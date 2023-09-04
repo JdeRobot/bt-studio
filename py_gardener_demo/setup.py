@@ -1,7 +1,7 @@
 from setuptools import setup
 from setuptools import find_packages
 
-package_name = 'client_demo'
+package_name = 'py_gardener_demo'
 
 setup(
     name=package_name,
@@ -35,12 +35,12 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
-    description='An translator to achieve BT.cpp behavior with py_trees',
+    description='A demo to prove py_gardener capabilities',
     license='BSD',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'demo = client_demo.demo:demo_main',
+            'demo = py_gardener_demo.demo:demo_main',
         ],
     },
 )

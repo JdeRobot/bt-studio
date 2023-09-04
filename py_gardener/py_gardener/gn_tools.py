@@ -18,7 +18,7 @@ def get_port_content(port_value):
         bb_key = port_value.strip("{}")
         blackboard = GlobalBlackboard.get_instance()
         
-        # Return the value of the blackboard entry if it exists, otherwise None-
+        # Return the value of the blackboard entry if it exists, otherwise None
         return getattr(blackboard, bb_key, "")
     else:
         return port_value

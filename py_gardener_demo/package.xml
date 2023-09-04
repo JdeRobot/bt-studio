@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>client_demo</name>
+  <name>py_gardener_demo</name>
   <version>0.0.0</version>
   <description>Hello I am a demo using py_gardener</description>
   <maintainer email="oscar.personal@robotics.com">Óscar Martínez</maintainer>

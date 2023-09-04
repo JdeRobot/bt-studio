@@ -7,12 +7,12 @@ import os
 def generate_launch_description():
 
     # Get the package directories
-    pkg_share_directory = get_package_share_directory('client_demo')
+    pkg_share_directory = get_package_share_directory('py_gardener_demo')
     
     return LaunchDescription([
 
         Node(
-            package='client_demo',
+            package='py_gardener_demo',
             executable='demo',
             output='screen',
         ),

@@ -12,12 +12,12 @@ def demo_main():
     # Init ros
     rclpy.init(args=None)
 
-    # Get the path to the root of the 'client_demo' package
-    client_demo_root_dir = get_package_share_directory('client_demo')
+    # Get the path to the root of the package
+    demo_root_dir = get_package_share_directory('py_gardener_demo')
 
-    # Now, you can build paths relative to the root of the client_demo package
-    tree_file_path = os.path.join(client_demo_root_dir, 'resource', 'tree.xml')
-    actions_dir_path = os.path.join(client_demo_root_dir, 'actions/')
+    # Now, you can build paths relative to the root of the package
+    tree_file_path = os.path.join(demo_root_dir, 'resource', 'tree.xml')
+    actions_dir_path = os.path.join(demo_root_dir, 'actions/')
 
     gardener = gn_factory.Gardener()
     tree = gardener.create_tree_from_file(tree_file_path, actions_dir_path)
