@@ -267,16 +267,16 @@ def get_branches(element):
         instance = Class(name=class_name, child=child)
     else:
         # Check if there is a port argument
-        port = {}
+        ports = {}
         for arg in element.attrib:
             if arg != 'name':
                 port_name = arg
                 port_content = element.get(arg)
                 
-                port[port_name] = port_content
+                ports[port_name] = port_content
                 break
 
-        instance = Class(name_arg, port)
+        instance = Class(name_arg, ports)
 
     return instance
 

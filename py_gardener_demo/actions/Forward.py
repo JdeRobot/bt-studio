@@ -4,16 +4,18 @@ from py_gardener import gn_tools
 
 class Forward(py_trees.behaviour.Behaviour):
 
-    def __init__(self, name: str = "Move", port = None):
+    def __init__(self, name: str = "Move", ports = None):
 
         """Configure the name of the behaviour."""
         super().__init__(name)
         self.logger.debug("%s.__init__()" % (self.__class__.__name__))
-        self.port = port
+
+        # Store the ports in the class for later usage
+        self.ports = ports
 
     def setup(self, **kwargs) -> None:
 
-        # Get the node passed from the tree
+        # Get the node passed from the tree (needed to interact with ros)
         try:
             self.node = kwargs['node']
         except KeyError as e:
