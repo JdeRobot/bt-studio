@@ -2,7 +2,7 @@
 <package format="3">
   <name>py_gardener_demo</name>
   <version>0.0.0</version>
-  <description>Hello I am a demo using py_gardener</description>
+  <description>Demo to test py_gardener capabilities and characteristics</description>
   <maintainer email="oscar.personal@robotics.com">Óscar Martínez</maintainer>
   <license>GPLv3</license>
 
