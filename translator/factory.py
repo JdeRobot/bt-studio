@@ -12,7 +12,7 @@ import autopep8
 import textwrap
 import rclpy.node
 import itertools
-from . import gn_parser
+from . import parser
 
 ##############################################################################
 # Tree classes
@@ -336,7 +336,7 @@ class Gardener(rclpy.node.Node):
     def create_tree_from_file(self, tree_path, action_path, timeout=1000):
 
         # Get a parsed xml and open it
-        formatted_xml = gn_parser.parse_tree(tree_path, action_path)
+        formatted_xml = parser.parse_tree(tree_path, action_path)
         xml_doc = ET.fromstring(formatted_xml)
 
         # Add actions to factory

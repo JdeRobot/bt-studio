@@ -1,4 +1,3 @@
-import sys
 import xml.etree.ElementTree as ET
 
 # Get the indentation of a given line
