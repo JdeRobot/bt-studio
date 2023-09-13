@@ -13,7 +13,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', ['launch/demo.launch.py']),
         ('share/' + package_name + '/resource', [
-            'resource/tree.xml',
+            'resource/bumpgo_ports.xml',
         ]),
         ('share/' + package_name + '/actions', [
             'actions/Forward.py',

@@ -16,7 +16,7 @@ def demo_main():
     demo_root_dir = get_package_share_directory('py_gardener_demo')
 
     # Now, you can build paths relative to the root of the package
-    tree_file_path = os.path.join(demo_root_dir, 'resource', 'tree.xml')
+    tree_file_path = os.path.join(demo_root_dir, 'resource', 'bumpgo_ports.xml')
     actions_dir_path = os.path.join(demo_root_dir, 'actions/')
 
     gardener = gn_factory.Gardener()

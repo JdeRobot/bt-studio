@@ -1,16 +1,16 @@
 import py_trees
 import geometry_msgs
-import py_trees_ros
+import std_msgs
 from py_gardener import gn_tools
 
 class Turn(py_trees.behaviour.Behaviour):
 
-    def __init__(self, name: str = "Turn", port = None):
+    def __init__(self, name: str = "Turn", ports = None):
 
         """Configure the name of the behaviour."""
         super().__init__(name)
         self.logger.debug("%s.__init__()" % (self.__class__.__name__))
-        self.port = port
+        self.ports = ports
 
     def setup(self, **kwargs: int) -> None:
 
@@ -29,6 +29,12 @@ class Turn(py_trees.behaviour.Behaviour):
             qos_profile=10
         )
 
+        self.publisher2 = self.node.create_publisher(
+            msg_type=std_msgs.msg.String,
+            topic="/n_obs",
+            qos_profile=10
+        )
+
         self.counter = 0
 
     def initialise(self) -> None:
@@ -43,12 +49,10 @@ class Turn(py_trees.behaviour.Behaviour):
         msg.angular.z = 0.4
         self.publisher.publish(msg)
         
-        self.counter += 1
-
-        try:
-            gn_tools.set_port_content(self.port["message"], self.counter)
-        except ValueError:
-            print("Menos mal")
+        nobs = gn_tools.get_port_content(self.ports["name2"])
+        str_pub = std_msgs.msg.String()
+        str_pub.data = str(nobs)
+        self.publisher2.publish(str_pub)
 
         return py_trees.common.Status.RUNNING 
 

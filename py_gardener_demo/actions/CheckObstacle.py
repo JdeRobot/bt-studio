@@ -1,16 +1,15 @@
 import py_trees
 import sensor_msgs
-import std_msgs
 from py_gardener import gn_tools
 
 class CheckObstacle(py_trees.behaviour.Behaviour):
 
-    def __init__(self, name: str = "CheckObstacle", port = None):
+    def __init__(self, name: str = "CheckObstacle", ports = None):
 
         """Configure the name of the behaviour."""
         super().__init__(name)
         self.logger.debug("%s.__init__()" % (self.__class__.__name__))
-        self.port = port
+        self.ports = ports
 
     def setup(self, **kwargs: int) -> None:
 
@@ -26,14 +25,9 @@ class CheckObstacle(py_trees.behaviour.Behaviour):
             '/scan',
             self.listener_callback,
             10)
-
-        self.publisher = self.node.create_publisher(
-            msg_type=std_msgs.msg.String,
-            topic="/kk",
-            qos_profile=10
-        )
     
         self.scan = sensor_msgs.msg.LaserScan()
+        self.counter = 0
 
     def initialise(self) -> None:
 
@@ -45,12 +39,14 @@ class CheckObstacle(py_trees.behaviour.Behaviour):
 
     def update(self) -> py_trees.common.Status:
 
-        str_pub = std_msgs.msg.String()
-        str_pub.data = str(gn_tools.get_port_content(self.port["message"]))
-        self.publisher.publish(str_pub)
-
         if len(self.scan.ranges) == 0: new_status = py_trees.common.Status.INVALID
-        elif self.scan.ranges[0] > 1: new_status = py_trees.common.Status.SUCCESS
+        elif self.scan.ranges[0] > 1: 
+            self.counter += 1
+            try:
+                gn_tools.set_port_content(self.ports["name1"], self.counter)
+            except ValueError:
+                print("Unable to set port content")
+            new_status = py_trees.common.Status.SUCCESS
         else: new_status = py_trees.common.Status.FAILURE
 
         return new_status

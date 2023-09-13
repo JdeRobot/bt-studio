@@ -12,7 +12,6 @@ import autopep8
 import textwrap
 import rclpy.node
 import itertools
-import types
 from . import gn_parser
 
 ##############################################################################
@@ -224,9 +223,10 @@ factory = {
     "Fallback": py_trees.composites.Selector,
     "ReactiveFallback": ReactiveFallback,
     "Inverter": py_trees.decorators.Inverter,
-    "RetryUntilSuccessful": py_trees.decorators.Retry,
     "ForceSuccess": py_trees.decorators.FailureIsSuccess,
     "ForceFailure": py_trees.decorators.SuccessIsFailure,
+    "Repeat": py_trees.decorators.Repeat,
+    "RetryUntilSuccessful": py_trees.decorators.Retry,
     "KeepRunningUntilFailure": py_trees.decorators.SuccessIsRunning
 }
 
@@ -259,6 +259,14 @@ def get_branches(element):
                 child = child_instance
         retry_name = "Retry_" + str(nfailures)
         instance = Class(name=retry_name, num_failures=int(nfailures), child=child)
+    elif 'Repeat' in class_name:
+        num_cycles = element.get('num_cycles')
+        for child_element in element:
+            child_instance = get_branches(child_element)
+            if child_instance is not None:
+                child = num_cycles
+        repeat_name = "Repeat_" + str(nfailures)
+        instance = Class(name=repeat_name, num_success=int(num_cycles), child=child)
     elif 'Inverter' in class_name or 'Force' in class_name or 'KeepRunningUntilFailure' in class_name:
         for child_element in element:
             child_instance = get_branches(child_element)
@@ -300,17 +308,16 @@ def add_actions_to_factory(doc):
 
     for element in code_element:
 
+        # Extract formatted code
         class_name = element.tag
         code_text = textwrap.dedent(element.text)
-
         formatted_code = autopep8.fix_code(code_text)
-        namespace = globals().copy()  # Copy current global namespace
 
-        exec(formatted_code, namespace)  # Execute in the copied namespace
+        # Copy current global namespace for safety
+        namespace = globals().copy()  
 
-        # Update the original global namespace with imported modules if not already present
-        new_imports = {k: v for k, v in namespace.items() if isinstance(v, types.ModuleType) and k not in globals()}
-        globals().update(new_imports)
+        # Execute in the copied namespace (because of closure, classes may access their imports)
+        exec(formatted_code, namespace)  
 
         # Access the class from the namespace and create an instance
         class_ref = namespace[class_name]
