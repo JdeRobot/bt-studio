@@ -1,7 +1,7 @@
 from setuptools import setup
 from setuptools import find_packages
 
-package_name = 'py_gardener_demo'
+package_name = 'offline_execution'
 
 setup(
     name=package_name,
@@ -35,12 +35,12 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
-    description='A demo to prove py_gardener capabilities',
+    description='Offline execution of generated trees',
     license='BSD',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'execute_tree = py_gardener_demo.execute_tree:execute_tree',
+            'execute_tree = offline_execution.execute_tree:execute_tree',
         ],
     },
 )

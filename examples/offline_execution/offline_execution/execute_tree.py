@@ -9,7 +9,7 @@ def execute_tree():
     rclpy.init(args=None)
 
     # Get the path to the root of the package
-    demo_root_dir = get_package_share_directory('py_gardener_demo')
+    demo_root_dir = get_package_share_directory('offline_execution')
 
     # Now, you can build paths relative to the root of the package
     tree_file_path = os.path.join(demo_root_dir, 'resource', 'final_tree.xml')
