@@ -1,11 +1,6 @@
-from ament_index_python.packages import get_package_share_directory
 import sys
 import os
-
-# Add the root directory of your project to the Python path.
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-
-from translator import parser
+from tree_translator import parser
 
 def main():
 

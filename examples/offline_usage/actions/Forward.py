@@ -1,6 +1,6 @@
 import py_trees
 import geometry_msgs
-from py_gardener import gn_tools
+from tree_translator import tools
 
 class Forward(py_trees.behaviour.Behaviour):
 
@@ -36,7 +36,7 @@ class Forward(py_trees.behaviour.Behaviour):
     def update(self) -> py_trees.common.Status:
 
         msg = geometry_msgs.msg.Twist()
-        msg.linear.x = float(gn_tools.get_port_content(self.ports["speed"]))
+        msg.linear.x = float(tools.get_port_content(self.ports["speed"]))
         self.publisher.publish(msg)
 
         return py_trees.common.Status.RUNNING 
