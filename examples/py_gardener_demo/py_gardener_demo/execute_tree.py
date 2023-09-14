@@ -12,7 +12,7 @@ def execute_tree():
     demo_root_dir = get_package_share_directory('py_gardener_demo')
 
     # Now, you can build paths relative to the root of the package
-    tree_file_path = os.path.join(demo_root_dir, 'resource', 'self_contained_file.xml')
+    tree_file_path = os.path.join(demo_root_dir, 'resource', 'final_tree.xml')
 
     # Generate the executable tree using the factory
     tree_factory = factory.TreeFactory()
