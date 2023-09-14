@@ -1,6 +1,6 @@
 import py_trees
 import sensor_msgs
-from ....translator import tools
+from tree_translator import tools
 
 class CheckObstacle(py_trees.behaviour.Behaviour):
 
@@ -43,7 +43,7 @@ class CheckObstacle(py_trees.behaviour.Behaviour):
         elif self.scan.ranges[0] > 1: 
             self.counter += 1
             try:
-                gn_tools.set_port_content(self.ports["name1"], self.counter)
+                tools.set_port_content(self.ports["name1"], self.counter)
             except ValueError:
                 print("Unable to set port content")
             new_status = py_trees.common.Status.SUCCESS

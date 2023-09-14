@@ -12,7 +12,6 @@ import autopep8
 import textwrap
 import rclpy.node
 import itertools
-from . import parser
 
 ##############################################################################
 # Tree classes
@@ -324,20 +323,21 @@ def add_actions_to_factory(doc):
         factory[class_name] = class_ref
 
 ##############################################################################
-# Gardener factory
+# Tree factory
 ##############################################################################
 
-class Gardener(rclpy.node.Node):
+class TreeFactory(rclpy.node.Node):
 
     def __init__(self):
 
-        super().__init__('Gardener')
+        super().__init__('Factory')
 
-    def create_tree_from_file(self, tree_path, action_path, timeout=1000):
+    def create_tree_from_file(self, tree_path, timeout=1000):
 
-        # Get a parsed xml and open it
-        formatted_xml = parser.parse_tree(tree_path, action_path)
-        xml_doc = ET.fromstring(formatted_xml)
+        # Open the self contained xml file
+        self_file = open(tree_path, 'r')
+        self_contained_tree = self_file.read()
+        xml_doc = ET.fromstring(self_contained_tree)
 
         # Add actions to factory
         add_actions_to_factory(xml_doc)
