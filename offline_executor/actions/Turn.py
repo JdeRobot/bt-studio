@@ -1,8 +1,9 @@
 import py_trees
-import sensor_msgs
+import geometry_msgs
+import std_msgs
 from tree_translator import tools
 
-class CheckObstacle(py_trees.behaviour.Behaviour):
+class Turn(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, ports = None):
 
@@ -25,18 +26,13 @@ class CheckObstacle(py_trees.behaviour.Behaviour):
         except KeyError as e:
             error_message = "Couldn't find the tree node"
             raise KeyError(error_message) from e
-
-        # Setup the subscription to the laser
-        self.subscription = self.node.create_subscription(
-            sensor_msgs.msg.LaserScan,
-            '/scan',
-            self.listener_callback,
-            10)
-    
-        self.scan = sensor_msgs.msg.LaserScan()
-
-    def listener_callback(self, msg) -> None:
-        self.scan = msg
+        
+        # Setup the publisher for the robot speed
+        self.publisher = self.node.create_publisher(
+            msg_type=geometry_msgs.msg.Twist,
+            topic="/cmd_vel",
+            qos_profile=10
+        )
 
     def initialise(self) -> None:
 
@@ -49,13 +45,13 @@ class CheckObstacle(py_trees.behaviour.Behaviour):
 
         """ Executed when the action is ticked. Do not block! """
 
-        # Check the laser measures
-        if len(self.scan.ranges) == 0: new_status = py_trees.common.Status.INVALID
-        elif self.scan.ranges[0] > 1: new_status = py_trees.common.Status.SUCCESS
-        else: new_status = py_trees.common.Status.FAILURE
+        # Publish the speed msg
+        msg = geometry_msgs.msg.Twist()
+        msg.angular.z = 0.4
+        self.publisher.publish(msg)
 
-        return new_status
-
+        return py_trees.common.Status.RUNNING 
+    
     def terminate(self, new_status: py_trees.common.Status) -> None:
 
         """ Called whenever the behaviour switches to a non-running state """

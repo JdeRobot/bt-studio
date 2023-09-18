@@ -1,17 +1,16 @@
 from setuptools import setup
 from setuptools import find_packages
 
-package_name = 'offline_execution'
+package_name = 'offline_executor'
 
 setup(
     name=package_name,
-    version='0.0.1',
+    version='0.1.0',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/' + package_name + '/launch', ['launch/execute_tree.launch.py']),
         ('share/' + package_name + '/resource', [
             'resource/basic_tree.xml',
         ]),
@@ -21,7 +20,7 @@ setup(
             'actions/CheckObstacle.py'
         ]),
     ],
-    install_requires=['setuptools', 'py_trees', 'py_trees_ros', 'std_msgs', 'geometry_msgs', 'sensor_msgs'],
+    install_requires=['setuptools', 'py_trees', 'py_trees_ros', 'std_msgs', 'geometry_msgs', 'sensor_msgs', 'tree_translator'],
     zip_safe=True,
     author='Óscar Martínez',
     author_email='oscar.robotics@tutanota.com',
@@ -34,12 +33,12 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
-    description='Offline execution of generated trees',
+    description='Offline execution example',
     license='BSD',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'execute_tree = offline_execution.execute_tree:execute_tree',
+            'demo = offline_executor.execute:execute_main',
         ],
     },
 )

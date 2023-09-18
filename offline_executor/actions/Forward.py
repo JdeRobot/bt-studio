@@ -57,6 +57,12 @@ class Forward(py_trees.behaviour.Behaviour):
         msg.linear.x = float(tools.get_port_content(self.ports["speed"]))
         self.publisher.publish(msg)
 
+        # Publish the number of obstacles retrieved from the port
+        nobs = tools.get_port_content(self.ports["obs_port"])
+        str_pub = std_msgs.msg.String()
+        str_pub.data = str(nobs)
+        self.publisher2.publish(str_pub)
+
         return py_trees.common.Status.RUNNING 
 
     def terminate(self, new_status: py_trees.common.Status) -> None:

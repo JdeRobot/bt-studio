@@ -1,9 +1,8 @@
 import py_trees
-import geometry_msgs
-import std_msgs
+import sensor_msgs
 from tree_translator import tools
 
-class Turn(py_trees.behaviour.Behaviour):
+class CheckObstacle(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, ports = None):
 
@@ -26,13 +25,21 @@ class Turn(py_trees.behaviour.Behaviour):
         except KeyError as e:
             error_message = "Couldn't find the tree node"
             raise KeyError(error_message) from e
-        
-        # Setup the publisher for the robot speed
-        self.publisher = self.node.create_publisher(
-            msg_type=geometry_msgs.msg.Twist,
-            topic="/cmd_vel",
-            qos_profile=10
-        )
+
+        # Setup the subscription to the laser
+        self.subscription = self.node.create_subscription(
+            sensor_msgs.msg.LaserScan,
+            '/scan',
+            self.listener_callback,
+            10)
+    
+        self.scan = sensor_msgs.msg.LaserScan()
+
+        # Init the obstacle counter
+        self.n_obs = 0
+
+    def listener_callback(self, msg) -> None:
+        self.scan = msg
 
     def initialise(self) -> None:
 
@@ -45,19 +52,16 @@ class Turn(py_trees.behaviour.Behaviour):
 
         """ Executed when the action is ticked. Do not block! """
 
-        # Publish the speed msg
-        msg = geometry_msgs.msg.Twist()
-        msg.angular.z = 0.4
-        self.publisher.publish(msg)
-        
-        # Publish the number of obstacles retrieved from the port
-        nobs = tools.get_port_content(self.ports["n_obs"])
-        str_pub = std_msgs.msg.String()
-        str_pub.data = str(nobs)
-        self.publisher2.publish(str_pub)
+        # Check the laser measures
+        if len(self.scan.ranges) == 0: new_status = py_trees.common.Status.INVALID
+        elif self.scan.ranges[0] > 1: new_status = py_trees.common.Status.SUCCESS
+        else: 
+            self.n_obs += 1
+            tools.set_port_content(self.ports["obs_port"], self.n_obs)
+            new_status = py_trees.common.Status.FAILURE
 
-        return py_trees.common.Status.RUNNING 
-    
+        return new_status
+
     def terminate(self, new_status: py_trees.common.Status) -> None:
 
         """ Called whenever the behaviour switches to a non-running state """
