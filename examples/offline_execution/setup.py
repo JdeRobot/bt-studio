@@ -17,12 +17,11 @@ setup(
         ]),
         ('share/' + package_name + '/actions', [
             'actions/Forward.py',
-            'actions/Backward.py',
             'actions/Turn.py',
             'actions/CheckObstacle.py'
         ]),
     ],
-    install_requires=['setuptools', 'py_trees', 'py_trees_ros', 'std_msgs', 'geometry_msgs', 'sensor_msgs', 'py_gardener'],
+    install_requires=['setuptools', 'py_trees', 'py_trees_ros', 'std_msgs', 'geometry_msgs', 'sensor_msgs'],
     zip_safe=True,
     author='Óscar Martínez',
     author_email='oscar.robotics@tutanota.com',

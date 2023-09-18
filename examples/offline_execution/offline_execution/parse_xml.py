@@ -1,9 +1,9 @@
-import sys
 import os
 from tree_translator import parser
 from ament_index_python.packages import get_package_share_directory, get_package_prefix
 
 def main():
+
     # Get the path to the root of the package
     demo_share_dir = get_package_share_directory('offline_execution')
     demo_root_dir = get_package_prefix('offline_execution')
