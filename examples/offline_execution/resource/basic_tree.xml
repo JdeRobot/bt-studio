@@ -1,11 +1,11 @@
 <root>
     <BehaviorTree ID="MainTree">
-        <ReactiveSequence name="rseq">
-            <ReactiveFallback name="rfall">
-                <CheckObstacle name="check_obstacle" name1="{same_key}"/>
-                <Turn name="avoid_obstacle" name2="{same_key}"/>
+        <ReactiveSequence name="main_seq">
+            <ReactiveFallback name="obs_fallback">
+                <CheckObstacle name="check_obstacle" obs_port="{n_obs}"/>
+                <Turn name="avoid_obstacle"/>
             </ReactiveFallback>
-            <Forward name="move_forward" speed="0.2"/>
+            <Forward name="move_forward" speed="0.2" obs_port="{n_obs}"/>
         </ReactiveSequence>
     </BehaviorTree>
 </root>
