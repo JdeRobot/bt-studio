@@ -1,4 +1,4 @@
-# tree_translator
+# treelib
 
 [![PyPI - Version](https://img.shields.io/pypi/v/tree-translator.svg)](https://pypi.org/project/tree-translator)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/tree-translator.svg)](https://pypi.org/project/tree-translator)

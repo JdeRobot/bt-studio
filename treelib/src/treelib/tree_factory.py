@@ -5,12 +5,10 @@
 import py_trees
 import py_trees_ros.trees
 import py_trees.console as console
-import rclpy
 import xml.etree.ElementTree as ET
 import typing
 import autopep8
 import textwrap
-import rclpy.node
 import itertools
 
 ##############################################################################
@@ -326,7 +324,7 @@ def add_actions_to_factory(doc):
 # Tree factory
 ##############################################################################
 
-class TreeFactory(rclpy.node.Node):
+class TreeFactory():
 
     def __init__(self):
 

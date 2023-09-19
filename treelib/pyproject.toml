@@ -32,7 +32,7 @@ Issues = "https://github.com/unknown/tree-translator/issues"
 Source = "https://github.com/unknown/tree-translator"
 
 [tool.hatch.version]
-path = "src/tree_translator/__about__.py"
+path = "src/treelib/__about__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -62,7 +62,7 @@ dependencies = [
   "ruff>=0.0.243",
 ]
 [tool.hatch.envs.lint.scripts]
-typing = "mypy --install-types --non-interactive {args:src/tree_translator tests}"
+typing = "mypy --install-types --non-interactive {args:src/treelib tests}"
 style = [
   "ruff {args:.}",
   "black --check --diff {args:.}",
@@ -128,7 +128,7 @@ unfixable = [
 ]
 
 [tool.ruff.isort]
-known-first-party = ["tree_translator"]
+known-first-party = ["treelib"]
 
 [tool.ruff.flake8-tidy-imports]
 ban-relative-imports = "all"
@@ -138,15 +138,15 @@ ban-relative-imports = "all"
 "tests/**/*" = ["PLR2004", "S101", "TID252"]
 
 [tool.coverage.run]
-source_pkgs = ["tree_translator", "tests"]
+source_pkgs = ["treelib", "tests"]
 branch = true
 parallel = true
 omit = [
-  "src/tree_translator/__about__.py",
+  "src/treelib/__about__.py",
 ]
 
 [tool.coverage.paths]
-tree_translator = ["src/tree_translator", "*/tree-translator/src/tree_translator"]
+treelib = ["src/treelib", "*/tree-translator/src/treelib"]
 tests = ["tests", "*/tree-translator/tests"]
 
 [tool.coverage.report]
