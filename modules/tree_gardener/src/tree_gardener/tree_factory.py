@@ -11,6 +11,7 @@ import autopep8
 import textwrap
 import itertools
 import rclpy.node
+import time
 
 ##############################################################################
 # Tree classes
@@ -210,6 +211,45 @@ class ReactiveFallback(py_trees.composites.Composite):
         )
         py_trees.composites.Composite.stop(self, new_status)
 
+class Delay(py_trees.decorators.Decorator):
+
+    def __init__(self, name: str, child: py_trees.behaviour.Behaviour, delay_ms: int = 0):
+
+        super(Delay, self).__init__(name=name, child=child)
+        self.secs = float(delay_ms/1000)  # Convert to seconds
+        self.start_time = None
+
+    def initialise(self) -> None:
+
+        self.start_time = time.monotonic() + self.secs
+
+    def tick(self) -> typing.Iterator[py_trees.behaviour.Behaviour]:
+
+        # Check if init is needed
+        if self.status != py_trees.common.Status.RUNNING:
+            self.initialise()
+
+        current_time = time.monotonic()
+        if (current_time < self.start_time):
+            # Return the decorator itself
+            for node in py_trees.behaviour.Behaviour.tick(self):
+                yield node
+        else:
+            # Tick the child
+            for node in py_trees.decorators.Decorator.tick(self):
+                yield node
+
+    def update(self) -> py_trees.common.Status:
+        
+        current_time = time.monotonic()
+        if (current_time > self.start_time):
+            return self.decorated.status
+        else:
+            return py_trees.common.Status.RUNNING
+
+    def terminate(self, new_status: py_trees.common.Status) -> None:
+        self.decorated.stop(new_status)
+
 ##############################################################################
 # Auxiliary variables
 ##############################################################################
@@ -225,7 +265,9 @@ factory = {
     "ForceFailure": py_trees.decorators.SuccessIsFailure,
     "Repeat": py_trees.decorators.Repeat,
     "RetryUntilSuccessful": py_trees.decorators.Retry,
-    "KeepRunningUntilFailure": py_trees.decorators.SuccessIsRunning
+    "KeepRunningUntilFailure": py_trees.decorators.SuccessIsRunning,
+    "RunOnce": py_trees.decorators.OneShot,
+    "Delay": Delay
 }
 
 ##############################################################################
@@ -262,15 +304,28 @@ def get_branches(element):
         for child_element in element:
             child_instance = get_branches(child_element)
             if child_instance is not None:
-                child = num_cycles
-        repeat_name = "Repeat_" + str(nfailures)
-        instance = Class(name=repeat_name, num_success=int(num_cycles), child=child)
+                child = child_instance
+        repeat_name = "Repeat_" + str(num_cycles)
+        instance = Class(name=repeat_name, child=child, num_success=int(num_cycles))
     elif 'Inverter' in class_name or 'Force' in class_name or 'KeepRunningUntilFailure' in class_name:
         for child_element in element:
             child_instance = get_branches(child_element)
             if child_instance is not None:
                 child = child_instance
         instance = Class(name=class_name, child=child)
+    elif 'RunOnce' in class_name:
+        for child_element in element:
+            child_instance = get_branches(child_element)
+            if child_instance is not None:
+                child = child_instance
+        instance = Class(name=class_name, child=child, policy=py_trees.common.OneShotPolicy.ON_COMPLETION)
+    elif 'Delay' in class_name:
+        delay_ms = element.get('delay_ms')
+        for child_element in element:
+            child_instance = get_branches(child_element)
+            if child_instance is not None:
+                child = child_instance
+        instance = Class(name=class_name, child=child, delay_ms=int(delay_ms))
     else:
         # Check if there is a port argument
         ports = {}

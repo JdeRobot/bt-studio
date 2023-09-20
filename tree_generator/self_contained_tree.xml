@@ -1,75 +1,17 @@
 <root>
     <BehaviorTree ID="MainTree">
-        <ReactiveSequence name="main_seq">
-            <ReactiveFallback name="obs_fallback">
-                <CheckObstacle name="check_obstacle" obs_port="{n_obs}" amplitude="20" />
-                <Turn name="avoid_obstacle" />
-            </ReactiveFallback>
-            <Forward name="move_forward" speed="0.2" obs_port="{n_obs}" />
-        </ReactiveSequence>
+        <RetryUntilSuccessful num_attempts="100">
+            <Sequence name="main_seq">
+                <Delay delay_ms="10000">
+                    <CheckObstacle name="check_obstacle" obs_port="{n_obs}" amplitude="20" />
+                </Delay>
+                <Repeat num_cycles="5">
+                    <CheckObstacle name="check_obstacle" obs_port="{n_obs}" amplitude="20" />
+                </Repeat>
+            </Sequence>
+        </RetryUntilSuccessful>
     </BehaviorTree>
     <Code>
-        <Turn>
-            import py_trees
-            import geometry_msgs
-            
-            class Turn(py_trees.behaviour.Behaviour):
-            
-                def __init__(self, name, ports = None):
-            
-                    """ Constructor, executed when the class is instantiated """
-            
-                    # Configure the name of the behaviour
-                    super().__init__(name)
-                    self.logger.debug("%s.__init__()" % (self.__class__.__name__))
-            
-                    # Get the ports
-                    self.ports = ports
-            
-                def setup(self, **kwargs: int) -&gt; None:
-            
-                    """ Executed when the setup function is called upon the tree """
-            
-                    # Get the node passed from the tree (needed for interaction with ROS)
-                    try:
-                        self.node = kwargs['node']
-                    except KeyError as e:
-                        error_message = "Couldn't find the tree node"
-                        raise KeyError(error_message) from e
-                    
-                    # Setup the publisher for the robot speed
-                    self.publisher = self.node.create_publisher(
-                        msg_type=geometry_msgs.msg.Twist,
-                        topic="/cmd_vel",
-                        qos_profile=10
-                    )
-            
-                def initialise(self) -&gt; None:
-            
-                    """ Executed when coming from an idle state """
-            
-                    # Debugging
-                    self.logger.debug("%s.initialise()" % (self.__class__.__name__))
-            
-                def update(self) -&gt; py_trees.common.Status:
-            
-                    """ Executed when the action is ticked. Do not block! """
-            
-                    # Publish the speed msg
-                    msg = geometry_msgs.msg.Twist()
-                    msg.angular.z = 0.4
-                    self.publisher.publish(msg)
-            
-                    return py_trees.common.Status.RUNNING 
-                
-                def terminate(self, new_status: py_trees.common.Status) -&gt; None:
-            
-                    """ Called whenever the behaviour switches to a non-running state """
-            
-                    # Debugging
-                    self.logger.debug("%s.terminate()[%s-&gt;%s]" % (self.__class__.__name__, self.status, new_status))
-            
-        </Turn>
         <CheckObstacle>
             import py_trees
             import sensor_msgs
@@ -158,85 +100,5 @@
                     self.logger.debug("%s.terminate()[%s-&gt;%s]" % (self.__class__.__name__, self.status, new_status))
             
         </CheckObstacle>
-        <Forward>
-            import py_trees
-            import geometry_msgs
-            import std_msgs
-            from tree_gardener import tree_tools
-            
-            class Forward(py_trees.behaviour.Behaviour):
-            
-                def __init__(self, name, ports = None):
-            
-                    """ Constructor, executed when the class is instantiated """
-            
-                    # Configure the name of the behaviour
-                    super().__init__(name)
-                    self.logger.debug("%s.__init__()" % (self.__class__.__name__))
-            
-                    # Get the ports
-                    self.ports = ports
-            
-                def setup(self, **kwargs) -&gt; None:
-            
-                    """ Executed when the setup function is called upon the tree """
-            
-                    # Get the node passed from the tree (needed for interaction with ROS)
-                    try:
-                        self.node = kwargs['node']
-                    except KeyError as e:
-                        error_message = "Couldn't find the tree node"
-                        raise KeyError(error_message) from e
-            
-                    # Setup the publisher for the robot speed
-                    self.publisher = self.node.create_publisher(
-                        msg_type=geometry_msgs.msg.Twist,
-                        topic="/cmd_vel",
-                        qos_profile=10
-                    )
-            
-                    # Setup the publisher for n_obs
-                    self.publisher2 = self.node.create_publisher(
-                        msg_type=std_msgs.msg.String,
-                        topic="/n_obs",
-                        qos_profile=10
-                    )
-            
-                def initialise(self) -&gt; None:
-            
-                    """ Executed when coming from an idle state """
-            
-                    # Debugging
-                    self.logger.debug("%s.initialise()" % (self.__class__.__name__))
-            
-                def update(self) -&gt; py_trees.common.Status:
-            
-                    """ Executed when the action is ticked. Do not block! """
-            
-                    # Publish the speed msg
-                    msg = geometry_msgs.msg.Twist()
-                    msg.linear.x = float(tree_tools.get_port_content(self.ports["speed"]))
-                    self.publisher.publish(msg)
-            
-                    # Publish the number of obstacles retrieved from the port
-                    nobs = tree_tools.get_port_content(self.ports["obs_port"])
-                    str_pub = std_msgs.msg.String()
-                    str_pub.data = str(nobs)
-                    self.publisher2.publish(str_pub)
-            
-                    return py_trees.common.Status.RUNNING 
-            
-                def terminate(self, new_status: py_trees.common.Status) -&gt; None:
-            
-                    """ Called whenever the behaviour switches to a non-running state """
-            
-                    # Stop the robot
-                    msg = geometry_msgs.msg.Twist()
-                    msg.linear.x = 0.0
-                    self.publisher.publish(msg)
-            
-                    # Debugging
-                    self.logger.debug("%s.terminate()[%s-&gt;%s]" % (self.__class__.__name__, self.status, new_status))
-        </Forward>
     </Code>
 </root>

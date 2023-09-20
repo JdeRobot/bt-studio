@@ -94,7 +94,8 @@ def get_action_set(tree) -> set:
     actions = set()
     structure_elements = ["Sequence","ReactiveSequence","BehaviorTree", "Fallback",
                           "ReactiveFallback","RetryUntilSuccessful", "Inverter",
-                          "ForceSuccess", "ForceFailure", "KeepRunningUntilFailure"]
+                          "ForceSuccess", "ForceFailure", "KeepRunningUntilFailure", "Repeat",
+                          "RunOnce", "Delay"]
     for leaf in tree:
 
         if leaf.tag not in actions and leaf.tag not in structure_elements: actions.add(leaf.tag)
