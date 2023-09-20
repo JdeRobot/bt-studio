@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>offline_execution</name>
-  <version>0.1</version>
-  <description>Offline execution of generated trees</description>
+  <name>offline_executor</name>
+  <version>0.1.0</version>
+  <description>Offline executor of generated BTs</description>
   <maintainer email="oscar.personal@robotics.com">Óscar Martínez</maintainer>
   <license>GPLv3</license>
 
@@ -11,7 +11,7 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
-  <exec_depend>py_gardener</exec_depend>
+  <exec_depend>tree_gardener</exec_depend>
 
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>

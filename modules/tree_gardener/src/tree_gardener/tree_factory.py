@@ -5,13 +5,12 @@
 import py_trees
 import py_trees_ros.trees
 import py_trees.console as console
-import rclpy
 import xml.etree.ElementTree as ET
 import typing
 import autopep8
 import textwrap
-import rclpy.node
 import itertools
+import rclpy.node
 
 ##############################################################################
 # Tree classes
@@ -281,7 +280,6 @@ def get_branches(element):
                 port_content = element.get(arg)
                 
                 ports[port_name] = port_content
-                break
 
         instance = Class(name_arg, ports)
 

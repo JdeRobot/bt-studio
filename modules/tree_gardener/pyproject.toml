@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "tree-translator"
+name = "tree-gardener"
 dynamic = ["version"]
 description = ''
 readme = "README.md"
@@ -27,12 +27,12 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Documentation = "https://github.com/unknown/tree-translator#readme"
-Issues = "https://github.com/unknown/tree-translator/issues"
-Source = "https://github.com/unknown/tree-translator"
+Documentation = "https://github.com/unknown/tree-gardener#readme"
+Issues = "https://github.com/unknown/tree-gardener/issues"
+Source = "https://github.com/unknown/tree-gardener"
 
 [tool.hatch.version]
-path = "src/tree_translator/__about__.py"
+path = "src/tree_gardener/__about__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -62,7 +62,7 @@ dependencies = [
   "ruff>=0.0.243",
 ]
 [tool.hatch.envs.lint.scripts]
-typing = "mypy --install-types --non-interactive {args:src/tree_translator tests}"
+typing = "mypy --install-types --non-interactive {args:src/tree_gardener tests}"
 style = [
   "ruff {args:.}",
   "black --check --diff {args:.}",
@@ -128,7 +128,7 @@ unfixable = [
 ]
 
 [tool.ruff.isort]
-known-first-party = ["tree_translator"]
+known-first-party = ["tree_gardener"]
 
 [tool.ruff.flake8-tidy-imports]
 ban-relative-imports = "all"
@@ -138,16 +138,16 @@ ban-relative-imports = "all"
 "tests/**/*" = ["PLR2004", "S101", "TID252"]
 
 [tool.coverage.run]
-source_pkgs = ["tree_translator", "tests"]
+source_pkgs = ["tree_gardener", "tests"]
 branch = true
 parallel = true
 omit = [
-  "src/tree_translator/__about__.py",
+  "src/tree_gardener/__about__.py",
 ]
 
 [tool.coverage.paths]
-tree_translator = ["src/tree_translator", "*/tree-translator/src/tree_translator"]
-tests = ["tests", "*/tree-translator/tests"]
+tree_gardener = ["src/tree_gardener", "*/tree-gardener/src/tree_gardener"]
+tests = ["tests", "*/tree-gardener/tests"]
 
 [tool.coverage.report]
 exclude_lines = [
