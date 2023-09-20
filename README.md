@@ -8,7 +8,7 @@
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-[![License](http://img.shields.io/:license-gpl-blue.svg)](http://opensource.org/licenses/GPL-2.0)
+[![License](http://img.shields.io/:license-gpl-blue.svg)](http://opensource.org/licenses/GPL-3.0)
 
 ## Introduction
 
@@ -23,14 +23,13 @@ In the future, this project will have total integration with [RoboticsAcademy](h
 * Integration with dockerized environment, with the capacity to execute the applications both in simulated and real robots. 
 
 <!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/JdeRobot/BehaviorTrees.svg?style=plastic
+[contributors-shield]: https://img.shields.io/github/contributors/JdeRobot/BehaviorTrees
 [contributors-url]: https://github.com/JdeRobot/BehaviorTrees/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/JdeRobot/BehaviorTrees.svg?style=plastic
+[forks-shield]: https://img.shields.io/github/forks/JdeRobot/BehaviorTrees
 [forks-url]: https://github.com/JdeRobot/BehaviorTrees/network/members
 [stars-shield]: https://img.shields.io/github/stars/JdeRobot/BehaviorTrees
 [stars-url]: https://github.com/JdeRobot/BehaviorTrees/stargazers
-[issues-shield]: https://img.shields.io/github/issues/JdeRobot/BehaviorTrees.svg?style=plastic
+[issues-shield]: https://img.shields.io/github/issues/JdeRobot/BehaviorTrees
 [issues-url]: https://github.com/JdeRobot/BehaviorTrees/issues
-[license-shield]: https://img.shields.io/github/license/opensource.org/licenses/GPL-2.0
-[license-url]: http://opensource.org/licenses/GPL-2.0
+[license-shield]: https://img.shields.io/github/license/opensource.org/licenses/GPL-3.0
+[license-url]: http://opensource.org/licenses/GPL-3.0
