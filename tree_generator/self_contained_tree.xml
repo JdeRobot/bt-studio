@@ -2,9 +2,9 @@
     <BehaviorTree ID="MainTree">
         <RetryUntilSuccessful num_attempts="100">
             <Sequence name="main_seq">
-                <RunOnce>
+                <Delay delay_ms="10000">
                     <CheckObstacle name="check_obstacle" obs_port="{n_obs}" amplitude="20" />
-                </RunOnce>
+                </Delay>
                 <Repeat num_cycles="5">
                     <CheckObstacle name="check_obstacle" obs_port="{n_obs}" amplitude="20" />
                 </Repeat>
