@@ -28,7 +28,7 @@ In the future, this project will have total integration with [RoboticsAcademy](h
 [contributors-url]: https://github.com/JdeRobot/BehaviorTrees/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/JdeRobot/BehaviorTrees.svg?style=plastic
 [forks-url]: https://github.com/JdeRobot/BehaviorTrees/network/members
-[stars-shield]: https://img.shields.io/github/stars/JdeRobot/BehaviorTrees.svg?style=plastic
+[stars-shield]: https://img.shields.io/github/stars/JdeRobot/BehaviorTrees
 [stars-url]: https://github.com/JdeRobot/BehaviorTrees/stargazers
 [issues-shield]: https://img.shields.io/github/issues/JdeRobot/BehaviorTrees.svg?style=plastic
 [issues-url]: https://github.com/JdeRobot/BehaviorTrees/issues
