@@ -1,29 +1,38 @@
 import rclpy
-from tree_translator import factory
-from ament_index_python.packages import get_package_share_directory
-import os
+from rclpy.node import Node
+from tree_gardener import tree_factory
 
-def execute_main():
+class TreeExecutor(Node):
 
-    # Init ros
-    rclpy.init(args=None)
+    def __init__(self):
+        
+        super().__init__('tree_executor_node')
+        
+        # Declare the parameter and its default value
+        self.declare_parameter("tree_path", "final_tree.xml")
 
-    # Get the path to the root of the package
-    demo_root_dir = get_package_share_directory('offline_executor')
+        # Retrieve the parameter value
+        tree_path = self.get_parameter("tree_path").value
 
-    # Now, you can build paths relative to the root of the package
-    tree_file_path = os.path.join(demo_root_dir, 'resource', 'final_tree.xml')
+        factory = tree_factory.TreeFactory()
+        self.tree = factory.create_tree_from_file(tree_path)
+        self.tree.tick_tock(period_ms=1000)
+        
+    def spin_tree(self):
 
-    # Generate the executable tree using the factory
-    tree_factory = factory.TreeFactory()
-    tree = tree_factory.create_tree_from_file(tree_file_path)
+        try:
+            rclpy.spin(self.tree.node)
+        except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
+            pass
+        finally:
+            self.tree.shutdown()
 
-    # Init the execution loop
-    tree.tick_tock(period_ms=1000)
-    try:
-        rclpy.spin(tree.node)
-    except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
-        pass
-    finally:
-        tree.shutdown()
-        rclpy.try_shutdown()
+def main():
+    
+    # Init the components
+    rclpy.init()
+    executor = TreeExecutor()
+
+    # Spin the tree
+    # executor.spin_tree()
+    rclpy.shutdown()

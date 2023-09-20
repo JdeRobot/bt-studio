@@ -1,6 +1,6 @@
 import os
 import argparse
-from tree_translator import parser
+from tree_gardener import tree_parser
 
 def main(tree_path, action_path):
 
@@ -11,7 +11,7 @@ def main(tree_path, action_path):
         raise FileNotFoundError(f"Action path '{action_path}' does not exist!")
 
     # Get a formatted self-contained tree string
-    formatted_xml = parser.parse_tree(tree_path, action_path)
+    formatted_xml = tree_parser.parse_tree(tree_path, action_path)
 
     # Path where the xml will be stored for later access
     result_tree_path = "self_contained_tree.xml"
@@ -19,7 +19,6 @@ def main(tree_path, action_path):
     # Store the string in a temp xml file
     with open(result_tree_path, "w") as result_file:
         result_file.write(formatted_xml)
-
 
 if __name__ == "__main__":
 

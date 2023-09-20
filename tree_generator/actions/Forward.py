@@ -1,7 +1,7 @@
 import py_trees
 import geometry_msgs
 import std_msgs
-from tree_translator import tools
+from tree_gardener import tree_tools
 
 class Forward(py_trees.behaviour.Behaviour):
 
@@ -54,11 +54,11 @@ class Forward(py_trees.behaviour.Behaviour):
 
         # Publish the speed msg
         msg = geometry_msgs.msg.Twist()
-        msg.linear.x = float(tools.get_port_content(self.ports["speed"]))
+        msg.linear.x = float(tree_tools.get_port_content(self.ports["speed"]))
         self.publisher.publish(msg)
 
         # Publish the number of obstacles retrieved from the port
-        nobs = tools.get_port_content(self.ports["obs_port"])
+        nobs = tree_tools.get_port_content(self.ports["obs_port"])
         str_pub = std_msgs.msg.String()
         str_pub.data = str(nobs)
         self.publisher2.publish(str_pub)

@@ -10,6 +10,7 @@ import typing
 import autopep8
 import textwrap
 import itertools
+import rclpy.node
 
 ##############################################################################
 # Tree classes
@@ -279,7 +280,6 @@ def get_branches(element):
                 port_content = element.get(arg)
                 
                 ports[port_name] = port_content
-                break
 
         instance = Class(name_arg, ports)
 
@@ -324,7 +324,7 @@ def add_actions_to_factory(doc):
 # Tree factory
 ##############################################################################
 
-class TreeFactory():
+class TreeFactory(rclpy.node.Node):
 
     def __init__(self):
 

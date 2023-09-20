@@ -33,12 +33,12 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
-    description='Offline execution example',
+    description='Offline execution of generated BTs',
     license='BSD',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'demo = offline_executor.execute:execute_main',
+            'executor = offline_executor.execute:main',
         ],
     },
 )

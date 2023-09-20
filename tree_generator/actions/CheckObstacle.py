@@ -1,6 +1,17 @@
 import py_trees
 import sensor_msgs
-from tree_translator import tools
+from tree_gardener import tree_tools
+
+def check_obstacle_in_laser(laser_measures, amplitude):
+        
+        relevant_measures = laser_measures[:amplitude] + laser_measures[-amplitude:]
+
+        for measure in relevant_measures:
+
+            if measure < 1:
+                return True
+            
+        return False
 
 class CheckObstacle(py_trees.behaviour.Behaviour):
 
@@ -54,10 +65,14 @@ class CheckObstacle(py_trees.behaviour.Behaviour):
 
         # Check the laser measures
         if len(self.scan.ranges) == 0: new_status = py_trees.common.Status.INVALID
-        elif self.scan.ranges[0] > 1: new_status = py_trees.common.Status.SUCCESS
+
+        # Check if there is an obstacle
+        amplitude = int(tree_tools.get_port_content(self.ports["amplitude"]))
+        obstacle = check_obstacle_in_laser(self.scan.ranges, amplitude)
+        if not obstacle: new_status = py_trees.common.Status.SUCCESS
         else: 
             self.n_obs += 1
-            tools.set_port_content(self.ports["obs_port"], self.n_obs)
+            tree_tools.set_port_content(self.ports["obs_port"], self.n_obs)
             new_status = py_trees.common.Status.FAILURE
 
         return new_status
