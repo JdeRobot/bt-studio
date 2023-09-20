@@ -225,7 +225,8 @@ factory = {
     "ForceFailure": py_trees.decorators.SuccessIsFailure,
     "Repeat": py_trees.decorators.Repeat,
     "RetryUntilSuccessful": py_trees.decorators.Retry,
-    "KeepRunningUntilFailure": py_trees.decorators.SuccessIsRunning
+    "KeepRunningUntilFailure": py_trees.decorators.SuccessIsRunning,
+    "RunOnce": py_trees.decorators.OneShot
 }
 
 ##############################################################################
@@ -262,15 +263,21 @@ def get_branches(element):
         for child_element in element:
             child_instance = get_branches(child_element)
             if child_instance is not None:
-                child = num_cycles
-        repeat_name = "Repeat_" + str(nfailures)
-        instance = Class(name=repeat_name, num_success=int(num_cycles), child=child)
+                child = child_instance
+        repeat_name = "Repeat_" + str(num_cycles)
+        instance = Class(name=repeat_name, child=child, num_success=int(num_cycles))
     elif 'Inverter' in class_name or 'Force' in class_name or 'KeepRunningUntilFailure' in class_name:
         for child_element in element:
             child_instance = get_branches(child_element)
             if child_instance is not None:
                 child = child_instance
         instance = Class(name=class_name, child=child)
+    elif 'RunOnce' in class_name:
+        for child_element in element:
+            child_instance = get_branches(child_element)
+            if child_instance is not None:
+                child = child_instance
+        instance = Class(name=class_name, child=child, policy=py_trees.common.OneShotPolicy.ON_COMPLETION)
     else:
         # Check if there is a port argument
         ports = {}
