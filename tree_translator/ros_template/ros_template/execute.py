@@ -23,9 +23,9 @@ class TreeExecutor(Node):
         try:
             rclpy.spin(self.tree.node)
         except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
-            pass
-        finally:
             self.tree.shutdown()
+        finally:
+            print("Shutdown completed")
 
 def main():
     
@@ -35,4 +35,3 @@ def main():
 
     # Spin the tree
     executor.spin_tree()
-    rclpy.shutdown()
