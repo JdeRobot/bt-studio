@@ -1,7 +1,7 @@
 from setuptools import setup
 from setuptools import find_packages
 
-package_name = 'offline_executor'
+package_name = 'ros_template'
 
 setup(
     name=package_name,
@@ -12,20 +12,15 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/resource', [
-            'resource/basic_tree.xml',
-        ]),
-        ('share/' + package_name + '/actions', [
-            'actions/Forward.py',
-            'actions/Turn.py',
-            'actions/CheckObstacle.py'
+            'resource/app_tree.xml',
         ]),
     ],
-    install_requires=['setuptools', 'py_trees', 'py_trees_ros', 'std_msgs', 'geometry_msgs', 'sensor_msgs', 'tree_translator'],
+    install_requires=['setuptools', 'py_trees', 'py_trees_ros', 'std_msgs', 'geometry_msgs', 'sensor_msgs', 'tree_gardener'],
     zip_safe=True,
-    author='Óscar Martínez',
-    author_email='oscar.robotics@tutanota.com',
-    maintainer='Óscar Martínez',
-    maintainer_email='oscar.robotics@tutanota.com',
+    author='',
+    author_email='',
+    maintainer='',
+    maintainer_email='',
     keywords=['ROS2', 'py_trees'],
     classifiers=[
         'Intended Audience :: Developers',
@@ -33,12 +28,12 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
-    description='Offline execution of generated BTs',
-    license='BSD',
+    description='A ROS2 app generated with tree_translator',
+    license='',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'executor = offline_executor.execute:main',
+            'executor = ros_template.execute:main',
         ],
     },
 )
