@@ -1,4 +1,10 @@
+import os
+import argparse
 import xml.etree.ElementTree as ET
+
+##############################################################################
+# Parser functions
+##############################################################################
 
 # Get the indentation of a given line
 def get_line_indentation(line) -> int:
@@ -104,6 +110,7 @@ def get_action_set(tree) -> set:
     
     return actions
 
+# Add the code of the different actions
 def add_actions_code(tree, actions, action_dir):
 
     code_section = ET.SubElement(tree, "Code")
@@ -120,6 +127,7 @@ def add_actions_code(tree, actions, action_dir):
         action_section = ET.SubElement(code_section, action_name)
         action_section.text = "\n" + action_code + "\n"
 
+# Read the tree and the actions and generate a formatted tree string
 def parse_tree(tree_path, action_path):
     
     # Get the tree XML file and read its content
@@ -139,3 +147,33 @@ def parse_tree(tree_path, action_path):
     formatted_tree = get_formatted_string(tree, actions)
 
     return formatted_tree
+
+##############################################################################
+# Main section
+##############################################################################
+
+def main(tree_path, action_path, result_path):
+
+    # Ensure the provided tree and action paths exist
+    if not os.path.exists(tree_path):
+        raise FileNotFoundError(f"Tree path '{tree_path}' does not exist!")
+    if not os.path.exists(action_path):
+        raise FileNotFoundError(f"Action path '{action_path}' does not exist!")
+
+    # Get a formatted self-contained tree string
+    formatted_xml = parse_tree(tree_path, action_path)
+
+    # Store the string in a temp xml file
+    with open(result_path, "w") as result_file:
+        result_file.write(formatted_xml)
+
+if __name__ == "__main__":
+
+    # Use argparse to handle command line arguments
+    parser = argparse.ArgumentParser(description="Generate self contained xml tree files from a basic xml and the actions")
+    parser.add_argument('tree_path', type=str, help='Path to the tree file.')
+    parser.add_argument('action_path', type=str, help='Path to the actions directory.')
+    parser.add_argument('result_path', type=str, help='Path to store the self contained tree')
+
+    args = parser.parse_args()
+    main(args.tree_path, args.action_path, args.result_path)

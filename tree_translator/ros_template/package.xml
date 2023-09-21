@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>offline_executor</name>
+  <name>ros_template</name>
   <version>0.1.0</version>
-  <description>Offline executor of generated BTs</description>
+  <description>A ROS2 app generated with tree_translator</description>
   <maintainer email="oscar.personal@robotics.com">Óscar Martínez</maintainer>
   <license>GPLv3</license>
 
