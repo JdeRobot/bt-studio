@@ -16,7 +16,7 @@ class TreeExecutor(Node):
 
         factory = tree_factory.TreeFactory()
         self.tree = factory.create_tree_from_file(tree_path)
-        self.tree.tick_tock(period_ms=1000)
+        self.tree.tick_tock(period_ms=50)
         
     def spin_tree(self):
 

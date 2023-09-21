@@ -3,8 +3,8 @@
   <name>ros_template</name>
   <version>0.1.0</version>
   <description>A ROS2 app generated with tree_translator</description>
-  <maintainer email="oscar.personal@robotics.com">Óscar Martínez</maintainer>
-  <license>GPLv3</license>
+  <maintainer email=""></maintainer>
+  <license></license>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>py_trees_ros</exec_depend>
