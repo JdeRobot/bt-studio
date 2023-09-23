@@ -4,11 +4,10 @@
 
 # BehaviorTrees
 
-[![Contributors][contributors-shield]][contributors-url]
+![version](https://img.shields.io/badge/Version-0.1-blue)
+![distro](https://img.shields.io/badge/ROS2-Humble-blue)
 [![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![License](http://img.shields.io/:license-gpl-blue.svg)](http://opensource.org/licenses/GPL-3.0)
+[![License](http://img.shields.io/:license-gpl-green.svg)](http://opensource.org/licenses/GPL-3.0)
 
 ## Introduction
 
