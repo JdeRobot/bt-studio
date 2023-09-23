@@ -12,8 +12,7 @@
 
 ## Introduction
 
-Behavior Trees is an **open-source** tool crafted for the development of robotic applications. Its primary objective is to facilitate the quick deployment of behavior tree-based robotic behaviors within ROS. By utilizing tree structures defined in XML, coupled with actions scripted in Python, the tool efficiently generates a ROS-executable app. This process circumvents the unnecessary complexities often associated with ROS-specific configurations, offering developers a more streamlined approach.
-
+Behavior Trees is an **open-source** tool crafted for the development of robotic applications. Its primary objective is to facilitate the quick deployment of behavior tree-based robotic applications within ROS. In BehaviorTrees, a robotic app is defined as an XML tree coupled with actions scripted in Python, which the tool then translates into a ROS 2 package. This process circumvents the unnecessary complexities often associated with ROS-specific configurations, offering developers a more streamlined approach.
 ## Usage
 
 ## Roadmap
