@@ -2,6 +2,8 @@ import os
 import argparse
 import shutil
 import zipfile
+import re
+import subprocess
 
 ##############################################################################
 # Helper functions
@@ -44,6 +46,65 @@ def replace_contents_in_file(file_path, original_str, replacement_str):
     with open(file_path, 'w') as file:
         file.write(new_data)
 
+def get_actions_paths(dir_to_scan):
+
+    files_to_scan = []
+    for root, _, filenames in os.walk(dir_to_scan):
+        for filename in filenames:
+            if filename.endswith('.py'):
+                files_to_scan.append(os.path.join(root, filename))
+
+    return files_to_scan
+
+# Collect unique imports from files
+def get_unique_imports(file_paths):
+
+    unique_imports = set()
+    
+    for file_path in file_paths:
+        if not os.path.exists(file_path):
+            print(f"Warning: File {file_path} does not exist. Skipping import collection for this file.")
+            continue
+
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
+
+        for line in lines:
+            # Using regex to find lines that don't start with '#' and have 'import ...' or 'from ... import ...'
+            match = re.search(r'^(?!#.*)(?:import|from)\s+(\w+)', line)
+            if match:
+                unique_imports.add(match.group(1))
+
+    return list(unique_imports)
+
+def update_package_xml(package_xml_path, unique_imports):
+
+    valid_imports = []
+    
+    for imp in unique_imports:
+        try:
+            result = subprocess.run(['rosdep', 'where-defined', imp], capture_output=True, text=True, check=True)
+            if "ERROR" not in result.stdout:
+                valid_imports.append(imp)
+        except subprocess.CalledProcessError:
+            print(f"Error while running rosdep for {imp}. Skipping this package.")
+
+    with open(package_xml_path, 'r') as file:
+        content = file.read()
+
+    # Finding the position of the last </exec_depend> tag
+    last_exec_depend_index = content.rfind('</exec_depend>') + len('</exec_depend>')
+
+    # Generating new <exec_depend> entries from the valid imports
+    new_exec_depends = '\n'.join([f'  <exec_depend>{imp}</exec_depend>' for imp in valid_imports])
+
+    # Inserting the new dependencies after the last </exec_depend>
+    updated_content = content[:last_exec_depend_index] + '\n' + new_exec_depends + content[last_exec_depend_index:]
+
+    # Writing the updated content back to package.xml
+    with open(package_xml_path, 'w') as file:
+        file.write(updated_content)
+
 # Setup the package with the user data
 def setup_package(temp_path, user_data):
 
@@ -61,6 +122,14 @@ def setup_package(temp_path, user_data):
             replace_contents_in_file(file_path, template_str, app_name)
         else:
             print(f"Warning: {file_name} not found in {temp_path}. Skipping content replacement for this file.")
+
+    # 3. Get a list of unique imports from the user-defined actions
+    action_paths = get_actions_paths("actions/")
+    imports = get_unique_imports(action_paths)
+
+    # 4. Update the template package xml so the dependencies can be installed with rosdep
+    package_xml_path = os.path.join(temp_path, "package.xml")
+    update_package_xml(package_xml_path, imports)
 
 
 ##############################################################################
@@ -86,7 +155,7 @@ def main(app_tree, app_name):
     tree_location = temp_path + "/resource/app_tree.xml"
     shutil.copy(app_tree, tree_location)
 
-    # 3. Edit some files in the template with user data
+    # 3. Edit some files in the template
     user_data = {"app_name": app_name}
     setup_package(temp_path, user_data)
 
