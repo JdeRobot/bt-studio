@@ -99,7 +99,7 @@ class TemplateAction(py_trees.behaviour.Behaviour):
 
     def terminate(self, new_status: py_trees.common.Status) -> None:
 
-        """ Called whenever the behaviour switches to a non-running state """
+        """ Called whenever the behavior switches to a non-running state """
         ...
 
 ```
@@ -108,7 +108,7 @@ For examples of how to use ports in your actions, please refer to the [example a
 
 2. Write an xml tree
 
-This is where the magic of your app happens. With the actions you have written, you can define a behavior tree in an xml file. All the nodes of [Davide Faconti's BT.cpp library](https://www.behaviortree.dev/docs/category/nodes-library) are fully supported in BehaviorTrees. 
+This is where the magic of your app happens. With the actions you have written, you can define a behavior tree in an XML file. All the nodes of [Davide Faconti's BT.cpp library](https://www.behaviortree.dev/docs/category/nodes-library) are fully supported in BehaviorTrees. 
 
 ```xml
 <root>
@@ -126,6 +126,23 @@ This is where the magic of your app happens. With the actions you have written, 
 
 3. Generate a self-contained tree
 
+```bash
+python3 generate_tree.py trees/tree.xml actions/ trees/self_contained_tree.xml
+```
+
+Although it is not a common practice, self-contained trees allow greater portability and encapsulate all the complexity of a robotics app into a single file. 
+
+4. Generate a ROS2 app
+
+Given a self-contained tree, `tree_gardener` is already able to transform it into an executable tree to be executed within ROS. BehaviorTrees, to offer greater ease of use and reduce the interaction with ROS, comes with an integrated app generation script. This script takes the previously generated tree and prepares a complete ROS 2 app, that can be directly installed. This is simply a ROS 2 package template with a prepared executor script, which calls all the necessary tree_gardener translator functions. If you know what you are doing, you can directly modify and use the [provided package template](tree_translator/ros_template). 
+
+```bash
+python3 generate_app.py trees/self_contained_tree.xml you_app_name
+```
+
+This generates a zip file with all the necessary files called `your_app_name.zip`
+
+## Executing your first app
 
 
 ## Roadmap
