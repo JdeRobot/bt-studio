@@ -144,6 +144,66 @@ This generates a zip file with all the necessary files called `your_app_name.zip
 
 ## Executing your first app
 
+1. Creating a ROS 2 ws and moving the app to the src folder
+
+The previous steps have generated an executable app, that should be placed inside a ROS 2 workspace. 
+
+```bash
+mkdir -p your_ws/src/your_app_name
+cp your_app_name.zip your_ws/src/your_app_name
+cd your_ws/src/your_app_name
+unzip your_app_name.zip
+```
+
+2. Install execution dependecies
+
+#### BehaviorTrees dependecies
+
+Move to the src of the ws and download BehaviorTrees depedencies
+```bash
+cd ..
+vcs import < your_app/thirdparty.repos
+```
+
+A Thirdparty folder is created to store the dependecies. 
+
+#### Dynamic app dependencies
+Now, install the dependencies of your actions using rosdep. This is done this way as the dependencies of each app are variable and cannot be known at installation time. 
+```bash
+cd ..
+rosdep install --from-paths src -y --ignore-src
+```
+
+3. Compile
+4. 
+Now, we call colcon build so it prepares the packages for execution.
+```bash
+colcon build --symlink-install
+```
+
+4. Source the ws
+   
+This is necessary for ros to detect the newly installed packages. 
+```bash
+source install/setup.bash
+```
+
+5. Execution!
+   
+Finally, we can execute the app. If you are using the recommended simulator:
+```bash
+ros2 launch tb4_sim tb4_launcher.py
+py-trees-tree-viewer 
+ros2 run your_app_name executor
+```
+
+If you execute these commands from different terminals, please, remember to source the ws in each of them. 
+
+## Video
+
+I have prepared this video to guide you through the installation process. Please, be aware this readme is the one and only source of truth of the project, the videos may not be updated. 
+
+[Installation](https://www.youtube.com/watch?v=MObIPLqlmGM&feature=youtu.be)
 
 ## Roadmap
 
