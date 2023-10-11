@@ -4,7 +4,7 @@ import { Resizable } from 'react-resizable';
 import HeaderMenu from './components/HeaderMenu';
 import FileBrowser from './components/FileBrowser';
 import FileEditor from './components/FileEditor';
-import DiagramEditor from './components/DiagramEditor';
+import DiagramEditor from './components/diagram_editor/DiagramEditor';
 import './App.css';
 
 const App = () => {

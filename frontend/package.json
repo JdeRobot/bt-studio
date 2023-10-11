@@ -7,7 +7,6 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.14.11",
-    "@projectstorm/react-canvas-core": "^7.0.2",
     "@projectstorm/react-diagrams": "^7.0.3",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
@@ -17,6 +16,7 @@
     "beautiful-react-diagrams": "^0.5.1",
     "beautiful-react-ui": "^0.57.1",
     "d3-drag": "^3.0.0",
+    "install": "^0.13.0",
     "react": "^18.2.0",
     "react-ace": "^10.1.0",
     "react-d3-graph": "^2.6.0",
@@ -25,6 +25,7 @@
     "react-scripts": "5.0.1",
     "react-split-pane": "^0.1.92",
     "react-treebeard": "^3.2.4",
+    "typescript": "^5.2.2",
     "web-vitals": "^2.1.0",
     "webfontloader": "^1.6.28"
   },
