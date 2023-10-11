@@ -1,0 +1,58 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:8000",
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.11",
+    "@projectstorm/react-canvas-core": "^7.0.2",
+    "@projectstorm/react-diagrams": "^7.0.3",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^13.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "ace-builds": "^1.28.0",
+    "axios": "^1.5.1",
+    "beautiful-react-diagrams": "^0.5.1",
+    "beautiful-react-ui": "^0.57.1",
+    "d3-drag": "^3.0.0",
+    "react": "^18.2.0",
+    "react-ace": "^10.1.0",
+    "react-d3-graph": "^2.6.0",
+    "react-dom": "^18.2.0",
+    "react-resizable": "^3.0.5",
+    "react-scripts": "5.0.1",
+    "react-split-pane": "^0.1.92",
+    "react-treebeard": "^3.2.4",
+    "web-vitals": "^2.1.0",
+    "webfontloader": "^1.6.28"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}

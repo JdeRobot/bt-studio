@@ -1,0 +1,12 @@
+/* FileBrowser.css */
+
+.file-item {
+    list-style-type: none;
+    padding: 8px;
+    cursor: pointer;
+}
+  
+.file-item:hover {
+    background-color: rgba(62, 81, 58, 0.321);
+}
+  
