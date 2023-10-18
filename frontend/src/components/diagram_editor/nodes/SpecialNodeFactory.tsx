@@ -5,10 +5,12 @@ import { SpecialNodeModel } from './SpecialNodeModel';
 import { SpecialNodeWidget } from './SpecialNodeWidget';
 
 export class SpecialNodeFactory extends AbstractReactFactory<NodeModel, any> {
+
     constructor() {
         super('special');
     }
 
+    // Setup the generator method
     generateModel(event: GenerateModelEvent): NodeModel {
         return new SpecialNodeModel();
     }

@@ -2,7 +2,10 @@ import React from 'react';
 import { DefaultPortLabel } from '@projectstorm/react-diagrams';
 import { SpecialPortWidget } from './SpecialPortWidget';
 
+// The node widget controls the visualization of the custom node
 export const SpecialNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
+
+    // Node style
     let nodeStyle: React.CSSProperties = {
         display: 'flex',
         justifyContent: "space-between",
@@ -17,10 +20,12 @@ export const SpecialNodeWidget = ({ engine, node }: { engine: any, node: any }) 
         fontWeight: 'bold'
     };
 
+    // Ports list
     const parentPorts: JSX.Element[] = [];
     const childrenPorts: JSX.Element[] = [];
     const normalPorts: JSX.Element[] = [];
 
+    // Get all the ports from the node and classify them
     Object.keys(node.getPorts()).forEach((portName) => {
         const port = node.getPort(portName);
         if (!port) return;
@@ -34,6 +39,7 @@ export const SpecialNodeWidget = ({ engine, node }: { engine: any, node: any }) 
         }
     });
 
+    // Apply styles depending on the quantity of ports (this is node styles)
     if (parentPorts.length > 0 && childrenPorts.length === 0) {
         nodeStyle = { ...nodeStyle, paddingRight: '10px' };
     } else if (parentPorts.length === 0 && childrenPorts.length > 0) {
@@ -42,6 +48,7 @@ export const SpecialNodeWidget = ({ engine, node }: { engine: any, node: any }) 
         nodeStyle = { ...nodeStyle, paddingTop: '10px', paddingBottom: '10px' };
     }
 
+    // Return the node to render
     return (
         <div className="node" style={nodeStyle}>
             <div className="parent-ports">

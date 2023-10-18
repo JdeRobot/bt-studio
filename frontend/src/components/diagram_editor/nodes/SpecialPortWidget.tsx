@@ -3,6 +3,7 @@ import { PortWidget } from '@projectstorm/react-diagrams';
 
 export const SpecialPortWidget = ({ engine, port }: { engine:any, port:any }) => {
 
+    // Different margins depending on the type (and thus the placing of the port)
     const getPortPlacement = () => {
 
         if (port.options.type === 'children port') {
@@ -20,12 +21,14 @@ export const SpecialPortWidget = ({ engine, port }: { engine:any, port:any }) =>
         }
     };
 
+    // Styles of the port itself
     const portStyle = {
         width: "10px", 
         height: "10px", 
         borderRadius: "50%",
         background: "black"
     }
+
     const portPlacement = getPortPlacement();
 
     return (
