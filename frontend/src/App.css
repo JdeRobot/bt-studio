@@ -1,0 +1,39 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: black;
+  color: white;
+  /* Other styles */
+}
+
+.HeaderMenu {
+  background-color: black;
+  color: white;
+  /* Other styles */
+}
+
+.App-main {
+  flex-grow: 1;
+  display: flex;
+  padding-left: 1vw;
+  overflow: auto;
+}
+
+.App-section {
+  padding: 20px;
+}
+
+/* React Resizable styles */
+.react-resizable {
+  position: relative;
+}
+
+.react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 100%;
+  bottom: 0;
+  right: 0;
+  cursor: ew-resize;
+}
