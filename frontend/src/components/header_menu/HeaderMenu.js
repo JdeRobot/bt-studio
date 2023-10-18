@@ -3,11 +3,13 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
+import './HeaderMenu.css'
+
 const HeaderMenu = () => {
   return (
     <AppBar position="static" sx={{ backgroundColor: '#12494c' }}>
       <Toolbar>
-        <h2 className="App-text">Behavior Tree Web Editor</h2>
+        <h2 className="Header-text">Behavior Tree Web Editor</h2>
       </Toolbar>
     </AppBar>
   );

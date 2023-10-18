@@ -63,7 +63,7 @@ const DiagramEditor = () => {
     }
     // Decorators
     else if (["RetryUntilSuccessful", "Inverter", "ForceSuccess", "ForceFailure", "KeepRunningUntilFailure", "Repeat", "RunOnce", "Delay"].includes(nodeName)) {
-      nodeColor = 'rgb(0,255,0)';
+      nodeColor = 'rgb(255,153,51)';
     }
     // Actions
     else {
