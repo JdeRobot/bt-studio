@@ -1,13 +1,14 @@
 // App.js
 import React, { useState } from 'react';
 import { Resizable } from 'react-resizable';
-import HeaderMenu from './components/HeaderMenu';
-import FileBrowser from './components/FileBrowser';
-import FileEditor from './components/FileEditor';
+import HeaderMenu from './components/header_menu/HeaderMenu';
+import FileBrowser from './components/file_browser/FileBrowser';
+import FileEditor from './components/file_editor/FileEditor';
 import DiagramEditor from './components/diagram_editor/DiagramEditor';
 import './App.css';
 
 const App = () => {
+
   const [browserWidth, setBrowserWidth] = useState(150);
   const [editorWidth, setEditorWidth] = useState(600);
 
@@ -25,8 +26,11 @@ const App = () => {
 
   return (
     <div className="App">
+
       <HeaderMenu />
+
       <div className="App-main" style={{ display: 'flex' }}>
+
         <div style={{ flex: `0 0 ${browserWidth}px` }}>
           <FileBrowser setCurrentFileContent={setCurrentFileContent} />
         </div>
@@ -46,7 +50,9 @@ const App = () => {
         <div style={{ flex: 1, paddingRight: "1vh"}}>
           <DiagramEditor />
         </div>
+        
       </div>
+
     </div>
   );
 };
