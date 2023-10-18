@@ -48,8 +48,12 @@ const NodeHeader = ({ onNodeTypeSelected }) => {
   const getMenuItems = () => {
     if (menuLabel === "Sequences") {
       return ["Sequence", "ReactiveSequence", "SequenceWithMemory"];
+    } else if (menuLabel === "Fallbacks") {
+      return ["Fallback", "ReactiveFallback"];
     } else if (menuLabel === "Decorators") {
-      return ["Decorator 1", "Decorator 2"];
+      return ["RetryUntilSuccessful", "Inverter",
+              "ForceSuccess", "ForceFailure", "KeepRunningUntilFailure", "Repeat",
+              "RunOnce", "Delay"];
     } else if (menuLabel === "Actions") {
       return ["Action 1", "Action 2"];
     }
@@ -63,6 +67,11 @@ const NodeHeader = ({ onNodeTypeSelected }) => {
         <Button style={modernButtonStyle} onClick={(e) => handleClick(e, "Sequences")}>
           <div style={textStyle}>
             Sequences
+          </div>
+        </Button>
+        <Button style={modernButtonStyle} onClick={(e) => handleClick(e, "Fallbacks")}>
+          <div style={textStyle}>
+            Fallbacks
           </div>
         </Button>
         <Button style={modernButtonStyle} onClick={(e) => handleClick(e, "Decorators")}>
