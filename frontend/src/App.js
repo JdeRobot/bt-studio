@@ -9,10 +9,8 @@ import './App.css';
 
 const App = () => {
 
-  const [browserWidth, setBrowserWidth] = useState(150);
   const [editorWidth, setEditorWidth] = useState(600);
-
-  const [currentFileContent, setCurrentFileContent] = useState('');
+  const [currentFilename, setCurrentFilename] = useState('');
 
   const onResize = (key, size) => {
     switch (key) {
@@ -31,8 +29,8 @@ const App = () => {
 
       <div className="App-main" style={{ display: 'flex' }}>
 
-        <div style={{ flex: `0 0 ${browserWidth}px` }}>
-          <FileBrowser setCurrentFileContent={setCurrentFileContent} />
+        <div style={{ flex: `0 0 150px` }}>
+          <FileBrowser setCurrentFilename = {setCurrentFilename} />
         </div>
         
         <Resizable
@@ -43,7 +41,7 @@ const App = () => {
           maxConstraints={[800, 800]}
         >
           <div style={{ flex: `0 0 ${editorWidth}px` }}>
-            <FileEditor currentFileContent={currentFileContent} />
+            <FileEditor currentFilename = {currentFilename} />
           </div>
         </Resizable>
 

@@ -1,15 +1,16 @@
 import { DefaultNodeModel, DefaultPortModel } from '@projectstorm/react-diagrams';
 
 export class SpecialNodeModel extends DefaultNodeModel {
+
     constructor(name: string = 'Special Node', color: string = 'rgb(0,192,255)') {
         super({
-            type: 'special',
+            type: "special",
             name: name,
             color: color,
         });
     }
 
-    // Method to add children port
+    // Method to add children port (they can be default model because only the widget, the visualization changes)
     addChildrenPort(name: string) {
         const port = new DefaultPortModel({
             in: false,

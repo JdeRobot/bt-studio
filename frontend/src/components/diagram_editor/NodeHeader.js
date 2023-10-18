@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
+
 
 const NodeHeader = ({ onNodeTypeSelected }) => {
 
@@ -32,6 +34,9 @@ const NodeHeader = ({ onNodeTypeSelected }) => {
   const handleClick = (event, label) => {
     setAnchorEl(event.currentTarget);
     setMenuLabel(label);
+    if (label === "Actions") {
+      fetchActionList();
+    }
   };
 
   const handleClose = () => {
@@ -45,13 +50,37 @@ const NodeHeader = ({ onNodeTypeSelected }) => {
     handleClose();
   };
 
+  // Initialize a state variable to hold the list of action names
+  const [actionList, setActionList] = useState([]);
+  
+  // Fetch the file list and update actionList
+  const fetchActionList = () => {
+    axios.get('/tree_api/get_file_list')
+      .then(response => {
+        const files = response.data.file_list;
+        if (Array.isArray(files)) {
+          const actions = files.map(file => file.replace('.py', ''));
+          setActionList(actions);
+        } else {
+          console.error('API response is not an array:', files);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching files:', error);
+      });
+  };
+
   const getMenuItems = () => {
     if (menuLabel === "Sequences") {
       return ["Sequence", "ReactiveSequence", "SequenceWithMemory"];
+    } else if (menuLabel === "Fallbacks") {
+      return ["Fallback", "ReactiveFallback"];
     } else if (menuLabel === "Decorators") {
-      return ["Decorator 1", "Decorator 2"];
+      return ["RetryUntilSuccessful", "Inverter",
+              "ForceSuccess", "ForceFailure", "KeepRunningUntilFailure", "Repeat",
+              "RunOnce", "Delay"];
     } else if (menuLabel === "Actions") {
-      return ["Action 1", "Action 2"];
+      return actionList; // Use the action names fetched from the API
     }
     return [];
   };
@@ -63,6 +92,11 @@ const NodeHeader = ({ onNodeTypeSelected }) => {
         <Button style={modernButtonStyle} onClick={(e) => handleClick(e, "Sequences")}>
           <div style={textStyle}>
             Sequences
+          </div>
+        </Button>
+        <Button style={modernButtonStyle} onClick={(e) => handleClick(e, "Fallbacks")}>
+          <div style={textStyle}>
+            Fallbacks
           </div>
         </Button>
         <Button style={modernButtonStyle} onClick={(e) => handleClick(e, "Decorators")}>

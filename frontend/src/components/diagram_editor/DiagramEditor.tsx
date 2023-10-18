@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import createEngine, { 
   DefaultLinkModel, 
   DefaultNodeModel,
@@ -17,6 +17,18 @@ import NodeHeader from './NodeHeader'; // Import HeaderMenu
 
 const DiagramEditor = () => {
 
+  // Initial node position
+  let lastMovedNodePosition = { x: 200, y: 200 };
+
+  // Function to attach a positionChanged listener to a node
+  const attachPositionListener = (node: any) => {
+    node.registerListener({
+      positionChanged: (event: any) => {
+        lastMovedNodePosition = event.entity.getPosition();
+      },
+    });
+  };
+
   // create an instance of the engine with all the defaults
   const engine = createEngine();
 
@@ -30,18 +42,52 @@ const DiagramEditor = () => {
 
   const model = new DiagramModel();
   model.addAll(root_node);
+
   engine.setModel(model);
 
   // Function to add a new node
-  const addNode = (nodeType : any) => {
+  const addNode = (nodeName:any) => {
 
-    const newNode = new SpecialNodeModel(nodeType, 'rgb(255,153,51)');
-    newNode.setPosition(Math.random() * 400, Math.random() * 400);
-    newNode.addChildrenPort("Children Port");
-    newNode.addParentPort("Parent Port");
+    // Control parameters
+    let nodeColor = 'rgb(255,153,51)'; // Default color
+    let hasInputPort = true;
+    let hasOutputPort = true;
+
+    // Sequences
+    if (["Sequence", "ReactiveSequence", "SequenceWithMemory"].includes(nodeName)) {
+      nodeColor = 'rgb(0,128,255)';
+    }
+    // Fallbacks
+    else if (["Fallback", "ReactiveFallback"].includes(nodeName)) {
+      nodeColor = 'rgb(255,0,0)';
+    }
+    // Decorators
+    else if (["RetryUntilSuccessful", "Inverter", "ForceSuccess", "ForceFailure", "KeepRunningUntilFailure", "Repeat", "RunOnce", "Delay"].includes(nodeName)) {
+      nodeColor = 'rgb(255,153,51)';
+    }
+    // Actions
+    else {
+      nodeColor = 'rgb(128,0,128)';
+      hasOutputPort = false;
+    }
+
+    // Create node
+    const newNode = new SpecialNodeModel(nodeName, nodeColor);
+
+    // Attach listener to this node
+    attachPositionListener(newNode);
+
+    // Setup the node position and ports
+    var new_y = lastMovedNodePosition.y + 100;
+    newNode.setPosition(lastMovedNodePosition.x, new_y);
+    lastMovedNodePosition.y = new_y;
+    if (hasInputPort) newNode.addParentPort("Parent Port");
+    if (hasOutputPort) newNode.addChildrenPort("Children Port");
+
     model.addNode(newNode);
     engine.repaintCanvas();
   };
+
 
   return (
     <div>
@@ -51,4 +97,4 @@ const DiagramEditor = () => {
   );
 };
 
-export default DiagramEditor;
+export default React.memo(DiagramEditor);

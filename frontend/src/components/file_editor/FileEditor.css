@@ -1,0 +1,15 @@
+/* FileEditor.css */
+
+.editor-container {
+    position: relative; /* Establish a stacking context */
+    flex: 2;
+    border: 1px solid black;
+}
+  
+.zoom-buttons {
+    position: absolute; /* Absolute positioning relative to .editor-container */
+    bottom: 20px; /* From the bottom */
+    right: 20px; /* From the right */
+    z-index: 1; /* Ensure it's above the editor content */
+}
+  
