@@ -34,6 +34,9 @@ const NodeHeader = ({ onNodeTypeSelected }) => {
   const handleClick = (event, label) => {
     setAnchorEl(event.currentTarget);
     setMenuLabel(label);
+    if (label === "Actions") {
+      fetchActionList();
+    }
   };
 
   const handleClose = () => {
@@ -47,25 +50,25 @@ const NodeHeader = ({ onNodeTypeSelected }) => {
     handleClose();
   };
 
-    // Initialize a state variable to hold the list of action names
-    const [actionList, setActionList] = useState([]);
+  // Initialize a state variable to hold the list of action names
+  const [actionList, setActionList] = useState([]);
   
-    // Fetch the file list and update actionList
-    useEffect(() => {
-      axios.get('/tree_api/get_file_list')
-        .then(response => {
-          const files = response.data.file_list;
-          if (Array.isArray(files)) {
-            const actions = files.map(file => file.replace('.py', ''));
-            setActionList(actions);
-          } else {
-            console.error('API response is not an array:', files);
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching files:', error);
-        });
-    }, []);
+  // Fetch the file list and update actionList
+  const fetchActionList = () => {
+    axios.get('/tree_api/get_file_list')
+      .then(response => {
+        const files = response.data.file_list;
+        if (Array.isArray(files)) {
+          const actions = files.map(file => file.replace('.py', ''));
+          setActionList(actions);
+        } else {
+          console.error('API response is not an array:', files);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching files:', error);
+      });
+  };
 
   const getMenuItems = () => {
     if (menuLabel === "Sequences") {
