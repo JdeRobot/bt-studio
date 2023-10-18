@@ -3,8 +3,8 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import FileContentSerializer
-from . import generate_app
-from . import generate_tree
+from . import app_generator
+from . import tree_generator
 from django.http import HttpResponse
 from django.http import JsonResponse
 import mimetypes
@@ -106,8 +106,8 @@ def download_app(request):
     if app_name:
 
         try:
-            generate_tree.generate(tree_path, folder_path, result_path)
-            zip_file_path = generate_app.generate(result_path, app_name, template_path)
+            tree_generator.generate(tree_path, folder_path, result_path)
+            zip_file_path = app_generator.generate(result_path, app_name, template_path)
 
             # Confirm ZIP file exists
             if not os.path.exists(zip_file_path):
