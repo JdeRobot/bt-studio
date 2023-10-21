@@ -5,28 +5,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
+import './NodeHeader.css';
 
 
 const NodeHeader = ({ onNodeTypeSelected }) => {
-
-  const modernButtonStyle = {
-    color: '#ffffff',
-    width: "130px",
-    backgroundColor: 'white',
-    color: 'black',
-    border: 'none',
-    borderRadius: '5px',
-    margin: '10px',
-    fontSize: '14px',
-    marginBottom: '5px',
-    '&:hover': {
-      backgroundColor: 'black',
-    }
-  };
-
-  const textStyle = {
-    marginBottom: "-3px",
-  }
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuLabel, setMenuLabel] = useState("");
@@ -86,29 +68,26 @@ const NodeHeader = ({ onNodeTypeSelected }) => {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#000000' }}>
+    <AppBar position="static" sx={{ backgroundColor: '#000000' , paddingBottom: '1px'}}>
       <Toolbar>
+
         <h2>Tree Editor</h2>
-        <Button style={modernButtonStyle} onClick={(e) => handleClick(e, "Sequences")}>
-          <div style={textStyle}>
-            Sequences
-          </div>
-        </Button>
-        <Button style={modernButtonStyle} onClick={(e) => handleClick(e, "Fallbacks")}>
-          <div style={textStyle}>
-            Fallbacks
-          </div>
-        </Button>
-        <Button style={modernButtonStyle} onClick={(e) => handleClick(e, "Decorators")}>
-          <div style={textStyle}>
-            Decorators
-          </div>
-        </Button>
-        <Button style={modernButtonStyle} onClick={(e) => handleClick(e, "Actions")}>
-          <div style={textStyle}>
-            Actions
-          </div>
-        </Button>
+
+        <div className='button-container'>
+          <button className='node-button' onClick={(e) => handleClick(e, "Sequences")}>
+              Sequences
+          </button>
+          <button className='node-button' onClick={(e) => handleClick(e, "Fallbacks")}>
+              Fallbacks
+          </button>
+          <button className='node-button' onClick={(e) => handleClick(e, "Decorators")}>
+              Decorators
+          </button>
+          <button className='node-button' onClick={(e) => handleClick(e, "Actions")}>
+              Actions
+          </button>
+        </div>
+
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
@@ -120,6 +99,7 @@ const NodeHeader = ({ onNodeTypeSelected }) => {
             </MenuItem>
           ))}
         </Menu>
+
       </Toolbar>
     </AppBar>
   );

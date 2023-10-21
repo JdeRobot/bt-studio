@@ -9,7 +9,7 @@ import './App.css';
 
 const App = () => {
 
-  const [editorWidth, setEditorWidth] = useState(600);
+  const [editorWidth, setEditorWidth] = useState(700);
   const [currentFilename, setCurrentFilename] = useState('');
 
   const onResize = (key, size) => {
@@ -29,7 +29,7 @@ const App = () => {
 
       <div className="App-main" style={{ display: 'flex' }}>
 
-        <div style={{ flex: `0 0 150px` }}>
+        <div>
           <FileBrowser setCurrentFilename = {setCurrentFilename} />
         </div>
         
@@ -38,14 +38,14 @@ const App = () => {
           height={0}
           onResize={(e, { size }) => onResize('editorWidth', size)}
           minConstraints={[400, 400]}
-          maxConstraints={[800, 800]}
+          maxConstraints={[900, 900]}
         >
-          <div style={{ flex: `0 0 ${editorWidth}px` }}>
+          <div style={{ width: `${editorWidth}px` }}>
             <FileEditor currentFilename = {currentFilename} />
           </div>
         </Resizable>
 
-        <div style={{ flex: 1, paddingRight: "1vh"}}>
+        <div style={{ flex: 1}}>
           <DiagramEditor />
         </div>
         
