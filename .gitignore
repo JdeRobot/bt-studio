@@ -1,1 +1,2 @@
 frontend/node_modules/.cache/*
+backend/backend/__pycache__/*
