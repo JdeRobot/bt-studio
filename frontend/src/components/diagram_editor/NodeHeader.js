@@ -7,8 +7,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import './NodeHeader.css';
 
+import del_img from './img/del_node.svg'
 
-const NodeHeader = ({ onNodeTypeSelected }) => {
+const NodeHeader = ({ onNodeTypeSelected, onDeleteNode }) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuLabel, setMenuLabel] = useState("");
@@ -68,8 +69,7 @@ const NodeHeader = ({ onNodeTypeSelected }) => {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#000000' , paddingBottom: '1px'}}>
-      <Toolbar>
+    <div className='node-header-container'>
 
         <h2>Tree Editor</h2>
 
@@ -100,8 +100,13 @@ const NodeHeader = ({ onNodeTypeSelected }) => {
           ))}
         </Menu>
 
-      </Toolbar>
-    </AppBar>
+        <div className='buttons'>
+          <button className="menu-button" onClick={onDeleteNode}>
+            <img className="icon" src={del_img}></img>
+          </button>
+        </div>
+
+    </div>
   );
   
 };

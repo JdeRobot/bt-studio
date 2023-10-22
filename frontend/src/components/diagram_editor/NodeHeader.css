@@ -19,3 +19,8 @@
 .node-button:hover {
     background-color: 'black',
 }
+
+.node-header-container {
+    display: flex;
+    align-items: center;
+}

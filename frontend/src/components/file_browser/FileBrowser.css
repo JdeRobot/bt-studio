@@ -6,14 +6,19 @@
     cursor: pointer;
 }
 
-.file-item-selected {
-    background-color: #cafddc50;
-}
-  
 .file-item:hover {
     background-color: rgba(62, 81, 58, 0.321);
 }
 
+.file-item-selected {
+    background-color: #cafddc50;
+}
+
+.file-item-selected:hover {
+    background-color: #cafddc50;
+}
+
+  
 .editor-menu {
     display: flex;
     align-items: center;

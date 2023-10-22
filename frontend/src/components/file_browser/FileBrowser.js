@@ -71,7 +71,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename }) => {
   return (
     <div style={{ flex: '2', border: '1px solid black' }}>
       <div className='browser-menu'>
-        <h2>File Editor</h2>
+        <h2>File Browser</h2>
         <div className='buttons'>
           <button className="menu-button" onClick={handleCreateFile}>
             <img className="icon" src={add_img}></img>

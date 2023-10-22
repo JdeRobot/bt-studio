@@ -2,8 +2,6 @@
 
 .editor-container {
     position: relative; /* Establish a stacking context */
-    flex: 2;
-    border: 1px solid black;
 }
   
 .zoom-buttons {

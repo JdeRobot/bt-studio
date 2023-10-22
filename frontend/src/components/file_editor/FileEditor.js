@@ -39,7 +39,6 @@ const FileEditor = ({ currentFilename }) => {
       })
       .then(response => {
         if (response.data.success) {
-          alert("File saved successfully.");
           setHasUnsavedChanges(false); // Reset the unsaved changes flag
         } else {
           alert(`Failed to save file: ${response.data.message}`);

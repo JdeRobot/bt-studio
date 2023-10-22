@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import createEngine, { 
   DefaultLinkModel, 
   DefaultNodeModel,
@@ -20,11 +20,14 @@ const DiagramEditor = () => {
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
 
-  // Function to attach a positionChanged listener to a node
-  const attachPositionListener = (node: any) => {
+  // Initialize state for last moved node ID
+  let lastMovedNodeId = "";
+
+  const attachPositionListener = (node:any) => {
     node.registerListener({
-      positionChanged: (event: any) => {
+      positionChanged: (event:any) => {
         lastMovedNodePosition = event.entity.getPosition();
+        lastMovedNodeId = node.getID();
       },
     });
   };
@@ -47,6 +50,8 @@ const DiagramEditor = () => {
 
   // Function to add a new node
   const addNode = (nodeName:any) => {
+
+    console.log("adding node");
 
     // Control parameters
     let nodeColor = 'rgb(255,153,51)'; // Default color
@@ -88,10 +93,23 @@ const DiagramEditor = () => {
     engine.repaintCanvas();
   };
 
+  const deleteLastMovedNode = () => {
+    if (lastMovedNodeId) {
+      const node = model.getNode(lastMovedNodeId);
+      if (node) {
+        node.remove();
+        engine.repaintCanvas();
+      }
+      lastMovedNodeId = "";
+    }
+  };
 
   return (
     <div>
-      <NodeHeader onNodeTypeSelected={addNode} />
+      <NodeHeader 
+        onNodeTypeSelected={addNode} 
+        onDeleteNode={deleteLastMovedNode}  // Pass the delete function
+      />
       <CanvasWidget className="canvas" engine={engine} />
     </div>
   );

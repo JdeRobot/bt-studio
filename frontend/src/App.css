@@ -37,3 +37,11 @@
   right: 0;
   cursor: ew-resize;
 }
+
+h1 {
+  font-size: 25px;
+}
+
+h2 {
+  font-size: 18px;
+}
