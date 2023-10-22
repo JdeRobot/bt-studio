@@ -29,8 +29,11 @@ const App = () => {
 
       <div className="App-main" style={{ display: 'flex' }}>
 
-        <div>
-          <FileBrowser setCurrentFilename = {setCurrentFilename} />
+        <div style={{ width: '200px'}}>
+          <FileBrowser 
+            setCurrentFilename={setCurrentFilename} 
+            currentFilename={currentFilename}
+          />
         </div>
         
         <Resizable

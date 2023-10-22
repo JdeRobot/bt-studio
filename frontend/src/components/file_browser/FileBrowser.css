@@ -9,4 +9,34 @@
 .file-item:hover {
     background-color: rgba(62, 81, 58, 0.321);
 }
+
+.menu {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.buttons {
+    padding-left: 10px;
+    display: flex;
+    width: 70px;
+    justify-content: space-around;
+}
+
+.menu-button {
+    width: 25px;
+    height: 25px;
+    background-color: black;
+    border: 0;
+}
+
+.menu-button:hover {
+    background-color: rgba(255, 255, 255, 0.264);
+    border-radius: 100%;
+}
+
+.add-image {
+    width: 20px;
+    color: "yellow";
+}
   
