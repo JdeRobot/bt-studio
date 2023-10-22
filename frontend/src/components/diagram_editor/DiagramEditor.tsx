@@ -27,7 +27,16 @@ const DiagramEditor = () => {
     node.registerListener({
       positionChanged: (event:any) => {
         lastMovedNodePosition = event.entity.getPosition();
-        lastMovedNodeId = node.getID();
+      },
+    });
+  };
+
+  const attachClickListener = (node:any) => {
+    node.registerListener({
+      selectionChanged: (event:any) => {
+        if (event.isSelected) {
+          lastMovedNodeId = node.getID();
+        }
       },
     });
   };
@@ -79,6 +88,8 @@ const DiagramEditor = () => {
 
     // Attach listener to this node
     attachPositionListener(newNode);
+    attachClickListener(newNode);
+    lastMovedNodeId = newNode.getID();
 
     // Setup the node position and ports
     var new_y = lastMovedNodePosition.y + 100;
@@ -87,7 +98,7 @@ const DiagramEditor = () => {
     if (hasInputPort) newNode.addParentPort("Parent Port");
     if (hasOutputPort) newNode.addChildrenPort("Children Port");
     newNode.addInputPort("Normal");
-    newNode.addOutputPort("patata");
+    newNode.addOutputPort("Patata");
 
     model.addNode(newNode);
     engine.repaintCanvas();

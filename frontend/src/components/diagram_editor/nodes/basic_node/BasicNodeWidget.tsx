@@ -64,7 +64,9 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
                 {childrenPorts.length > 0 ? childrenPorts : <div className='placeholder'></div>}
             </div>
             <div className='layer'>
-                {inputPorts}
+                <div className="left-ports">
+                    {inputPorts}
+                </div>
                 <div className="right-ports">
                     {outputPorts}
                 </div>

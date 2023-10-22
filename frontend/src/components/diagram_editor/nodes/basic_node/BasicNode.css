@@ -5,7 +5,11 @@
 .right-ports {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+}
+
+.left-ports {
+    display: flex;
+    flex-direction: column;
 }
 
 .placeholder {
