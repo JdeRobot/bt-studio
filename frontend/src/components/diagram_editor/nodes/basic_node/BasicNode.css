@@ -1,9 +1,4 @@
-.left-ports {
-    background-color: rgb(135, 123, 123);
-}
-
 .right-ports {
-    background-color: rgb(135, 123, 123);
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -12,4 +7,14 @@
 .input-ports {
     margin-top: 5px;
     margin-left: -4px;
+}
+
+.placeholder {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    opacity: 0;
+    margin-top: 5px;
+    margin-left: -4px;
+    margin-right: 5px;
 }

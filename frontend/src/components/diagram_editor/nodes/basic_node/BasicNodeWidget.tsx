@@ -47,7 +47,7 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
     });
 
     // Apply styles depending on the quantity of ports (this is node styles)
-    if (parentPorts.length > 0 && childrenPorts.length === 0) {
+    if (parentPorts.length > 0 && outputPorts.length === 0 && childrenPorts.length === 0) {
         nodeStyle = { ...nodeStyle, paddingRight: '10px' };
     } else if (parentPorts.length === 0 && childrenPorts.length > 0) {
         nodeStyle = { ...nodeStyle, paddingLeft: '10px' };
@@ -58,7 +58,7 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
     // Return the node to render
     return (
         <div className="node" style={nodeStyle}>
-            <div className="left-ports">
+            <div>
                 {parentPorts}
                 {inputPorts}
             </div>
@@ -66,7 +66,7 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
                 {node.getOptions().name}
             </div>
             <div className="right-ports">
-                {childrenPorts}
+                {childrenPorts.length > 0 ? childrenPorts : <div className='placeholder'></div>}
                 {outputPorts}
             </div>
         </div>
