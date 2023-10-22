@@ -8,8 +8,10 @@ import Button from '@mui/material/Button';
 import './NodeHeader.css';
 
 import del_img from './img/del_node.svg'
+import add_input_img from './img/add_input.svg'
+import add_output_img from './img/add_output.svg'
 
-const NodeHeader = ({ onNodeTypeSelected, onDeleteNode }) => {
+const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, onAddInputPort, onAddOutputPort }) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuLabel, setMenuLabel] = useState("");
@@ -100,9 +102,15 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode }) => {
           ))}
         </Menu>
 
-        <div className='buttons'>
-          <button className="menu-button" onClick={onDeleteNode}>
+        <div className='action-buttons'>
+          <button className="node-action-button" onClick={onDeleteNode}>
             <img className="icon" src={del_img}></img>
+          </button>
+          <button className="node-action-button" onClick={onAddInputPort}>
+            <img className="icon" src={add_input_img}></img>
+          </button>
+          <button className="node-action-button" onClick={onAddOutputPort}>
+            <img className="icon" src={add_output_img}></img>
           </button>
         </div>
 

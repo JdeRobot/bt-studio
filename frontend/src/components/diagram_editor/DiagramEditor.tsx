@@ -21,7 +21,7 @@ const DiagramEditor = () => {
   let lastMovedNodePosition = { x: 200, y: 200 };
 
   // Initialize state for last moved node ID
-  let lastMovedNodeId = "";
+  let lastClickedNodeId = "";
 
   const attachPositionListener = (node:any) => {
     node.registerListener({
@@ -35,7 +35,7 @@ const DiagramEditor = () => {
     node.registerListener({
       selectionChanged: (event:any) => {
         if (event.isSelected) {
-          lastMovedNodeId = node.getID();
+          lastClickedNodeId = node.getID();
         }
       },
     });
@@ -89,7 +89,7 @@ const DiagramEditor = () => {
     // Attach listener to this node
     attachPositionListener(newNode);
     attachClickListener(newNode);
-    lastMovedNodeId = newNode.getID();
+    lastClickedNodeId = newNode.getID();
 
     // Setup the node position and ports
     var new_y = lastMovedNodePosition.y + 100;
@@ -97,21 +97,53 @@ const DiagramEditor = () => {
     lastMovedNodePosition.y = new_y;
     if (hasInputPort) newNode.addParentPort("Parent Port");
     if (hasOutputPort) newNode.addChildrenPort("Children Port");
-    newNode.addInputPort("Normal");
-    newNode.addOutputPort("Patata");
 
     model.addNode(newNode);
     engine.repaintCanvas();
   };
 
-  const deleteLastMovedNode = () => {
-    if (lastMovedNodeId) {
-      const node = model.getNode(lastMovedNodeId);
+  const deleteLastClickedNode = () => {
+    if (lastClickedNodeId) {
+      const node = model.getNode(lastClickedNodeId);
       if (node) {
         node.remove();
         engine.repaintCanvas();
       }
-      lastMovedNodeId = "";
+      lastClickedNodeId = "";
+    }
+  };
+
+  const addInputPort = () => {
+    if (lastClickedNodeId) {
+      const genericNode = model.getNode(lastClickedNodeId);
+      if (genericNode) {
+        // Cast the node to BasicNodeModel
+        const node = genericNode as BasicNodeModel;
+        
+        // Now you can call your custom method
+        const portName = prompt("Enter the name for the new input port:");
+        if (portName !== null) { // Check that the user didn't cancel
+          node.addInputPort(portName);
+        }
+        engine.repaintCanvas();
+      }
+    }
+  };
+
+  const addOutputPort = () => {
+    if (lastClickedNodeId) {
+      const genericNode = model.getNode(lastClickedNodeId);
+      if (genericNode) {
+        // Cast the node to BasicNodeModel
+        const node = genericNode as BasicNodeModel;
+        
+        // Now you can call your custom method
+        const portName = prompt("Enter the name for the new output port:");
+        if (portName !== null) { // Check that the user didn't cancel
+          node.addOutputPort(portName);
+        }
+        engine.repaintCanvas();
+      }
     }
   };
 
@@ -119,7 +151,9 @@ const DiagramEditor = () => {
     <div>
       <NodeHeader 
         onNodeTypeSelected={addNode} 
-        onDeleteNode={deleteLastMovedNode}  // Pass the delete function
+        onDeleteNode={deleteLastClickedNode}
+        onAddInputPort={addInputPort}
+        onAddOutputPort={addOutputPort}
       />
       <CanvasWidget className="canvas" engine={engine} />
     </div>
