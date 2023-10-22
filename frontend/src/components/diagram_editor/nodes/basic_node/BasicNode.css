@@ -1,3 +1,15 @@
-.parent-ports {
-    background-color: rgba(137, 43, 226, 0);
+.left-ports {
+    background-color: rgb(135, 123, 123);
+}
+
+.right-ports {
+    background-color: rgb(135, 123, 123);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.input-ports {
+    margin-top: 5px;
+    margin-left: -4px;
 }

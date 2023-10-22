@@ -9,10 +9,10 @@ import {
   CanvasWidget
 } from '@projectstorm/react-canvas-core';
 
-import { SpecialNodeFactory } from './nodes/basic_node/BasicNodeFactory'; // Import custom node factory
+import { BasicNodeFactory } from './nodes/basic_node/BasicNodeFactory'; // Import custom node factory
 
 import './DiagramEditor.css';
-import { SpecialNodeModel } from './nodes/basic_node/BasicNodeModel';
+import { BasicNodeModel } from './nodes/basic_node/BasicNodeModel';
 import NodeHeader from './NodeHeader'; // Import HeaderMenu
 
 const DiagramEditor = () => {
@@ -36,10 +36,10 @@ const DiagramEditor = () => {
   const engine = createEngine();
 
   // Register the custom node factory
-  engine.getNodeFactories().registerFactory(new SpecialNodeFactory());
+  engine.getNodeFactories().registerFactory(new BasicNodeFactory());
 
   // Root node
-  const root_node = new SpecialNodeModel('Tree Root', 'rgb(0,204,0)')
+  const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)')
   root_node.setPosition(200, 200);
   root_node.addChildrenPort("Children Port")
 
@@ -75,7 +75,7 @@ const DiagramEditor = () => {
     }
 
     // Create node
-    const newNode = new SpecialNodeModel(nodeName, nodeColor);
+    const newNode = new BasicNodeModel(nodeName, nodeColor);
 
     // Attach listener to this node
     attachPositionListener(newNode);
@@ -86,6 +86,8 @@ const DiagramEditor = () => {
     lastMovedNodePosition.y = new_y;
     if (hasInputPort) newNode.addParentPort("Parent Port");
     if (hasOutputPort) newNode.addChildrenPort("Children Port");
+    newNode.addInputPort("Normal");
+    newNode.addOutputPort("patata");
 
     model.addNode(newNode);
     engine.repaintCanvas();

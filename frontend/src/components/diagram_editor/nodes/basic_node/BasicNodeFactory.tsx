@@ -1,10 +1,10 @@
 import React from 'react';
 import { AbstractReactFactory, GenerateModelEvent, GenerateWidgetEvent } from '@projectstorm/react-canvas-core';
 import { NodeModel } from '@projectstorm/react-diagrams';
-import { SpecialNodeModel } from './BasicNodeModel';
-import { SpecialNodeWidget } from './BasicNodeWidget';
+import { BasicNodeModel } from './BasicNodeModel';
+import { BasicNodeWidget } from './BasicNodeWidget';
 
-export class SpecialNodeFactory extends AbstractReactFactory<NodeModel, any> {
+export class BasicNodeFactory extends AbstractReactFactory<NodeModel, any> {
 
     constructor() {
         super('special');
@@ -12,10 +12,10 @@ export class SpecialNodeFactory extends AbstractReactFactory<NodeModel, any> {
 
     // Setup the generator method
     generateModel(event: GenerateModelEvent): NodeModel {
-        return new SpecialNodeModel();
+        return new BasicNodeModel();
     }
 
     generateReactWidget(event: GenerateWidgetEvent<NodeModel>): JSX.Element {
-        return <SpecialNodeWidget engine={this.engine} node={event.model} />;
+        return <BasicNodeWidget engine={this.engine} node={event.model} />;
     }
 }
