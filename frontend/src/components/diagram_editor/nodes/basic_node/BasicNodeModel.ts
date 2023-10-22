@@ -40,7 +40,7 @@ export class SpecialNodeModel extends DefaultNodeModel {
             in: false,
             name: name,
             label: name,
-            type: 'default'
+            type: 'data'
         });
         this.addPort(port);
         return port;

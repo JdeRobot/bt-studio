@@ -1,6 +1,8 @@
 import React from 'react';
 import { DefaultPortLabel } from '@projectstorm/react-diagrams';
-import { SpecialPortWidget } from './SpecialPortWidget';
+import { SpecialPortWidget } from './ConnectionPortWidget';
+
+import './BasicNode.css'
 
 // The node widget controls the visualization of the custom node
 export const SpecialNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
@@ -34,7 +36,7 @@ export const SpecialNodeWidget = ({ engine, node }: { engine: any, node: any }) 
             parentPorts.push(<SpecialPortWidget key={portName} engine={engine} port={port} />);
         } else if (port.options.type === 'children port') {
             childrenPorts.push(<SpecialPortWidget key={portName} engine={engine} port={port} />);
-        } else if (port.options.type === 'normal') {
+        } else if (port.options.type === 'data') {
             normalPorts.push(<DefaultPortLabel key={portName} engine={engine} port={port} />);
         }
     });
@@ -53,13 +55,13 @@ export const SpecialNodeWidget = ({ engine, node }: { engine: any, node: any }) 
         <div className="node" style={nodeStyle}>
             <div className="parent-ports">
                 {parentPorts}
+                {normalPorts}
             </div>
             <div className="title" style={titleStyle}>
                 {node.getOptions().name}
             </div>
             <div className="ports">
                 {childrenPorts}
-                {normalPorts}
             </div>
         </div>
     );

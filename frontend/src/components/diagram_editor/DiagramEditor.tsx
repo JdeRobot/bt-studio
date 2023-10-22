@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import createEngine, { 
   DefaultLinkModel, 
   DefaultNodeModel,
@@ -9,10 +9,10 @@ import {
   CanvasWidget
 } from '@projectstorm/react-canvas-core';
 
-import { SpecialNodeFactory } from './nodes/SpecialNodeFactory'; // Import custom node factory
+import { SpecialNodeFactory } from './nodes/basic_node/BasicNodeFactory'; // Import custom node factory
 
 import './DiagramEditor.css';
-import { SpecialNodeModel } from './nodes/SpecialNodeModel';
+import { SpecialNodeModel } from './nodes/basic_node/BasicNodeModel';
 import NodeHeader from './NodeHeader'; // Import HeaderMenu
 
 const DiagramEditor = () => {
@@ -20,11 +20,14 @@ const DiagramEditor = () => {
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
 
-  // Function to attach a positionChanged listener to a node
-  const attachPositionListener = (node: any) => {
+  // Initialize state for last moved node ID
+  let lastMovedNodeId = "";
+
+  const attachPositionListener = (node:any) => {
     node.registerListener({
-      positionChanged: (event: any) => {
+      positionChanged: (event:any) => {
         lastMovedNodePosition = event.entity.getPosition();
+        lastMovedNodeId = node.getID();
       },
     });
   };
@@ -88,10 +91,23 @@ const DiagramEditor = () => {
     engine.repaintCanvas();
   };
 
+  const deleteLastMovedNode = () => {
+    if (lastMovedNodeId) {
+      const node = model.getNode(lastMovedNodeId);
+      if (node) {
+        node.remove();
+        engine.repaintCanvas();
+      }
+      lastMovedNodeId = "";
+    }
+  };
 
   return (
     <div>
-      <NodeHeader onNodeTypeSelected={addNode} />
+      <NodeHeader 
+        onNodeTypeSelected={addNode} 
+        onDeleteNode={deleteLastMovedNode}  // Pass the delete function
+      />
       <CanvasWidget className="canvas" engine={engine} />
     </div>
   );

@@ -1,0 +1,26 @@
+.button-container {
+    width: 600px;
+    padding-left: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.node-button {
+    color: #ffffff;
+    width: 120px;
+    height: 30px;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 2px;
+    font-size: 16px;
+}
+
+.node-button:hover {
+    background-color: 'black',
+}
+
+.node-header-container {
+    display: flex;
+    align-items: center;
+}

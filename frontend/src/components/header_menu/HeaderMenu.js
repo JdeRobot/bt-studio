@@ -9,7 +9,7 @@ const HeaderMenu = () => {
   return (
     <AppBar position="static" sx={{ backgroundColor: '#12494c' }}>
       <Toolbar>
-        <h2 className="Header-text">Behavior Tree Web Editor</h2>
+        <h1 className="Header-text">Behavior Tree Web Editor</h1>
       </Toolbar>
     </AppBar>
   );
