@@ -1,8 +1,8 @@
 import React from 'react';
 import { AbstractReactFactory, GenerateModelEvent, GenerateWidgetEvent } from '@projectstorm/react-canvas-core';
 import { NodeModel } from '@projectstorm/react-diagrams';
-import { SpecialNodeModel } from './SpecialNodeModel';
-import { SpecialNodeWidget } from './SpecialNodeWidget';
+import { SpecialNodeModel } from './BasicNodeModel';
+import { SpecialNodeWidget } from './BasicNodeWidget';
 
 export class SpecialNodeFactory extends AbstractReactFactory<NodeModel, any> {
 

@@ -9,10 +9,10 @@ import {
   CanvasWidget
 } from '@projectstorm/react-canvas-core';
 
-import { SpecialNodeFactory } from './nodes/SpecialNodeFactory'; // Import custom node factory
+import { SpecialNodeFactory } from './nodes/basic_node/BasicNodeFactory'; // Import custom node factory
 
 import './DiagramEditor.css';
-import { SpecialNodeModel } from './nodes/SpecialNodeModel';
+import { SpecialNodeModel } from './nodes/basic_node/BasicNodeModel';
 import NodeHeader from './NodeHeader'; // Import HeaderMenu
 
 const DiagramEditor = () => {
@@ -50,8 +50,6 @@ const DiagramEditor = () => {
 
   // Function to add a new node
   const addNode = (nodeName:any) => {
-
-    console.log("adding node");
 
     // Control parameters
     let nodeColor = 'rgb(255,153,51)'; // Default color
