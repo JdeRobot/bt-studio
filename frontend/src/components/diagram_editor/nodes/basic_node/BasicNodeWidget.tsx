@@ -18,10 +18,7 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
         background: node.getOptions().color || 'red',
         paddingTop: "10px",
         paddingBottom: "10px",
-    };
-
-    const titleStyle: React.CSSProperties = {
-        fontWeight: 'bold'
+        flexDirection: "column"
     };
 
     // Ports list
@@ -58,17 +55,21 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
     // Return the node to render
     return (
         <div className="node" style={nodeStyle}>
-            <div>
+            
+            <div className='layer'>
                 {parentPorts}
-                {inputPorts}
-            </div>
-            <div className="title" style={titleStyle}>
-                {node.getOptions().name}
-            </div>
-            <div className="right-ports">
+                <div className="title">
+                    {node.getOptions().name}
+                </div>
                 {childrenPorts.length > 0 ? childrenPorts : <div className='placeholder'></div>}
-                {outputPorts}
             </div>
+            <div className='layer'>
+                {inputPorts}
+                <div className="right-ports">
+                    {outputPorts}
+                </div>
+            </div>
+            
         </div>
     );
 };

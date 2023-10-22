@@ -1,20 +1,33 @@
+.title {
+    font-weight: bold;
+}
+
 .right-ports {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
 }
 
-.input-ports {
-    margin-top: 5px;
-    margin-left: -4px;
-}
-
 .placeholder {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    opacity: 0;
     margin-top: 5px;
     margin-left: -4px;
     margin-right: 5px;
+}
+
+/* Special styles based on the conditions */
+.node.special-right-padding {
+    padding-right: 10px;
+}
+
+.node.special-left-padding {
+    padding-left: 10px;
+}
+
+.layer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
