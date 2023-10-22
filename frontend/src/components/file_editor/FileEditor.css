@@ -9,7 +9,58 @@
 .zoom-buttons {
     position: absolute; /* Absolute positioning relative to .editor-container */
     bottom: 20px; /* From the bottom */
-    right: 20px; /* From the right */
+    right: 5px; /* From the right */
     z-index: 1; /* Ensure it's above the editor content */
+    width: 75px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.zoom-in {
+    width: 25px;
+    height: 25px;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 2px;
+    font-size: 16px;
+}
+
+.browser-menu {
+    display: flex;
+    align-items: center;
+}
+
+.editor-buttons {
+    display: flex;
+    align-items: center;
+    margin-right: 30px;
+}
+
+.save-button {
+    width: 25px;
+    height: 25px;
+    background-color: black;
+    border: 0;
+}
+
+.save-button:hover {
+    background-color: rgba(255, 255, 255, 0.264);
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+}
+
+.unsaved-dot {
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.icon {
+    width: 20px;
 }
   

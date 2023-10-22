@@ -5,15 +5,19 @@
     padding: 8px;
     cursor: pointer;
 }
+
+.file-item-selected {
+    background-color: #cafddc50;
+}
   
 .file-item:hover {
     background-color: rgba(62, 81, 58, 0.321);
 }
 
-.menu {
+.editor-menu {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
 }
 
 .buttons {
@@ -35,8 +39,7 @@
     border-radius: 100%;
 }
 
-.add-image {
+.icon {
     width: 20px;
-    color: "yellow";
 }
   

@@ -5,23 +5,53 @@ import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-monokai';
 import './FileEditor.css'
 
-const FileEditor = ({ currentFilename }) => {
+import save_img from './img/save.svg' 
 
-  const [fileContent, setFileContent] = useState(""); // To store file content
-  const [fontSize, setFontSize] = useState(14); // To store current font size
+const FileEditor = ({ currentFilename }) => {
+  
+  const [fileContent, setFileContent] = useState("");
+  const [fontSize, setFontSize] = useState(14);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   useEffect(() => {
-    if (currentFilename !== "") {
+    if (currentFilename) {
       axios.get(`/tree_api/get_file?filename=${currentFilename}`)
         .then(response => {
           const content = response.data.content;
           setFileContent(content);
+          setHasUnsavedChanges(false); // Reset the unsaved changes flag when a new file is loaded
         })
         .catch(error => {
           console.error('Error fetching file content:', error);
         });
     }
+    else {
+      setFileContent("");
+      setHasUnsavedChanges(false);
+    }
   }, [currentFilename]);
+
+  const handleSaveFile = () => {
+    if (currentFilename) {
+      axios.post('/tree_api/save_file/', {
+        filename: currentFilename,
+        content: fileContent
+      })
+      .then(response => {
+        if (response.data.success) {
+          alert("File saved successfully.");
+          setHasUnsavedChanges(false); // Reset the unsaved changes flag
+        } else {
+          alert(`Failed to save file: ${response.data.message}`);
+        }
+      })
+      .catch(error => {
+        console.error('Error saving file:', error);
+      });
+    } else {
+      alert("No file is currently selected.");
+    }
+  };
 
   const handleZoomIn = () => {
     setFontSize(prevFontSize => prevFontSize + 2);
@@ -33,10 +63,18 @@ const FileEditor = ({ currentFilename }) => {
 
   return (
     <div className="editor-container">
-      <h2>File Editor</h2>
+      <div className='editor-menu'>
+        <h2>File Editor</h2>
+        <div className="editor-buttons">
+          {hasUnsavedChanges && <div className="unsaved-dot"></div>}
+          <button className="save-button" onClick={handleSaveFile}>
+            <img className="icon" src={save_img}></img>
+          </button>
+        </div>
+      </div>
       <div className="zoom-buttons">
-        <button onClick={handleZoomIn}>+</button>
-        <button onClick={handleZoomOut}>-</button>
+        <button className="zoom-in" onClick={handleZoomIn}>+</button>
+        <button className="zoom-in" onClick={handleZoomOut}>-</button>
       </div>
       <AceEditor
         mode="python"
@@ -46,7 +84,10 @@ const FileEditor = ({ currentFilename }) => {
         height="80vh"
         value={fileContent}
         fontSize={fontSize}
-      />
+        onChange={newContent => {
+          setFileContent(newContent);
+          setHasUnsavedChanges(true); // Set the unsaved changes flag
+        }}/>
     </div>
   );
 };

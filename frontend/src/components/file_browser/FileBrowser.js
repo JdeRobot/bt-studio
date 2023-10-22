@@ -55,7 +55,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename }) => {
         .then(response => {
           if (response.data.success) {
             fetchFileList();  // Update the file list
-            setCurrentFilename(''); // Unset the current file
+            setCurrentFilename(""); // Unset the current file
           } else {
             alert(response.data.message);
           }
@@ -70,14 +70,14 @@ const FileBrowser = ({ setCurrentFilename, currentFilename }) => {
 
   return (
     <div style={{ flex: '2', border: '1px solid black' }}>
-      <div className='menu'>
+      <div className='browser-menu'>
         <h2>File Editor</h2>
         <div className='buttons'>
           <button className="menu-button" onClick={handleCreateFile}>
-            <img className="add-image" src={add_img}></img>
+            <img className="icon" src={add_img}></img>
           </button>
           <button className="menu-button" onClick={handleDeleteFile}>
-            <img className="add-image" src={delete_img}></img>
+            <img className="icon" src={delete_img}></img>
           </button>
         </div>
       </div>
@@ -86,7 +86,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename }) => {
           {fileList.map((file, index) => (
             <div 
               key={index}
-              className="file-item"
+              className={`file-item ${currentFilename === file ? 'file-item-selected' : ''}`}
               onClick={() => handleFileClick(file)}
             >
               {file}
