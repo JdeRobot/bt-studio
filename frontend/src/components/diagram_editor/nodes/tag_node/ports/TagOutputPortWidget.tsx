@@ -1,11 +1,11 @@
 import React from 'react';
 import { PortWidget } from '@projectstorm/react-diagrams';
-import './OutputPort.css';
+import './TagOutputPort.css';
 
 export const OutputPortWidget = ({ engine, port }: {engine: any, port: any }) => {
     return (
-        <div className='output-container'>
-            <PortWidget port={port} engine={engine} className="output-port-widget">
+        <div className='tag-output-container'>
+            <PortWidget port={port} engine={engine} className="tag-output-port">
             </PortWidget>
         </div>
     );

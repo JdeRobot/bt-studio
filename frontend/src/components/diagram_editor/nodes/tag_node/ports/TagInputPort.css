@@ -1,21 +1,14 @@
 /* InputPort.css */
 
-.input-port-widget {
+.tag-input-port {
     width: 10px;
     height: 10px;
     background: black;
 }
   
-.input-label {
-    padding-left: 5px;
-    display: inline-block;
-    vertical-align: middle;
-}
-  
-.input-container {
+.tag-input-container {
     display: inline-flex;
     align-items: center;
-    margin-top: 5px;
     margin-left: -4px;
     margin-right: 5px;
 }

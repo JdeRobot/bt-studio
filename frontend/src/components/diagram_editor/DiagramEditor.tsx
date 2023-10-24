@@ -70,8 +70,14 @@ const DiagramEditor = () => {
     else if (nodeName == "Delay") node.addInputPort("delay_ms");
   }
 
+  const nodeTypeSelector = (nodeName:any) => {
+
+    if (["Input port value", "Output port value"].includes(nodeName)) addTagNode(nodeName);
+    else addBasicNode(nodeName);
+  }
+
   // Function to add a new node
-  const addNode = (nodeName:any) => {
+  const addBasicNode = (nodeName:any) => {
 
     // Control parameters
     let nodeColor = 'rgb(255,153,51)'; // Default color
@@ -120,10 +126,12 @@ const DiagramEditor = () => {
     engine.repaintCanvas();
   };
 
-  const addTagNode = () => {
+  const addTagNode = (nodeName:any) => {
 
-    const newNode = new TagNodeModel("patata", 'rgb(255,153,51)'); 
-    newNode.addInputPort("input"); 
+    const newNode = new TagNodeModel(nodeName, 'rgb(255,153,51)'); 
+    
+    if (nodeName == "Input port value") newNode.addOutputPort();
+    else newNode.addInputPort();
 
     // Attach listener to this node
     attachPositionListener(newNode);
@@ -214,7 +222,7 @@ const DiagramEditor = () => {
   return (
     <div>
       <NodeHeader 
-        onNodeTypeSelected={addNode} 
+        onNodeTypeSelected={nodeTypeSelector} 
         onAddTag={addTagNode}
         onDeleteNode={deleteLastClickedNode}
         onAddInputPort={addInputPort}

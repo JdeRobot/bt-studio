@@ -66,6 +66,8 @@ const NodeHeader = ({ onNodeTypeSelected, onAddTag, onDeleteNode, onAddInputPort
               "RunOnce", "Delay"];
     } else if (menuLabel === "Actions") {
       return actionList; // Use the action names fetched from the API
+    } else if (menuLabel === "Port values") {
+      return ["Input port value", "Output port value"]
     }
     return [];
   };
@@ -87,6 +89,9 @@ const NodeHeader = ({ onNodeTypeSelected, onAddTag, onDeleteNode, onAddInputPort
           </button>
           <button className='node-button' onClick={(e) => handleClick(e, "Actions")}>
               Actions
+          </button>
+          <button className='node-button' onClick={(e) => handleClick(e, "Port values")}>
+              Port value
           </button>
         </div>
 
@@ -113,9 +118,6 @@ const NodeHeader = ({ onNodeTypeSelected, onAddTag, onDeleteNode, onAddInputPort
             <img className="icon" src={add_output_img}></img>
           </button>
         </div>
-        <button className="node-action-button" onClick={onAddTag}>
-            <img className="icon" src={del_img}></img>
-          </button>
 
     </div>
   );

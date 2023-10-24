@@ -11,11 +11,11 @@ export class TagNodeModel extends DefaultNodeModel {
     }
 
     // Method to add children port (they can be default model because only the widget, the visualization changes)
-    addOutputPort(name: string) {
+    addOutputPort() {
         const port = new DefaultPortModel({
             in: false,
-            name: name,
-            label: name,
+            name: "output",
+            label: "output",
             type: 'output port'
         });
         this.addPort(port);
@@ -23,11 +23,11 @@ export class TagNodeModel extends DefaultNodeModel {
     }
     
     // Method to add a special port
-    addInputPort(name: string) {
+    addInputPort() {
         const port = new DefaultPortModel({
             in: true,
-            name: name,
-            label: name,
+            name: "input",
+            label: "input",
             type: 'input port'
         });
         this.addPort(port);

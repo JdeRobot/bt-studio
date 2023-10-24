@@ -1,7 +1,7 @@
 import React, {useState } from 'react';
 import { DefaultPortLabel } from '@projectstorm/react-diagrams';
-import { InputPortWidget } from './ports/InputPortWidget';
-import { OutputPortWidget } from './ports/OutputPortWidget';
+import { InputPortWidget } from './ports/TagInputPortWidget';
+import { OutputPortWidget } from './ports/TagOutputPortWidget';
 
 import './TagNode.css'
 
@@ -16,7 +16,7 @@ export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
     const outputPorts: JSX.Element[] = [];
 
     // Initial class
-    let nodeClass = "tag-node basic";
+    let nodeClass = "tag-node";
 
     // Get all the ports from the node and classify them
     Object.keys(node.getPorts()).forEach((portName) => {
@@ -32,9 +32,9 @@ export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
 
     // Adjust class name depending on the quantity of ports
     if (inputPorts.length > 0 && outputPorts.length === 0) {
-        nodeClass = "tag-node input";
+        nodeClass = "tag-node tag-input";
     } else if (inputPorts.length === 0 && outputPorts.length > 0) {
-        nodeClass = "tag-node output";
+        nodeClass = "tag-node tag-output";
     }
 
     const showPromptAndUpdateText = () => {
@@ -51,7 +51,7 @@ export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
     // Return the node to render
     return (
         <div className={nodeClass}>
-            <div className='layer'>
+            <div className='tag-layer'>
                 {inputPorts}
                 <div onDoubleClick={showPromptAndUpdateText}>
                     {nodeText}

@@ -44,13 +44,9 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
     });
 
     // Apply styles depending on the quantity of ports (this is node styles)
-    if (parentPorts.length > 0 && outputPorts.length === 0 && childrenPorts.length === 0) {
-        nodeStyle = { ...nodeStyle, paddingRight: '10px' };
-    } else if (parentPorts.length === 0 && childrenPorts.length > 0) {
+    if (parentPorts.length === 0 && childrenPorts.length > 0) {
         nodeStyle = { ...nodeStyle, paddingLeft: '10px' };
-    } else {
-        nodeStyle = { ...nodeStyle, paddingTop: '10px', paddingBottom: '10px' };
-    }
+    } 
 
     // Return the node to render
     return (
@@ -61,7 +57,7 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
                 <div className="basic-title">
                     {node.getOptions().name}
                 </div>
-                {childrenPorts.length > 0 ? childrenPorts : <div className='placeholder'></div>}
+                {childrenPorts.length > 0 ? childrenPorts : <div className='basic-placeholder'></div>}
             </div>
             <div className='basic-layer'>
                 <div className="basic-left-ports">
