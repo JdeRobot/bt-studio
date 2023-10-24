@@ -220,14 +220,19 @@ const DiagramEditor = () => {
     }
   };
 
+  const generateApp = () => {
+    var str = JSON.stringify(model.serialize());
+    console.log(str);
+  }
+
   return (
     <div>
       <NodeHeader 
         onNodeTypeSelected={nodeTypeSelector} 
-        onAddTag={addTagNode}
         onDeleteNode={deleteLastClickedNode}
         onAddInputPort={addInputPort}
         onAddOutputPort={addOutputPort}
+        onGenerateApp={generateApp}
       />
       <CanvasWidget className="canvas" engine={engine} />
     </div>

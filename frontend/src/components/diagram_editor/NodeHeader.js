@@ -11,7 +11,7 @@ import del_img from './img/del_node.svg'
 import add_input_img from './img/add_input.svg'
 import add_output_img from './img/add_output.svg'
 
-const NodeHeader = ({ onNodeTypeSelected, onAddTag, onDeleteNode, onAddInputPort, onAddOutputPort }) => {
+const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, onAddInputPort, onAddOutputPort, onGenerateApp }) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuLabel, setMenuLabel] = useState("");
@@ -116,6 +116,9 @@ const NodeHeader = ({ onNodeTypeSelected, onAddTag, onDeleteNode, onAddInputPort
           </button>
           <button className="node-action-button" onClick={onAddOutputPort}>
             <img className="icon" src={add_output_img}></img>
+          </button>
+          <button className="node-action-button" onClick={onGenerateApp}>
+            <img className="icon" src={del_img}></img>
           </button>
         </div>
 
