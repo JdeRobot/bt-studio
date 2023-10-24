@@ -1,18 +1,19 @@
-.title {
+.basic-title {
     font-weight: bold;
 }
 
-.right-ports {
+.basic-right-ports {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.basic-left-ports {
     display: flex;
     flex-direction: column;
 }
 
-.left-ports {
-    display: flex;
-    flex-direction: column;
-}
-
-.placeholder {
+.basic-placeholder {
     width: 10px;
     height: 10px;
     border-radius: 50%;
@@ -21,7 +22,7 @@
     margin-right: 5px;
 }
 
-.layer {
+.basic-layer {
     display: flex;
     flex-direction: row;
     justify-content: space-between;

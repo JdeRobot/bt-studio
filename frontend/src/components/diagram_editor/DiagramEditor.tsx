@@ -122,7 +122,8 @@ const DiagramEditor = () => {
 
   const addTagNode = () => {
 
-    const newNode = new TagNodeModel("patata", "rgb(255,153,51)");  
+    const newNode = new TagNodeModel("patata", 'rgb(255,153,51)'); 
+    newNode.addInputPort("input"); 
 
     // Attach listener to this node
     attachPositionListener(newNode);

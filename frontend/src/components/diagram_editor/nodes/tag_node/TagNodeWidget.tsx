@@ -1,15 +1,19 @@
-import React from 'react';
+import React, {useState } from 'react';
 import { DefaultPortLabel } from '@projectstorm/react-diagrams';
-import { ConnectionPortWidget } from './ports/ConnectionPortWidget';
+import { InputPortWidget } from './ports/InputPortWidget';
+import { OutputPortWidget } from './ports/OutputPortWidget';
 
 import './TagNode.css'
 
 // The node widget controls the visualization of the custom node
 export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
 
+    // State to store and update the text
+    const [nodeText, setNodeText] = useState("value");
+
     // Ports list
-    const parentPorts: JSX.Element[] = [];
-    const childrenPorts: JSX.Element[] = [];
+    const inputPorts: JSX.Element[] = [];
+    const outputPorts: JSX.Element[] = [];
 
     // Initial class
     let nodeClass = "tag-node basic";
@@ -19,32 +23,41 @@ export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
         const port = node.getPort(portName);
         if (!port) return;
 
-        if (port.options.type === 'parent port') {
-            parentPorts.push(<ConnectionPortWidget key={portName} engine={engine} port={port} />);
-        } else if (port.options.type === 'children port') {
-            childrenPorts.push(<ConnectionPortWidget key={portName} engine={engine} port={port} />);
+        if (port.options.type === 'input port') {
+            inputPorts.push(<InputPortWidget key={portName} engine={engine} port={port} />);
+        } else if (port.options.type === 'output port') {
+            outputPorts.push(<OutputPortWidget key={portName} engine={engine} port={port} />);
         }
     });
 
     // Adjust class name depending on the quantity of ports
-    if (parentPorts.length > 0 && childrenPorts.length === 0) {
-        nodeClass = "tag-node parent-only";
-    } else if (parentPorts.length === 0 && childrenPorts.length > 0) {
-        nodeClass = "tag-node children-only";
+    if (inputPorts.length > 0 && outputPorts.length === 0) {
+        nodeClass = "tag-node input";
+    } else if (inputPorts.length === 0 && outputPorts.length > 0) {
+        nodeClass = "tag-node output";
     }
+
+    const showPromptAndUpdateText = () => {
+        const newText = prompt("Enter new text:", nodeText);
+        if (newText !== null) {
+            if (newText.length <= 25) {
+                setNodeText(newText);
+            } else {
+                alert("Text should be less than or equal to 25 characters.");
+            }
+        }
+    };
 
     // Return the node to render
     return (
         <div className={nodeClass}>
-            
             <div className='layer'>
-                {parentPorts}
-                <div className="title">
-                    {node.getOptions().name}
+                {inputPorts}
+                <div onDoubleClick={showPromptAndUpdateText}>
+                    {nodeText}
                 </div>
-                {childrenPorts.length > 0 ? childrenPorts : <div className='placeholder'></div>}
+                {outputPorts}
             </div>
-            
         </div>
     );
 };

@@ -54,20 +54,20 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
 
     // Return the node to render
     return (
-        <div style={nodeStyle}>
+        <div className='basic-node' style={nodeStyle}>
             
-            <div className='layer'>
+            <div className='basic-layer'>
                 {parentPorts}
-                <div className="title">
+                <div className="basic-title">
                     {node.getOptions().name}
                 </div>
                 {childrenPorts.length > 0 ? childrenPorts : <div className='placeholder'></div>}
             </div>
-            <div className='layer'>
-                <div className="left-ports">
+            <div className='basic-layer'>
+                <div className="basic-left-ports">
                     {inputPorts}
                 </div>
-                <div className="right-ports">
+                <div className="basic-right-ports">
                     {outputPorts}
                 </div>
             </div>

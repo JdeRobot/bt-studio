@@ -4,7 +4,7 @@ export class BasicNodeModel extends DefaultNodeModel {
 
     constructor(name: string = 'Special Node', color: string = 'rgb(0,192,255)') {
         super({
-            type: "special",
+            type: "basic",
             name: name,
             color: color,
         });
