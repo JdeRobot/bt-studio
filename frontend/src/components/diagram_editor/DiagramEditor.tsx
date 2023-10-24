@@ -9,10 +9,13 @@ import {
   CanvasWidget
 } from '@projectstorm/react-canvas-core';
 
-import { BasicNodeFactory } from './nodes/basic_node/BasicNodeFactory'; // Import custom node factory
-
 import './DiagramEditor.css';
 import { BasicNodeModel } from './nodes/basic_node/BasicNodeModel';
+import { BasicNodeFactory } from './nodes/basic_node/BasicNodeFactory'; // Import custom node factory
+
+import { TagNodeModel } from './nodes/tag_node/TagNodeModel';
+import { TagNodeFactory } from './nodes/tag_node/TagNodeFactory';
+
 import NodeHeader from './NodeHeader'; // Import HeaderMenu
 
 const DiagramEditor = () => {
@@ -22,6 +25,23 @@ const DiagramEditor = () => {
 
   // Initialize state for last moved node ID
   let lastClickedNodeId = "";
+
+  // create an instance of the engine with all the defaults
+  const engine = createEngine();
+
+  // Register the custom node factory
+  engine.getNodeFactories().registerFactory(new BasicNodeFactory());
+  engine.getNodeFactories().registerFactory(new TagNodeFactory());
+
+  // Root node
+  const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)')
+  root_node.setPosition(200, 200);
+  root_node.addChildrenPort("Children Port")
+
+  const model = new DiagramModel();
+  model.addAll(root_node);
+
+  engine.setModel(model);
 
   const attachPositionListener = (node:any) => {
     node.registerListener({
@@ -41,21 +61,14 @@ const DiagramEditor = () => {
     });
   };
 
-  // create an instance of the engine with all the defaults
-  const engine = createEngine();
+  // Add the nodes default ports
+  const addDefaultPorts = (node:any) => {
 
-  // Register the custom node factory
-  engine.getNodeFactories().registerFactory(new BasicNodeFactory());
-
-  // Root node
-  const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)')
-  root_node.setPosition(200, 200);
-  root_node.addChildrenPort("Children Port")
-
-  const model = new DiagramModel();
-  model.addAll(root_node);
-
-  engine.setModel(model);
+    var nodeName = node.options.name;
+    if (nodeName == "RetryUntilSuccessful") node.addInputPort("num_attempts");
+    else if (nodeName == "Repeat") node.addInputPort("num_cycles");
+    else if (nodeName == "Delay") node.addInputPort("delay_ms");
+  }
 
   // Function to add a new node
   const addNode = (nodeName:any) => {
@@ -68,6 +81,7 @@ const DiagramEditor = () => {
     // Sequences
     if (["Sequence", "ReactiveSequence", "SequenceWithMemory"].includes(nodeName)) {
       nodeColor = 'rgb(0,128,255)';
+
     }
     // Fallbacks
     else if (["Fallback", "ReactiveFallback"].includes(nodeName)) {
@@ -95,12 +109,35 @@ const DiagramEditor = () => {
     var new_y = lastMovedNodePosition.y + 100;
     newNode.setPosition(lastMovedNodePosition.x, new_y);
     lastMovedNodePosition.y = new_y;
+
+    // Add ports
     if (hasInputPort) newNode.addParentPort("Parent Port");
     if (hasOutputPort) newNode.addChildrenPort("Children Port");
+    addDefaultPorts(newNode);
 
+    // Add the node to the model
     model.addNode(newNode);
     engine.repaintCanvas();
   };
+
+  const addTagNode = () => {
+
+    const newNode = new TagNodeModel("patata", "rgb(255,153,51)");  
+
+    // Attach listener to this node
+    attachPositionListener(newNode);
+    attachClickListener(newNode);
+    lastClickedNodeId = newNode.getID();
+    
+    // Setup the node position and ports
+    var new_y = lastMovedNodePosition.y + 100;
+    newNode.setPosition(lastMovedNodePosition.x, new_y);
+    lastMovedNodePosition.y = new_y;
+
+    // Add the node to the model
+    model.addNode(newNode);
+    engine.repaintCanvas();  
+  }
 
   const deleteLastClickedNode = () => {
     if (lastClickedNodeId) {
@@ -116,7 +153,6 @@ const DiagramEditor = () => {
   const checkIfAction = (node:any) => {
     
     var name = node.options.name;
-    console.log(name);
 
     // Check if the node is a user written action
     return !(["Sequence", "ReactiveSequence", "SequenceWithMemory", 
@@ -178,6 +214,7 @@ const DiagramEditor = () => {
     <div>
       <NodeHeader 
         onNodeTypeSelected={addNode} 
+        onAddTag={addTagNode}
         onDeleteNode={deleteLastClickedNode}
         onAddInputPort={addInputPort}
         onAddOutputPort={addOutputPort}

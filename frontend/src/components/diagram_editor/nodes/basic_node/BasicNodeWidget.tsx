@@ -54,7 +54,7 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
 
     // Return the node to render
     return (
-        <div className="node" style={nodeStyle}>
+        <div style={nodeStyle}>
             
             <div className='layer'>
                 {parentPorts}

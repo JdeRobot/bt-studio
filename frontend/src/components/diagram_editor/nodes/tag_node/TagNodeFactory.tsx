@@ -1,21 +1,21 @@
 import React from 'react';
 import { AbstractReactFactory, GenerateModelEvent, GenerateWidgetEvent } from '@projectstorm/react-canvas-core';
 import { NodeModel } from '@projectstorm/react-diagrams';
-import { BasicNodeModel } from './BasicNodeModel';
-import { BasicNodeWidget } from './BasicNodeWidget';
+import { TagNodeModel } from './TagNodeModel';
+import { TagNodeWidget } from './TagNodeWidget';
 
-export class BasicNodeFactory extends AbstractReactFactory<NodeModel, any> {
+export class TagNodeFactory extends AbstractReactFactory<NodeModel, any> {
 
     constructor() {
-        super('basic');
+        super('tag');
     }
 
     // Setup the generator method
     generateModel(event: GenerateModelEvent): NodeModel {
-        return new BasicNodeModel();
+        return new TagNodeModel();
     }
 
     generateReactWidget(event: GenerateWidgetEvent<NodeModel>): JSX.Element {
-        return <BasicNodeWidget engine={this.engine} node={event.model} />;
+        return <TagNodeWidget engine={this.engine} node={event.model} />;
     }
 }

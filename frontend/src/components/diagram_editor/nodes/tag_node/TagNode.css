@@ -26,3 +26,26 @@
     flex-direction: row;
     justify-content: space-between;
 }
+
+.tag-node {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid black;
+    background-color: blueviolet;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    flex-direction: column;
+}
+
+.parent-only {
+    padding-right: 10px;
+}
+
+.children-only {
+    padding-left: 10px;
+}
+
+.basic {
+    padding-left: 10px;
+    padding-right: 10px;
+}
