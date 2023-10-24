@@ -166,7 +166,8 @@ const DiagramEditor = () => {
     // Check if the node is a user written action
     return !(["Sequence", "ReactiveSequence", "SequenceWithMemory", 
         "Fallback", "ReactiveFallback", "RetryUntilSuccessful", "Inverter", "ForceSuccess", 
-        "ForceFailure", "KeepRunningUntilFailure", "Repeat", "RunOnce", "Delay"].includes(name))
+        "ForceFailure", "KeepRunningUntilFailure", "Repeat", "RunOnce", "Delay",
+        "Input port value", "Output port value"].includes(name))
   }
 
   const addInputPort = () => {

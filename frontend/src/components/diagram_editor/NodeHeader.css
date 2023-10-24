@@ -26,14 +26,14 @@
 }
 
 .action-buttons {
-    margin-left: 25px;
+    margin-left: 10px;
 }
 
 .node-action-button {
     width: 25px;
     height: 25px;
-    margin-right: 5px;
-    margin-left: 5px;
+    margin-right: 2px;
+    margin-left: 2px;
     background-color: black;
     border: 0;
 }
