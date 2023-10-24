@@ -113,36 +113,63 @@ const DiagramEditor = () => {
     }
   };
 
+  const checkIfAction = (node:any) => {
+    
+    var name = node.options.name;
+    console.log(name);
+
+    // Check if the node is a user written action
+    return !(["Sequence", "ReactiveSequence", "SequenceWithMemory", 
+        "Fallback", "ReactiveFallback", "RetryUntilSuccessful", "Inverter", "ForceSuccess", 
+        "ForceFailure", "KeepRunningUntilFailure", "Repeat", "RunOnce", "Delay"].includes(name))
+  }
+
   const addInputPort = () => {
+
     if (lastClickedNodeId) {
+
       const genericNode = model.getNode(lastClickedNodeId);
       if (genericNode) {
+
         // Cast the node to BasicNodeModel
         const node = genericNode as BasicNodeModel;
-        
-        // Now you can call your custom method
-        const portName = prompt("Enter the name for the new input port:");
-        if (portName !== null) { // Check that the user didn't cancel
-          node.addInputPort(portName);
+
+        // Check restrictions
+        if (checkIfAction(node)) {
+          // Now you can call your custom method
+          const portName = prompt("Enter the name for the new input port:");
+          if (portName !== null) { // Check that the user didn't cancel
+            node.addInputPort(portName);
+          }
+          engine.repaintCanvas();
+        } else {
+          window.alert("Ports can only be added to action nodes")
         }
-        engine.repaintCanvas();
       }
     }
   };
 
   const addOutputPort = () => {
+
     if (lastClickedNodeId) {
+      
       const genericNode = model.getNode(lastClickedNodeId);
       if (genericNode) {
+
         // Cast the node to BasicNodeModel
         const node = genericNode as BasicNodeModel;
         
-        // Now you can call your custom method
-        const portName = prompt("Enter the name for the new output port:");
-        if (portName !== null) { // Check that the user didn't cancel
-          node.addOutputPort(portName);
+        // Check restrictions
+        if (checkIfAction(node)) {
+          // Now you can call your custom method
+          const portName = prompt("Enter the name for the new output port:");
+          if (portName !== null) { // Check that the user didn't cancel
+            node.addOutputPort(portName);
+          }
+          engine.repaintCanvas();
+        } else {
+          window.alert("Ports can only be added to action nodes")
         }
-        engine.repaintCanvas();
       }
     }
   };
