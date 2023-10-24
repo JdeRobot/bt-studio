@@ -9,10 +9,13 @@ import {
   CanvasWidget
 } from '@projectstorm/react-canvas-core';
 
-import { SpecialNodeFactory } from './nodes/basic_node/BasicNodeFactory'; // Import custom node factory
-
 import './DiagramEditor.css';
-import { SpecialNodeModel } from './nodes/basic_node/BasicNodeModel';
+import { BasicNodeModel } from './nodes/basic_node/BasicNodeModel';
+import { BasicNodeFactory } from './nodes/basic_node/BasicNodeFactory'; // Import custom node factory
+
+import { TagNodeModel } from './nodes/tag_node/TagNodeModel';
+import { TagNodeFactory } from './nodes/tag_node/TagNodeFactory';
+
 import NodeHeader from './NodeHeader'; // Import HeaderMenu
 
 const DiagramEditor = () => {
@@ -21,25 +24,17 @@ const DiagramEditor = () => {
   let lastMovedNodePosition = { x: 200, y: 200 };
 
   // Initialize state for last moved node ID
-  let lastMovedNodeId = "";
-
-  const attachPositionListener = (node:any) => {
-    node.registerListener({
-      positionChanged: (event:any) => {
-        lastMovedNodePosition = event.entity.getPosition();
-        lastMovedNodeId = node.getID();
-      },
-    });
-  };
+  let lastClickedNodeId = "";
 
   // create an instance of the engine with all the defaults
   const engine = createEngine();
 
   // Register the custom node factory
-  engine.getNodeFactories().registerFactory(new SpecialNodeFactory());
+  engine.getNodeFactories().registerFactory(new BasicNodeFactory());
+  engine.getNodeFactories().registerFactory(new TagNodeFactory());
 
   // Root node
-  const root_node = new SpecialNodeModel('Tree Root', 'rgb(0,204,0)')
+  const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)')
   root_node.setPosition(200, 200);
   root_node.addChildrenPort("Children Port")
 
@@ -48,8 +43,41 @@ const DiagramEditor = () => {
 
   engine.setModel(model);
 
+  const attachPositionListener = (node:any) => {
+    node.registerListener({
+      positionChanged: (event:any) => {
+        lastMovedNodePosition = event.entity.getPosition();
+      },
+    });
+  };
+
+  const attachClickListener = (node:any) => {
+    node.registerListener({
+      selectionChanged: (event:any) => {
+        if (event.isSelected) {
+          lastClickedNodeId = node.getID();
+        }
+      },
+    });
+  };
+
+  // Add the nodes default ports
+  const addDefaultPorts = (node:any) => {
+
+    var nodeName = node.options.name;
+    if (nodeName == "RetryUntilSuccessful") node.addInputPort("num_attempts");
+    else if (nodeName == "Repeat") node.addInputPort("num_cycles");
+    else if (nodeName == "Delay") node.addInputPort("delay_ms");
+  }
+
+  const nodeTypeSelector = (nodeName:any) => {
+
+    if (["Input port value", "Output port value"].includes(nodeName)) addTagNode(nodeName);
+    else addBasicNode(nodeName);
+  }
+
   // Function to add a new node
-  const addNode = (nodeName:any) => {
+  const addBasicNode = (nodeName:any) => {
 
     // Control parameters
     let nodeColor = 'rgb(255,153,51)'; // Default color
@@ -59,6 +87,7 @@ const DiagramEditor = () => {
     // Sequences
     if (["Sequence", "ReactiveSequence", "SequenceWithMemory"].includes(nodeName)) {
       nodeColor = 'rgb(0,128,255)';
+
     }
     // Fallbacks
     else if (["Fallback", "ReactiveFallback"].includes(nodeName)) {
@@ -75,38 +104,135 @@ const DiagramEditor = () => {
     }
 
     // Create node
-    const newNode = new SpecialNodeModel(nodeName, nodeColor);
+    const newNode = new BasicNodeModel(nodeName, nodeColor);
 
     // Attach listener to this node
     attachPositionListener(newNode);
+    attachClickListener(newNode);
+    lastClickedNodeId = newNode.getID();
 
     // Setup the node position and ports
     var new_y = lastMovedNodePosition.y + 100;
     newNode.setPosition(lastMovedNodePosition.x, new_y);
     lastMovedNodePosition.y = new_y;
+
+    // Add ports
     if (hasInputPort) newNode.addParentPort("Parent Port");
     if (hasOutputPort) newNode.addChildrenPort("Children Port");
+    addDefaultPorts(newNode);
 
+    // Add the node to the model
     model.addNode(newNode);
     engine.repaintCanvas();
   };
 
-  const deleteLastMovedNode = () => {
-    if (lastMovedNodeId) {
-      const node = model.getNode(lastMovedNodeId);
+  const addTagNode = (nodeName:any) => {
+
+    const newNode = new TagNodeModel(nodeName, 'rgb(255,153,51)'); 
+    
+    if (nodeName == "Input port value") newNode.addOutputPort();
+    else newNode.addInputPort();
+
+    // Attach listener to this node
+    attachPositionListener(newNode);
+    attachClickListener(newNode);
+    lastClickedNodeId = newNode.getID();
+    
+    // Setup the node position and ports
+    var new_y = lastMovedNodePosition.y + 100;
+    newNode.setPosition(lastMovedNodePosition.x, new_y);
+    lastMovedNodePosition.y = new_y;
+
+    // Add the node to the model
+    model.addNode(newNode);
+    engine.repaintCanvas();  
+  }
+
+  const deleteLastClickedNode = () => {
+    if (lastClickedNodeId) {
+      const node = model.getNode(lastClickedNodeId);
       if (node) {
         node.remove();
         engine.repaintCanvas();
       }
-      lastMovedNodeId = "";
+      lastClickedNodeId = "";
     }
   };
+
+  const checkIfAction = (node:any) => {
+    
+    var name = node.options.name;
+
+    // Check if the node is a user written action
+    return !(["Sequence", "ReactiveSequence", "SequenceWithMemory", 
+        "Fallback", "ReactiveFallback", "RetryUntilSuccessful", "Inverter", "ForceSuccess", 
+        "ForceFailure", "KeepRunningUntilFailure", "Repeat", "RunOnce", "Delay",
+        "Input port value", "Output port value"].includes(name))
+  }
+
+  const addInputPort = () => {
+
+    if (lastClickedNodeId) {
+
+      const genericNode = model.getNode(lastClickedNodeId);
+      if (genericNode) {
+
+        // Cast the node to BasicNodeModel
+        const node = genericNode as BasicNodeModel;
+
+        // Check restrictions
+        if (checkIfAction(node)) {
+          // Now you can call your custom method
+          const portName = prompt("Enter the name for the new input port:");
+          if (portName !== null) { // Check that the user didn't cancel
+            node.addInputPort(portName);
+          }
+          engine.repaintCanvas();
+        } else {
+          window.alert("Ports can only be added to action nodes")
+        }
+      }
+    }
+  };
+
+  const addOutputPort = () => {
+
+    if (lastClickedNodeId) {
+      
+      const genericNode = model.getNode(lastClickedNodeId);
+      if (genericNode) {
+
+        // Cast the node to BasicNodeModel
+        const node = genericNode as BasicNodeModel;
+        
+        // Check restrictions
+        if (checkIfAction(node)) {
+          // Now you can call your custom method
+          const portName = prompt("Enter the name for the new output port:");
+          if (portName !== null) { // Check that the user didn't cancel
+            node.addOutputPort(portName);
+          }
+          engine.repaintCanvas();
+        } else {
+          window.alert("Ports can only be added to action nodes")
+        }
+      }
+    }
+  };
+
+  const generateApp = () => {
+    var str = JSON.stringify(model.serialize());
+    console.log(str);
+  }
 
   return (
     <div>
       <NodeHeader 
-        onNodeTypeSelected={addNode} 
-        onDeleteNode={deleteLastMovedNode}  // Pass the delete function
+        onNodeTypeSelected={nodeTypeSelector} 
+        onDeleteNode={deleteLastClickedNode}
+        onAddInputPort={addInputPort}
+        onAddOutputPort={addOutputPort}
+        onGenerateApp={generateApp}
       />
       <CanvasWidget className="canvas" engine={engine} />
     </div>

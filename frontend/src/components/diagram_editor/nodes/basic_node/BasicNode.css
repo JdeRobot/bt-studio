@@ -1,3 +1,29 @@
-.parent-ports {
-    background-color: rgba(137, 43, 226, 0);
+.basic-title {
+    font-weight: bold;
+}
+
+.basic-right-ports {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.basic-left-ports {
+    display: flex;
+    flex-direction: column;
+}
+
+.basic-placeholder {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-top: 5px;
+    margin-left: -4px;
+    margin-right: 5px;
+}
+
+.basic-layer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }

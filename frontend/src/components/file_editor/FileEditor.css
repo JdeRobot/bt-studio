@@ -2,6 +2,7 @@
 
 .editor-container {
     position: relative; /* Establish a stacking context */
+    margin-right: 2px;
 }
   
 .zoom-buttons {
