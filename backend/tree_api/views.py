@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from .serializers import FileContentSerializer
 from . import app_generator
 from . import tree_generator
+from . import json_translator
 from django.http import HttpResponse
 from django.http import JsonResponse
 import mimetypes
@@ -86,6 +87,26 @@ def save_file(request):
     try:
         with open(file_path, 'w') as f:
             f.write(content)
+        return Response({'success': True})
+    except Exception as e:
+        return Response({'success': False, 'message': str(e)}, status=400)
+
+@api_view(['POST'])
+def translate_json(request):
+
+    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+
+    try:
+        content = request.data.get('content')
+        if content is None:
+            return Response({'success': False, 'message': 'Content is missing'}, status=400)
+        
+        # Pass the JSON content to the translate function
+        xml_string = json_translator.translate(content)
+        f = open(folder_path + "/test.xml", "w")
+        f.write(xml_string)
+        f.close()
+        
         return Response({'success': True})
     except Exception as e:
         return Response({'success': False, 'message': str(e)}, status=400)

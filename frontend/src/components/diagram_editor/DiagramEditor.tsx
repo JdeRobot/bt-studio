@@ -221,9 +221,28 @@ const DiagramEditor = () => {
   };
 
   const generateApp = () => {
-    var str = JSON.stringify(model.serialize());
+    const str = JSON.stringify(model.serialize());
     console.log(str);
-  }
+  
+    fetch("/tree_api/translate_json/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ content: str }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log("Successfully sent JSON to server.");
+        } else {
+          console.log("Failed to send JSON to server:", data.message);
+        }
+      })
+      .catch((error) => {
+        console.log("Error:", error);
+      });
+  };
 
   return (
     <div>
