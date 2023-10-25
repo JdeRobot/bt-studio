@@ -8,7 +8,7 @@ def prettify_xml(element):
     reparsed = minidom.parseString(rough_string)
     return reparsed.toprettyxml(indent="  ")
 
-def get_tree_structure(link_models):
+def get_tree_structure(link_models, node_models):
     
   # Create a dictionary to store the tree connections
   tree_structure = {}
@@ -18,6 +18,8 @@ def get_tree_structure(link_models):
       
       source = link_info['source']
       target = link_info['target']
+
+      if node_models[target]["type"] == "tag": continue
       
       if source not in tree_structure:
         tree_structure[source] = []
@@ -97,12 +99,13 @@ def translate(content, tree_path):
   link_models = parsed_json['layers'][0]['models']
 
   # Get the tree structure
-  tree_structure = get_tree_structure(link_models)
+  tree_structure = get_tree_structure(link_models, node_models)
 
   # Generate XML
   root = Element("Root", name="Tree Root")
   behavior_tree = SubElement(root, "BehaviorTree")
   start_node_id = get_start_node_id(node_models, link_models)
+  print(start_node_id)
   build_xml(node_models, link_models, tree_structure, start_node_id, behavior_tree)
   
   # Save the xml in the specified route

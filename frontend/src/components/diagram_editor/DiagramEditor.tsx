@@ -87,7 +87,6 @@ const DiagramEditor = () => {
     // Sequences
     if (["Sequence", "ReactiveSequence", "SequenceWithMemory"].includes(nodeName)) {
       nodeColor = 'rgb(0,128,255)';
-
     }
     // Fallbacks
     else if (["Fallback", "ReactiveFallback"].includes(nodeName)) {
@@ -223,8 +222,9 @@ const DiagramEditor = () => {
   const generateApp = () => {
 
     const str = JSON.stringify(model.serialize());
+    console.log(str);
 
-    var app_name = "test";
+    var app_name = prompt("Introduce your app name: ");
   
     fetch("/tree_api/generate_app/", {
       method: "POST",
