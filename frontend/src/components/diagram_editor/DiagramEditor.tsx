@@ -128,7 +128,7 @@ const DiagramEditor = () => {
 
   const addTagNode = (nodeName:any) => {
 
-    const newNode = new TagNodeModel(nodeName, 'rgb(255,153,51)'); 
+    const newNode = new TagNodeModel('value', 'rgb(255,153,51)'); 
     
     if (nodeName == "Input port value") newNode.addOutputPort();
     else newNode.addInputPort();
