@@ -87,7 +87,7 @@ def get_start_node_id(node_models, link_models):
   return start_node_id
       
 
-def translate(content):
+def translate(content, tree_path):
 
   # Parse the JSON data
   parsed_json = json.loads(content)
@@ -105,7 +105,8 @@ def translate(content):
   start_node_id = get_start_node_id(node_models, link_models)
   build_xml(node_models, link_models, tree_structure, start_node_id, behavior_tree)
   
-  # Debug the XML
+  # Save the xml in the specified route
   xml_string = prettify_xml(root)
-  
-  return xml_string
+  f = open(tree_path, "w")
+  f.write(xml_string)
+  f.close()

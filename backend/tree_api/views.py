@@ -102,32 +102,36 @@ def translate_json(request):
             return Response({'success': False, 'message': 'Content is missing'}, status=400)
         
         # Pass the JSON content to the translate function
-        xml_string = json_translator.translate(content)
-        f = open(folder_path + "/test.xml", "w")
-        f.write(xml_string)
-        f.close()
+        json_translator.translate(content, folder_path + "/tree.xml")
         
         return Response({'success': True})
     except Exception as e:
         return Response({'success': False, 'message': str(e)}, status=400)
 
-@api_view(['GET'])
-def download_app(request):
+@api_view(['POST'])
+def generate_app(request):
 
     # Get the app name
-    app_name = request.GET.get('app_name', None)
+    app_name = request.data.get('app_name')
+    content = request.data.get('content')
 
     # Make folder path relative to Django app
-    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
-    tree_path = os.path.join(folder_path, 'tree.xml')
-    result_path = os.path.join(folder_path, '/tmp/self_contained_tree.xml')
+    action_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    tree_path = os.path.join('/tmp/tree.xml')
+    self_contained_tree_path = os.path.join('/tmp/self_contained_tree.xml')
     template_path = os.path.join(settings.BASE_DIR, 'ros_template')
 
-    if app_name:
+    if app_name and content:
 
         try:
-            tree_generator.generate(tree_path, folder_path, result_path)
-            zip_file_path = app_generator.generate(result_path, app_name, template_path)
+            # Generate a basic tree from the JSON definition 
+            json_translator.translate(content, tree_path)
+
+            # Generate a self-contained tree 
+            tree_generator.generate(tree_path, action_path, self_contained_tree_path)
+
+            # Using the self-contained tree, package the ROS 2 app
+            zip_file_path = app_generator.generate(self_contained_tree_path, app_name, template_path)
 
             # Confirm ZIP file exists
             if not os.path.exists(zip_file_path):

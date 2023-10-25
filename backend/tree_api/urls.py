@@ -8,5 +8,5 @@ urlpatterns = [
     path('delete_file/', views.delete_file, name='delete_file'),
     path('save_file/', views.save_file, name='save_file'),
     path('translate_json/', views.translate_json, name='translate_json'),
-    path('download_app/', views.download_app, name='download_app')
+    path('generate_app/', views.generate_app, name='generate_app')
 ]
