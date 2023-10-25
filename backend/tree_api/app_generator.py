@@ -82,6 +82,11 @@ def get_unique_imports(file_paths):
     return list(unique_imports)
 
 def update_package_xml(package_xml_path, unique_imports):
+    # Mapping from Python import names to ROS package names
+    special_imports = {
+        'cv2': 'python3-opencv',
+        # Add more mappings here as needed
+    }
 
     with open(package_xml_path, 'r') as file:
         content = file.read()
@@ -89,8 +94,10 @@ def update_package_xml(package_xml_path, unique_imports):
     # Finding the position of the last </exec_depend> tag
     last_exec_depend_index = content.rfind('</exec_depend>') + len('</exec_depend>')
 
-    # Generating new <exec_depend> entries from the valid imports
-    new_exec_depends = '\n'.join([f'  <exec_depend>{imp}</exec_depend>' for imp in unique_imports])
+    # Replacing special import names and generating new <exec_depend> entries
+    new_exec_depends = '\n'.join(
+        [f'  <exec_depend>{special_imports.get(imp, imp)}</exec_depend>' for imp in unique_imports]
+    )
 
     # Inserting the new dependencies after the last </exec_depend>
     updated_content = content[:last_exec_depend_index] + '\n' + new_exec_depends + content[last_exec_depend_index:]
@@ -98,6 +105,7 @@ def update_package_xml(package_xml_path, unique_imports):
     # Writing the updated content back to package.xml
     with open(package_xml_path, 'w') as file:
         file.write(updated_content)
+
 
 # Setup the package with the user data
 def setup_package(temp_path, action_path, user_data):
