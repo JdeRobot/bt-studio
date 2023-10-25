@@ -131,7 +131,7 @@ def generate_app(request):
             tree_generator.generate(tree_path, action_path, self_contained_tree_path)
 
             # Using the self-contained tree, package the ROS 2 app
-            zip_file_path = app_generator.generate(self_contained_tree_path, app_name, template_path)
+            zip_file_path = app_generator.generate(self_contained_tree_path, app_name, template_path, action_path)
 
             # Confirm ZIP file exists
             if not os.path.exists(zip_file_path):
