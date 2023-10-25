@@ -74,20 +74,19 @@ def get_unique_imports(file_paths):
             match = re.search(r'^(?!#.*)(?:import|from)\s+(\w+)', line)
             if match:
                 unique_imports.add(match.group(1))
+    
+    f = open("/tmp/imports.txt", 'w')
+    f.write(f"Action paths: {unique_imports}.")
+    f.close()
 
     return list(unique_imports)
 
 def update_package_xml(package_xml_path, unique_imports):
-
-    valid_imports = []
-    
-    for imp in unique_imports:
-        try:
-            result = subprocess.run(['rosdep', 'where-defined', imp], capture_output=True, text=True, check=True)
-            if "ERROR" not in result.stdout:
-                valid_imports.append(imp)
-        except subprocess.CalledProcessError:
-            print(f"Error while running rosdep for {imp}. Skipping this package.")
+    # Mapping from Python import names to ROS package names
+    special_imports = {
+        'cv2': 'python3-opencv',
+        # Add more mappings here as needed
+    }
 
     with open(package_xml_path, 'r') as file:
         content = file.read()
@@ -95,8 +94,10 @@ def update_package_xml(package_xml_path, unique_imports):
     # Finding the position of the last </exec_depend> tag
     last_exec_depend_index = content.rfind('</exec_depend>') + len('</exec_depend>')
 
-    # Generating new <exec_depend> entries from the valid imports
-    new_exec_depends = '\n'.join([f'  <exec_depend>{imp}</exec_depend>' for imp in valid_imports])
+    # Replacing special import names and generating new <exec_depend> entries
+    new_exec_depends = '\n'.join(
+        [f'  <exec_depend>{special_imports.get(imp, imp)}</exec_depend>' for imp in unique_imports]
+    )
 
     # Inserting the new dependencies after the last </exec_depend>
     updated_content = content[:last_exec_depend_index] + '\n' + new_exec_depends + content[last_exec_depend_index:]
@@ -105,8 +106,9 @@ def update_package_xml(package_xml_path, unique_imports):
     with open(package_xml_path, 'w') as file:
         file.write(updated_content)
 
+
 # Setup the package with the user data
-def setup_package(temp_path, user_data):
+def setup_package(temp_path, action_path, user_data):
 
     app_name = user_data['app_name']
     template_str = "ros_template"
@@ -124,7 +126,7 @@ def setup_package(temp_path, user_data):
             print(f"Warning: {file_name} not found in {temp_path}. Skipping content replacement for this file.")
 
     # 3. Get a list of unique imports from the user-defined actions
-    action_paths = get_actions_paths("actions/")
+    action_paths = get_actions_paths(action_path)
     imports = get_unique_imports(action_paths)
 
     # 4. Update the template package xml so the dependencies can be installed with rosdep
@@ -136,7 +138,7 @@ def setup_package(temp_path, user_data):
 # Main section
 ##############################################################################
 
-def generate(app_tree, app_name, template_path):
+def generate(app_tree, app_name, template_path, action_path):
 
     temp_path = "/tmp/ros_template"
 
@@ -156,7 +158,7 @@ def generate(app_tree, app_name, template_path):
 
     # 3. Edit some files in the template
     user_data = {"app_name": app_name}
-    setup_package(temp_path, user_data)
+    setup_package(temp_path, action_path, user_data)
 
     # 3. Generate a zip file in the destination folder with a name specified by the user
     dest_path = "/tmp/" + app_name + ".zip"

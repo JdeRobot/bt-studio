@@ -128,7 +128,7 @@ const DiagramEditor = () => {
 
   const addTagNode = (nodeName:any) => {
 
-    const newNode = new TagNodeModel(nodeName, 'rgb(255,153,51)'); 
+    const newNode = new TagNodeModel('value', 'rgb(255,153,51)'); 
     
     if (nodeName == "Input port value") newNode.addOutputPort();
     else newNode.addInputPort();
@@ -221,9 +221,41 @@ const DiagramEditor = () => {
   };
 
   const generateApp = () => {
-    var str = JSON.stringify(model.serialize());
-    console.log(str);
-  }
+
+    const str = JSON.stringify(model.serialize());
+
+    var app_name = "test";
+  
+    fetch("/tree_api/generate_app/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ app_name, content: str }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((data) => {
+            throw new Error(data.message || "An error occurred.");
+          });
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `${app_name}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+  
 
   return (
     <div>

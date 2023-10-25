@@ -1,4 +1,4 @@
-import React, {useState } from 'react';
+import React, {useState, useEffect } from 'react';
 import { DefaultPortLabel } from '@projectstorm/react-diagrams';
 import { InputPortWidget } from './ports/TagInputPortWidget';
 import { OutputPortWidget } from './ports/TagOutputPortWidget';
@@ -8,8 +8,7 @@ import './TagNode.css'
 // The node widget controls the visualization of the custom node
 export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
 
-    // State to store and update the text
-    const [nodeText, setNodeText] = useState("value");
+    const [nodeName, setNodeName] = useState(node.options.name || "Unnamed");
 
     // Ports list
     const inputPorts: JSX.Element[] = [];
@@ -38,12 +37,13 @@ export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
     }
 
     const showPromptAndUpdateText = () => {
-        const newText = prompt("Enter new text:", nodeText);
+        const newText = prompt("Enter new node name:", nodeName);
         if (newText !== null) {
             if (newText.length <= 25) {
-                setNodeText(newText);
+                setNodeName(newText);
+                node.options.name = newText;  // Update the node object as well
             } else {
-                alert("Text should be less than or equal to 25 characters.");
+                alert("Name should be less than or equal to 25 characters.");
             }
         }
     };
@@ -54,7 +54,7 @@ export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
             <div className='tag-layer'>
                 {inputPorts}
                 <div onDoubleClick={showPromptAndUpdateText}>
-                    {nodeText}
+                    {nodeName}
                 </div>
                 {outputPorts}
             </div>

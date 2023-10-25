@@ -15,7 +15,7 @@ setup(
             'resource/app_tree.xml',
         ]),
     ],
-    install_requires=['setuptools', 'py_trees', 'py_trees_ros', 'std_msgs', 'geometry_msgs', 'sensor_msgs', 'tree_gardener'],
+    install_requires=['setuptools'],
     zip_safe=True,
     author='',
     author_email='',
