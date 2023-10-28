@@ -2,7 +2,7 @@
 
 <a href="https://jderobot.github.io/"><img src="docs/assets/gif/logo.gif" width="150" align="right" /></a>
 
-# BT Studio
+# BehaviorTrees
 
 ![version](https://img.shields.io/badge/Version-0.1-blue)
 ![distro](https://img.shields.io/badge/ROS2-Humble-blue)
@@ -11,14 +11,7 @@
 
 ## Introduction
 
-BT Studio is an **open-source** tool crafted for the development of robotic applications. Its primary objective is to facilitate the quick deployment of behavior tree-based robotic applications within ROS. In BehaviorTrees, a robotic app is defined as an XML tree coupled with actions scripted in Python, which the tool then translates into a ROS 2 package. This process circumvents the unnecessary complexities often associated with ROS-specific configurations, offering developers a more streamlined approach.
-
-## Authors
-
-This project is part of the **JdeRobot** ecosystem, and it's being developed by: 
-
-* Óscar Martínez Martínez (maintainer)
-* Jose María Cañas Plaza
+Behavior Trees is an **open-source** tool crafted for the development of robotic applications. Its primary objective is to facilitate the quick deployment of behavior tree-based robotic applications within ROS. In BehaviorTrees, a robotic app is defined as an XML tree coupled with actions scripted in Python, which the tool then translates into a ROS 2 package. This process circumvents the unnecessary complexities often associated with ROS-specific configurations, offering developers a more streamlined approach.
 
 ## Usage
 

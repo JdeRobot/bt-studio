@@ -2,3 +2,9 @@
   font-family: 'Spline Sans Mono', sans-serif;
   color: #cafddc;
 }
+
+.jde-icon {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
