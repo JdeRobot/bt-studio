@@ -174,7 +174,9 @@ def generate_app(request):
     content = request.data.get('content')
 
     # Make folder path relative to Django app
-    action_path = os.path.join(settings.BASE_DIR, 'filesystem', app_name, 'actions')
+    base_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(base_path, app_name)
+    action_path = os.path.join(project_path, 'actions')
     tree_path = os.path.join('/tmp/tree.xml')
     self_contained_tree_path = os.path.join('/tmp/self_contained_tree.xml')
     template_path = os.path.join(settings.BASE_DIR, 'ros_template')

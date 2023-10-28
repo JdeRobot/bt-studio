@@ -28,6 +28,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname} ) => {
         if (response.data.success) {
           // Successfully created the project
           setCurrentProjectname(projectName);
+          localStorage.setItem('project_name', projectName);
           console.log('Project created successfully');
         } 
       })

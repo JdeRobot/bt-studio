@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import createEngine, { 
   DefaultLinkModel, 
   DefaultNodeModel,
+  DiagramEngine,
   DiagramModel 
 } from '@projectstorm/react-diagrams';
 
@@ -18,30 +19,32 @@ import { TagNodeFactory } from './nodes/tag_node/TagNodeFactory';
 
 import NodeHeader from './NodeHeader'; // Import HeaderMenu
 
-const DiagramEditor = () => {
+const DiagramEditor = ({currentProjectname} : {currentProjectname : any}) => {
+
+  const engine = useMemo(() => {
+    const newEngine = createEngine();
+    console.log("New Engine: ", newEngine);  // Debug line
+    newEngine.getNodeFactories().registerFactory(new BasicNodeFactory());
+    newEngine.getNodeFactories().registerFactory(new TagNodeFactory());
+    return newEngine;
+  }, []);
+  
+  const model = useMemo(() => {
+    const newModel = new DiagramModel();
+    console.log("New Model: ", newModel);  // Debug line
+    const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
+    root_node.setPosition(200, 200);
+    root_node.addChildrenPort("Children Port");
+    newModel.addAll(root_node);
+    engine.setModel(newModel);
+    return newModel;
+  }, []);
 
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
-
+  
   // Initialize state for last moved node ID
   let lastClickedNodeId = "";
-
-  // create an instance of the engine with all the defaults
-  const engine = createEngine();
-
-  // Register the custom node factory
-  engine.getNodeFactories().registerFactory(new BasicNodeFactory());
-  engine.getNodeFactories().registerFactory(new TagNodeFactory());
-
-  // Root node
-  const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)')
-  root_node.setPosition(200, 200);
-  root_node.addChildrenPort("Children Port")
-
-  const model = new DiagramModel();
-  model.addAll(root_node);
-
-  engine.setModel(model);
 
   const attachPositionListener = (node:any) => {
     node.registerListener({
@@ -220,19 +223,16 @@ const DiagramEditor = () => {
   };
 
   const generateApp = () => {
-
-    const str = JSON.stringify(model.serialize());
-    console.log(str);
-
-    var app_name = prompt("Introduce your app name: ");
-  
-    fetch("/tree_api/generate_app/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ app_name, content: str }),
-    })
+    if (model) {
+      const str = JSON.stringify(model.serialize());
+    
+      fetch("/tree_api/generate_app/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ app_name: currentProjectname, content: str }),  // Change this line
+      })
       .then((response) => {
         if (!response.ok) {
           return response.json().then((data) => {
@@ -246,7 +246,7 @@ const DiagramEditor = () => {
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        a.download = `${app_name}.zip`;
+        a.download = `${currentProjectname}.zip`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -254,9 +254,9 @@ const DiagramEditor = () => {
       .catch((error) => {
         console.error("Error:", error);
       });
-  };
+    }
+  };  
   
-
   return (
     <div>
       <NodeHeader 
@@ -265,6 +265,7 @@ const DiagramEditor = () => {
         onAddInputPort={addInputPort}
         onAddOutputPort={addOutputPort}
         onGenerateApp={generateApp}
+        currentProjectname={currentProjectname}
       />
       <CanvasWidget className="canvas" engine={engine} />
     </div>
