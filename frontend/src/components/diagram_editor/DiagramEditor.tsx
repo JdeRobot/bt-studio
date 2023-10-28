@@ -19,11 +19,10 @@ import { TagNodeFactory } from './nodes/tag_node/TagNodeFactory';
 
 import NodeHeader from './NodeHeader'; // Import HeaderMenu
 
-const DiagramEditor = ({currentProjectname} : {currentProjectname : any}) => {
+const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname : any, setModelJson : any}) => {
 
   const engine = useMemo(() => {
     const newEngine = createEngine();
-    console.log("New Engine: ", newEngine);  // Debug line
     newEngine.getNodeFactories().registerFactory(new BasicNodeFactory());
     newEngine.getNodeFactories().registerFactory(new TagNodeFactory());
     return newEngine;
@@ -31,12 +30,12 @@ const DiagramEditor = ({currentProjectname} : {currentProjectname : any}) => {
   
   const model = useMemo(() => {
     const newModel = new DiagramModel();
-    console.log("New Model: ", newModel);  // Debug line
     const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
     root_node.setPosition(200, 200);
     root_node.addChildrenPort("Children Port");
     newModel.addAll(root_node);
     engine.setModel(newModel);
+    setModelJson(JSON.stringify(newModel.serialize()));
     return newModel;
   }, []);
 
@@ -126,6 +125,7 @@ const DiagramEditor = ({currentProjectname} : {currentProjectname : any}) => {
     // Add the node to the model
     model.addNode(newNode);
     engine.repaintCanvas();
+    setModelJson(JSON.stringify(model.serialize()));
   };
 
   const addTagNode = (nodeName:any) => {
@@ -148,6 +148,7 @@ const DiagramEditor = ({currentProjectname} : {currentProjectname : any}) => {
     // Add the node to the model
     model.addNode(newNode);
     engine.repaintCanvas();  
+    setModelJson(JSON.stringify(model.serialize()));
   }
 
   const deleteLastClickedNode = () => {
@@ -156,6 +157,7 @@ const DiagramEditor = ({currentProjectname} : {currentProjectname : any}) => {
       if (node) {
         node.remove();
         engine.repaintCanvas();
+        setModelJson(JSON.stringify(model.serialize()));
       }
       lastClickedNodeId = "";
     }
@@ -190,6 +192,7 @@ const DiagramEditor = ({currentProjectname} : {currentProjectname : any}) => {
             node.addInputPort(portName);
           }
           engine.repaintCanvas();
+          setModelJson(JSON.stringify(model.serialize()));
         } else {
           window.alert("Ports can only be added to action nodes")
         }
@@ -215,6 +218,7 @@ const DiagramEditor = ({currentProjectname} : {currentProjectname : any}) => {
             node.addOutputPort(portName);
           }
           engine.repaintCanvas();
+          setModelJson(JSON.stringify(model.serialize()));
         } else {
           window.alert("Ports can only be added to action nodes")
         }

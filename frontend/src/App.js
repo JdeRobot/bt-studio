@@ -12,6 +12,7 @@ const App = () => {
   const [editorWidth, setEditorWidth] = useState(700);
   const [currentFilename, setCurrentFilename] = useState('');
   const [currentProjectname, setCurrentProjectname] = useState('');
+  const [modelJson, setModelJson] = useState('');
 
   const onResize = (key, size) => {
     switch (key) {
@@ -29,6 +30,7 @@ const App = () => {
       <HeaderMenu 
         setCurrentProjectname={setCurrentProjectname} 
         currentProjectname={currentProjectname}
+        modelJson={modelJson}
       />
 
       <div className="App-main" style={{ display: 'flex' }}>
@@ -59,6 +61,7 @@ const App = () => {
         <div style={{ flex: 1}}>
           <DiagramEditor 
             currentProjectname={currentProjectname}
+            setModelJson={setModelJson}
           />
         </div>
         

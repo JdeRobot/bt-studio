@@ -9,7 +9,7 @@ import logo_img from './img/logo.png'
 import './HeaderMenu.css'
 import add_project_img from './img/add_project.svg'
 
-const HeaderMenu = ( {setCurrentProjectname, currentProjectname} ) => {
+const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson} ) => {
 
   const createProject = () => {
 
@@ -68,6 +68,11 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname} ) => {
         window.alert(`An error occurred while fetching the project list`);
       });
   };
+
+  const test = () => {
+
+    console.log(modelJson);
+  };
   
   return (
     <AppBar position="static" sx={{ backgroundColor: '#12494c' }}>
@@ -79,6 +84,9 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname} ) => {
           <img className="header-icon" src={add_project_img}></img>
         </button>
         <button className="node-action-button" onClick={changeProject}>
+          <img className="header-icon" src={add_project_img}></img>
+        </button>
+        <button className="node-action-button" onClick={test}>
           <img className="header-icon" src={add_project_img}></img>
         </button>
       </Toolbar>
