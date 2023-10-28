@@ -16,9 +16,11 @@ def create_project(request):
     project_name = request.GET.get('project_name')
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, 'actions')
     
     if not os.path.exists(project_path):
         os.mkdir(project_path)
+        os.mkdir(action_path)
         return Response({'success': True})
     else:
         return Response({'success': False, 'message': 'Project already exists'}, status=400)
@@ -51,10 +53,11 @@ def get_file_list(request):
     project_name = request.GET.get('project_name')
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(folder_path, project_name)
-    
+    action_path = os.path.join(project_path, 'actions')
+
     try:
         # List all files in the directory
-        file_list = [f for f in os.listdir(project_path) if os.path.isfile(os.path.join(project_path, f))]
+        file_list = [f for f in os.listdir(action_path) if os.path.isfile(os.path.join(action_path, f))]
         
         # Return the list of files
         return Response({'file_list': file_list})
@@ -71,9 +74,10 @@ def get_file(request):
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, 'actions')
     
     if filename:
-        file_path = os.path.join(project_path, filename)
+        file_path = os.path.join(action_path, filename)
         if os.path.exists(file_path):
             with open(file_path, 'r') as f:
                 content = f.read()
@@ -94,7 +98,8 @@ def create_file(request):
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(folder_path, project_name)
-    file_path = os.path.join(project_path, filename)
+    action_path = os.path.join(project_path, 'actions')
+    file_path = os.path.join(action_path, filename)
     
     if not os.path.exists(file_path):
         with open(file_path, 'w') as f:
@@ -113,7 +118,8 @@ def delete_file(request):
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(folder_path, project_name)
-    file_path = os.path.join(project_path, filename)
+    action_path = os.path.join(project_path, 'actions')
+    file_path = os.path.join(action_path, filename)
     
     if os.path.exists(file_path):
         try:
@@ -133,7 +139,8 @@ def save_file(request):
     
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(folder_path, project_name)
-    file_path = os.path.join(project_path, filename)
+    action_path = os.path.join(project_path, 'actions')
+    file_path = os.path.join(action_path, filename)
 
     try:
         with open(file_path, 'w') as f:
@@ -167,7 +174,7 @@ def generate_app(request):
     content = request.data.get('content')
 
     # Make folder path relative to Django app
-    action_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    action_path = os.path.join(settings.BASE_DIR, 'filesystem', app_name, 'actions')
     tree_path = os.path.join('/tmp/tree.xml')
     self_contained_tree_path = os.path.join('/tmp/self_contained_tree.xml')
     template_path = os.path.join(settings.BASE_DIR, 'ros_template')

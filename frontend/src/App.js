@@ -57,7 +57,9 @@ const App = () => {
         </Resizable>
 
         <div style={{ flex: 1}}>
-          <DiagramEditor />
+          <DiagramEditor 
+            currentProjectname={currentProjectname}
+          />
         </div>
         
       </div>
