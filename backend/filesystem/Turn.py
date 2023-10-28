@@ -7,7 +7,7 @@ class Turn(py_trees.behaviour.Behaviour):
 
         """ Constructor, executed when the class is instantiated """
 
-        # Configure the name of the behaviour
+        # Configure the name of the behavioure
         super().__init__(name)
         self.logger.debug("%s.__init__()" % (self.__class__.__name__))
 
