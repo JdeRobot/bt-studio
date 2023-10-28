@@ -2,7 +2,7 @@
 
 <a href="https://jderobot.github.io/"><img src="docs/assets/gif/logo.gif" width="150" align="right" /></a>
 
-# BehaviorTrees
+# BT Studio
 
 ![version](https://img.shields.io/badge/Version-0.1-blue)
 ![distro](https://img.shields.io/badge/ROS2-Humble-blue)
@@ -11,7 +11,7 @@
 
 ## Introduction
 
-Behavior Trees is an **open-source** tool crafted for the development of robotic applications. Its primary objective is to facilitate the quick deployment of behavior tree-based robotic applications within ROS. In BehaviorTrees, a robotic app is defined as an XML tree coupled with actions scripted in Python, which the tool then translates into a ROS 2 package. This process circumvents the unnecessary complexities often associated with ROS-specific configurations, offering developers a more streamlined approach.
+BT Studio is an **open-source** tool crafted for the development of robotic applications. Its primary objective is to facilitate the quick deployment of behavior tree-based robotic applications within ROS. In BT Studio, a robotic app is defined as an XML tree coupled with actions scripted in Python, which the tool then translates into a ROS 2 package. This process circumvents the unnecessary complexities often associated with ROS-specific configurations, offering developers a more streamlined approach.
 
 ## Usage
 
@@ -24,8 +24,8 @@ source /opt/ros/humble/setup.bash
 
 2. Clone the repo and enter it
 ```bash
-git clone https://github.com/JdeRobot/BehaviorTrees
-cd BehaviorTrees
+git clone https://github.com/JdeRobot/bt-studio
+cd bt-studio
 ```
 
 3. Install the necessary packages
@@ -108,7 +108,7 @@ For examples of how to use ports in your actions, please refer to the [example a
 
 2. Write an xml tree
 
-This is where the magic of your app happens. With the actions you have written, you can define a behavior tree in an XML file. All the nodes of [Davide Faconti's BT.cpp library](https://www.behaviortree.dev/docs/category/nodes-library) are fully supported in BehaviorTrees. 
+This is where the magic of your app happens. With the actions you have written, you can define a behavior tree in an XML file. All the nodes of [Davide Faconti's BT.cpp library](https://www.behaviortree.dev/docs/category/nodes-library) are fully supported in BT Studio. 
 
 ```xml
 <root>
@@ -134,7 +134,7 @@ Although it is not a common practice, self-contained trees allow greater portabi
 
 4. Generate a ROS2 app
 
-Given a self-contained tree, `tree_gardener` is already able to transform it into an executable tree to be executed within ROS. BehaviorTrees, to offer greater ease of use and reduce the interaction with ROS, comes with an integrated app generation script. This script takes the previously generated tree and prepares a complete ROS 2 app, that can be directly installed. This is simply a ROS 2 package template with a prepared executor script, which calls all the necessary tree_gardener translator functions. If you know what you are doing, you can directly modify and use the [provided package template](tree_translator/ros_template). 
+Given a self-contained tree, `tree_gardener` is already able to transform it into an executable tree to be executed within ROS. BT Studio, to offer greater ease of use and reduce the interaction with ROS, comes with an integrated app generation script. This script takes the previously generated tree and prepares a complete ROS 2 app, that can be directly installed. This is simply a ROS 2 package template with a prepared executor script, which calls all the necessary tree_gardener translator functions. If you know what you are doing, you can directly modify and use the [provided package template](tree_translator/ros_template). 
 
 ```bash
 python3 generate_app.py trees/self_contained_tree.xml you_app_name
@@ -157,9 +157,9 @@ unzip your_app_name.zip
 
 2. Install execution dependecies
 
-#### BehaviorTrees dependecies
+#### BT Studio dependecies
 
-Move to the src of the ws and download BehaviorTrees depedencies
+Move to the src of the ws and download BT Studio depedencies
 ```bash
 cd ..
 vcs import < your_app/thirdparty.repos
@@ -214,13 +214,13 @@ In the future, this project will have total integration with [RoboticsAcademy](h
 * Integration with a dockerized environment 
 
 <!-- MARKDOWN LINKS & IMAGES -->
-[contributors-shield]: https://img.shields.io/github/contributors/JdeRobot/BehaviorTrees
-[contributors-url]: https://github.com/JdeRobot/BehaviorTrees/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/JdeRobot/BehaviorTrees
-[forks-url]: https://github.com/JdeRobot/BehaviorTrees/network/members
-[stars-shield]: https://img.shields.io/github/stars/JdeRobot/BehaviorTrees
-[stars-url]: https://github.com/JdeRobot/BehaviorTrees/stargazers
-[issues-shield]: https://img.shields.io/github/issues/JdeRobot/BehaviorTrees
-[issues-url]: https://github.com/JdeRobot/BehaviorTrees/issues
+[contributors-shield]: https://img.shields.io/github/contributors/JdeRobot/bt-studio
+[contributors-url]: https://github.com/JdeRobot/bt-studio/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/JdeRobot/bt-studio
+[forks-url]: https://github.com/JdeRobot/bt-studio/network/members
+[stars-shield]: https://img.shields.io/github/stars/JdeRobot/bt-studio
+[stars-url]: https://github.com/JdeRobot/bt-studio/stargazers
+[issues-shield]: https://img.shields.io/github/issues/JdeRobot/bt-studio
+[issues-url]: https://github.com/JdeRobot/bt-studio/issues
 [license-shield]: https://img.shields.io/github/license/opensource.org/licenses/GPL-3.0
 [license-url]: http://opensource.org/licenses/GPL-3.0
