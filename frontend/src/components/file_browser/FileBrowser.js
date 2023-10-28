@@ -5,27 +5,30 @@ import './FileBrowser.css';
 import add_img from './img/add.svg'
 import delete_img from './img/delete.svg'
 
-const FileBrowser = ({ setCurrentFilename, currentFilename }) => {
+const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname }) => {
 
   const [fileList, setFileList] = useState(null);
 
   useEffect(() => {
     fetchFileList();
-  }, []);
+  }, [currentProjectname]);
 
   const fetchFileList = () => {
-    axios.get('/tree_api/get_file_list')
-      .then(response => {
-        const files = response.data.file_list;
-        if (Array.isArray(files)) {
-          setFileList(files);
-        } else {
-          console.error('API response is not an array:', files);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching files:', error);
-      });
+
+    if (currentProjectname != '') {
+      axios.get(`/tree_api/get_file_list?project_name=${currentProjectname}`)
+        .then(response => {
+          const files = response.data.file_list;
+          if (Array.isArray(files)) {
+            setFileList(files);
+          } else {
+            console.error('API response is not an array:', files);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching files:', error);
+        });
+    }
   };
 
   const handleFileClick = (filename) => {
@@ -33,9 +36,10 @@ const FileBrowser = ({ setCurrentFilename, currentFilename }) => {
   };
 
   const handleCreateFile = () => {
+
     const filename = prompt("Enter new action name:");
     if (filename) {
-      axios.post('/tree_api/create_file/', { filename })
+      axios.get(`/tree_api/create_file?project_name=${currentProjectname}&filename=${filename}`)
         .then(response => {
           if (response.data.success) {
             fetchFileList();  // Update the file list
@@ -50,8 +54,9 @@ const FileBrowser = ({ setCurrentFilename, currentFilename }) => {
   };
 
   const handleDeleteFile = () => {
+
     if (currentFilename) {
-      axios.post('/tree_api/delete_file/', { filename: currentFilename })
+      axios.get(`/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}`)
         .then(response => {
           if (response.data.success) {
             fetchFileList();  // Update the file list
@@ -94,7 +99,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename }) => {
           ))}
         </div>
       ) : (
-        <p>Loading or encountered an error...</p>
+        <p>Create or select a project to start</p>
       )}
     </div>
   );

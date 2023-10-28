@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('create_project/', views.create_project, name='create_project'),
+    path('get_project_list/', views.get_project_list, name='get_project_list'),
     path('get_file_list/', views.get_file_list, name='get_file_list'),
     path('get_file/', views.get_file, name='get_file'),
     path('create_file/', views.create_file, name='create_file'),

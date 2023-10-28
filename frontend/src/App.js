@@ -11,6 +11,7 @@ const App = () => {
 
   const [editorWidth, setEditorWidth] = useState(700);
   const [currentFilename, setCurrentFilename] = useState('');
+  const [currentProjectname, setCurrentProjectname] = useState('');
 
   const onResize = (key, size) => {
     switch (key) {
@@ -25,7 +26,10 @@ const App = () => {
   return (
     <div className="App">
 
-      <HeaderMenu />
+      <HeaderMenu 
+        setCurrentProjectname={setCurrentProjectname} 
+        currentProjectname={currentProjectname}
+      />
 
       <div className="App-main" style={{ display: 'flex' }}>
 
@@ -33,6 +37,7 @@ const App = () => {
           <FileBrowser 
             setCurrentFilename={setCurrentFilename} 
             currentFilename={currentFilename}
+            currentProjectname={currentProjectname}
           />
         </div>
         
@@ -44,7 +49,10 @@ const App = () => {
           maxConstraints={[900, 900]}
         >
           <div style={{ width: `${editorWidth}px` }}>
-            <FileEditor currentFilename = {currentFilename} />
+            <FileEditor 
+              currentFilename = {currentFilename} 
+              currentProjectname={currentProjectname}
+            />
           </div>
         </Resizable>
 

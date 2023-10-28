@@ -7,15 +7,15 @@ import './FileEditor.css'
 
 import save_img from './img/save.svg' 
 
-const FileEditor = ({ currentFilename }) => {
+const FileEditor = ({ currentFilename, currentProjectname }) => {
   
   const [fileContent, setFileContent] = useState("");
   const [fontSize, setFontSize] = useState(14);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   useEffect(() => {
-    if (currentFilename) {
-      axios.get(`/tree_api/get_file?filename=${currentFilename}`)
+    if (currentFilename != '') {
+      axios.get(`/tree_api/get_file?project_name=${currentProjectname}&filename=${currentFilename}`)
         .then(response => {
           const content = response.data.content;
           setFileContent(content);
@@ -31,9 +31,16 @@ const FileEditor = ({ currentFilename }) => {
     }
   }, [currentFilename]);
 
+  useEffect(() => {
+    
+    setFileContent("");
+  }, [currentProjectname]);
+
   const handleSaveFile = () => {
+
     if (currentFilename) {
       axios.post('/tree_api/save_file/', {
+        project_name: currentProjectname,
         filename: currentFilename,
         content: fileContent
       })
