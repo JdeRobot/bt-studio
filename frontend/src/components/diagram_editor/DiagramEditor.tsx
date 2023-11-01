@@ -21,23 +21,21 @@ import NodeHeader from './NodeHeader'; // Import HeaderMenu
 
 const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname : any, setModelJson : any}) => {
 
+  // Create the engine
   const engine = useMemo(() => {
     const newEngine = createEngine();
     newEngine.getNodeFactories().registerFactory(new BasicNodeFactory());
     newEngine.getNodeFactories().registerFactory(new TagNodeFactory());
     return newEngine;
   }, []);
-  
-  const model = useMemo(() => {
-    const newModel = new DiagramModel();
-    const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
-    root_node.setPosition(200, 200);
-    root_node.addChildrenPort("Children Port");
-    newModel.addAll(root_node);
-    engine.setModel(newModel);
-    setModelJson(JSON.stringify(newModel.serialize()));
-    return newModel;
-  }, []);
+
+  // Create the model
+  const model = new DiagramModel();
+  const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
+  root_node.setPosition(200, 200);
+  root_node.addChildrenPort("Children Port");
+  model.addAll(root_node);
+  engine.setModel(model);
 
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
@@ -123,9 +121,11 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
     addDefaultPorts(newNode);
 
     // Add the node to the model
-    model.addNode(newNode);
-    engine.repaintCanvas();
-    setModelJson(JSON.stringify(model.serialize()));
+    if (model) {
+      model.addNode(newNode);
+      engine.repaintCanvas();
+      setModelJson(JSON.stringify(model.serialize()));
+    }
   };
 
   const addTagNode = (nodeName:any) => {
@@ -146,13 +146,15 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
     lastMovedNodePosition.y = new_y;
 
     // Add the node to the model
-    model.addNode(newNode);
-    engine.repaintCanvas();  
-    setModelJson(JSON.stringify(model.serialize()));
+    if (model) {
+      model.addNode(newNode);
+      engine.repaintCanvas();
+      setModelJson(JSON.stringify(model.serialize()));
+    }
   }
 
   const deleteLastClickedNode = () => {
-    if (lastClickedNodeId) {
+    if (model && lastClickedNodeId) {
       const node = model.getNode(lastClickedNodeId);
       if (node) {
         node.remove();
@@ -176,7 +178,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
 
   const addInputPort = () => {
 
-    if (lastClickedNodeId) {
+    if (model && lastClickedNodeId) {
 
       const genericNode = model.getNode(lastClickedNodeId);
       if (genericNode) {
@@ -202,7 +204,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
 
   const addOutputPort = () => {
 
-    if (lastClickedNodeId) {
+    if (model && lastClickedNodeId) {
       
       const genericNode = model.getNode(lastClickedNodeId);
       if (genericNode) {
@@ -235,7 +237,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ app_name: currentProjectname, content: str }),  // Change this line
+        body: JSON.stringify({ app_name: currentProjectname, content: str }),
       })
       .then((response) => {
         if (!response.ok) {
