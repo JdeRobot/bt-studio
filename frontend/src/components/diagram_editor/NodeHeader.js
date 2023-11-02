@@ -10,6 +10,7 @@ import './NodeHeader.css';
 import del_img from './img/del_node.svg'
 import add_input_img from './img/add_input.svg'
 import add_output_img from './img/add_output.svg'
+import download_img from './img/download.svg'
 
 const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, onAddInputPort, onAddOutputPort, onGenerateApp, currentProjectname }) => {
 
@@ -109,17 +110,17 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, onAddInputPort, onAddOut
         </Menu>
 
         <div className='action-buttons'>
-          <button className="node-action-button" onClick={onDeleteNode}>
+          <button className="node-action-button" onClick={onDeleteNode} title='Delete node'>
             <img className="icon" src={del_img}></img>
           </button>
-          <button className="node-action-button" onClick={onAddInputPort}>
+          <button className="node-action-button" onClick={onAddInputPort} title='Add input port'>
             <img className="icon" src={add_input_img}></img>
           </button>
-          <button className="node-action-button" onClick={onAddOutputPort}>
+          <button className="node-action-button" onClick={onAddOutputPort} title='Add output port'>
             <img className="icon" src={add_output_img}></img>
           </button>
-          <button className="node-action-button" onClick={onGenerateApp}>
-            <img className="icon" src={del_img}></img>
+          <button className="node-action-button" onClick={onGenerateApp} title='Download app'>
+            <img className="icon" src={download_img}></img>
           </button>
         </div>
 
