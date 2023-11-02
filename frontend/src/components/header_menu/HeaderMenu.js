@@ -76,6 +76,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
     // Assuming modelJson and currentProjectname are correctly populated
     if (!modelJson || !currentProjectname) {
       console.error('Either modelJson or currentProjectname is not set.');
+      window.alert("Please, select or create a project to store changes")
       return;
     }
 
@@ -105,11 +106,12 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
         <h1 className="Header-text">BT Studio IDE</h1>
 
         <div className='header-button-container'>
-        <h2>
-          <span className={`project-name-box ${projectChanges ? 'unsaved' : ''}`}>
-            {currentProjectname}
-          </span>
-        </h2>
+          {currentProjectname && (
+              <span className="project-name-box">
+                <div className='project-name'>{currentProjectname}</div>
+                {projectChanges && <div className="small-text">Unsaved</div>}
+              </span>
+          )}
 
           <button className="header-button" onClick={createProject} title="Create new project">
             <img className="header-icon" src={add_project_img}></img>
