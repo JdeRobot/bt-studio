@@ -69,9 +69,29 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson} ) =>
       });
   };
 
-  const test = () => {
+  const saveProject = () => {
+  
+    // Assuming modelJson and currentProjectname are correctly populated
+    if (!modelJson || !currentProjectname) {
+      console.error('Either modelJson or currentProjectname is not set.');
+      return;
+    }
 
-    console.log(modelJson);
+    axios.post('/tree_api/save_project/', {
+      project_name: currentProjectname,
+      graph_json: modelJson
+    })
+    .then(response => {
+      if (response.data.success) {
+        console.log('Project saved successfully.');
+      } else {
+        console.error('Error saving project:', response.data.message || 'Unknown error');
+      }
+    })
+    .catch(error => {
+      console.error('Axios Error:', error);
+    });
+
   };
   
   return (
@@ -86,7 +106,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson} ) =>
         <button className="node-action-button" onClick={changeProject}>
           <img className="header-icon" src={add_project_img}></img>
         </button>
-        <button className="node-action-button" onClick={test}>
+        <button className="node-action-button" onClick={saveProject}>
           <img className="header-icon" src={add_project_img}></img>
         </button>
       </Toolbar>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { DefaultPortLabel } from '@projectstorm/react-diagrams';
-import { ConnectionPortWidget } from './ports/ConnectionPortWidget';
+import { ChildrenPortWidget } from './ports/children_port/ChildrenPortWidget';
+import { ParentPortWidget } from './ports/parent_port/ParentPortWidget';
 import { InputPortWidget } from './ports/InputPortWidget';
 import { OutputPortWidget } from './ports/OutputPortWidget';
 
@@ -15,9 +16,8 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
         justifyContent: "space-between",
         border: '1px solid black',
         borderRadius: '5px',
-        background: node.getOptions().color || 'red',
-        paddingTop: "10px",
-        paddingBottom: "10px",
+        background: node.getColor() || 'red',
+        padding: '10px',
         flexDirection: "column"
     };
 
@@ -32,21 +32,16 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
         const port = node.getPort(portName);
         if (!port) return;
 
-        if (port.options.type === 'parent port') {
-            parentPorts.push(<ConnectionPortWidget key={portName} engine={engine} port={port} />);
-        } else if (port.options.type === 'children port') {
-            childrenPorts.push(<ConnectionPortWidget key={portName} engine={engine} port={port} />);
+        if (port.options.type === 'parent') {
+            parentPorts.push(<ParentPortWidget key={portName} engine={engine} port={port} />);
+        } else if (port.options.type === 'children') {
+            childrenPorts.push(<ChildrenPortWidget key={portName} engine={engine} port={port} />);
         } else if (port.options.type === 'input port') {
             inputPorts.push(<InputPortWidget key={portName} engine={engine} port={port} />);
         } else if (port.options.type === 'output port') {
             outputPorts.push(<OutputPortWidget key={portName} engine={engine} port={port} />);
         }
     });
-
-    // Apply styles depending on the quantity of ports (this is node styles)
-    if (parentPorts.length === 0 && childrenPorts.length > 0) {
-        nodeStyle = { ...nodeStyle, paddingLeft: '10px' };
-    } 
 
     // Return the node to render
     return (
@@ -55,9 +50,11 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
             <div className='basic-layer'>
                 {parentPorts}
                 <div className="basic-title">
-                    {node.getOptions().name}
+                    {node.getName()}
                 </div>
-                {childrenPorts.length > 0 ? childrenPorts : <div className='basic-placeholder'></div>}
+                <div className='basic-children-port'>
+                    {childrenPorts.length > 0 ? childrenPorts : <div className='basic-placeholder'></div>}
+                </div>
             </div>
             <div className='basic-layer'>
                 <div className="basic-left-ports">

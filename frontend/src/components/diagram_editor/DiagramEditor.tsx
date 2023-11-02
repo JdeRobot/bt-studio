@@ -18,23 +18,65 @@ import { TagNodeModel } from './nodes/tag_node/TagNodeModel';
 import { TagNodeFactory } from './nodes/tag_node/TagNodeFactory';
 
 import NodeHeader from './NodeHeader'; // Import HeaderMenu
+import axios from 'axios';
+
+import { SimplePortFactory } from './nodes/SimplePortFactory';
+import { ChildrenPortModel } from './nodes/basic_node/ports/children_port/ChildrenPortModel';
+import { ParentPortModel } from './nodes/basic_node/ports/parent_port/ParentPortModel';
 
 const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname : any, setModelJson : any}) => {
+
+  const [graphJson, setGraphJson] = useState(null);
 
   // Create the engine
   const engine = useMemo(() => {
     const newEngine = createEngine();
     newEngine.getNodeFactories().registerFactory(new BasicNodeFactory());
     newEngine.getNodeFactories().registerFactory(new TagNodeFactory());
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('children', (config) => new ChildrenPortModel()));
     return newEngine;
   }, []);
 
-  // Create the model
-  const model = new DiagramModel();
+  useEffect(() => {    
+    if (currentProjectname) { // Only execute the API call if currentProjectname is set
+      axios.get('/tree_api/get_project_graph/', {
+        params: {
+          project_name: currentProjectname
+        }
+      })
+      .then(response => {
+        if (response.data.success) {
+          // Set the model as the received json
+          setGraphJson(response.data.graph_json);
+        } else {
+          console.error(response.data.message);
+        }
+      })
+      .catch(error => {
+        setGraphJson(null);
+      });
+    }
+  
+  }, [currentProjectname]);
+  
+// Create the model
+var model = new DiagramModel();
+
+if (graphJson === null) {
   const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
   root_node.setPosition(200, 200);
   root_node.addChildrenPort("Children Port");
   model.addAll(root_node);
+} else {
+  try {
+    // Try parsing the JSON string
+    model.deserializeModel(graphJson, engine);
+  } catch (e) {
+    // Log the error for debugging
+    console.error("An error occurred while parsing the JSON:", e);
+  }
+}
+
   engine.setModel(model);
 
   // Initial node position
@@ -229,6 +271,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
   };
 
   const generateApp = () => {
+
     if (model) {
       const str = JSON.stringify(model.serialize());
     

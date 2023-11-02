@@ -13,6 +13,11 @@
     flex-direction: column;
 }
 
+.basic-children-port {
+    position: absolute;
+    left: 80px;
+}
+
 .basic-placeholder {
     width: 10px;
     height: 10px;
@@ -26,4 +31,6 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+    position: relative;
 }
