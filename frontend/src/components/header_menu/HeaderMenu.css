@@ -9,7 +9,44 @@
   margin-right: 10px;
 }
 
-.header-icon {
-  width: 30px;
-  height: 30px;
+.project-name-box {
+  display: flex;
+  border: 2px solid black; /* Black border */
+  background-color: transparent; /* Transparent background */
+  color: white;
+  padding: 10px;
+  min-width: 80px;
+  min-height: 45px;
+  margin-right: 10px;
+  justify-content: center;
+  /* Other styling as needed */
+}
+
+.project-name-box.unsaved {
+  border: 2px solid yellow;
+  /* Other styling for unsaved state */
+}
+
+
+.header-button-container {
+  display: flex;
+  width: 85%;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.header-button {
+  display: flex;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  background-color: #12494c;
+  border: 0;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.header-button:hover {
+  background-color: rgba(255, 255, 255, 0.264);
+  border-radius: 50%; /* Circular highlight */
 }
