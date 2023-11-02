@@ -11,7 +11,7 @@ import add_project_img from './img/add_project.svg'
 import change_project_img from './img/change_project.svg'
 import save_project_img from './img/save_project.svg'
 
-const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, projectChanges} ) => {
+const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, projectChanges, setProjectChanges} ) => {
 
   const createProject = () => {
 
@@ -79,7 +79,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
       return;
     }
 
-    console.log(modelJson);
+    setProjectChanges(false);
 
     axios.post('/tree_api/save_project/', {
       project_name: currentProjectname,

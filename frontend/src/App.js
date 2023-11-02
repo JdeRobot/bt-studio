@@ -33,6 +33,7 @@ const App = () => {
         currentProjectname={currentProjectname}
         modelJson={modelJson}
         projectChanges={projectChanges}
+        setProjectChanges={setProjectChanges}
       />
 
       <div className="App-main" style={{ display: 'flex' }}>
@@ -42,6 +43,7 @@ const App = () => {
             setCurrentFilename={setCurrentFilename} 
             currentFilename={currentFilename}
             currentProjectname={currentProjectname}
+            setProjectChanges={setProjectChanges}
           />
         </div>
         
