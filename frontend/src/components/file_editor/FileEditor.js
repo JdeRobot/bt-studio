@@ -7,7 +7,7 @@ import './FileEditor.css'
 
 import save_img from './img/save.svg' 
 
-const FileEditor = ({ currentFilename, currentProjectname }) => {
+const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) => {
   
   const [fileContent, setFileContent] = useState("");
   const [fontSize, setFontSize] = useState(14);
@@ -47,6 +47,7 @@ const FileEditor = ({ currentFilename, currentProjectname }) => {
       .then(response => {
         if (response.data.success) {
           setHasUnsavedChanges(false); // Reset the unsaved changes flag
+          setProjectChanges(false);
         } else {
           alert(`Failed to save file: ${response.data.message}`);
         }
@@ -91,6 +92,7 @@ const FileEditor = ({ currentFilename, currentProjectname }) => {
         value={fileContent}
         fontSize={fontSize}
         onChange={newContent => {
+          setProjectChanges(true);
           setFileContent(newContent);
           setHasUnsavedChanges(true); // Set the unsaved changes flag
         }}/>

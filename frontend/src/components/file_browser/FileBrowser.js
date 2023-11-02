@@ -5,7 +5,7 @@ import './FileBrowser.css';
 import add_img from './img/add.svg'
 import delete_img from './img/delete.svg'
 
-const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname }) => {
+const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, setProjectChanges}) => {
 
   const [fileList, setFileList] = useState(null);
 
@@ -42,6 +42,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname }
       axios.get(`/tree_api/create_file?project_name=${currentProjectname}&filename=${filename}`)
         .then(response => {
           if (response.data.success) {
+            setProjectChanges(true);
             fetchFileList();  // Update the file list
           } else {
             alert(response.data.message);
@@ -59,6 +60,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname }
       axios.get(`/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}`)
         .then(response => {
           if (response.data.success) {
+            setProjectChanges(true);
             fetchFileList();  // Update the file list
             setCurrentFilename(""); // Unset the current file
           } else {

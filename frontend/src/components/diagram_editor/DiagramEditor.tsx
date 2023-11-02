@@ -94,6 +94,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
         if (response.data.success) {
           // Set the model as the received json
           setGraphJson(response.data.graph_json);
+          setModelJson(response.data.graph_json);
         } else {
           console.error(response.data.message);
         }

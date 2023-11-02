@@ -27,18 +27,20 @@
 
 .action-buttons {
     margin-left: 10px;
+    display: flex;
 }
 
 .node-action-button {
-    width: 25px;
-    height: 25px;
-    margin-right: 2px;
-    margin-left: 2px;
+    display: flex;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
     background-color: black;
     border: 0;
 }
 
 .node-action-button:hover {
     background-color: rgba(255, 255, 255, 0.264);
-    border-radius: 100%;
+    border-radius: 50%; /* Circular highlight */
 }
+

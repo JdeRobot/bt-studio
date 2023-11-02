@@ -8,8 +8,10 @@ import logo_img from './img/logo.png'
 
 import './HeaderMenu.css'
 import add_project_img from './img/add_project.svg'
+import change_project_img from './img/change_project.svg'
+import save_project_img from './img/save_project.svg'
 
-const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson} ) => {
+const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, projectChanges, setProjectChanges} ) => {
 
   const createProject = () => {
 
@@ -77,7 +79,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson} ) =>
       return;
     }
 
-    console.log(modelJson);
+    setProjectChanges(false);
 
     axios.post('/tree_api/save_project/', {
       project_name: currentProjectname,
@@ -101,16 +103,26 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson} ) =>
       <Toolbar>
         <img src={logo_img} className="jde-icon" alt="JdeRobot logo"></img>
         <h1 className="Header-text">BT Studio IDE</h1>
-        <h2>{currentProjectname}</h2>
-        <button className="node-action-button" onClick={createProject}>
-          <img className="header-icon" src={add_project_img}></img>
-        </button>
-        <button className="node-action-button" onClick={changeProject}>
-          <img className="header-icon" src={add_project_img}></img>
-        </button>
-        <button className="node-action-button" onClick={saveProject}>
-          <img className="header-icon" src={add_project_img}></img>
-        </button>
+
+        <div className='header-button-container'>
+        <h2>
+          <span className={`project-name-box ${projectChanges ? 'unsaved' : ''}`}>
+            {currentProjectname}
+          </span>
+        </h2>
+
+          <button className="header-button" onClick={createProject} title="Create new project">
+            <img className="header-icon" src={add_project_img}></img>
+          </button>
+          <button className="header-button" onClick={changeProject} title="Change project">
+            <img className="header-icon" src={change_project_img}></img>
+          </button>
+          <button className="header-button" onClick={saveProject} title="Save project">
+            <img className="header-icon" src={save_project_img}></img>
+          </button>
+        </div>
+
+
       </Toolbar>
     </AppBar>
   );

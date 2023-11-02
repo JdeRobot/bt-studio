@@ -13,6 +13,7 @@ const App = () => {
   const [currentFilename, setCurrentFilename] = useState('');
   const [currentProjectname, setCurrentProjectname] = useState('');
   const [modelJson, setModelJson] = useState('');
+  const [projectChanges, setProjectChanges] = useState(false);
 
   const onResize = (key, size) => {
     switch (key) {
@@ -31,6 +32,8 @@ const App = () => {
         setCurrentProjectname={setCurrentProjectname} 
         currentProjectname={currentProjectname}
         modelJson={modelJson}
+        projectChanges={projectChanges}
+        setProjectChanges={setProjectChanges}
       />
 
       <div className="App-main" style={{ display: 'flex' }}>
@@ -40,6 +43,7 @@ const App = () => {
             setCurrentFilename={setCurrentFilename} 
             currentFilename={currentFilename}
             currentProjectname={currentProjectname}
+            setProjectChanges={setProjectChanges}
           />
         </div>
         
@@ -54,6 +58,7 @@ const App = () => {
             <FileEditor 
               currentFilename = {currentFilename} 
               currentProjectname={currentProjectname}
+              setProjectChanges={setProjectChanges}
             />
           </div>
         </Resizable>
