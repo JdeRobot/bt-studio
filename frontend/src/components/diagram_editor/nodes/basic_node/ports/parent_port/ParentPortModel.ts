@@ -5,6 +5,7 @@ export class ParentPortModel extends DefaultPortModel {
 		super({
 			type: 'parent',
 			name: 'parent',
+			label: 'parent',
 			in: true
 		});
 	}

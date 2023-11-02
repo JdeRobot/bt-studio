@@ -34,6 +34,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
     newEngine.getNodeFactories().registerFactory(new BasicNodeFactory());
     newEngine.getNodeFactories().registerFactory(new TagNodeFactory());
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('children', (config) => new ChildrenPortModel()));
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('parent', (config) => new ParentPortModel()));
     return newEngine;
   }, []);
 
@@ -89,6 +90,17 @@ if (graphJson === null) {
     node.registerListener({
       positionChanged: (event:any) => {
         lastMovedNodePosition = event.entity.getPosition();
+        setModelJson(JSON.stringify(model.serialize())); // Serialize and update model JSON
+      },
+    });
+  };
+
+  const attachLinkListener = (node:any) => {
+    node.registerListener({
+      linksUpdated: (event:any) => {
+        if (event.isCreated) {
+          setModelJson(JSON.stringify(model.serialize())); // Update when a new link is created
+        }
       },
     });
   };
@@ -150,6 +162,7 @@ if (graphJson === null) {
     // Attach listener to this node
     attachPositionListener(newNode);
     attachClickListener(newNode);
+    attachLinkListener(newNode);
     lastClickedNodeId = newNode.getID();
 
     // Setup the node position and ports

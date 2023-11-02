@@ -77,6 +77,8 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson} ) =>
       return;
     }
 
+    console.log(modelJson);
+
     axios.post('/tree_api/save_project/', {
       project_name: currentProjectname,
       graph_json: modelJson

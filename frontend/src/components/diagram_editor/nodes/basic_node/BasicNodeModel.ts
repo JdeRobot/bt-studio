@@ -1,6 +1,7 @@
 import { DefaultNodeModel, DefaultPortModel, NodeModel, NodeModelGenerics, PortModelAlignment } from '@projectstorm/react-diagrams';
 import { ParentPortModel } from './ports/parent_port/ParentPortModel';
 import { ChildrenPortModel } from './ports/children_port/ChildrenPortModel';
+import { DeserializeEvent } from '@projectstorm/react-canvas-core';
 
 export interface BasicNodeModelGenerics {
     PORT: ParentPortModel | ChildrenPortModel;
@@ -62,5 +63,19 @@ export class BasicNodeModel extends NodeModel<NodeModelGenerics & BasicNodeModel
         });
         this.addPort(port);
         return port;
+    }
+
+    serialize() {
+        return {
+          ...super.serialize(),
+          name: this.name,
+          color: this.color
+        };
+    }
+
+    deserialize(event: DeserializeEvent<this>): void {
+        super.deserialize(event);
+        this.name = event.data.name;
+        this.color = event.data.color;
     }
 }

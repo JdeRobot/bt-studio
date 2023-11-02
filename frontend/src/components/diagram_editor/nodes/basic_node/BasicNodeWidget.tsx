@@ -48,7 +48,9 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
         <div className='basic-node' style={nodeStyle}>
             
             <div className='basic-layer'>
-                {parentPorts}
+                <div className='basic-parent-port'>
+                    {parentPorts.length > 0 ? parentPorts : <div className='basic-placeholder'></div>}
+                </div>
                 <div className="basic-title">
                     {node.getName()}
                 </div>
