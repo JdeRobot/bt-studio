@@ -14,17 +14,32 @@ def get_tree_structure(link_models, node_models):
   tree_structure = {}
 
   # Build the tree structure
-  for link_id, link_info in link_models.items():
-      
-      source = link_info['source']
-      target = link_info['target']
+  for node_id, node_info in node_models.items():
+    
+    node_type = node_info['type']
+    node_ports = node_info['ports']
 
-      if node_models[target]["type"] == "tag": continue
-      
-      if source not in tree_structure:
-        tree_structure[source] = []
-      
-      tree_structure[source].append(target)
+    # If the node is a tag, there are other construction mechanisms
+    if node_type == "tag": continue
+
+    # Search for the children port
+    for port in node_ports:
+
+      if port['type'] == "children":
+        
+        # The current node_id is always the source
+        if node_id not in tree_structure:
+          tree_structure[node_id] = []
+        
+        # Get all the links
+        children_links = port['links']
+        for link in children_links:
+          
+          link_info = link_models[link]
+
+          # The user may have connected the node in both directions
+          child_node = link_info['target'] if link_info['target'] != node_id else link_info['source']
+          tree_structure[node_id].append(child_node)
 
   return tree_structure
 
@@ -37,7 +52,7 @@ def get_data_ports(node_models, link_models, node_id):
 
   for port in ports:
 
-    if port['type'] == "input port" or port['type'] == "output port":
+    if port['type'] == "input" or port['type'] == "output":
 
       # Get the link connecting the port to the value tag
       tag_port_link = link_models[port['links'][0]]

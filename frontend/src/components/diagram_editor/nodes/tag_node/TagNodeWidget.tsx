@@ -1,14 +1,14 @@
 import React, {useState, useEffect } from 'react';
 import { DefaultPortLabel } from '@projectstorm/react-diagrams';
-import { InputPortWidget } from './ports/TagInputPortWidget';
-import { OutputPortWidget } from './ports/TagOutputPortWidget';
+import { InputPortWidget } from './ports/input_port/TagInputPortWidget';
+import { OutputPortWidget } from './ports/output_port/TagOutputPortWidget';
 
 import './TagNode.css'
 
 // The node widget controls the visualization of the custom node
 export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
 
-    const [nodeName, setNodeName] = useState(node.options.name || "Unnamed");
+    const [nodeName, setNodeName] = useState(node.getName() || "Value");
 
     // Ports list
     const inputPorts: JSX.Element[] = [];
@@ -22,9 +22,9 @@ export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
         const port = node.getPort(portName);
         if (!port) return;
 
-        if (port.options.type === 'input port') {
+        if (port.options.type === 'tag input') {
             inputPorts.push(<InputPortWidget key={portName} engine={engine} port={port} />);
-        } else if (port.options.type === 'output port') {
+        } else if (port.options.type === 'tag output') {
             outputPorts.push(<OutputPortWidget key={portName} engine={engine} port={port} />);
         }
     });
@@ -41,7 +41,7 @@ export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
         if (newText !== null) {
             if (newText.length <= 25) {
                 setNodeName(newText);
-                node.options.name = newText;  // Update the node object as well
+                node.setName(newText);  // Update the node object as well
             } else {
                 alert("Name should be less than or equal to 25 characters.");
             }

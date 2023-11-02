@@ -1,60 +1,70 @@
-import { DefaultNodeModel, DefaultPortModel } from '@projectstorm/react-diagrams';
+import { DefaultNodeModel, DefaultPortModel, NodeModel, NodeModelGenerics, PortModelAlignment } from '@projectstorm/react-diagrams';
+import { ParentPortModel } from './ports/parent_port/ParentPortModel';
+import { ChildrenPortModel } from './ports/children_port/ChildrenPortModel';
+import { DeserializeEvent } from '@projectstorm/react-canvas-core';
+import { InputPortModel } from './ports/input_port/InputPortModel';
+import { OutputPortModel } from './ports/output_port/OutputPortModel';
 
-export class BasicNodeModel extends DefaultNodeModel {
+export interface BasicNodeModelGenerics {
+    PORT: ParentPortModel | ChildrenPortModel | InputPortModel | OutputPortModel;
+}
 
-    constructor(name: string = 'Special Node', color: string = 'rgb(0,192,255)') {
+export class BasicNodeModel extends NodeModel<NodeModelGenerics & BasicNodeModelGenerics> {
+
+    private name: string;
+    private color: string;
+
+    constructor(name: string = 'Basic Node', color: string = 'rgb(0,192,255)') {
         super({
             type: "basic",
-            name: name,
-            color: color,
         });
+        this.name = name;
+        this.color = color;
     }
 
-    // Method to add children port (they can be default model because only the widget, the visualization changes)
+    getName(): string {
+        return this.name;
+    }
+
+    getColor(): string {
+        return this.color;
+    }
+
     addChildrenPort(name: string) {
-        const port = new DefaultPortModel({
-            in: false,
-            name: name,
-            label: name,
-            type: 'children port'
-        });
+        const port = new ChildrenPortModel();
         this.addPort(port);
         return port;
     }
     
-    // Method to add a special port
     addParentPort(name: string) {
-        const port = new DefaultPortModel({
-            in: true,
-            name: name,
-            label: name,
-            type: 'parent port'
-        });
+        const port = new ParentPortModel();
         this.addPort(port);
         return port;
     }
 
-    // Method to add a normal port
     addInputPort(name: string) {
-        const port = new DefaultPortModel({
-            in: true,
-            name: name,
-            label: name,
-            type: 'input port'
-        });
+        const port = new InputPortModel(name);
         this.addPort(port);
         return port;
     }
 
-    // Method to add a normal port
     addOutputPort(name: string) {
-        const port = new DefaultPortModel({
-            in: false,
-            name: name,
-            label: name,
-            type: 'output port'
-        });
+        const port = new OutputPortModel(name);
         this.addPort(port);
         return port;
+    }
+
+    serialize() {
+        return {
+          ...super.serialize(),
+          name: this.name,
+          color: this.color
+        };
+    }
+
+    deserialize(event: DeserializeEvent<this>): void {
+        super.deserialize(event);
+        this.name = event.data.name;
+        this.color = event.data.color;
     }
 }

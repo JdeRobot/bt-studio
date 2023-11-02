@@ -4,13 +4,15 @@ import { Resizable } from 'react-resizable';
 import HeaderMenu from './components/header_menu/HeaderMenu';
 import FileBrowser from './components/file_browser/FileBrowser';
 import FileEditor from './components/file_editor/FileEditor';
-import DiagramEditor from './components/diagram_editor/DiagramEditor';
 import './App.css';
+import DiagramEditor from './components/diagram_editor/DiagramEditor';
 
 const App = () => {
 
   const [editorWidth, setEditorWidth] = useState(700);
   const [currentFilename, setCurrentFilename] = useState('');
+  const [currentProjectname, setCurrentProjectname] = useState('');
+  const [modelJson, setModelJson] = useState('');
 
   const onResize = (key, size) => {
     switch (key) {
@@ -25,7 +27,11 @@ const App = () => {
   return (
     <div className="App">
 
-      <HeaderMenu />
+      <HeaderMenu 
+        setCurrentProjectname={setCurrentProjectname} 
+        currentProjectname={currentProjectname}
+        modelJson={modelJson}
+      />
 
       <div className="App-main" style={{ display: 'flex' }}>
 
@@ -33,6 +39,7 @@ const App = () => {
           <FileBrowser 
             setCurrentFilename={setCurrentFilename} 
             currentFilename={currentFilename}
+            currentProjectname={currentProjectname}
           />
         </div>
         
@@ -44,12 +51,18 @@ const App = () => {
           maxConstraints={[900, 900]}
         >
           <div style={{ width: `${editorWidth}px` }}>
-            <FileEditor currentFilename = {currentFilename} />
+            <FileEditor 
+              currentFilename = {currentFilename} 
+              currentProjectname={currentProjectname}
+            />
           </div>
         </Resizable>
 
         <div style={{ flex: 1}}>
-          <DiagramEditor />
+          <DiagramEditor 
+            currentProjectname={currentProjectname}
+            setModelJson={setModelJson}
+          />
         </div>
         
       </div>

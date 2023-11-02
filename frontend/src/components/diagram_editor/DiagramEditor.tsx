@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import createEngine, { 
   DefaultLinkModel, 
   DefaultNodeModel,
+  DiagramEngine,
   DiagramModel 
 } from '@projectstorm/react-diagrams';
 
@@ -17,36 +18,42 @@ import { TagNodeModel } from './nodes/tag_node/TagNodeModel';
 import { TagNodeFactory } from './nodes/tag_node/TagNodeFactory';
 
 import NodeHeader from './NodeHeader'; // Import HeaderMenu
+import axios from 'axios';
 
-const DiagramEditor = () => {
+import { SimplePortFactory } from './nodes/SimplePortFactory';
+import { ChildrenPortModel } from './nodes/basic_node/ports/children_port/ChildrenPortModel';
+import { ParentPortModel } from './nodes/basic_node/ports/parent_port/ParentPortModel';
+import { OutputPortModel } from './nodes/basic_node/ports/output_port/OutputPortModel';
+import { InputPortModel } from './nodes/basic_node/ports/input_port/InputPortModel';
+import { TagInputPortModel } from './nodes/tag_node/ports/input_port/TagInputPortModel';
+import { TagOutputPortModel } from './nodes/tag_node/ports/output_port/TagOutputPortModel';
+
+const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname : any, setModelJson : any}) => {
+
+  const [graphJson, setGraphJson] = useState(null);
 
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
-
+  
   // Initialize state for last moved node ID
   let lastClickedNodeId = "";
 
-  // create an instance of the engine with all the defaults
-  const engine = createEngine();
-
-  // Register the custom node factory
-  engine.getNodeFactories().registerFactory(new BasicNodeFactory());
-  engine.getNodeFactories().registerFactory(new TagNodeFactory());
-
-  // Root node
-  const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)')
-  root_node.setPosition(200, 200);
-  root_node.addChildrenPort("Children Port")
-
-  const model = new DiagramModel();
-  model.addAll(root_node);
-
-  engine.setModel(model);
-
+  // Listeners
   const attachPositionListener = (node:any) => {
     node.registerListener({
       positionChanged: (event:any) => {
         lastMovedNodePosition = event.entity.getPosition();
+        setModelJson(JSON.stringify(model.serialize())); // Serialize and update model JSON
+      },
+    });
+  };
+
+  const attachLinkListener = (node:any) => {
+    node.registerListener({
+      linksUpdated: (event:any) => {
+        if (event.isCreated) {
+          setModelJson(JSON.stringify(model.serialize())); // Update when a new link is created
+        }
       },
     });
   };
@@ -60,6 +67,72 @@ const DiagramEditor = () => {
       },
     });
   };
+
+  // Create the engine
+  const engine = useMemo(() => {
+    const newEngine = createEngine();
+    newEngine.getNodeFactories().registerFactory(new BasicNodeFactory());
+    newEngine.getNodeFactories().registerFactory(new TagNodeFactory());
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('children', (config) => new ChildrenPortModel()));
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('parent', (config) => new ParentPortModel()));
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('output', (config) => new OutputPortModel("")));
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('input', (config) => new InputPortModel("")));
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('tag output', (config) => new TagOutputPortModel()));
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('tag input', (config) => new TagInputPortModel()));
+    return newEngine;
+  }, []);
+
+  // Update the graphJson when the project name changes
+  useEffect(() => {    
+    if (currentProjectname) { // Only execute the API call if currentProjectname is set
+      axios.get('/tree_api/get_project_graph/', {
+        params: {
+          project_name: currentProjectname
+        }
+      })
+      .then(response => {
+        if (response.data.success) {
+          // Set the model as the received json
+          setGraphJson(response.data.graph_json);
+        } else {
+          console.error(response.data.message);
+        }
+      })
+      .catch(error => {
+        setGraphJson(null);
+      });
+    }
+  
+  }, [currentProjectname]);
+  
+  // Create the model
+  var model = new DiagramModel();
+
+  if (graphJson === null) {
+    const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
+    root_node.setPosition(200, 200);
+    root_node.addChildrenPort("Children Port");
+    model.addAll(root_node);
+  } else {
+    try {
+      // Try parsing the JSON string
+      model.deserializeModel(graphJson, engine);
+
+      // After deserialization, attach listeners to each node
+      const nodes = model.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
+      nodes.forEach((node) => {
+        attachPositionListener(node);
+        attachLinkListener(node);
+        attachClickListener(node);
+      });
+    } catch (e) {
+      // Log the error for debugging
+      console.error("An error occurred while parsing the JSON:", e);
+    }
+  }
+
+  // Set the model in the engine
+  engine.setModel(model);
 
   // Add the nodes default ports
   const addDefaultPorts = (node:any) => {
@@ -108,6 +181,7 @@ const DiagramEditor = () => {
     // Attach listener to this node
     attachPositionListener(newNode);
     attachClickListener(newNode);
+    attachLinkListener(newNode);
     lastClickedNodeId = newNode.getID();
 
     // Setup the node position and ports
@@ -121,8 +195,11 @@ const DiagramEditor = () => {
     addDefaultPorts(newNode);
 
     // Add the node to the model
-    model.addNode(newNode);
-    engine.repaintCanvas();
+    if (model) {
+      model.addNode(newNode);
+      engine.repaintCanvas();
+      setModelJson(JSON.stringify(model.serialize()));
+    }
   };
 
   const addTagNode = (nodeName:any) => {
@@ -143,16 +220,20 @@ const DiagramEditor = () => {
     lastMovedNodePosition.y = new_y;
 
     // Add the node to the model
-    model.addNode(newNode);
-    engine.repaintCanvas();  
+    if (model) {
+      model.addNode(newNode);
+      engine.repaintCanvas();
+      setModelJson(JSON.stringify(model.serialize()));
+    }
   }
 
   const deleteLastClickedNode = () => {
-    if (lastClickedNodeId) {
+    if (model && lastClickedNodeId) {
       const node = model.getNode(lastClickedNodeId);
       if (node) {
         node.remove();
         engine.repaintCanvas();
+        setModelJson(JSON.stringify(model.serialize()));
       }
       lastClickedNodeId = "";
     }
@@ -171,7 +252,7 @@ const DiagramEditor = () => {
 
   const addInputPort = () => {
 
-    if (lastClickedNodeId) {
+    if (model && lastClickedNodeId) {
 
       const genericNode = model.getNode(lastClickedNodeId);
       if (genericNode) {
@@ -187,6 +268,7 @@ const DiagramEditor = () => {
             node.addInputPort(portName);
           }
           engine.repaintCanvas();
+          setModelJson(JSON.stringify(model.serialize()));
         } else {
           window.alert("Ports can only be added to action nodes")
         }
@@ -196,7 +278,7 @@ const DiagramEditor = () => {
 
   const addOutputPort = () => {
 
-    if (lastClickedNodeId) {
+    if (model && lastClickedNodeId) {
       
       const genericNode = model.getNode(lastClickedNodeId);
       if (genericNode) {
@@ -212,6 +294,7 @@ const DiagramEditor = () => {
             node.addOutputPort(portName);
           }
           engine.repaintCanvas();
+          setModelJson(JSON.stringify(model.serialize()));
         } else {
           window.alert("Ports can only be added to action nodes")
         }
@@ -221,18 +304,16 @@ const DiagramEditor = () => {
 
   const generateApp = () => {
 
-    const str = JSON.stringify(model.serialize());
-    console.log(str);
-
-    var app_name = prompt("Introduce your app name: ");
-  
-    fetch("/tree_api/generate_app/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ app_name, content: str }),
-    })
+    if (model) {
+      const str = JSON.stringify(model.serialize());
+    
+      fetch("/tree_api/generate_app/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ app_name: currentProjectname, content: str }),
+      })
       .then((response) => {
         if (!response.ok) {
           return response.json().then((data) => {
@@ -246,7 +327,7 @@ const DiagramEditor = () => {
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        a.download = `${app_name}.zip`;
+        a.download = `${currentProjectname}.zip`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -254,9 +335,9 @@ const DiagramEditor = () => {
       .catch((error) => {
         console.error("Error:", error);
       });
-  };
+    }
+  };  
   
-
   return (
     <div>
       <NodeHeader 
@@ -265,6 +346,7 @@ const DiagramEditor = () => {
         onAddInputPort={addInputPort}
         onAddOutputPort={addOutputPort}
         onGenerateApp={generateApp}
+        currentProjectname={currentProjectname}
       />
       <CanvasWidget className="canvas" engine={engine} />
     </div>

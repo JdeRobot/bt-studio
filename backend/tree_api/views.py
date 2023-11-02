@@ -9,15 +9,100 @@ from . import json_translator
 from django.http import HttpResponse
 from django.http import JsonResponse
 import mimetypes
+import json
+
+@api_view(['GET'])
+def create_project(request):
+
+    project_name = request.GET.get('project_name')
+    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, 'actions')
+    
+    if not os.path.exists(project_path):
+        os.mkdir(project_path)
+        os.mkdir(action_path)
+        return Response({'success': True})
+    else:
+        return Response({'success': False, 'message': 'Project already exists'}, status=400)
+
+@api_view(['GET'])
+def get_project_list(request):
+
+    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    
+    try:
+        # List all folders in the directory
+        project_list = [d for d in os.listdir(folder_path) if os.path.isdir(os.path.join(folder_path, d))]
+        
+        # Return the list of projects
+        return Response({'project_list': project_list})
+        
+    except Exception as e:
+        return Response({'error': f'An error occurred: {str(e)}'}, status=500)
+    
+@api_view(['POST'])
+def save_project(request):
+
+    # Get the app name and the graph
+    project_name = request.data.get('project_name')
+    graph_json = request.data.get('graph_json')
+
+    # Generate the paths
+    base_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(base_path, project_name)
+    graph_path = os.path.join(project_path, "graph.json")
+
+    if project_path and graph_json:
+
+        try:
+            # Obtain pretty json
+            graph = json.loads(graph_json)
+            graph_formated = json.dumps(graph, indent=4)
+
+            with open(graph_path, 'w') as f:
+                f.write(graph_formated)
+
+            return JsonResponse({'success': True})
+        
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Error deleting file: {str(e)}'}, status=500)
+    else:
+        return Response({'error': 'app_name parameter is missing'}, status=400)
+
+@api_view(['GET'])
+def get_project_graph(request):
+
+    project_name = request.GET.get('project_name')
+
+    # Generate the paths
+    base_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(base_path, project_name)
+    graph_path = os.path.join(project_path, "graph.json")
+
+    # Check if the project exists
+    if os.path.exists(graph_path):
+        try:
+            with open(graph_path, 'r') as f:
+                graph_data = json.load(f)
+            return JsonResponse({'success': True, 'graph_json': graph_data})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Error reading file: {str(e)}'}, status=500)
+    else:
+        return Response({'error': 'The project does not have a graph definition'}, status=404)
+
 
 @api_view(['GET'])
 def get_file_list(request):
     
+    project_name = request.GET.get('project_name')
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
-    
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, 'actions')
+
     try:
         # List all files in the directory
-        file_list = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+        file_list = [f for f in os.listdir(action_path) if os.path.isfile(os.path.join(action_path, f))]
         
         # Return the list of files
         return Response({'file_list': file_list})
@@ -28,13 +113,16 @@ def get_file_list(request):
 @api_view(['GET'])
 def get_file(request):
 
+    project_name = request.GET.get('project_name', None)
     filename = request.GET.get('filename', None)
     
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, 'actions')
     
     if filename:
-        file_path = os.path.join(folder_path, filename)
+        file_path = os.path.join(action_path, filename)
         if os.path.exists(file_path):
             with open(file_path, 'r') as f:
                 content = f.read()
@@ -45,12 +133,18 @@ def get_file(request):
     else:
         return Response({'error': 'Filename parameter is missing'}, status=400)
 
-@api_view(['POST'])
+@api_view(['GET'])
 def create_file(request):
 
-    filename = request.data.get('filename')
+    # Get the file info
+    project_name = request.GET.get('project_name', None)
+    filename = request.GET.get('filename', None)
+    
+    # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
-    file_path = os.path.join(folder_path, filename)
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, 'actions')
+    file_path = os.path.join(action_path, filename)
     
     if not os.path.exists(file_path):
         with open(file_path, 'w') as f:
@@ -59,11 +153,18 @@ def create_file(request):
     else:
         return Response({'success': False, 'message': 'File already exists'}, status=400)
 
-@api_view(['POST'])
+@api_view(['GET'])
 def delete_file(request):
-    filename = request.data.get('filename')
+    
+    # Get the file info
+    project_name = request.GET.get('project_name', None)
+    filename = request.GET.get('filename', None)
+    
+    # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
-    file_path = os.path.join(folder_path, filename)
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, 'actions')
+    file_path = os.path.join(action_path, filename)
     
     if os.path.exists(file_path):
         try:
@@ -74,15 +175,17 @@ def delete_file(request):
     else:
         return JsonResponse({'success': False, 'message': 'File does not exist'}, status=404)
 
-
 @api_view(['POST'])
 def save_file(request):
 
+    project_name = request.data.get('project_name')
     filename = request.data.get('filename')
     content = request.data.get('content')
     
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
-    file_path = os.path.join(folder_path, filename)
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, 'actions')
+    file_path = os.path.join(action_path, filename)
 
     try:
         with open(file_path, 'w') as f:
@@ -116,7 +219,9 @@ def generate_app(request):
     content = request.data.get('content')
 
     # Make folder path relative to Django app
-    action_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    base_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(base_path, app_name)
+    action_path = os.path.join(project_path, 'actions')
     tree_path = os.path.join('/tmp/tree.xml')
     self_contained_tree_path = os.path.join('/tmp/self_contained_tree.xml')
     template_path = os.path.join(settings.BASE_DIR, 'ros_template')
@@ -148,8 +253,7 @@ def generate_app(request):
         except Exception as e:
             return Response({'success': False, 'message': str(e)}, status=400)
     else:
-        return Response({'error': 'app_name parameter is missing'}, status=400)
-
+        return Response({'error': 'app_name parameter is missing'}, status=500)
 
 
     

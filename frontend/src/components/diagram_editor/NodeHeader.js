@@ -11,7 +11,7 @@ import del_img from './img/del_node.svg'
 import add_input_img from './img/add_input.svg'
 import add_output_img from './img/add_output.svg'
 
-const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, onAddInputPort, onAddOutputPort, onGenerateApp }) => {
+const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, onAddInputPort, onAddOutputPort, onGenerateApp, currentProjectname }) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuLabel, setMenuLabel] = useState("");
@@ -40,7 +40,8 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, onAddInputPort, onAddOut
   
   // Fetch the file list and update actionList
   const fetchActionList = () => {
-    axios.get('/tree_api/get_file_list')
+
+    axios.get(`/tree_api/get_file_list?project_name=${currentProjectname}`)
       .then(response => {
         const files = response.data.file_list;
         if (Array.isArray(files)) {
