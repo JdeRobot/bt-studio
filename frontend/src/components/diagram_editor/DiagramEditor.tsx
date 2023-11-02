@@ -28,64 +28,13 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
 
   const [graphJson, setGraphJson] = useState(null);
 
-  // Create the engine
-  const engine = useMemo(() => {
-    const newEngine = createEngine();
-    newEngine.getNodeFactories().registerFactory(new BasicNodeFactory());
-    newEngine.getNodeFactories().registerFactory(new TagNodeFactory());
-    newEngine.getPortFactories().registerFactory(new SimplePortFactory('children', (config) => new ChildrenPortModel()));
-    newEngine.getPortFactories().registerFactory(new SimplePortFactory('parent', (config) => new ParentPortModel()));
-    return newEngine;
-  }, []);
-
-  useEffect(() => {    
-    if (currentProjectname) { // Only execute the API call if currentProjectname is set
-      axios.get('/tree_api/get_project_graph/', {
-        params: {
-          project_name: currentProjectname
-        }
-      })
-      .then(response => {
-        if (response.data.success) {
-          // Set the model as the received json
-          setGraphJson(response.data.graph_json);
-        } else {
-          console.error(response.data.message);
-        }
-      })
-      .catch(error => {
-        setGraphJson(null);
-      });
-    }
-  
-  }, [currentProjectname]);
-  
-// Create the model
-var model = new DiagramModel();
-
-if (graphJson === null) {
-  const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
-  root_node.setPosition(200, 200);
-  root_node.addChildrenPort("Children Port");
-  model.addAll(root_node);
-} else {
-  try {
-    // Try parsing the JSON string
-    model.deserializeModel(graphJson, engine);
-  } catch (e) {
-    // Log the error for debugging
-    console.error("An error occurred while parsing the JSON:", e);
-  }
-}
-
-  engine.setModel(model);
-
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
   
   // Initialize state for last moved node ID
   let lastClickedNodeId = "";
 
+  // Listeners
   const attachPositionListener = (node:any) => {
     node.registerListener({
       positionChanged: (event:any) => {
@@ -114,6 +63,68 @@ if (graphJson === null) {
       },
     });
   };
+
+  // Create the engine
+  const engine = useMemo(() => {
+    const newEngine = createEngine();
+    newEngine.getNodeFactories().registerFactory(new BasicNodeFactory());
+    newEngine.getNodeFactories().registerFactory(new TagNodeFactory());
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('children', (config) => new ChildrenPortModel()));
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('parent', (config) => new ParentPortModel()));
+    return newEngine;
+  }, []);
+
+  // Update the graphJson when the project name changes
+  useEffect(() => {    
+    if (currentProjectname) { // Only execute the API call if currentProjectname is set
+      axios.get('/tree_api/get_project_graph/', {
+        params: {
+          project_name: currentProjectname
+        }
+      })
+      .then(response => {
+        if (response.data.success) {
+          // Set the model as the received json
+          setGraphJson(response.data.graph_json);
+        } else {
+          console.error(response.data.message);
+        }
+      })
+      .catch(error => {
+        setGraphJson(null);
+      });
+    }
+  
+  }, [currentProjectname]);
+  
+  // Create the model
+  var model = new DiagramModel();
+
+  if (graphJson === null) {
+    const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
+    root_node.setPosition(200, 200);
+    root_node.addChildrenPort("Children Port");
+    model.addAll(root_node);
+  } else {
+    try {
+      // Try parsing the JSON string
+      model.deserializeModel(graphJson, engine);
+
+      // After deserialization, attach listeners to each node
+      const nodes = model.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
+      nodes.forEach((node) => {
+        attachPositionListener(node);
+        attachLinkListener(node);
+        attachClickListener(node);
+      });
+    } catch (e) {
+      // Log the error for debugging
+      console.error("An error occurred while parsing the JSON:", e);
+    }
+  }
+
+  // Set the model in the engine
+  engine.setModel(model);
 
   // Add the nodes default ports
   const addDefaultPorts = (node:any) => {
