@@ -23,6 +23,10 @@ import axios from 'axios';
 import { SimplePortFactory } from './nodes/SimplePortFactory';
 import { ChildrenPortModel } from './nodes/basic_node/ports/children_port/ChildrenPortModel';
 import { ParentPortModel } from './nodes/basic_node/ports/parent_port/ParentPortModel';
+import { OutputPortModel } from './nodes/basic_node/ports/output_port/OutputPortModel';
+import { InputPortModel } from './nodes/basic_node/ports/input_port/InputPortModel';
+import { TagInputPortModel } from './nodes/tag_node/ports/input_port/TagInputPortModel';
+import { TagOutputPortModel } from './nodes/tag_node/ports/output_port/TagOutputPortModel';
 
 const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname : any, setModelJson : any}) => {
 
@@ -71,6 +75,10 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
     newEngine.getNodeFactories().registerFactory(new TagNodeFactory());
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('children', (config) => new ChildrenPortModel()));
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('parent', (config) => new ParentPortModel()));
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('output', (config) => new OutputPortModel("")));
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('input', (config) => new InputPortModel("")));
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('tag output', (config) => new TagOutputPortModel()));
+    newEngine.getPortFactories().registerFactory(new SimplePortFactory('tag input', (config) => new TagInputPortModel()));
     return newEngine;
   }, []);
 

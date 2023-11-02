@@ -2,8 +2,8 @@ import React from 'react';
 import { DefaultPortLabel } from '@projectstorm/react-diagrams';
 import { ChildrenPortWidget } from './ports/children_port/ChildrenPortWidget';
 import { ParentPortWidget } from './ports/parent_port/ParentPortWidget';
-import { InputPortWidget } from './ports/InputPortWidget';
-import { OutputPortWidget } from './ports/OutputPortWidget';
+import { InputPortWidget } from './ports/input_port/InputPortWidget';
+import { OutputPortWidget } from './ports/output_port/OutputPortWidget';
 
 import './BasicNode.css'
 
@@ -36,9 +36,9 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
             parentPorts.push(<ParentPortWidget key={portName} engine={engine} port={port} />);
         } else if (port.options.type === 'children') {
             childrenPorts.push(<ChildrenPortWidget key={portName} engine={engine} port={port} />);
-        } else if (port.options.type === 'input port') {
+        } else if (port.options.type === 'input') {
             inputPorts.push(<InputPortWidget key={portName} engine={engine} port={port} />);
-        } else if (port.options.type === 'output port') {
+        } else if (port.options.type === 'output') {
             outputPorts.push(<OutputPortWidget key={portName} engine={engine} port={port} />);
         }
     });

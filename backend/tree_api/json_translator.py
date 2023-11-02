@@ -37,7 +37,7 @@ def get_data_ports(node_models, link_models, node_id):
 
   for port in ports:
 
-    if port['type'] == "input port" or port['type'] == "output port":
+    if port['type'] == "input" or port['type'] == "output":
 
       # Get the link connecting the port to the value tag
       tag_port_link = link_models[port['links'][0]]

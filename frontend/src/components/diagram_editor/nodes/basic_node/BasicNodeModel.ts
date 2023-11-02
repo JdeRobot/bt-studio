@@ -2,9 +2,11 @@ import { DefaultNodeModel, DefaultPortModel, NodeModel, NodeModelGenerics, PortM
 import { ParentPortModel } from './ports/parent_port/ParentPortModel';
 import { ChildrenPortModel } from './ports/children_port/ChildrenPortModel';
 import { DeserializeEvent } from '@projectstorm/react-canvas-core';
+import { InputPortModel } from './ports/input_port/InputPortModel';
+import { OutputPortModel } from './ports/output_port/OutputPortModel';
 
 export interface BasicNodeModelGenerics {
-    PORT: ParentPortModel | ChildrenPortModel;
+    PORT: ParentPortModel | ChildrenPortModel | InputPortModel | OutputPortModel;
 }
 
 export class BasicNodeModel extends NodeModel<NodeModelGenerics & BasicNodeModelGenerics> {
@@ -34,33 +36,20 @@ export class BasicNodeModel extends NodeModel<NodeModelGenerics & BasicNodeModel
         return port;
     }
     
-    // Method to add a special port
     addParentPort(name: string) {
         const port = new ParentPortModel();
         this.addPort(port);
         return port;
     }
 
-    // Method to add a normal port
     addInputPort(name: string) {
-        const port = new DefaultPortModel({
-            in: true,
-            name: name,
-            label: name,
-            type: 'input port'
-        });
+        const port = new InputPortModel(name);
         this.addPort(port);
         return port;
     }
 
-    // Method to add a normal port
     addOutputPort(name: string) {
-        const port = new DefaultPortModel({
-            in: false,
-            name: name,
-            label: name,
-            type: 'output port'
-        });
+        const port = new OutputPortModel(name);
         this.addPort(port);
         return port;
     }
