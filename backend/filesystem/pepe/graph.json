@@ -1,0 +1,114 @@
+{
+    "id": "02dadec9-e2ae-4676-ab97-f8fdecb131a3",
+    "offsetX": 0,
+    "offsetY": 0,
+    "zoom": 100,
+    "gridSize": 0,
+    "layers": [
+        {
+            "id": "f4531826-b40f-41d6-a4ae-bbf65c4b2829",
+            "type": "diagram-links",
+            "isSvg": true,
+            "transformed": true,
+            "models": {
+                "15812a9a-6e1a-4ad3-a053-113288ad3578": {
+                    "id": "15812a9a-6e1a-4ad3-a053-113288ad3578",
+                    "type": "default",
+                    "selected": true,
+                    "source": "9581312b-94af-4b37-8bd1-1a4b060096c2",
+                    "sourcePort": "c36bf8ad-d992-4575-af72-5f756b6545f9",
+                    "target": "2a6af536-ec7f-455c-80f9-3205a98ed0f5",
+                    "targetPort": "d9a2b915-7f3c-462b-8c8a-4938a4844460",
+                    "points": [
+                        {
+                            "id": "d1b553d0-bd0e-4840-88b2-ea5ed387a58a",
+                            "type": "point",
+                            "x": 295.64996337890625,
+                            "y": 220.5
+                        },
+                        {
+                            "id": "4c0b4095-ba11-4616-8122-1f389ded28f7",
+                            "type": "point",
+                            "x": 350.99993896484375,
+                            "y": 170.5
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                }
+            }
+        },
+        {
+            "id": "7268241d-42a9-4eba-be1c-818867834054",
+            "type": "diagram-nodes",
+            "isSvg": false,
+            "transformed": true,
+            "models": {
+                "9581312b-94af-4b37-8bd1-1a4b060096c2": {
+                    "id": "9581312b-94af-4b37-8bd1-1a4b060096c2",
+                    "type": "basic",
+                    "x": 200,
+                    "y": 200,
+                    "ports": [
+                        {
+                            "id": "c36bf8ad-d992-4575-af72-5f756b6545f9",
+                            "type": "children",
+                            "x": 290.64996337890625,
+                            "y": 215.5,
+                            "name": "children",
+                            "alignment": "right",
+                            "parentNode": "9581312b-94af-4b37-8bd1-1a4b060096c2",
+                            "links": [
+                                "15812a9a-6e1a-4ad3-a053-113288ad3578"
+                            ],
+                            "in": false,
+                            "label": "children"
+                        }
+                    ],
+                    "name": "Tree Root",
+                    "color": "rgb(0,204,0)"
+                },
+                "2a6af536-ec7f-455c-80f9-3205a98ed0f5": {
+                    "id": "2a6af536-ec7f-455c-80f9-3205a98ed0f5",
+                    "type": "basic",
+                    "selected": true,
+                    "x": 350,
+                    "y": 149,
+                    "ports": [
+                        {
+                            "id": "d9a2b915-7f3c-462b-8c8a-4938a4844460",
+                            "type": "parent",
+                            "x": 345.99993896484375,
+                            "y": 165.5,
+                            "name": "parent",
+                            "alignment": "left",
+                            "parentNode": "2a6af536-ec7f-455c-80f9-3205a98ed0f5",
+                            "links": [
+                                "15812a9a-6e1a-4ad3-a053-113288ad3578"
+                            ],
+                            "in": true,
+                            "label": "parent"
+                        },
+                        {
+                            "id": "6c86d729-7978-4e14-b652-80fa940f61aa",
+                            "type": "children",
+                            "x": 439.46661376953125,
+                            "y": 165.5,
+                            "name": "children",
+                            "alignment": "right",
+                            "parentNode": "2a6af536-ec7f-455c-80f9-3205a98ed0f5",
+                            "links": [],
+                            "in": false,
+                            "label": "children"
+                        }
+                    ],
+                    "name": "Sequence",
+                    "color": "rgb(0,128,255)"
+                }
+            }
+        }
+    ]
+}

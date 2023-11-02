@@ -28,7 +28,7 @@ import { InputPortModel } from './nodes/basic_node/ports/input_port/InputPortMod
 import { TagInputPortModel } from './nodes/tag_node/ports/input_port/TagInputPortModel';
 import { TagOutputPortModel } from './nodes/tag_node/ports/output_port/TagOutputPortModel';
 
-const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname : any, setModelJson : any}) => {
+const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges} : {currentProjectname : any, setModelJson : any, setProjectChanges:any}) => {
 
   const [graphJson, setGraphJson] = useState(null);
 
@@ -43,6 +43,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
     node.registerListener({
       positionChanged: (event:any) => {
         lastMovedNodePosition = event.entity.getPosition();
+        setProjectChanges(true);
         setModelJson(JSON.stringify(model.serialize())); // Serialize and update model JSON
       },
     });
@@ -52,6 +53,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
     node.registerListener({
       linksUpdated: (event:any) => {
         if (event.isCreated) {
+          setProjectChanges(true);
           setModelJson(JSON.stringify(model.serialize())); // Update when a new link is created
         }
       },
@@ -198,6 +200,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
     // Add the node to the model
     if (model) {
       model.addNode(newNode);
+      setProjectChanges(true);
       engine.repaintCanvas();
       setModelJson(JSON.stringify(model.serialize()));
     }
@@ -223,6 +226,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
     // Add the node to the model
     if (model) {
       model.addNode(newNode);
+      setProjectChanges(true);
       engine.repaintCanvas();
       setModelJson(JSON.stringify(model.serialize()));
     }
@@ -233,6 +237,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
       const node = model.getNode(lastClickedNodeId);
       if (node) {
         node.remove();
+        setProjectChanges(true);
         engine.repaintCanvas();
         setModelJson(JSON.stringify(model.serialize()));
       }
@@ -266,6 +271,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
           // Now you can call your custom method
           const portName = prompt("Enter the name for the new input port:");
           if (portName !== null) { // Check that the user didn't cancel
+            setProjectChanges(true);
             node.addInputPort(portName);
           }
           engine.repaintCanvas();
@@ -292,6 +298,7 @@ const DiagramEditor = ({currentProjectname, setModelJson} : {currentProjectname 
           // Now you can call your custom method
           const portName = prompt("Enter the name for the new output port:");
           if (portName !== null) { // Check that the user didn't cancel
+            setProjectChanges(true);
             node.addOutputPort(portName);
           }
           engine.repaintCanvas();

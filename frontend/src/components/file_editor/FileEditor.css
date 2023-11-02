@@ -37,17 +37,19 @@
 }
 
 .save-button {
+    display: flex;
+    justify-content: center;
     width: 25px;
     height: 25px;
     background-color: black;
     border: 0;
+    margin-left: 3px;
+    margin-right: 3px;
 }
 
 .save-button:hover {
     background-color: rgba(255, 255, 255, 0.264);
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
+    border-radius: 50%; /* Circular highlight */
 }
 
 .unsaved-dot {

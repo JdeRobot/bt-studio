@@ -67,6 +67,7 @@ const App = () => {
           <DiagramEditor 
             currentProjectname={currentProjectname}
             setModelJson={setModelJson}
+            setProjectChanges={setProjectChanges}
           />
         </div>
         

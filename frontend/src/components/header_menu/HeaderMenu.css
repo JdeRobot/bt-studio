@@ -11,22 +11,21 @@
 
 .project-name-box {
   display: flex;
-  border: 2px solid black; /* Black border */
-  background-color: transparent; /* Transparent background */
+  flex-direction: column;
+  background-color: #12494c; /* Transparent background */
   color: white;
   padding: 10px;
-  min-width: 80px;
-  min-height: 45px;
-  margin-right: 10px;
   justify-content: center;
   /* Other styling as needed */
 }
 
-.project-name-box.unsaved {
-  border: 2px solid yellow;
-  /* Other styling for unsaved state */
+.project-name {
+  font-weight: bold;
 }
 
+.small-text {
+  font-size: 0.7rem; /* Adjust the size as needed */
+}
 
 .header-button-container {
   display: flex;
