@@ -138,7 +138,7 @@ def setup_package(temp_path, action_path, user_data):
 # Main section
 ##############################################################################
 
-def generate(app_tree, app_name, template_path, action_path):
+def generate(app_tree, app_name, template_path, action_path, tree_gardener_path):
 
     temp_path = "/tmp/ros_template"
 
