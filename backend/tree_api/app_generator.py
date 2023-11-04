@@ -138,32 +138,40 @@ def setup_package(temp_path, action_path, user_data):
 # Main section
 ##############################################################################
 
-def generate(app_tree, app_name, template_path, action_path, tree_gardener_path):
+def generate(app_tree, app_name, template_path, action_path, tree_gardener_src):
 
-    temp_path = "/tmp/ros_template"
+    app_path = "/tmp/" + app_name
+    executor_path = app_path + "/" + app_name
+    tree_gardener_dst = app_path + "/tree_gardener"
 
     # Ensure the files exist
     if not os.path.exists(app_tree):
         raise FileNotFoundError(f"Tree path '{app_tree}' does not exist!")
 
     # 1. Copy the template to a temporary directory
-    if os.path.exists(temp_path):
-        shutil.rmtree(temp_path)  # Delete if it already exists
-    shutil.copytree(template_path, temp_path)
-    print(f"Template copied to {temp_path}")
+    if os.path.exists(executor_path):
+        shutil.rmtree(executor_path)  # Delete if it already exists
+    shutil.copytree(template_path, executor_path)
+    print(f"Template copied to {executor_path}")
 
     # 2. Copy the tree to the template directory
-    tree_location = temp_path + "/resource/app_tree.xml"
+    tree_location = executor_path + "/resource/app_tree.xml"
     shutil.copy(app_tree, tree_location)
 
     # 3. Edit some files in the template
     user_data = {"app_name": app_name}
-    setup_package(temp_path, action_path, user_data)
+    setup_package(executor_path, action_path, user_data)
+
+    # 4. Copy the tree_gardener package to the app
+    if os.path.exists(tree_gardener_dst):
+        shutil.rmtree(tree_gardener_dst)  # Delete if it already exists
+    shutil.copytree(tree_gardener_src, tree_gardener_dst)
+    print(f"Tree gardener copied to {tree_gardener_dst}")
 
     # 3. Generate a zip file in the destination folder with a name specified by the user
-    dest_path = "/tmp/" + app_name + ".zip"
+    dest_path = app_path + ".zip"
     with zipfile.ZipFile(dest_path, 'w') as zipf:
-        zipdir(temp_path, zipf)
+        zipdir(app_path, zipf)
     print(f"Directory compressed to {dest_path}")
 
     return dest_path
