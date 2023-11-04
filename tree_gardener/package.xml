@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>ros_template</name>
-  <version>0.1.0</version>
-  <description>A ROS2 app generated BT Studio</description>
-  <maintainer email="mantainer@mail.com">Mantainer</maintainer>
+  <name>tree_gardener</name>
+  <version>0.2.0</version>
+  <description>BT execution engine for BT Studio</description>
+  <maintainer email="oscar.robotics@tutanota.com">Óscar Martínez</maintainer>
   <license>GPLv3</license>
 
   <exec_depend>rclpy</exec_depend>
