@@ -44,7 +44,7 @@ pip install django djangorestframework
 python3 manage.py runserver
 ```
 
-**Do not close the terminal where this is executing!** Django provides the necessary backend funcionalities. For continuing the process, simply open a new terminal. 
+**Do not close the terminal where this is executing!**. Django provides the necessary backend funcionalities. For continuing the process, simply open a new terminal. 
 
 6. Install the appropiate nodejs version
 
@@ -147,7 +147,7 @@ Clicking the green download button, a ROS 2 app is generated. This can be unzipe
 
 ### Using the generated app
 
-1. You need to ROS2 humble installed in your system. Please follow this [guide](https://docs.ros.org/en/humble/Installation.html) if you haven't. After that, source the ros underlay. 
+1. You need to ROS 2 humble installed in your system. Please follow this [guide](https://docs.ros.org/en/humble/Installation.html) if you haven't. After that, source the ros underlay. It is highly recommended to add this line at the end of your `.basrhc` file. 
 
 ```bash
 source /opt/ros/humble/setup.bash
@@ -161,7 +161,7 @@ mv your_app.zip your_ws/src
 unzip your_ws/src/your_app.zip
 ```
 
-2. Init rosdep
+3. Init rosdep
 
 You may have to init the ROS dependency manager if you haven't done it before. 
 
@@ -170,7 +170,7 @@ sudo rosdep init
 rosdep update
 ```
 
-3. Downloading auxiliary tools and dependencies
+4. Downloading auxiliary tools and dependencies
 
 These are a testing environment in the Webots simulator and a tree execution visualizer. 
 
@@ -181,14 +181,14 @@ cd ../..
 rosdep install --from-paths src -r -y --ignore-src
 ```
 
-4. Compiling
+5. Compiling
 
 ```bash
 colcon build --symlink-install
 source install/setup.bash
 ```
 
-5. Launching a testing environment
+6. Launching a testing environment
 
 You may choose whatever environment for your app to execute into, but we provide some prepared packages for convenience.
 
@@ -197,12 +197,12 @@ ros2 launch tb4_sim tb4_launcher.py
 py-trees-tree-viewer
 ```
 
-6. Launching the app
+7. Launching the app
 
 Now, using the app executor, you may launch the app itself. 
 
 ```bash
-ros2 run your_app executor
+ros2 run your_app_name executor
 ```
 
 ## Showcase
