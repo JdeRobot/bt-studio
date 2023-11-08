@@ -106,7 +106,6 @@ def update_package_xml(package_xml_path, unique_imports):
     with open(package_xml_path, 'w') as file:
         file.write(updated_content)
 
-
 # Setup the package with the user data
 def setup_package(temp_path, action_path, user_data):
 

@@ -4,7 +4,7 @@
 
 # BT Studio
 
-![version](https://img.shields.io/badge/Version-0.1-blue)
+![version](https://img.shields.io/badge/Version-0.2-blue)
 ![distro](https://img.shields.io/badge/ROS2-Humble-blue)
 [![Forks][forks-shield]][forks-url]
 [![License](http://img.shields.io/:license-gpl-green.svg)](http://opensource.org/licenses/GPL-3.0)
@@ -17,22 +17,18 @@ BT Studio is an **open-source** tool crafted for the development of robotic appl
 
 ### Installation
 
-1. You need to ROS2 humble installed in your system. Please follow this [guide](https://docs.ros.org/en/humble/Installation.html) if you haven't. After that, source the ros underlay. 
-```bash
-source /opt/ros/humble/setup.bash
-```
-
-2. Clone the repo and enter it
+1. Clone the repo and enter it
 ```bash
 git clone https://github.com/JdeRobot/bt-studio
 cd bt-studio
 ```
 
-3. Install the necessary packages
+2. Install the necessary packages
 ```bash
 sudo apt update
-sudo apt install python3-vcstool python3-pip python3-rosdep python3-colcon-common-extensions -y
+sudo apt install npm python3-vcstool python3-pip python3-rosdep python3-colcon-common-extensions python3-autopep8 -y
 ```
+
 4. Install the backend dependencies
 ```bash
 cd backend
@@ -43,13 +39,32 @@ pip install django djangorestframework
 ```
 
 5. Launch the backend
+
 ```bash
 python3 manage.py runserver
 ```
 
-6. Setup the frontend
+**Do not close the terminal where this is executing!**. Django provides the necessary backend funcionalities. For continuing the process, simply open a new terminal. 
+
+6. Install the appropiate nodejs version
+
+```bash
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+source ~/.bashrc
+nvm install 16
+nvm use 16
+```
+
+7. Install Yarn
+
+```bash
+sudo npm install --global yarn
+```
+
+8. Setup the frontend
 
 From the bt_studio folder:
+
 ```bash
 cd frontend
 yarn install
@@ -60,7 +75,11 @@ A new window in the browser should have opened. If not, go to [BT Studio](http:/
 
 ### Generating apps
 
-1. Write actions
+1. Create new app
+
+You may create a new app clicking the **+** button in the upper right corner, or swap to the the demo project clicking the change button next to it and typing *demo*. In the demo project, you may find a reference implementation of a bump and go app for a differential robot using a LIDAR. Feel free to explore and use whatever you need!
+
+2. Write actions
 
 You may create as many actions as needed using the file browser. The actions must have a .py extension and follow this structure:
 
@@ -116,19 +135,25 @@ class TemplateAction(py_trees.behaviour.Behaviour):
 
 ```
 
-For examples of how to use ports in your actions, please refer to the [example actions](tree_translator/actions) provided with the repo in the actions folder. Feel free to study and adapt them!
+For examples of how to use ports in your actions, please refer to the [example actions](backend/filesystem/demo/actions/) provided with the repo in the actions folder. The structure is the same as [py_trees actions](https://py-trees.readthedocs.io/en/devel/behaviours.html), as this project uses the library underneath. Kudos to @stonier!
 
-2. Define the tree structure
+3. Define the tree structure
 
-Using the existing blocks, you may define the logic of your app. Here you have available all the defined actions. This can be done previously to step 1 if you prefer to define the logic of the tree before its implementation!
+Using the existing blocks, you may define the logic of your app. Here you have available all the defined actions. This can be done previously to step 2 if you prefer to define the logic of the tree before its implementation!
 
-3. Downloading the app
+4. Downloading the app
 
 Clicking the green download button, a ROS 2 app is generated. This can be unziped in a ROS 2 workspace and installed as any other package. 
 
 ### Using the generated app
 
-1. Moving the app to a ROS 2 ws
+1. You need to ROS 2 humble installed in your system. Please follow this [guide](https://docs.ros.org/en/humble/Installation.html) if you haven't. After that, source the ros underlay. It is highly recommended to add this line at the end of your `.basrhc` file. 
+
+```bash
+source /opt/ros/humble/setup.bash
+```
+
+2. Moving the app to a ROS 2 ws
 
 ```bash
 mkdir -p your_ws/src
@@ -136,7 +161,18 @@ mv your_app.zip your_ws/src
 unzip your_ws/src/your_app.zip
 ```
 
-2. Downloading auxiliary tools and dependencies
+3. Init rosdep
+
+You may have to init the ROS dependency manager if you haven't done it before. 
+
+```bash
+sudo rosdep init
+rosdep update
+```
+
+4. Downloading auxiliary tools and dependencies
+
+These are a testing environment in the Webots simulator and a tree execution visualizer. 
 
 ```bash
 cd src/your_app/
@@ -145,14 +181,14 @@ cd ../..
 rosdep install --from-paths src -r -y --ignore-src
 ```
 
-3. Compiling
+5. Compiling
 
 ```bash
 colcon build --symlink-install
 source install/setup.bash
 ```
 
-4. Launching a testing environment
+6. Launching a testing environment
 
 You may choose whatever environment for your app to execute into, but we provide some prepared packages for convenience.
 
@@ -161,12 +197,12 @@ ros2 launch tb4_sim tb4_launcher.py
 py-trees-tree-viewer
 ```
 
-5. Launching the app
+7. Launching the app
 
 Now, using the app executor, you may launch the app itself. 
 
 ```bash
-ros2 run your_app executor
+ros2 run your_app_name executor
 ```
 
 ## Showcase
