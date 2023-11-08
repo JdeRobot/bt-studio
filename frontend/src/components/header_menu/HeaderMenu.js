@@ -16,29 +16,35 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
   const createProject = () => {
 
     const projectName = window.prompt('Enter the name for the new project:');
-
+  
     if (projectName === null || projectName === '') {
       // User pressed cancel or entered an empty string
       return;
     }
-
-    const apiUrl = `/tree_api/create_project?project_name=${projectName}`;
-
+  
+    const apiUrl = `/tree_api/create_project?project_name=${encodeURIComponent(projectName)}`;
     axios.get(apiUrl)
       .then(response => {
-
         if (response.data.success) {
           // Successfully created the project
           setCurrentProjectname(projectName);
-          localStorage.setItem('project_name', projectName);
           console.log('Project created successfully');
         } 
       })
       .catch(error => {
-        // Failed to create the project
-        window.alert(`The project ${projectName} already exists`);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          if (error.response.status === 409) {
+            window.alert(`The project ${projectName} already exists`);
+          } else {
+            // Handle other statuses or general API errors
+            window.alert('Unable to connect with the backend server. Please check the backend status.');
+          }
+        }
       });
   };
+  
 
   const changeProject = () => {
 
