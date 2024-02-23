@@ -140,7 +140,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges} : {
   // Add the nodes default ports
   const addDefaultPorts = (node:any) => {
 
-    var nodeName = node.options.name;
+    console.log("Adding default ports");
+
+    var nodeName = node.getName();
+    console.log(nodeName);
     if (nodeName == "RetryUntilSuccessful") node.addInputPort("num_attempts");
     else if (nodeName == "Repeat") node.addInputPort("num_cycles");
     else if (nodeName == "Delay") node.addInputPort("delay_ms");
