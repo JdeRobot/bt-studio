@@ -1,11 +1,12 @@
 // App.js
-import React, { useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Resizable } from 'react-resizable';
 import HeaderMenu from './components/header_menu/HeaderMenu';
 import FileBrowser from './components/file_browser/FileBrowser';
 import FileEditor from './components/file_editor/FileEditor';
 import './App.css';
 import DiagramEditor from './components/diagram_editor/DiagramEditor';
+import VncViewer from './components/vnc_viewer/VncViewer'
 
 const App = () => {
 
@@ -63,12 +64,13 @@ const App = () => {
           </div>
         </Resizable>
 
-        <div style={{ flex: 1}}>
+        <div>
           <DiagramEditor 
             currentProjectname={currentProjectname}
             setModelJson={setModelJson}
             setProjectChanges={setProjectChanges}
           />
+          <VncViewer/>
         </div>
         
       </div>

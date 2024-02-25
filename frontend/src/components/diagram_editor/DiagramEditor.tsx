@@ -143,7 +143,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges} : {
     console.log("Adding default ports");
 
     var nodeName = node.getName();
-    console.log(nodeName);
     if (nodeName == "RetryUntilSuccessful") node.addInputPort("num_attempts");
     else if (nodeName == "Repeat") node.addInputPort("num_cycles");
     else if (nodeName == "Delay") node.addInputPort("delay_ms");
@@ -334,6 +333,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges} : {
         return response.blob();
       })
       .then((blob) => {
+        // Get the application
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.style.display = 'none';
