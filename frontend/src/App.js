@@ -120,6 +120,8 @@ const App = () => {
             currentProjectname={currentProjectname}
             setModelJson={setModelJson}
             setProjectChanges={setProjectChanges}
+            gazeboEnabled={gazeboEnabled}
+            manager={manager}
           />
           <VncViewer
             gazeboEnabled={gazeboEnabled}
