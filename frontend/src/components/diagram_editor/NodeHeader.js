@@ -11,8 +11,10 @@ import del_img from './img/del_node.svg'
 import add_input_img from './img/add_input.svg'
 import add_output_img from './img/add_output.svg'
 import download_img from './img/download.svg'
+import run_img from './img/run.svg'
 
-const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, onAddInputPort, onAddOutputPort, onGenerateApp, currentProjectname }) => {
+const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, 
+  onAddInputPort, onAddOutputPort, onGenerateApp, onRunApp, currentProjectname }) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuLabel, setMenuLabel] = useState("");
@@ -121,6 +123,9 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, onAddInputPort, onAddOut
           </button>
           <button className="node-action-button" onClick={onGenerateApp} title='Download app'>
             <img className="icon" src={download_img}></img>
+          </button>
+          <button className="node-action-button" onClick={onRunApp} title='Run app'>
+            <img className="icon" src={run_img}></img>
           </button>
         </div>
 

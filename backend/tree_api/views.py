@@ -10,6 +10,8 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 import mimetypes
 import json
+import shutil
+import zipfile
 
 @api_view(['GET'])
 def create_project(request):
@@ -256,5 +258,62 @@ def generate_app(request):
     else:
         return Response({'error': 'app_name parameter is missing'}, status=500)
 
+@api_view(['POST'])
+def get_simplified_app(request):
 
+    # Get the app name
+    app_name = request.data.get('app_name')
+    tree_graph = request.data.get('content')
+
+    # Make folder path relative to Django app
+    base_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(base_path, app_name)
+    action_path = os.path.join(project_path, 'actions')
+
+    working_folder = "/tmp/wf"
+    tree_path = "/tmp/tree.xml"
+    self_contained_tree_path = os.path.join(working_folder, 'self_contained_tree.xml')
+    tree_gardener_src = os.path.join(settings.BASE_DIR, 'tree_gardener')
+    template_path = os.path.join(settings.BASE_DIR, 'ros_template')
+
+    if app_name and tree_graph:
+
+        try:
+            # 1. Create the working folder
+            if os.path.exists(working_folder):
+                shutil.rmtree(working_folder)
+            os.mkdir(working_folder)
+
+            # 2. Generate a basic tree from the JSON definition 
+            json_translator.translate(tree_graph, tree_path)
+
+            # 3. Generate a self-contained tree 
+            tree_generator.generate(tree_path, action_path, self_contained_tree_path)
+
+            # 4. Copy necessary files from tree_gardener and ros_template
+            factory_location = tree_gardener_src + "/tree_gardener/tree_factory.py"
+            tools_location = tree_gardener_src + "/tree_gardener/tree_tools.py"
+            entrypoint_location = template_path + "/ros_template/execute_docker.py"
+            shutil.copy(factory_location, working_folder)
+            shutil.copy(tools_location, working_folder)
+            shutil.copy(entrypoint_location, working_folder)
+
+            # 5. Generate the zip
+            zip_path = working_folder + ".zip"
+            with zipfile.ZipFile(zip_path, 'w') as zipf:
+                for root, dirs, files in os.walk(working_folder):
+                    for file in files:
+                        zipf.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), working_folder))
+
+            # 6. Return the zip
+            zip_file = open(zip_path, 'rb')
+            mime_type, _ = mimetypes.guess_type(zip_path)
+            response = HttpResponse(zip_file, content_type=mime_type)
+            response['Content-Disposition'] = f'attachment; filename={os.path.basename(zip_path)}'         
+
+            return response
+        except Exception as e:
+            return Response({'success': False, 'message': str(e)}, status=400)
+    else:
+        return Response({'error': 'app_name parameter is missing'}, status=500)
     

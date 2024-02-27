@@ -28,9 +28,10 @@ import { InputPortModel } from './nodes/basic_node/ports/input_port/InputPortMod
 import { TagInputPortModel } from './nodes/tag_node/ports/input_port/TagInputPortModel';
 import { TagOutputPortModel } from './nodes/tag_node/ports/output_port/TagOutputPortModel';
 
-const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges} : {currentProjectname : any, setModelJson : any, setProjectChanges:any}) => {
+const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gazeboEnabled, manager} : {currentProjectname : any, setModelJson : any, setProjectChanges:any, gazeboEnabled:any, manager:any}) => {
 
   const [graphJson, setGraphJson] = useState(null);
+  const [appRunning, setAppRunning] = useState(false);
 
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
@@ -143,7 +144,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges} : {
     console.log("Adding default ports");
 
     var nodeName = node.getName();
-    console.log(nodeName);
     if (nodeName == "RetryUntilSuccessful") node.addInputPort("num_attempts");
     else if (nodeName == "Repeat") node.addInputPort("num_cycles");
     else if (nodeName == "Delay") node.addInputPort("delay_ms");
@@ -334,6 +334,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges} : {
         return response.blob();
       })
       .then((blob) => {
+        // Get the application
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.style.display = 'none';
@@ -348,6 +349,65 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges} : {
       });
     }
   };  
+
+  const runApp = () => {
+    if(gazeboEnabled) 
+    {
+      if(!appRunning) 
+      {
+        const tree_graph = JSON.stringify(model.serialize());
+        fetch("/tree_api/get_simplified_app/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ app_name: currentProjectname, content: tree_graph }),
+        })
+        .then((response) => {
+          if (!response.ok) {
+            return response.json().then((data) => {
+              throw new Error(data.message || "An error occurred.");
+            });
+          }
+          return response.blob();
+        })
+        .then((blob) => {
+          var reader = new FileReader();
+          reader.readAsDataURL(blob); 
+          reader.onloadend = function() {
+            var base64data = reader.result;                
+            console.log(base64data);
+            
+            // Send the zip
+            manager
+            .run({type: "bt-studio", code: base64data})
+            .then(() => {
+              console.log("App running!");
+              setAppRunning(true);
+            })
+            .catch((response:any) => {
+              let linterMessage = JSON.stringify(response.data.message).split("\\n");
+              alert(`Received linter message: ${linterMessage}`);
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+      }
+      else {
+        manager
+        .terminate_application()
+        .then(() => {
+          console.log("App terminated!");
+          setAppRunning(false);
+        })
+      }
+    }
+    else {
+      console.log("Gazebo is not up!");
+    }
+  }
   
   return (
     <div>
@@ -357,6 +417,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges} : {
         onAddInputPort={addInputPort}
         onAddOutputPort={addOutputPort}
         onGenerateApp={generateApp}
+        onRunApp={runApp}
         currentProjectname={currentProjectname}
       />
       <CanvasWidget className="canvas" engine={engine} />
