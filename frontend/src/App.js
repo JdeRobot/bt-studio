@@ -12,9 +12,9 @@ import CommsManager from './components/comms_manager/CommsManager';
 
 const App = () => {
 
-  const [editorWidth, setEditorWidth] = useState(700);
+  const [editorWidth, setEditorWidth] = useState(807);
   const [currentFilename, setCurrentFilename] = useState('');
-  const [currentProjectname, setCurrentProjectname] = useState('');
+  const [currentProjectname, setCurrentProjectname] = useState('visual_follow_person');
   const [modelJson, setModelJson] = useState('');
   const [projectChanges, setProjectChanges] = useState(false);
   const [gazeboEnabled, setGazeboEnabled] = useState(false);

@@ -1,10 +1,6 @@
 import py_trees
 import geometry_msgs
-import std_msgs
-from tree_gardener import tree_tools
-from cv_bridge import CvBridge
-import sensor_msgs
-import cv2
+import tree_tools
 
 class Forward(py_trees.behaviour.Behaviour):
 
@@ -37,29 +33,6 @@ class Forward(py_trees.behaviour.Behaviour):
             qos_profile=10
         )
 
-        # Setup the publisher for n_obs
-        self.publisher2 = self.node.create_publisher(
-            msg_type=std_msgs.msg.String,
-            topic="/n_obs",
-            qos_profile=10
-        )
-
-        # Setup the subscription to camera
-        self.subscription = self.node.create_subscription(
-            sensor_msgs.msg.Image,
-            '/camera/image_raw',
-            self.listener_callback,
-            10
-        )
-
-        self.bridge = CvBridge()
-        self.img_received = False
-    
-    def listener_callback(self, msg):
-
-        self.last_img = self.bridge.imgmsg_to_cv2(msg)
-        self.img_received = True
-
     def initialise(self) -> None:
 
         """ Executed when coming from an idle state """
@@ -75,16 +48,6 @@ class Forward(py_trees.behaviour.Behaviour):
         msg = geometry_msgs.msg.Twist()
         msg.linear.x = float(tree_tools.get_port_content(self.ports["speed"]))
         self.publisher.publish(msg)
-
-        # Publish the number of obstacles retrieved from the port
-        nobs = tree_tools.get_port_content(self.ports["obs_port"])
-        str_pub = std_msgs.msg.String()
-        str_pub.data = str(nobs)
-        self.publisher2.publish(str_pub)
-
-        if self.img_received:
-            cv2.imshow("Robot img", self.last_img)
-            cv2.waitKey(1)
 
         return py_trees.common.Status.RUNNING 
 

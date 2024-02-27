@@ -1,6 +1,6 @@
 import py_trees
 import sensor_msgs
-from tree_gardener import tree_tools
+import tree_tools
 
 def check_obstacle_in_laser(laser_measures, amplitude):
         
@@ -44,13 +44,10 @@ class CheckObstacle(py_trees.behaviour.Behaviour):
             self.listener_callback,
             10)
     
-        self.scan = sensor_msgs.msg.LaserScan()
-
-        # Init the obstacle counter
-        self.n_obs = 0
+        self.last_scan_ = sensor_msgs.msg.LaserScan()
 
     def listener_callback(self, msg) -> None:
-        self.scan = msg
+        self.last_scan_ = msg
 
     def initialise(self) -> None:
 
@@ -64,16 +61,16 @@ class CheckObstacle(py_trees.behaviour.Behaviour):
         """ Executed when the action is ticked. Do not block! """
 
         # Check the laser measures
-        if len(self.scan.ranges) == 0: new_status = py_trees.common.Status.INVALID
+        if len(self.last_scan_.ranges) == 0: new_status = py_trees.common.Status.INVALID
 
-        # Check if there is an obstacle
+        # Get params from ports
         amplitude = int(tree_tools.get_port_content(self.ports["amplitude"]))
-        obstacle = check_obstacle_in_laser(self.scan.ranges, amplitude)
-        if not obstacle: new_status = py_trees.common.Status.SUCCESS
-        else: 
-            self.n_obs += 1
-            tree_tools.set_port_content(self.ports["obs_port"], self.n_obs)
-            new_status = py_trees.common.Status.FAILURE
+        obs_dist = float(tree_tools.get_port_content(self.ports["obs_dist"]))
+        
+        # Check if there is an obstacle
+        obstacle = check_obstacle_in_laser(self.last_scan_.ranges, amplitude)
+        if obstacle: new_status = py_trees.common.Status.SUCCESS
+        else: new_status = py_trees.common.Status.FAILURE
 
         return new_status
 

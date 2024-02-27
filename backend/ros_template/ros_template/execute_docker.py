@@ -1,7 +1,6 @@
 import rclpy
 from rclpy.node import Node
 import tree_factory
-from ament_index_python.packages import get_package_share_directory
 import os
 
 class TreeExecutor(Node):
@@ -11,8 +10,8 @@ class TreeExecutor(Node):
         super().__init__('tree_executor_node')
         
         # Get the path to the root of the package
-        pkg_share_dir = get_package_share_directory('ros_template')
-        tree_path = os.path.join(pkg_share_dir, 'resource', 'app_tree.xml')
+        ws_path = "/workspace/code"
+        tree_path = os.path.join(ws_path, 'self_contained_tree.xml')
 
         factory = tree_factory.TreeFactory()
         self.tree = factory.create_tree_from_file(tree_path)
@@ -35,3 +34,5 @@ def main():
 
     # Spin the tree
     executor.spin_tree()
+
+main()
