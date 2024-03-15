@@ -14,7 +14,7 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
     let nodeStyle: React.CSSProperties = {
         display: 'flex',
         justifyContent: "space-between",
-        border: '1px solid black',
+        border: node.getBorderRadius() + 'px solid ' +  node.getBorderColor(),
         borderRadius: '5px',
         background: node.getColor() || 'red',
         padding: '10px',
