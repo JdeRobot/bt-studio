@@ -11,6 +11,8 @@ import add_project_img from './img/add_project.svg'
 import change_project_img from './img/change_project.svg'
 import save_project_img from './img/save_project.svg'
 
+var dropdown_shown = false;
+
 const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, projectChanges, setProjectChanges} ) => {
 
   const createProject = () => {
@@ -44,31 +46,50 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
         }
       });
   };
-  
 
-  const changeProject = () => {
+  const changeProject = function(event) {
+    var projectName = event.target.innerText;
+    const existingProjects = document.getElementById('dropdown').innerText;
+    
+    if (projectName === null || projectName === '') {
+      // User pressed cancel or entered an empty string
+      return;
+    }
+
+    if (existingProjects.includes(projectName)) {
+      // Project exists, proceed to change
+      setCurrentProjectname(projectName);
+      console.log(`Switched to project ${projectName}`);
+    } else {
+      // Project doesn't exist
+      window.alert(`The project ${projectName} does not exist`);
+    }
+  }
+
+  const dropdownProject = (e) => {
+    var sel = document.getElementById('dropdown');
+    var opt = null;
+
+    e.stopPropagation();
+    sel.classList.toggle("show");
+    dropdown_shown = !dropdown_shown;
+    sel.innerHTML = ""; // Delete all things from previous iterations
+
+    if (!dropdown_shown) {return;}
 
     // API call to get the list of existing projects
     const listApiUrl = `/tree_api/get_project_list`;
   
     axios.get(listApiUrl)
       .then(response => {
-
         const existingProjects = response.data.project_list;
-        const projectName = window.prompt('Enter the name of the project you want to switch to:');
-  
-        if (projectName === null || projectName === '') {
-          // User pressed cancel or entered an empty string
-          return;
-        }
-  
-        if (existingProjects.includes(projectName)) {
-          // Project exists, proceed to change
-          setCurrentProjectname(projectName);
-          console.log(`Switched to project ${projectName}`);
-        } else {
-          // Project doesn't exist
-          window.alert(`The project ${projectName} does not exist`);
+        var i;
+
+        for(i = 0; i<existingProjects.length; i++) { 
+          opt = document.createElement('option');
+          opt.value = existingProjects[i];
+          opt.innerHTML = existingProjects[i];
+          sel.appendChild(opt);
         }
       })
       .catch(error => {
@@ -118,12 +139,14 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
                 {projectChanges && <div className="small-text">Unsaved</div>}
               </span>
           )}
-
+          
           <button className="header-button" onClick={createProject} title="Create new project">
             <img className="header-icon" src={add_project_img}></img>
           </button>
-          <button className="header-button" onClick={changeProject} title="Change project">
+          <button className="header-button" onClick={dropdownProject} title="Change project">
             <img className="header-icon" src={change_project_img}></img>
+            <div class="dropdown" id="dropdown" onClick={changeProject} >
+            </div>
           </button>
           <button className="header-button" onClick={saveProject} title="Save project">
             <img className="header-icon" src={save_project_img}></img>
