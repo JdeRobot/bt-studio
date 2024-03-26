@@ -49,3 +49,40 @@
   background-color: rgba(255, 255, 255, 0.264);
   border-radius: 50%; /* Circular highlight */
 }
+
+.dropdown {
+  position: absolute;
+  width: 150px;
+  box-shadow: var(--shadow);
+  border-radius: 10px;
+  border: 1px solid black;
+  margin-top: 0.3rem;
+  background: #12494c;
+  transition: all 0.1s cubic-bezier(0.16, 1, 0.5, 1);
+  z-index: 2;
+  top: 50px;
+    
+  transform: translateY(0.5rem);
+  visibility: hidden;
+  opacity: 0;
+}
+
+.dropdown option {
+  display: flex;
+  align-items: center;
+  column-gap: var(--gap);
+  padding: 0.8rem 1rem;
+  text-decoration: none;
+  color: white;
+}
+
+.dropdown option:hover {
+  background-color: var(--color);
+  color: #979797;
+}
+
+.show {
+  transform: translateY(0rem);
+  visibility: visible;
+  opacity: 1;
+}

@@ -11,6 +11,13 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
 
     private name: string;
     private color: string;
+    private is_selected: boolean;
+
+    private static select_border_color: string = 'rgb(18,109,114)';
+    private static base_border_color: string = 'rgb(0,0,0)';
+
+    private static select_border_radius: string = '5';
+    private static base_border_radius: string = '1';
 
     constructor(name: string = 'Tag Node', color: string = 'rgb(0,192,255)') {
         super({
@@ -18,6 +25,7 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
         });
         this.name = name;
         this.color = color;
+        this.is_selected = false;
     }
 
     getName(): string {
@@ -30,6 +38,24 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
 
     getColor(): string {
         return this.color;
+    }
+
+    getBorderColor(): string {
+        if (this.is_selected) {return TagNodeModel.select_border_color;}
+        else { return TagNodeModel.base_border_color;}
+    }
+
+    getBorderRadius(): string {
+        if (this.is_selected) {return TagNodeModel.select_border_radius;}
+        else { return TagNodeModel.base_border_radius;}
+    }
+
+    selectNode() {
+        this.is_selected = true;
+    }
+
+    deselectNode() {
+        this.is_selected = false;
     }
 
     // Method to add children port (they can be default model because only the widget, the visualization changes)
@@ -49,7 +75,8 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
         return {
           ...super.serialize(),
           name: this.name,
-          color: this.color
+          color: this.color,
+          is_selected: this.is_selected
         };
     }
 
@@ -57,5 +84,6 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
         super.deserialize(event);
         this.name = event.data.name;
         this.color = event.data.color;
+        this.is_selected = event.data.is_selected;
     }
 }

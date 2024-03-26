@@ -66,6 +66,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       selectionChanged: (event:any) => {
         if (event.isSelected) {
           lastClickedNodeId = node.getID();
+          node.selectNode();
+        } else {
+          node.deselectNode();
         }
       },
     });
