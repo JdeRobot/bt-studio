@@ -10,6 +10,17 @@ export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
 
     const [nodeName, setNodeName] = useState(node.getName() || "Value");
 
+    // Tag style
+    let tagStyle: React.CSSProperties = {
+        display: 'flex',
+        justifyContent: "space-between",
+        border: node.getBorderRadius() + 'px solid ' +  node.getBorderColor(),
+        background: 'grey',
+        paddingTop: '5px',
+        paddingBottom: '5px',
+        flexDirection: "column"
+    };
+
     // Ports list
     const inputPorts: JSX.Element[] = [];
     const outputPorts: JSX.Element[] = [];
@@ -50,7 +61,7 @@ export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
 
     // Return the node to render
     return (
-        <div className={nodeClass}>
+        <div className={nodeClass} style={tagStyle}>
             <div className='tag-layer'>
                 {inputPorts}
                 <div onDoubleClick={showPromptAndUpdateText}>
