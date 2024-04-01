@@ -1,6 +1,6 @@
 import py_trees
 import sensor_msgs
-import tree_tools
+from tree_gardener import tree_tools
 
 def check_obstacle_in_laser(laser_measures, amplitude):
         

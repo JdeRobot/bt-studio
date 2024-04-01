@@ -1,6 +1,6 @@
 import py_trees
 import sensor_msgs
-import tree_tools
+from tree_gardener import tree_tools
 import std_msgs
 from cv_bridge import CvBridge
 import sensor_msgs
