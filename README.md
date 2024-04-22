@@ -4,7 +4,7 @@
 
 # BT Studio
 
-![version](https://img.shields.io/badge/Version-0.2-blue)
+![version](https://img.shields.io/badge/Version-0.3-blue)
 ![distro](https://img.shields.io/badge/ROS2-Humble-blue)
 [![Forks][forks-shield]][forks-url]
 [![License](http://img.shields.io/:license-gpl-green.svg)](http://opensource.org/licenses/GPL-3.0)
