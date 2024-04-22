@@ -82,8 +82,10 @@ def build_xml(node_models, link_models, tree_structure, node_id, xml_parent):
 
   # Apply recursion to all its children
   if node_id in tree_structure:
+    tree_structure[node_id] = sorted(tree_structure[node_id], 
+                                     key=lambda item: node_models[item]['y'], 
+                                     reverse=True)  # Fixed: issue #73
     for child_id in tree_structure[node_id]:
-
       build_xml(node_models, link_models, tree_structure, child_id, current_element)
 
 def get_start_node_id(node_models, link_models):
