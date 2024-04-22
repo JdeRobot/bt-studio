@@ -1,6 +1,6 @@
 import py_trees
 import geometry_msgs
-import tree_tools
+from tree_gardener import tree_tools
 
 class Move(py_trees.behaviour.Behaviour):
 
