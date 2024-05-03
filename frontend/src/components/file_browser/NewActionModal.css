@@ -1,0 +1,87 @@
+.form-row + .form-row {
+  margin-top: 1rem;
+}
+
+.form-col {
+  background-color: none;
+  cursor: pointer; /* Pointer/hand icon */
+  float: left; /* Float the buttons side by side */
+  width:50%;
+}
+
+.form-col button {
+  border-radius: 10px;
+  height: 2em;
+  font-size: medium;
+}
+
+.form-col button:hover {
+  background-color: #0d3335;
+}
+
+.form-row label {
+  margin-bottom: 10px;
+  margin-left: 5px;
+}
+
+input {
+  border: 2px solid #000000 !important;
+  background-color: #264142 !important;
+  border-radius: 10px;
+  padding-left: 1em;
+}
+
+.form-row label,
+.form-row input,
+.form-row select,
+.form-row button {
+  width: 100%;
+  display: block;
+  background-color: #12494c;
+  border: none;
+  color: #ffffff;
+  font-size: medium;
+}
+
+#cancel-new-action:hover {
+  background-color: hsla(0, 100%, 49%, 0.5);
+}
+
+.templates-col{
+  background-color: none;
+  float: left; /* Float the buttons side by side */
+  width:30%;
+  border-radius: 10px;
+}
+
+.templates-col div{
+  border-radius: 10px; 
+  cursor: pointer; /* Pointer/hand icon */
+  text-align: center;
+  margin: 3px;
+  padding: 5px; 
+}
+
+.templates-col:hover div{
+  background-color: #0d3335;
+}
+
+.templates-col .icon {
+    height: 50px;
+    width: 30px;
+}
+
+.templates-col p {
+  margin: 3px !important;
+  color: #ffffff;
+}
+
+.templates-col input[type="radio"] {
+  display: none;
+  z-index: 100;
+}
+
+.templates-col input[type="radio"]:checked + div {
+  background-color: rgb(42, 114, 133) !important;
+  color: black;
+}
