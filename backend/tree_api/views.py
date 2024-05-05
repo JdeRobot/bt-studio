@@ -141,16 +141,31 @@ def create_file(request):
     # Get the file info
     project_name = request.GET.get('project_name', None)
     filename = request.GET.get('filename', None)
+    template = request.GET.get('template', None)
+    print(template)
     
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    templates_folder_path = os.path.join(settings.BASE_DIR, 'templates')
     project_path = os.path.join(folder_path, project_name)
     action_path = os.path.join(project_path, 'actions')
     file_path = os.path.join(action_path, filename)
+    template_path = os.path.join(templates_folder_path, template)
+
+    replacements = {'ACTION': filename[:-3]}
     
     if not os.path.exists(file_path):
         with open(file_path, 'w') as f:
-            f.write('')  # Empty content
+            if template == 'empty':
+                f.write('')  # Empty content
+            elif template == 'action':
+                with open(template_path,'r') as temp:
+                    for line in temp:
+                        for src, target in replacements.items():
+                            line = line.replace(src, target)
+                        f.write(line)
+            else:
+                return Response({'success': False, 'message': 'Template does not exist'}, status=400)
         return Response({'success': True})
     else:
         return Response({'success': False, 'message': 'File already exists'}, status=400)
