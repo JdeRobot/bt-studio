@@ -154,12 +154,21 @@ def create_file(request):
 
     replacements = {'ACTION': filename[:-3]}
     
+    # TODO: this should be done externally
     if not os.path.exists(file_path):
         if template == 'empty':
             with open(file_path, 'w') as f:
                 f.write('')  # Empty content
             return Response({'success': True})
         elif template == 'action':
+            with open(file_path, 'w') as f:
+                with open(template_path,'r') as temp:
+                    for line in temp:
+                        for src, target in replacements.items():
+                            line = line.replace(src, target)
+                        f.write(line)
+                    return Response({'success': True})
+        elif template == 'io':
             with open(file_path, 'w') as f:
                 with open(template_path,'r') as temp:
                     for line in temp:
