@@ -155,18 +155,20 @@ def create_file(request):
     replacements = {'ACTION': filename[:-3]}
     
     if not os.path.exists(file_path):
-        with open(file_path, 'w') as f:
-            if template == 'empty':
+        if template == 'empty':
+            with open(file_path, 'w') as f:
                 f.write('')  # Empty content
-            elif template == 'action':
+            return Response({'success': True})
+        elif template == 'action':
+            with open(file_path, 'w') as f:
                 with open(template_path,'r') as temp:
                     for line in temp:
                         for src, target in replacements.items():
                             line = line.replace(src, target)
                         f.write(line)
-            else:
-                return Response({'success': False, 'message': 'Template does not exist'}, status=400)
-        return Response({'success': True})
+                    return Response({'success': True})
+        else:
+            return Response({'success': False, 'message': 'Template does not exist'}, status=400)
     else:
         return Response({'success': False, 'message': 'File already exists'}, status=400)
 

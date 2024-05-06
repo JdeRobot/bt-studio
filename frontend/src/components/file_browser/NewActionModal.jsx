@@ -6,12 +6,21 @@ import empty_template from './img/empty_template.svg'
 const initialNewActionModalData = {
   actionName: '',
   templateType: 'empty',
+  allowCreation: false,
 };
+
+function CreateButton({ hasToDisplay }) {
+  if (hasToDisplay) {
+    return <button type="submit" id="create-new-action">Create</button>;
+  }
+  return null;
+}
 
 const NewActionModal = ({ onSubmit, isOpen, onClose }) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialNewActionModalData);
-  const [template, setTemplate] = useState("empty")
+  const [template, setTemplate] = useState("empty");
+  const [createButton, setcreateButton] = useState(false);
 
   const onOptionChange = e => {
     setTemplate(e.target.value)
@@ -32,18 +41,23 @@ const NewActionModal = ({ onSubmit, isOpen, onClose }) => {
       ...prevFormData,
       [name]: value,
     }));
+    if (name === "actionName") {
+      setcreateButton(value !== "");
+    }
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     onSubmit(formState);
     setFormState(initialNewActionModalData);
+    setcreateButton(false);
   };
 
   const handleCancel = (event) => {
     event.preventDefault();
     onClose(formState);
     setFormState(initialNewActionModalData);
+    setcreateButton(false);
   };
 
   return (
@@ -61,7 +75,7 @@ const NewActionModal = ({ onSubmit, isOpen, onClose }) => {
             required
           />
         </div>
-        <div className="form-row">
+        <div className="form-row" id="templates-list">
           <label htmlFor="templateType">Template Type</label>
           <div className="templates-col">
             <label>
@@ -106,12 +120,9 @@ const NewActionModal = ({ onSubmit, isOpen, onClose }) => {
             </label>
           </div>
         </div>
-        <div className="form-row"></div>
         <div className="form-row">
           <div className="form-col">
-            <button type="submit">Create</button>
-          </div>
-          <div className="form-col">
+            <CreateButton hasToDisplay={createButton}/>
             <button type="reset" id="cancel-new-action">Cancel</button>
           </div>
         </div>

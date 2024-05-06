@@ -6,7 +6,8 @@
   background-color: none;
   cursor: pointer; /* Pointer/hand icon */
   float: left; /* Float the buttons side by side */
-  width:50%;
+  text-align: center;
+  width: 100%;
 }
 
 .form-col button {
@@ -26,7 +27,7 @@
 
 input {
   border: 2px solid #000000 !important;
-  background-color: #264142 !important;
+  background-color: #0c3032 !important;
   border-radius: 10px;
   padding-left: 1em;
 }
@@ -43,8 +44,16 @@ input {
   font-size: medium;
 }
 
+#templates-list {
+  height: 130px;
+}
+
 #cancel-new-action:hover {
   background-color: hsla(0, 100%, 49%, 0.5);
+}
+
+#create-new-action:hover {
+  background-color: hsla(93, 100%, 49%, 0.5);
 }
 
 .templates-col{
@@ -63,7 +72,7 @@ input {
 }
 
 .templates-col:hover div{
-  background-color: #0d3335;
+  background-color: #0c3032;
 }
 
 .templates-col .icon {
@@ -82,6 +91,6 @@ input {
 }
 
 .templates-col input[type="radio"]:checked + div {
-  background-color: rgb(42, 114, 133) !important;
+  background-color: #1f7f84 !important;
   color: black;
 }
