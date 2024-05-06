@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './NewActionModal.css';
 import Modal from '../Modal/Modal';
-import empty_template from './img/empty_template.svg'
+import empty_template from './img/empty_template.svg';
+import action_template from './img/action_template.svg';
+import io_template from './img/io_template.svg';
 
 const initialNewActionModalData = {
   actionName: '',
@@ -100,7 +102,7 @@ const NewActionModal = ({ onSubmit, isOpen, onClose }) => {
               checked={template === "action"}
               onChange={onOptionChange}/>
             <div htmlFor="actionTemplate">
-              <img className="icon" src={empty_template}></img>
+              <img className="icon" src={action_template}></img>
               <p> Action </p>
             </div>
             </label>
@@ -114,7 +116,7 @@ const NewActionModal = ({ onSubmit, isOpen, onClose }) => {
               checked={template === "io"}
               onChange={onOptionChange}/>
             <div htmlFor="ioTemplate">
-              <img className="icon" src={empty_template}></img>
+              <img className="icon" src={io_template}></img>
               <p> I/O </p>
             </div>
             </label>
