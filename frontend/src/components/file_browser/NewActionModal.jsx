@@ -18,7 +18,7 @@ function CreateButton({ hasToDisplay }) {
   return null;
 }
 
-const NewActionModal = ({ onSubmit, isOpen, onClose }) => {
+const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialNewActionModalData);
   const [template, setTemplate] = useState("empty");
@@ -44,7 +44,7 @@ const NewActionModal = ({ onSubmit, isOpen, onClose }) => {
       [name]: value,
     }));
     if (name === "actionName") {
-      setcreateButton(value !== "");
+      setcreateButton(value !== "" && !fileList.includes(value) && !value.includes("."));
     }
   };
 

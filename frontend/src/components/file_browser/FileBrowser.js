@@ -122,6 +122,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
         isOpen={isNewActionModalOpen}
         onSubmit={handleFormSubmit}
         onClose={handleCloseNewActionModal}
+        fileList={fileList}
       />
       {Array.isArray(fileList) ? (
         <div>
