@@ -7,7 +7,7 @@ import io_template from './img/io_template.svg';
 
 const initialNewActionModalData = {
   actionName: '',
-  templateType: 'empty',
+  templateType: "empty",
   allowCreation: false,
 };
 
@@ -35,6 +35,7 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
         focusInputRef.current.focus();
       }, 0);
     }
+    setTemplate("empty")
   }, [isOpen]);
 
   const handleInputChange = (event) => {
@@ -82,11 +83,11 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
           <div className="templates-col">
             <label>
             <input type="radio"
-            name="templateType" 
-            value="empty"
-            id="emptyTemplate"
-            checked={template === "empty"}
-            onChange={onOptionChange}/>
+              name="templateType" 
+              value="empty"
+              id="emptyTemplate"
+              checked={template === "empty"}
+              onChange={onOptionChange}/>
             <div htmlFor="emptyTemplate">
               <img className="icon" src={empty_template}></img>
               <p> Empty </p>

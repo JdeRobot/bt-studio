@@ -90,7 +90,6 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
 
   const handleFormSubmit = (data) => {
     setNewsletterFormData(data);
-    console.log(newsletterFormData);
     handleCloseNewActionModal();
     if (data.actionName !== '') {
       axios.get(`/tree_api/create_file?project_name=${currentProjectname}&filename=${data.actionName}.py&template=${data.templateType}`)
