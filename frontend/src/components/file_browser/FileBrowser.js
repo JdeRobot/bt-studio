@@ -111,7 +111,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
   return (
     <div style={{ flex: '2', border: '1px solid black' }}>
       <div className='browser-menu'>
-        <h2>File Browser</h2>
+        <h2>Action Browser</h2>
         <div className='buttons'>
           <button className="menu-button" onClick={handleCreateFile} title='Create a new action file'>
             <img className="icon" src={add_img}></img>
