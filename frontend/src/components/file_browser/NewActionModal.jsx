@@ -123,10 +123,8 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
           </div>
         </div>
         <div className="form-row">
-          <div className="form-col">
-            <CreateButton hasToDisplay={createButton}/>
-            <button type="reset" id="cancel-new-action">Cancel</button>
-          </div>
+          <CreateButton hasToDisplay={createButton}/>
+          <button type="reset" id="cancel-new-action">Cancel</button>
         </div>
       </form>
     </Modal>

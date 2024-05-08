@@ -2,36 +2,6 @@
   margin-top: 1rem;
 }
 
-.form-col {
-  background-color: none;
-  cursor: pointer; /* Pointer/hand icon */
-  float: left; /* Float the buttons side by side */
-  text-align: center;
-  width: 100%;
-}
-
-.form-col button {
-  border-radius: 10px;
-  height: 2em;
-  font-size: medium;
-}
-
-.form-col button:hover {
-  background-color: #0d3335;
-}
-
-.form-row label {
-  margin-bottom: 10px;
-  margin-left: 5px;
-}
-
-input {
-  border: 2px solid #000000 !important;
-  background-color: #0c3032 !important;
-  border-radius: 10px;
-  padding-left: 1em;
-}
-
 .form-row label,
 .form-row input,
 .form-row select,
@@ -44,8 +14,27 @@ input {
   font-size: medium;
 }
 
+.form-row input {
+  border: 2px solid #000000 !important;
+  background-color: #0c3032 !important;
+  border-radius: 10px;
+  padding-left: 1em;
+}
+
+.form-row label {
+  margin-bottom: 10px;
+  margin-left: 5px;
+}
+
 #templates-list {
   height: 130px;
+}
+
+.form-row button {
+  margin-bottom: 10px;
+  border-radius: 10px;
+  height: 2em;
+  font-size: medium;
 }
 
 #cancel-new-action:hover {

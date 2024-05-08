@@ -65,7 +65,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
   const handleDeleteFile = () => {
 
     if (currentFilename) {
-      axios.get(`/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}.py`)
+      axios.get(`/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}`)
         .then(response => {
           if (response.data.success) {
             setProjectChanges(true);
