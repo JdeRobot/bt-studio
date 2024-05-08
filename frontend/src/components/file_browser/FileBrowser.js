@@ -23,6 +23,9 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
         .then(response => {
           const files = response.data.file_list;
           if (Array.isArray(files)) {
+            for (let index = 0; index < files.length; index++) {
+              files[index] = files[index].slice(0,-3);
+            }
             setFileList(files);
           } else {
             console.error('API response is not an array:', files);
