@@ -6,6 +6,7 @@ from .serializers import FileContentSerializer
 from . import app_generator
 from . import tree_generator
 from . import json_translator
+from . import templates
 from django.http import HttpResponse
 from django.http import JsonResponse
 import mimetypes
@@ -142,40 +143,16 @@ def create_file(request):
     project_name = request.GET.get('project_name', None)
     filename = request.GET.get('filename', None)
     template = request.GET.get('template', None)
-    print(template)
     
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
-    templates_folder_path = os.path.join(settings.BASE_DIR, 'templates')
     project_path = os.path.join(folder_path, project_name)
     action_path = os.path.join(project_path, 'actions')
     file_path = os.path.join(action_path, filename)
-    template_path = os.path.join(templates_folder_path, template)
-
-    replacements = {'ACTION': filename[:-3]}
     
-    # TODO: this should be done externally
     if not os.path.exists(file_path):
-        if template == 'empty':
-            with open(file_path, 'w') as f:
-                f.write('')  # Empty content
+        if (templates.create_file_from_template(file_path, filename, template)):
             return Response({'success': True})
-        elif template == 'action':
-            with open(file_path, 'w') as f:
-                with open(template_path,'r') as temp:
-                    for line in temp:
-                        for src, target in replacements.items():
-                            line = line.replace(src, target)
-                        f.write(line)
-                    return Response({'success': True})
-        elif template == 'io':
-            with open(file_path, 'w') as f:
-                with open(template_path,'r') as temp:
-                    for line in temp:
-                        for src, target in replacements.items():
-                            line = line.replace(src, target)
-                        f.write(line)
-                    return Response({'success': True})
         else:
             return Response({'success': False, 'message': 'Template does not exist'}, status=400)
     else:

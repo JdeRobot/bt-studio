@@ -42,24 +42,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
   };
 
   const handleCreateFile = () => {
-
-    // TODO: new interface
     setNewActionModalOpen(true);
-    // const filename = prompt("Enter new action name:");
-    // if (filename) {
-    //   axios.get(`/tree_api/create_file?project_name=${currentProjectname}&filename=${filename}.py`)
-    //     .then(response => {
-    //       if (response.data.success) {
-    //         setProjectChanges(true);
-    //         fetchFileList();  // Update the file list
-    //       } else {
-    //         alert(response.data.message);
-    //       }
-    //     })
-    //     .catch(error => {
-    //       console.error('Error creating file:', error);
-    //     });
-    // }
   };
 
   const handleDeleteFile = () => {
@@ -91,6 +74,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
   const handleFormSubmit = (data) => {
     setNewsletterFormData(data);
     handleCloseNewActionModal();
+    
     if (data.actionName !== '') {
       axios.get(`/tree_api/create_file?project_name=${currentProjectname}&filename=${data.actionName}.py&template=${data.templateType}`)
         .then(response => {
