@@ -38,7 +38,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
   };
 
   const handleFileClick = (filename) => {
-    setCurrentFilename(filename);
+    setCurrentFilename(filename + '.py');
   };
 
   const handleCreateFile = () => {
@@ -65,7 +65,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
   const handleDeleteFile = () => {
 
     if (currentFilename) {
-      axios.get(`/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}`)
+      axios.get(`/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}.py`)
         .then(response => {
           if (response.data.success) {
             setProjectChanges(true);
