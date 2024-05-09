@@ -1,0 +1,13 @@
+.modal::backdrop {
+  background: hsl(0 0% 0% / 50%);
+}
+
+.modal {
+  /* max-width: 20rem; */
+  padding: 1.5rem;
+  border: 2px solid #000000;
+  border-radius: 0.5rem;
+  position: relative;
+  box-shadow: hsl(0 0% 0% / 10%) 0 0 0.5rem 0.25rem;
+  background: #12494c;
+}
