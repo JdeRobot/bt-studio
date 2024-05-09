@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './FileBrowser.css';
-import NewActionModal from './NewActionModal.jsx';
 
 import add_img from './img/add.svg'
 import delete_img from './img/delete.svg'
@@ -9,8 +8,6 @@ import delete_img from './img/delete.svg'
 const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, setProjectChanges}) => {
 
   const [fileList, setFileList] = useState(null);
-  const [isNewActionModalOpen, setNewActionModalOpen] = useState(false);
-  const [newsletterFormData, setNewsletterFormData] = useState(null);
 
   useEffect(() => {
     fetchFileList();
@@ -18,14 +15,11 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
 
   const fetchFileList = () => {
 
-    if (currentProjectname !== '') {
+    if (currentProjectname != '') {
       axios.get(`/tree_api/get_file_list?project_name=${currentProjectname}`)
         .then(response => {
           const files = response.data.file_list;
           if (Array.isArray(files)) {
-            for (let index = 0; index < files.length; index++) {
-              files[index] = files[index].slice(0,-3);
-            }
             setFileList(files);
           } else {
             console.error('API response is not an array:', files);
@@ -38,11 +32,26 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
   };
 
   const handleFileClick = (filename) => {
-    setCurrentFilename(filename + '.py');
+    setCurrentFilename(filename);
   };
 
   const handleCreateFile = () => {
-    setNewActionModalOpen(true);
+
+    const filename = prompt("Enter new action name:");
+    if (filename) {
+      axios.get(`/tree_api/create_file?project_name=${currentProjectname}&filename=${filename}`)
+        .then(response => {
+          if (response.data.success) {
+            setProjectChanges(true);
+            fetchFileList();  // Update the file list
+          } else {
+            alert(response.data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error creating file:', error);
+        });
+    }
   };
 
   const handleDeleteFile = () => {
@@ -66,35 +75,10 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
     }
   };
 
-  const handleCloseNewActionModal = () => {
-    setNewActionModalOpen(false);
-    document.getElementById('actionName').value = '';
-  };
-
-  const handleFormSubmit = (data) => {
-    setNewsletterFormData(data);
-    handleCloseNewActionModal();
-    
-    if (data.actionName !== '') {
-      axios.get(`/tree_api/create_file?project_name=${currentProjectname}&filename=${data.actionName}.py&template=${data.templateType}`)
-        .then(response => {
-          if (response.data.success) {
-            setProjectChanges(true);
-            fetchFileList();  // Update the file list
-          } else {
-            alert(response.data.message);
-          }
-        })
-        .catch(error => {
-          console.error('Error creating file:', error);
-        });
-    }
-  };
-
   return (
     <div style={{ flex: '2', border: '1px solid black' }}>
       <div className='browser-menu'>
-        <h2>Action Browser</h2>
+        <h2>File Browser</h2>
         <div className='buttons'>
           <button className="menu-button" onClick={handleCreateFile} title='Create a new action file'>
             <img className="icon" src={add_img}></img>
@@ -104,12 +88,6 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
           </button>
         </div>
       </div>
-      <NewActionModal
-        isOpen={isNewActionModalOpen}
-        onSubmit={handleFormSubmit}
-        onClose={handleCloseNewActionModal}
-        fileList={fileList}
-      />
       {Array.isArray(fileList) ? (
         <div>
           {fileList.map((file, index) => (
