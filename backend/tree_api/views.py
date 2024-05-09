@@ -6,7 +6,6 @@ from .serializers import FileContentSerializer
 from . import app_generator
 from . import tree_generator
 from . import json_translator
-from . import templates
 from django.http import HttpResponse
 from django.http import JsonResponse
 import mimetypes
@@ -142,7 +141,6 @@ def create_file(request):
     # Get the file info
     project_name = request.GET.get('project_name', None)
     filename = request.GET.get('filename', None)
-    template = request.GET.get('template', None)
     
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
@@ -151,10 +149,9 @@ def create_file(request):
     file_path = os.path.join(action_path, filename)
     
     if not os.path.exists(file_path):
-        if (templates.create_file_from_template(file_path, filename, template)):
-            return Response({'success': True})
-        else:
-            return Response({'success': False, 'message': 'Template does not exist'}, status=400)
+        with open(file_path, 'w') as f:
+            f.write('')  # Empty content
+        return Response({'success': True})
     else:
         return Response({'success': False, 'message': 'File already exists'}, status=400)
 
