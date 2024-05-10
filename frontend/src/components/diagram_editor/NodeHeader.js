@@ -113,19 +113,19 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode,
 
         <div className='action-buttons'>
           <button className="node-action-button" onClick={onDeleteNode} title='Delete node'>
-            <img className="icon" src={del_img}></img>
+            <img className="icon action-icon" src={del_img}></img>
           </button>
           <button className="node-action-button" onClick={onAddInputPort} title='Add input port'>
-            <img className="icon" src={add_input_img}></img>
+            <img className="icon action-icon" src={add_input_img}></img>
           </button>
           <button className="node-action-button" onClick={onAddOutputPort} title='Add output port'>
-            <img className="icon" src={add_output_img}></img>
+            <img className="icon action-icon" src={add_output_img}></img>
           </button>
           <button className="node-action-button" onClick={onGenerateApp} title='Download app'>
-            <img className="icon" src={download_img}></img>
+            <img className="icon action-icon" src={download_img}></img>
           </button>
           <button className="node-action-button" onClick={onRunApp} title='Run app'>
-            <img className="icon" src={run_img}></img>
+            <img className="icon action-icon" src={run_img}></img>
           </button>
         </div>
 
