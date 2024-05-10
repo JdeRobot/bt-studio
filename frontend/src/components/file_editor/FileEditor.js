@@ -6,6 +6,7 @@ import 'ace-builds/src-noconflict/theme-monokai';
 import './FileEditor.css'
 
 import save_img from './img/save.svg' 
+import splash_img from './img/logo_jderobot_monocolor.svg' 
 
 const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) => {
   
@@ -34,6 +35,7 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
   useEffect(() => {
     
     setFileContent("");
+    console.log(currentFilename);
   }, [currentProjectname]);
 
   const handleSaveFile = () => {
@@ -79,10 +81,13 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
           </button>
         </div>
       </div>
-      <div className="zoom-buttons">
-        <button className="zoom-in" onClick={handleZoomIn}>+</button>
-        <button className="zoom-in" onClick={handleZoomOut}>-</button>
-      </div>
+      {fileContent !== "" &&(
+        <div className="zoom-buttons">
+          <button className="zoom-in" onClick={handleZoomIn}>+</button>
+          <button className="zoom-in" onClick={handleZoomOut}>-</button>
+        </div>
+      )}
+      {fileContent !== "" ?(
       <AceEditor
         mode="python"
         theme="monokai"
@@ -96,6 +101,10 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
           setFileContent(newContent);
           setHasUnsavedChanges(true); // Set the unsaved changes flag
         }}/>
+      ) : (
+        <img className="splash-icon" src={splash_img}></img>
+      )
+      }
     </div>
   );
 };
