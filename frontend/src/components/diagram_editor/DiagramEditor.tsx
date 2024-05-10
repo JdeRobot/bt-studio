@@ -39,6 +39,14 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   // Initialize state for last moved node ID
   let lastClickedNodeId = "";
 
+  // Store action nodes and their inputs and outputs
+  interface ActionData {
+    input: string[];
+    output: string[];
+    ids: string[];
+  }
+  let actionNodesData: { [id: string]: ActionData; } = {};
+
   // Listeners
   const attachPositionListener = (node:any) => {
     node.registerListener({
@@ -111,6 +119,28 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     }
   
   }, [currentProjectname]);
+
+  useEffect(() => {    
+    console.log(actionNodesData)
+    const nodes = model.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
+    nodes.forEach((node) => {
+      if (checkIfAction(node)) {
+        let castNode = node as BasicNodeModel;
+        saveActionNodeData(node);
+        for (let key in node.getPorts()) {
+          if (key !== 'parent') {
+            if (node.getPorts()[key] instanceof InputPortModel) {
+              castNode.addInputPort(key);
+              actionNodesData[castNode.getName()]['input'] = actionNodesData[castNode.getName()]['input'].concat([key]);
+            } else if (node.getPorts()[key] instanceof OutputPortModel) {
+              castNode.addOutputPort(key);
+              actionNodesData[castNode.getName()]['output'] = actionNodesData[castNode.getName()]['output'].concat([key]);
+            }
+          }
+        }
+      }
+    });
+  }, [graphJson]);
   
   // Create the model
   var model = new DiagramModel();
@@ -141,15 +171,30 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   // Set the model in the engine
   engine.setModel(model);
 
+  // Save action node data
+  const saveActionNodeData = (node:any) => {
+    if (actionNodesData[node.name]) {
+      actionNodesData[node.name]['ids'] = actionNodesData[node.name]['ids'].concat([node.getID()]);
+      for (const inputs of actionNodesData[node.name]['input']) {
+          node.addInputPort(inputs);
+      }
+      for (const outputs of actionNodesData[node.name]['output']) {
+          node.addOutputPort(outputs);
+      }
+    } else {
+      actionNodesData[node.name] = {input: [], output: [], ids: [node.getID()]};
+    }
+  }
+
   // Add the nodes default ports
   const addDefaultPorts = (node:any) => {
 
     console.log("Adding default ports");
 
     var nodeName = node.getName();
-    if (nodeName == "RetryUntilSuccessful") node.addInputPort("num_attempts");
-    else if (nodeName == "Repeat") node.addInputPort("num_cycles");
-    else if (nodeName == "Delay") node.addInputPort("delay_ms");
+    if (nodeName === "RetryUntilSuccessful") node.addInputPort("num_attempts");
+    else if (nodeName === "Repeat") node.addInputPort("num_cycles");
+    else if (nodeName === "Delay") node.addInputPort("delay_ms");
   }
 
   const nodeTypeSelector = (nodeName:any) => {
@@ -165,6 +210,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     let nodeColor = 'rgb(255,153,51)'; // Default color
     let hasInputPort = true;
     let hasOutputPort = true;
+    let isAction = false;
 
     // Sequences
     if (["Sequence", "ReactiveSequence", "SequenceWithMemory"].includes(nodeName)) {
@@ -182,10 +228,15 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     else {
       nodeColor = 'rgb(128,0,128)';
       hasOutputPort = false;
+      isAction = true;
     }
 
     // Create node
     const newNode = new BasicNodeModel(nodeName, nodeColor);
+
+    if (isAction) {    
+      saveActionNodeData(newNode);
+    }
 
     // Attach listener to this node
     attachPositionListener(newNode);
@@ -216,7 +267,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
     const newNode = new TagNodeModel('value', 'rgb(255,153,51)'); 
     
-    if (nodeName == "Input port value") newNode.addOutputPort();
+    if (nodeName === "Input port value") newNode.addOutputPort();
     else newNode.addInputPort();
 
     // Attach listener to this node
@@ -253,13 +304,17 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const checkIfAction = (node:any) => {
     
-    var name = node.options.name;
+    var name = node.name;
+
+    if (node.getOptions().type === 'tag') {
+      return false;
+    }
 
     // Check if the node is a user written action
     return !(["Sequence", "ReactiveSequence", "SequenceWithMemory", 
         "Fallback", "ReactiveFallback", "RetryUntilSuccessful", "Inverter", "ForceSuccess", 
         "ForceFailure", "KeepRunningUntilFailure", "Repeat", "RunOnce", "Delay",
-        "Input port value", "Output port value"].includes(name))
+        "Input port value", "Output port value", "Tree Root"].includes(name))
   }
 
   const addInputPort = () => {
@@ -279,6 +334,15 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           if (portName !== null) { // Check that the user didn't cancel
             setProjectChanges(true);
             node.addInputPort(portName);
+            actionNodesData[node.getName()]['input'] = actionNodesData[node.getName()]['input'].concat([portName]);
+            // Add the new port to all the cloned actions
+            for (const nodesId of actionNodesData[node.getName()]['ids']) {
+              if (nodesId !== lastClickedNodeId) {
+                let genericActionNode = model.getNode(nodesId);
+                let actionNode = genericActionNode as BasicNodeModel;
+                actionNode.addInputPort(portName);
+              }
+            }
           }
           engine.repaintCanvas();
           setModelJson(JSON.stringify(model.serialize()));
@@ -306,6 +370,15 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           if (portName !== null) { // Check that the user didn't cancel
             setProjectChanges(true);
             node.addOutputPort(portName);
+            actionNodesData[node.getName()]['output'] = actionNodesData[node.getName()]['output'].concat([portName]);
+            // Add the new port to all the cloned actions
+            for (const nodesId of actionNodesData[node.getName()]['ids']) {
+              if (nodesId !== lastClickedNodeId) {
+                let genericActionNode = model.getNode(nodesId);
+                let actionNode = genericActionNode as BasicNodeModel;
+                actionNode.addOutputPort(portName);
+              }
+            }
           }
           engine.repaintCanvas();
           setModelJson(JSON.stringify(model.serialize()));
