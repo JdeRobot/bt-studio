@@ -18,7 +18,8 @@ export const BasicNodeWidget = ({ engine, node }: { engine: any, node: any }) =>
         borderRadius: '5px',
         background: node.getColor() || 'red',
         padding: '10px',
-        flexDirection: "column"
+        flexDirection: "column",
+        color: 'white'
     };
 
     // Ports list

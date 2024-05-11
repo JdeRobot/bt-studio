@@ -34,6 +34,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const [graphJson, setGraphJson] = useState(null);
   const [appRunning, setAppRunning] = useState(false);
   const [isEditActionModalOpen, setEditActionModalOpen] = useState(false);
+  const [currentActionNode, setCurrentActionNode] = useState<BasicNodeModel | null>(null);
 
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
@@ -320,7 +321,17 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }
 
   const handleOpenEditActionModal = () => {
-    setEditActionModalOpen(true);
+    if (lastClickedNodeId !== "") {
+      const genericNode = model.getNode(lastClickedNodeId);
+      const node = genericNode as BasicNodeModel;
+      if (checkIfAction(node)) {
+        setEditActionModalOpen(true);
+        (document.getElementById('actionNameEditor') as HTMLInputElement).value = node.getName();
+        node.deselectNode();
+        setCurrentActionNode(node);
+        console.log(node)
+      }
+    }
   };
 
   const handleCloseEditActionModal = () => {
@@ -510,6 +521,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       <EditActionModal
         isOpen={isEditActionModalOpen}
         onClose={handleCloseEditActionModal}
+        currentActionNode={currentActionNode}
+        engine={engine}
       />
     </div>
   );
