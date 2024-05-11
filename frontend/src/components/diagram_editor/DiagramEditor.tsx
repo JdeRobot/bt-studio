@@ -27,11 +27,13 @@ import { OutputPortModel } from './nodes/basic_node/ports/output_port/OutputPort
 import { InputPortModel } from './nodes/basic_node/ports/input_port/InputPortModel';
 import { TagInputPortModel } from './nodes/tag_node/ports/input_port/TagInputPortModel';
 import { TagOutputPortModel } from './nodes/tag_node/ports/output_port/TagOutputPortModel';
+import EditActionModal from './EditActionModal.jsx';
 
 const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gazeboEnabled, manager} : {currentProjectname : any, setModelJson : any, setProjectChanges:any, gazeboEnabled:any, manager:any}) => {
 
   const [graphJson, setGraphJson] = useState(null);
   const [appRunning, setAppRunning] = useState(false);
+  const [isEditActionModalOpen, setEditActionModalOpen] = useState(false);
 
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
@@ -317,6 +319,14 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         "Input port value", "Output port value", "Tree Root"].includes(name))
   }
 
+  const handleOpenEditActionModal = () => {
+    setEditActionModalOpen(true);
+  };
+
+  const handleCloseEditActionModal = () => {
+    setEditActionModalOpen(false);
+  };
+
   const addInputPort = () => {
 
     if (model && lastClickedNodeId) {
@@ -490,13 +500,17 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       <NodeHeader 
         onNodeTypeSelected={nodeTypeSelector} 
         onDeleteNode={deleteLastClickedNode}
-        onAddInputPort={addInputPort}
+        onAddInputPort={handleOpenEditActionModal}
         onAddOutputPort={addOutputPort}
         onGenerateApp={generateApp}
         onRunApp={runApp}
         currentProjectname={currentProjectname}
       />
       <CanvasWidget className="canvas" engine={engine} />
+      <EditActionModal
+        isOpen={isEditActionModalOpen}
+        onClose={handleCloseEditActionModal}
+      />
     </div>
   );
 };
