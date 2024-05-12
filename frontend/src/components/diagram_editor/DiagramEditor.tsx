@@ -35,6 +35,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const [appRunning, setAppRunning] = useState(false);
   const [isEditActionModalOpen, setEditActionModalOpen] = useState(false);
   const [currentActionNode, setCurrentActionNode] = useState<BasicNodeModel | null>(null);
+  const [actionNodesData, setActionNodesData] = useState<{ [id: string]: ActionData; }>({});
+  const [model, setModel] = useState(new DiagramModel());
 
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
@@ -48,7 +50,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     output: string[];
     ids: string[];
   }
-  let actionNodesData: { [id: string]: ActionData; } = {};
+  // let actionNodesData: { [id: string]: ActionData; } = {};
 
   // Listeners
   const attachPositionListener = (node:any) => {
@@ -124,29 +126,50 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }, [currentProjectname]);
 
   useEffect(() => {    
-    console.log(actionNodesData)
     const nodes = model.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
     nodes.forEach((node) => {
       if (checkIfAction(node)) {
         let castNode = node as BasicNodeModel;
-        saveActionNodeData(node);
-        for (let key in node.getPorts()) {
-          if (key !== 'parent') {
-            if (node.getPorts()[key] instanceof InputPortModel) {
-              castNode.addInputPort(key);
-              actionNodesData[castNode.getName()]['input'] = actionNodesData[castNode.getName()]['input'].concat([key]);
-            } else if (node.getPorts()[key] instanceof OutputPortModel) {
-              castNode.addOutputPort(key);
-              actionNodesData[castNode.getName()]['output'] = actionNodesData[castNode.getName()]['output'].concat([key]);
+        if (!(castNode.getName() in actionNodesData)) {
+          saveActionNodeData(node);
+          for (let key in node.getPorts()) {
+            if (key !== 'parent') {
+              if (node.getPorts()[key] instanceof InputPortModel) {
+                castNode.addInputPort(key);
+                actionNodesData[castNode.getName()]['input'] = actionNodesData[castNode.getName()]['input'].concat([key]);
+              } else if (node.getPorts()[key] instanceof OutputPortModel) {
+                castNode.addOutputPort(key);
+                actionNodesData[castNode.getName()]['output'] = actionNodesData[castNode.getName()]['output'].concat([key]);
+              }
             }
           }
         }
       }
     });
   }, [graphJson]);
+
+  useEffect(() => {
+    if (!isEditActionModalOpen && currentActionNode !== null) {
+      for (const nodesId of actionNodesData[currentActionNode!.getName()]['ids']) {
+        let genericActionNode = model.getNode(nodesId);
+        let actionNode = genericActionNode as BasicNodeModel;
+        console.log(model.getNodes());
+        for (const inputs of actionNodesData[actionNode.getName()]['input']) {
+          if (!(inputs in actionNode.getPorts())) {
+            actionNode.addInputPort(inputs);
+          }
+        }
+        for (const outputs of actionNodesData[actionNode.getName()]['output']) {
+          if (!(outputs in actionNode.getPorts())) {
+            actionNode.addOutputPort(outputs);
+          }
+        }
+      }
+    }
+  }, [isEditActionModalOpen]);
   
   // Create the model
-  var model = new DiagramModel();
+  // var model = new DiagramModel();
 
   if (graphJson === null) {
     const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
@@ -260,6 +283,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     // Add the node to the model
     if (model) {
       model.addNode(newNode);
+      console.log(model.getNodes());
       setProjectChanges(true);
       engine.repaintCanvas();
       setModelJson(JSON.stringify(model.serialize()));
@@ -322,27 +346,30 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const handleOpenEditActionModal = () => {
     if (lastClickedNodeId !== "") {
+      console.log(model.getNodes());
       const genericNode = model.getNode(lastClickedNodeId);
       const node = genericNode as BasicNodeModel;
+      console.log(node);
       if (checkIfAction(node)) {
         setEditActionModalOpen(true);
         (document.getElementById('actionNameEditor') as HTMLInputElement).value = node.getName();
         node.deselectNode();
         setCurrentActionNode(node);
-        console.log(node)
       }
     }
   };
 
   const handleCloseEditActionModal = () => {
     setEditActionModalOpen(false);
+    // console.log(actionNodesData)
   };
 
   const addInputPort = () => {
 
-    if (model && lastClickedNodeId) {
+    // if (model && lastClickedNodeId) {
+      console.log(model)
 
-      const genericNode = model.getNode(lastClickedNodeId);
+      const genericNode = model.getNode(currentActionNode!.getID());
       if (genericNode) {
 
         // Cast the node to BasicNodeModel
@@ -355,6 +382,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           if (portName !== null) { // Check that the user didn't cancel
             setProjectChanges(true);
             node.addInputPort(portName);
+            console.log(node)
+            setCurrentActionNode(node);
             actionNodesData[node.getName()]['input'] = actionNodesData[node.getName()]['input'].concat([portName]);
             // Add the new port to all the cloned actions
             for (const nodesId of actionNodesData[node.getName()]['ids']) {
@@ -371,7 +400,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           window.alert("Ports can only be added to action nodes")
         }
       }
-    }
+    // }
   };
 
   const addOutputPort = () => {
@@ -523,6 +552,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         onClose={handleCloseEditActionModal}
         currentActionNode={currentActionNode}
         engine={engine}
+        addInputPort={addInputPort}
       />
     </div>
   );

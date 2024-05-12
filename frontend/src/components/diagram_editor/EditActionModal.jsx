@@ -8,7 +8,7 @@ const initialEditActionModalData = {
   actionNameEditor: ''
 };
 
-const EditActionModal = ({ isOpen, onClose, currentActionNode, engine}) => {
+const EditActionModal = ({ isOpen, onClose, currentActionNode, engine, addInputPort}) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialEditActionModalData);
 
@@ -50,6 +50,9 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, engine}) => {
             node={currentActionNode} 
           />
         }
+      </div>
+      <div className="form-row">
+        <button className="menu-button" onClick={() => addInputPort(currentActionNode)} title='Add input to action'>Click</button>
       </div>
     </Modal>
   );
