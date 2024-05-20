@@ -1,3 +1,5 @@
 frontend/node_modules/.cache/*
 *.pyc
 backend/backend/__pycache__/*
+
+git config --global core.excludesfile ~/.gitignore_global
