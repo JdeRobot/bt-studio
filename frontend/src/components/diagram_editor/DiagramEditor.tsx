@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import createEngine, { 
   DefaultLinkModel, 
   DefaultNodeModel,
@@ -34,15 +34,17 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const [graphJson, setGraphJson] = useState(null);
   const [appRunning, setAppRunning] = useState(false);
   const [isEditActionModalOpen, setEditActionModalOpen] = useState(false);
-  const [currentActionNode, setCurrentActionNode] = useState<BasicNodeModel | null>(null);
+  const [currentActionNode, setCurrentActionNode] = useState("");
+  const [modelProjectName, setModelProjectName] = useState("");
   const [actionNodesData, setActionNodesData] = useState<{ [id: string]: ActionData; }>({});
-  const [model, setModel] = useState(new DiagramModel());
 
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
   
   // Initialize state for last moved node ID
   let lastClickedNodeId = "";
+  let lastClickedNodeName = "";
+  const forceNotReset = useRef(false);
 
   // Store action nodes and their inputs and outputs
   interface ActionData {
@@ -80,6 +82,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         if (event.isSelected) {
           lastClickedNodeId = node.getID();
           node.selectNode();
+          lastClickedNodeName = node.getName();
         } else {
           node.deselectNode();
         }
@@ -125,7 +128,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   
   }, [currentProjectname]);
 
-  useEffect(() => {    
+  useEffect(() => {
     const nodes = model.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
     nodes.forEach((node) => {
       if (checkIfAction(node)) {
@@ -149,8 +152,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }, [graphJson]);
 
   useEffect(() => {
-    if (!isEditActionModalOpen && currentActionNode !== null) {
-      for (const nodesId of actionNodesData[currentActionNode!.getName()]['ids']) {
+    setCurrentActionNode(lastClickedNodeName);
+    console.log(currentActionNode);
+    if (!isEditActionModalOpen && currentActionNode !== "") {
+      for (const nodesId of actionNodesData[currentActionNode]['ids']) {
         let genericActionNode = model.getNode(nodesId);
         let actionNode = genericActionNode as BasicNodeModel;
         console.log(model.getNodes());
@@ -165,11 +170,12 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           }
         }
       }
+      forceNotReset.current = false;
     }
   }, [isEditActionModalOpen]);
   
   // Create the model
-  // var model = new DiagramModel();
+  var model = new DiagramModel();
 
   if (graphJson === null) {
     const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
@@ -194,8 +200,12 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     }
   }
 
-  // Set the model in the engine
-  engine.setModel(model);
+  // Set the model in the engine ONLY on project change
+  console.log("aaaa");
+  if (!forceNotReset.current) {
+    // return;
+    engine.setModel(model);
+  }
 
   // Save action node data
   const saveActionNodeData = (node:any) => {
@@ -345,31 +355,47 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }
 
   const handleOpenEditActionModal = () => {
-    if (lastClickedNodeId !== "") {
-      console.log(model.getNodes());
-      const genericNode = model.getNode(lastClickedNodeId);
-      const node = genericNode as BasicNodeModel;
-      console.log(node);
-      if (checkIfAction(node)) {
-        setEditActionModalOpen(true);
-        (document.getElementById('actionNameEditor') as HTMLInputElement).value = node.getName();
-        node.deselectNode();
-        setCurrentActionNode(node);
-      }
-    }
+    // if (lastClickedNodeId !== "") {
+    //   console.log(model.getNodes());
+    //   const genericNode = model.getNode(lastClickedNodeId);
+    //   const node = genericNode as BasicNodeModel;
+    //   console.log(node);
+    //   if (checkIfAction(node)) {
+    //     // (document.getElementById('actionNameEditor') as HTMLInputElement).value = node.getName();
+    //   }
+    // }
+    // setProjectChanges(false);
+    // setModelJson(JSON.stringify(model.serialize()));
+
+    // axios.post('/tree_api/save_project/', {
+    //   project_name: currentProjectname,
+    //   graph_json: JSON.stringify(model.serialize())
+    // })
+    // .then(response => {
+    //   if (response.data.success) {
+    //     console.log('Project saved successfully.');
+    //   } else {
+    //     console.error('Error saving project:', response.data.message || 'Unknown error');
+    //   }
+    // })
+    // .catch(error => {
+    //   console.error('Axios Error:', error);
+    // });
+    forceNotReset.current = true;
+    setEditActionModalOpen(true);
   };
 
   const handleCloseEditActionModal = () => {
     setEditActionModalOpen(false);
-    // console.log(actionNodesData)
   };
 
   const addInputPort = () => {
 
     // if (model && lastClickedNodeId) {
-      console.log(model)
+      console.log(model.getNodes())
 
-      const genericNode = model.getNode(currentActionNode!.getID());
+      const genericNode = model.getNode(lastClickedNodeId);
+      console.log(currentActionNode)
       if (genericNode) {
 
         // Cast the node to BasicNodeModel
@@ -383,7 +409,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
             setProjectChanges(true);
             node.addInputPort(portName);
             console.log(node)
-            setCurrentActionNode(node);
+            setCurrentActionNode(node.getName());
             actionNodesData[node.getName()]['input'] = actionNodesData[node.getName()]['input'].concat([portName]);
             // Add the new port to all the cloned actions
             for (const nodesId of actionNodesData[node.getName()]['ids']) {
@@ -551,8 +577,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         isOpen={isEditActionModalOpen}
         onClose={handleCloseEditActionModal}
         currentActionNode={currentActionNode}
-        engine={engine}
         addInputPort={addInputPort}
+        orig_engine={engine}
       />
     </div>
   );
