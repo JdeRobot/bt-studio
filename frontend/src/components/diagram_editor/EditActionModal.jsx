@@ -4,41 +4,23 @@ import { BasicNodeWidget } from './nodes/basic_node/BasicNodeWidget.tsx';
 import './EditActionModal.css';
 import Modal from '../Modal/Modal';
 
-const initialEditActionModalData = {
-  actionNameEditor: ''
-};
-
-const EditActionModal = ({ isOpen, onClose, currentActionNode, addInputPort, orig_engine}) => {
-  const focusInputRef = useRef(null);
-  const [formState, setFormState] = useState(initialEditActionModalData);
-  const engine = orig_engine;
-
-  useEffect(() => {
-    if (isOpen && focusInputRef.current) {
-      setTimeout(() => {
-        focusInputRef.current.focus();
-      }, 0);
-    }
-  }, [isOpen]);
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormState((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
+const EditActionModal = ({ isOpen, onClose, currentActionNode, engine, addInputPort}) => {
 
   return (
     <Modal hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
       <div className="form-row">
-        <label htmlFor="actionNameEditor">Edit Action Node</label>
-        {currentActionNode !== "" &&
-          <label>{currentActionNode}</label>
+        <label htmlFor="actionNameEditor">Action Editor</label>
+      </div>
+      <div className="form-row">
+        {currentActionNode && 
+          <BasicNodeWidget
+            engine={engine}
+            node={currentActionNode} 
+          />
         }
       </div>
       <div className="form-row">
-        <button className="menu-button" onClick={() => addInputPort()} title='Add input to action'>Click</button>
+        <button className="menu-button" onClick={() => addInputPort(currentActionNode)} title='Add input to action'>Add input</button>
       </div>
     </Modal>
   );

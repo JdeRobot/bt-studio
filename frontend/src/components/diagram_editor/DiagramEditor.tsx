@@ -34,7 +34,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const [graphJson, setGraphJson] = useState(null);
   const [appRunning, setAppRunning] = useState(false);
   const [isEditActionModalOpen, setEditActionModalOpen] = useState(false);
-  const [currentActionNode, setCurrentActionNode] = useState("");
+  const [currentActionNode, setCurrentActionNode] = useState<any>(null);
   const [modelProjectName, setModelProjectName] = useState("");
   const [actionNodesData, setActionNodesData] = useState<{ [id: string]: ActionData; }>({});
 
@@ -42,9 +42,11 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   let lastMovedNodePosition = { x: 200, y: 200 };
   
   // Initialize state for last moved node ID
-  let lastClickedNodeId = "";
-  let lastClickedNodeName = "";
+  // let lastClickedNodeId = "";
+  const lastClickedNodeId = useRef<string>("");
   const forceNotReset = useRef(false);
+  // Create the model
+  const model = useRef(new DiagramModel());
 
   // Store action nodes and their inputs and outputs
   interface ActionData {
@@ -60,7 +62,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       positionChanged: (event:any) => {
         lastMovedNodePosition = event.entity.getPosition();
         setProjectChanges(true);
-        setModelJson(JSON.stringify(model.serialize())); // Serialize and update model JSON
+        setModelJson(JSON.stringify(model.current.serialize())); // Serialize and update model JSON
       },
     });
   };
@@ -70,7 +72,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       linksUpdated: (event:any) => {
         if (event.isCreated) {
           setProjectChanges(true);
-          setModelJson(JSON.stringify(model.serialize())); // Update when a new link is created
+          setModelJson(JSON.stringify(model.current.serialize())); // Update when a new link is created
         }
       },
     });
@@ -80,9 +82,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     node.registerListener({
       selectionChanged: (event:any) => {
         if (event.isSelected) {
-          lastClickedNodeId = node.getID();
+          lastClickedNodeId.current = node.getID();
           node.selectNode();
-          lastClickedNodeName = node.getName();
         } else {
           node.deselectNode();
         }
@@ -117,6 +118,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           // Set the model as the received json
           setGraphJson(response.data.graph_json);
           setModelJson(response.data.graph_json);
+          // Create the new model
+          model.current = new DiagramModel();
+          // Reset the force reset state
+          forceNotReset.current = false;
         } else {
           console.error(response.data.message);
         }
@@ -129,7 +134,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }, [currentProjectname]);
 
   useEffect(() => {
-    const nodes = model.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
+    const nodes = model.current.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
     nodes.forEach((node) => {
       if (checkIfAction(node)) {
         let castNode = node as BasicNodeModel;
@@ -152,13 +157,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }, [graphJson]);
 
   useEffect(() => {
-    setCurrentActionNode(lastClickedNodeName);
-    console.log(currentActionNode);
-    if (!isEditActionModalOpen && currentActionNode !== "") {
-      for (const nodesId of actionNodesData[currentActionNode]['ids']) {
-        let genericActionNode = model.getNode(nodesId);
+    if (!isEditActionModalOpen && currentActionNode !== null) {
+      for (const nodesId of actionNodesData[currentActionNode!.getName()]['ids']) {
+        let genericActionNode = model.current.getNode(nodesId);
         let actionNode = genericActionNode as BasicNodeModel;
-        console.log(model.getNodes());
         for (const inputs of actionNodesData[actionNode.getName()]['input']) {
           if (!(inputs in actionNode.getPorts())) {
             actionNode.addInputPort(inputs);
@@ -170,41 +172,35 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           }
         }
       }
-      forceNotReset.current = false;
     }
   }, [isEditActionModalOpen]);
-  
-  // Create the model
-  var model = new DiagramModel();
-
-  if (graphJson === null) {
-    const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
-    root_node.setPosition(200, 200);
-    root_node.addChildrenPort("Children Port");
-    model.addAll(root_node);
-  } else {
-    try {
-      // Try parsing the JSON string
-      model.deserializeModel(graphJson, engine);
-
-      // After deserialization, attach listeners to each node
-      const nodes = model.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
-      nodes.forEach((node) => {
-        attachPositionListener(node);
-        attachLinkListener(node);
-        attachClickListener(node);
-      });
-    } catch (e) {
-      // Log the error for debugging
-      console.error("An error occurred while parsing the JSON:", e);
-    }
-  }
 
   // Set the model in the engine ONLY on project change
-  console.log("aaaa");
   if (!forceNotReset.current) {
-    // return;
-    engine.setModel(model);
+    if (graphJson === null) {
+      const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
+      root_node.setPosition(200, 200);
+      root_node.addChildrenPort("Children Port");
+      model.current.addAll(root_node);
+    } else {
+      try {
+        // Try parsing the JSON string
+        model.current.deserializeModel(graphJson, engine);
+
+        // After deserialization, attach listeners to each node
+        const nodes = model.current.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
+        nodes.forEach((node) => {
+          attachPositionListener(node);
+          attachLinkListener(node);
+          attachClickListener(node);
+        });
+      } catch (e) {
+        // Log the error for debugging
+        console.error("An error occurred while parsing the JSON:", e);
+      }
+    }
+
+    engine.setModel(model.current);
   }
 
   // Save action node data
@@ -278,7 +274,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     attachPositionListener(newNode);
     attachClickListener(newNode);
     attachLinkListener(newNode);
-    lastClickedNodeId = newNode.getID();
+    lastClickedNodeId.current = newNode.getID();
 
     // Setup the node position and ports
     var new_y = lastMovedNodePosition.y + 100;
@@ -291,12 +287,12 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     addDefaultPorts(newNode);
 
     // Add the node to the model
-    if (model) {
-      model.addNode(newNode);
-      console.log(model.getNodes());
+    if (model.current) {
+      model.current.addNode(newNode);
+      console.log(model.current.getNodes());
       setProjectChanges(true);
       engine.repaintCanvas();
-      setModelJson(JSON.stringify(model.serialize()));
+      setModelJson(JSON.stringify(model.current.serialize()));
     }
   };
 
@@ -310,7 +306,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     // Attach listener to this node
     attachPositionListener(newNode);
     attachClickListener(newNode);
-    lastClickedNodeId = newNode.getID();
+    lastClickedNodeId.current = newNode.getID();
     
     // Setup the node position and ports
     var new_y = lastMovedNodePosition.y + 100;
@@ -318,24 +314,25 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     lastMovedNodePosition.y = new_y;
 
     // Add the node to the model
-    if (model) {
-      model.addNode(newNode);
+    if (model.current) {
+      model.current.addNode(newNode);
       setProjectChanges(true);
       engine.repaintCanvas();
-      setModelJson(JSON.stringify(model.serialize()));
+      setModelJson(JSON.stringify(model.current.serialize()));
     }
   }
 
   const deleteLastClickedNode = () => {
-    if (model && lastClickedNodeId) {
-      const node = model.getNode(lastClickedNodeId);
+    if (model.current && lastClickedNodeId.current) {
+      const node: any = model.current.getNode(lastClickedNodeId.current);
       if (node) {
+        actionNodesData[node!.getName()]['ids'] = actionNodesData[node!.getName()]['ids'].filter(obj => obj !== lastClickedNodeId.current);
         node.remove();
         setProjectChanges(true);
         engine.repaintCanvas();
-        setModelJson(JSON.stringify(model.serialize()));
+        setModelJson(JSON.stringify(model.current.serialize()));
       }
-      lastClickedNodeId = "";
+      lastClickedNodeId.current = "";
     }
   };
 
@@ -355,34 +352,19 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }
 
   const handleOpenEditActionModal = () => {
-    // if (lastClickedNodeId !== "") {
-    //   console.log(model.getNodes());
-    //   const genericNode = model.getNode(lastClickedNodeId);
-    //   const node = genericNode as BasicNodeModel;
-    //   console.log(node);
-    //   if (checkIfAction(node)) {
-    //     // (document.getElementById('actionNameEditor') as HTMLInputElement).value = node.getName();
-    //   }
-    // }
-    // setProjectChanges(false);
-    // setModelJson(JSON.stringify(model.serialize()));
+    if (lastClickedNodeId.current !== "") {
+      console.log(model.current.getNodes());
+      const genericNode = model.current.getNode(lastClickedNodeId.current);
+      const node = genericNode as BasicNodeModel;
+      console.log(node);
+      if (checkIfAction(node)) {
+        forceNotReset.current = true;
+        node.deselectNode();
+        setCurrentActionNode(node);
+        setEditActionModalOpen(true);
+      }
+    }
 
-    // axios.post('/tree_api/save_project/', {
-    //   project_name: currentProjectname,
-    //   graph_json: JSON.stringify(model.serialize())
-    // })
-    // .then(response => {
-    //   if (response.data.success) {
-    //     console.log('Project saved successfully.');
-    //   } else {
-    //     console.error('Error saving project:', response.data.message || 'Unknown error');
-    //   }
-    // })
-    // .catch(error => {
-    //   console.error('Axios Error:', error);
-    // });
-    forceNotReset.current = true;
-    setEditActionModalOpen(true);
   };
 
   const handleCloseEditActionModal = () => {
@@ -390,50 +372,39 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   };
 
   const addInputPort = () => {
-
-    // if (model && lastClickedNodeId) {
-      console.log(model.getNodes())
-
-      const genericNode = model.getNode(lastClickedNodeId);
-      console.log(currentActionNode)
-      if (genericNode) {
-
-        // Cast the node to BasicNodeModel
-        const node = genericNode as BasicNodeModel;
-
-        // Check restrictions
-        if (checkIfAction(node)) {
-          // Now you can call your custom method
-          const portName = prompt("Enter the name for the new input port:");
-          if (portName !== null) { // Check that the user didn't cancel
-            setProjectChanges(true);
-            node.addInputPort(portName);
-            console.log(node)
-            setCurrentActionNode(node.getName());
-            actionNodesData[node.getName()]['input'] = actionNodesData[node.getName()]['input'].concat([portName]);
-            // Add the new port to all the cloned actions
-            for (const nodesId of actionNodesData[node.getName()]['ids']) {
-              if (nodesId !== lastClickedNodeId) {
-                let genericActionNode = model.getNode(nodesId);
-                let actionNode = genericActionNode as BasicNodeModel;
-                actionNode.addInputPort(portName);
-              }
+    if (currentActionNode) {
+      // Check restrictions
+      if (checkIfAction(currentActionNode)) {
+        // Now you can call your custom method
+        const portName = prompt("Enter the name for the new input port:");
+        if (portName !== null) { // Check that the user didn't cancel
+          setProjectChanges(true);
+          currentActionNode.addInputPort(portName);
+          console.log(currentActionNode)
+          actionNodesData[currentActionNode.getName()]['input'] = actionNodesData[currentActionNode.getName()]['input'].concat([portName]);
+          // Add the new port to all the cloned actions
+          for (const nodesId of actionNodesData[currentActionNode.getName()]['ids']) {
+            if (nodesId !== lastClickedNodeId.current) {
+              let genericActionNode = model.current.getNode(nodesId);
+              let actionNode = genericActionNode as BasicNodeModel;
+              actionNode.addInputPort(portName);
             }
           }
-          engine.repaintCanvas();
-          setModelJson(JSON.stringify(model.serialize()));
-        } else {
-          window.alert("Ports can only be added to action nodes")
         }
+        setCurrentActionNode(currentActionNode);
+        engine.repaintCanvas();
+        setModelJson(JSON.stringify(model.current.serialize()));
+      } else {
+        window.alert("Ports can only be added to action nodes")
       }
-    // }
+    }
   };
 
   const addOutputPort = () => {
 
-    if (model && lastClickedNodeId) {
+    if (model.current && lastClickedNodeId.current) {
       
-      const genericNode = model.getNode(lastClickedNodeId);
+      const genericNode = model.current.getNode(lastClickedNodeId.current);
       if (genericNode) {
 
         // Cast the node to BasicNodeModel
@@ -449,15 +420,15 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
             actionNodesData[node.getName()]['output'] = actionNodesData[node.getName()]['output'].concat([portName]);
             // Add the new port to all the cloned actions
             for (const nodesId of actionNodesData[node.getName()]['ids']) {
-              if (nodesId !== lastClickedNodeId) {
-                let genericActionNode = model.getNode(nodesId);
+              if (nodesId !== lastClickedNodeId.current) {
+                let genericActionNode = model.current.getNode(nodesId);
                 let actionNode = genericActionNode as BasicNodeModel;
                 actionNode.addOutputPort(portName);
               }
             }
           }
           engine.repaintCanvas();
-          setModelJson(JSON.stringify(model.serialize()));
+          setModelJson(JSON.stringify(model.current.serialize()));
         } else {
           window.alert("Ports can only be added to action nodes")
         }
@@ -467,8 +438,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const generateApp = () => {
 
-    if (model) {
-      const str = JSON.stringify(model.serialize());
+    if (model.current) {
+      const str = JSON.stringify(model.current.serialize());
     
       fetch("/tree_api/generate_app/", {
         method: "POST",
@@ -507,7 +478,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     {
       if(!appRunning) 
       {
-        const tree_graph = JSON.stringify(model.serialize());
+        const tree_graph = JSON.stringify(model.current.serialize());
         fetch("/tree_api/get_simplified_app/", {
           method: "POST",
           headers: {
@@ -576,9 +547,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       <EditActionModal
         isOpen={isEditActionModalOpen}
         onClose={handleCloseEditActionModal}
+        engine={engine}
         currentActionNode={currentActionNode}
         addInputPort={addInputPort}
-        orig_engine={engine}
       />
     </div>
   );

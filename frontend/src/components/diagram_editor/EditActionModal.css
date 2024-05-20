@@ -2,9 +2,21 @@
   margin-top: 1rem;
 }
 
-.form-row label,
-.form-row input,
-.form-row select,
+.form-row {
+  width: 300px;
+}
+
+.form-row label {
+  width: 100%;
+  display: block;
+  background-color: #12494c;
+  border: none;
+  color: #ffffff;
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+}
+
 .form-row button {
   width: 100%;
   display: block;
