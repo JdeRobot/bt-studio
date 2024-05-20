@@ -53,6 +53,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     input: string[];
     output: string[];
     ids: string[];
+    color: string;
   }
   // let actionNodesData: { [id: string]: ActionData; } = {};
 
@@ -171,7 +172,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
             actionNode.addOutputPort(outputs);
           }
         }
+        actionNode.setColor(actionNodesData[actionNode.getName()]['color'])
       }
+      engine.repaintCanvas();
+      setModelJson(JSON.stringify(model.current.serialize()));
     }
   }, [isEditActionModalOpen]);
 
@@ -213,8 +217,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       for (const outputs of actionNodesData[node.name]['output']) {
           node.addOutputPort(outputs);
       }
+      node.setColor(actionNodesData[node.getName()]['color'])
     } else {
-      actionNodesData[node.name] = {input: [], output: [], ids: [node.getID()]};
+      actionNodesData[node.name] = {input: [], output: [], ids: [node.getID()], color: node.getColor()};
     }
   }
 
@@ -268,6 +273,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
     if (isAction) {    
       saveActionNodeData(newNode);
+      console.log(actionNodesData)
     }
 
     // Attach listener to this node
@@ -367,8 +373,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   };
 
-  const handleCloseEditActionModal = () => {
+  const handleCloseEditActionModal = (color:any) => {
     setEditActionModalOpen(false);
+    actionNodesData[currentActionNode.getName()]['color'] = 'rgb('+Math.round(color.rgb['r'])+','+Math.round(color.rgb['g'])+','+Math.round(color.rgb['b'])+')';
+    console.log(actionNodesData)
   };
 
   const addInputPort = () => {

@@ -35,6 +35,10 @@ export class BasicNodeModel extends NodeModel<NodeModelGenerics & BasicNodeModel
         return this.name;
     }
 
+    setColor(color: string): void {
+        this.color = color;
+    }
+
     getColor(): string {
         return this.color;
     }

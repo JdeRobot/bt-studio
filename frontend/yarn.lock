@@ -8402,6 +8402,11 @@ react-app-polyfill@^3.0.0:
     regenerator-runtime "^0.13.9"
     whatwg-fetch "^3.6.2"
 
+react-color-palette@^7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/react-color-palette/-/react-color-palette-7.1.1.tgz#939cffb4b1295c4f4140437a3805e64bfd5ff3e9"
+  integrity sha512-fBmTRWmTCrH08yZwU+5647pUKABRM6h4TS/43Q/mt/TLH1hyTfWopCc6wm2L9IoynPcOT7SaOm3Xmdz+goFEDw==
+
 react-d3-graph@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/react-d3-graph/-/react-d3-graph-2.6.0.tgz#b994131e430b568e086970560ba8a26809113173"
