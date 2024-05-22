@@ -6,8 +6,10 @@ import "react-color-palette/css";
 
 import './EditActionModal.css';
 import Modal from '../Modal/Modal';
+import { OutputPortModel } from './nodes/basic_node/ports/output_port/OutputPortModel';
+import { InputPortModel } from './nodes/basic_node/ports/input_port/InputPortModel';
 
-const EditActionModal = ({ isOpen, onClose, currentActionNode, engine, addInputPort}) => {
+const EditActionModal = ({ isOpen, onClose, currentActionNode, addInputPort, addOutputPort}) => {
   // const [color, setColor] = useColor(currentActionNode ? currentActionNode.getColor().replaceAll(",", " ") : "rgb(128 0 128)");
   const [color, setColor] = useColor("rgb(128 0 128)");
 
@@ -17,21 +19,59 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, engine, addInputP
     }
   }, [color]);
 
+  const isBackgroundDark = () => {
+    return ((color.rgb['r'] + color.rgb['g'] + color.rgb['b']) / 3) < 123
+  }
+
   return (
     <Modal hasCloseBtn={true} isOpen={isOpen} onClose={() => onClose(color)}>
       <div className="form-row">
         <label htmlFor="actionNameEditor">Action Editor</label>
       </div>
       <div className="form-row">
-        {currentActionNode && 
-          <BasicNodeWidget
-            engine={engine}
-            node={currentActionNode} 
-          />
+        {currentActionNode &&
+          <div className="node-editor" style={{backgroundColor: currentActionNode.getColor()}}>
+            <label className="node-editor-name" style={{color: isBackgroundDark() ? 'white' : 'black'}}>{currentActionNode.getName()}</label>
+            <div className="node-editor-io">
+              <div className="node-editor-inputs">
+                {Object.entries(currentActionNode.getPorts()).map((port, index) => {
+                  if (port[1] instanceof InputPortModel) {
+                    return (
+                      <div key={index} className="node-editor-input" style={{color: isBackgroundDark() ? 'white' : 'black'}}>
+                        {port[0]}
+                      </div>
+                    );
+                  }
+                })}
+                <button 
+                  className="node-editor-button" 
+                  style={{color: isBackgroundDark() ? 'white' : 'black'}} 
+                  onClick={() => addInputPort()} 
+                  title='Add input'>
+                  +
+                </button>
+              </div>
+              <div className="node-editor-outputs">
+                {Object.entries(currentActionNode.getPorts()).map((port, index) => {
+                  if (port[1] instanceof OutputPortModel) {
+                    return (
+                      <div key={index} className="node-editor-output" style={{color: isBackgroundDark() ? 'white' : 'black'}}>
+                        {port[0]}
+                      </div>
+                    );
+                  }
+                })}
+                <button 
+                  className="node-editor-button" 
+                  style={{color: isBackgroundDark() ? 'white' : 'black'}} 
+                  onClick={() => addOutputPort()} 
+                  title='Add output'>
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
         }
-      </div>
-      <div className="form-row">
-        <button className="menu-button" onClick={() => addInputPort(currentActionNode)} title='Add input to action'>Add input</button>
       </div>
       <div className="form-row">
         <label for="favcolor">Color:</label>

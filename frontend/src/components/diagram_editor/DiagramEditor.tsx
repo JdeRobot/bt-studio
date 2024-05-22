@@ -409,37 +409,30 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   };
 
   const addOutputPort = () => {
-
-    if (model.current && lastClickedNodeId.current) {
-      
-      const genericNode = model.current.getNode(lastClickedNodeId.current);
-      if (genericNode) {
-
-        // Cast the node to BasicNodeModel
-        const node = genericNode as BasicNodeModel;
-        
-        // Check restrictions
-        if (checkIfAction(node)) {
-          // Now you can call your custom method
-          const portName = prompt("Enter the name for the new output port:");
-          if (portName !== null) { // Check that the user didn't cancel
-            setProjectChanges(true);
-            node.addOutputPort(portName);
-            actionNodesData[node.getName()]['output'] = actionNodesData[node.getName()]['output'].concat([portName]);
-            // Add the new port to all the cloned actions
-            for (const nodesId of actionNodesData[node.getName()]['ids']) {
-              if (nodesId !== lastClickedNodeId.current) {
-                let genericActionNode = model.current.getNode(nodesId);
-                let actionNode = genericActionNode as BasicNodeModel;
-                actionNode.addOutputPort(portName);
-              }
+    if (currentActionNode) {
+      // Check restrictions
+      if (checkIfAction(currentActionNode)) {
+        // Now you can call your custom method
+        const portName = prompt("Enter the name for the new output port:");
+        if (portName !== null) { // Check that the user didn't cancel
+          setProjectChanges(true);
+          currentActionNode.addOutputPort(portName);
+          console.log(currentActionNode)
+          actionNodesData[currentActionNode.getName()]['output'] = actionNodesData[currentActionNode.getName()]['output'].concat([portName]);
+          // Add the new port to all the cloned actions
+          for (const nodesId of actionNodesData[currentActionNode.getName()]['ids']) {
+            if (nodesId !== lastClickedNodeId.current) {
+              let genericActionNode = model.current.getNode(nodesId);
+              let actionNode = genericActionNode as BasicNodeModel;
+              actionNode.addOutputPort(portName);
             }
           }
-          engine.repaintCanvas();
-          setModelJson(JSON.stringify(model.current.serialize()));
-        } else {
-          window.alert("Ports can only be added to action nodes")
         }
+        setCurrentActionNode(currentActionNode);
+        engine.repaintCanvas();
+        setModelJson(JSON.stringify(model.current.serialize()));
+      } else {
+        window.alert("Ports can only be added to action nodes")
       }
     }
   };
@@ -555,9 +548,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       <EditActionModal
         isOpen={isEditActionModalOpen}
         onClose={handleCloseEditActionModal}
-        engine={engine}
         currentActionNode={currentActionNode}
         addInputPort={addInputPort}
+        addOutputPort={addOutputPort}
       />
     </div>
   );

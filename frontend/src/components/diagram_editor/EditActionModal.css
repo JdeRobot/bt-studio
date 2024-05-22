@@ -3,7 +3,7 @@
 }
 
 .form-row {
-  width: 300px;
+  width: 400px;
 }
 
 .form-row label {
@@ -42,56 +42,60 @@
   height: 130px;
 }
 
-.form-row button {
-  margin-bottom: 10px;
-  border-radius: 10px;
-  height: 2em;
-  font-size: medium;
-}
-
-#cancel-new-action:hover {
-  background-color: hsla(0, 100%, 49%, 0.5);
-}
-
 #create-new-action:hover {
   background-color: hsla(93, 100%, 49%, 0.5);
 }
 
-.templates-col{
-  background-color: none;
-  float: left; /* Float the buttons side by side */
-  width:30%;
+.node-editor {
+  border: #000000 solid 3px;
   border-radius: 10px;
+  padding: 10px;
 }
 
-.templates-col div{
-  border-radius: 10px; 
-  cursor: pointer; /* Pointer/hand icon */
-  text-align: center;
-  margin: 3px;
-  padding: 5px; 
+.node-editor label {
+  background: none;
 }
 
-.templates-col:hover div{
-  background-color: #0c3032;
+.node-editor-io {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 10px;
 }
 
-.templates-col .icon {
-    height: 50px;
-    width: 30px;
+.node-editor-button {
+  background: none !important;
+  border-radius: 7px;
+  padding: 5px;
 }
 
-.templates-col p {
-  margin: 3px !important;
-  color: #ffffff;
+.node-editor-button:hover {
+  background-color: hsla(0, 0%, 50%, 0.3) !important;
 }
 
-.templates-col input[type="radio"] {
-  display: none;
-  z-index: 100;
+.node-editor-input + .node-editor-input {
+  margin-top: .3em;
 }
 
-.templates-col input[type="radio"]:checked + div {
-  background-color: #1f7f84 !important;
-  color: black;
+.node-editor-input {
+  border-radius: 7px;
+  padding: 5px;
+}
+
+.node-editor-input:hover {
+  background-color: hsla(0, 0%, 50%, 0.3);
+}
+
+.node-editor-output + .node-editor-output {
+  margin-top: .3em;
+}
+
+.node-editor-output {
+  border-radius: 7px;
+  padding: 5px;
+  text-align: right;
+}
+
+.node-editor-output:hover {
+  /* background-color: hsla(0, 0%, 50%, 0.3); */
+  filter: invert(100%);
 }
