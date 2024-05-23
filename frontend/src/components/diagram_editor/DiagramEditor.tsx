@@ -579,8 +579,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       <NodeHeader 
         onNodeTypeSelected={nodeTypeSelector} 
         onDeleteNode={deleteLastClickedNode}
-        onAddInputPort={handleOpenEditActionModal}
-        onAddOutputPort={addOutputPort}
+        onEditAction={handleOpenEditActionModal}
         onGenerateApp={generateApp}
         onRunApp={runApp}
         currentProjectname={currentProjectname}
