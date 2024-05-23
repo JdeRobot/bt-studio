@@ -12,6 +12,9 @@ import { InputPortModel } from './nodes/basic_node/ports/input_port/InputPortMod
 const EditActionModal = ({ isOpen, onClose, currentActionNode, addInputPort, addOutputPort}) => {
   // const [color, setColor] = useColor(currentActionNode ? currentActionNode.getColor().replaceAll(",", " ") : "rgb(128 0 128)");
   const [color, setColor] = useColor("rgb(128 0 128)");
+  const [nodePorts, setNodePorts] = useState(currentActionNode ? currentActionNode.getPorts() : []);
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
 
   useEffect(() => {
     if (currentActionNode) {
@@ -46,7 +49,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, addInputPort, add
                 <button 
                   className="node-editor-button" 
                   style={{color: isBackgroundDark() ? 'white' : 'black'}} 
-                  onClick={() => addInputPort()} 
+                  onClick={() => {addInputPort(); forceUpdate();}} 
                   title='Add input'>
                   +
                 </button>
@@ -64,7 +67,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, addInputPort, add
                 <button 
                   className="node-editor-button" 
                   style={{color: isBackgroundDark() ? 'white' : 'black'}} 
-                  onClick={() => addOutputPort()} 
+                  onClick={() => {addOutputPort(); forceUpdate();}} 
                   title='Add output'>
                   +
                 </button>
