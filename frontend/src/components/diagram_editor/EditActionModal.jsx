@@ -25,6 +25,11 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
     return ((color.rgb['r'] + color.rgb['g'] + color.rgb['b']) / 3) < 123
   }
 
+  const reRender = () => {
+    forceUpdate();
+    document.getElementById('node-editor-modal').focus();
+  }
+
   const horizontalScrolling = (e) => {
     e.preventDefault()
     var containerScrollPosition = e.target.scrollLeft
@@ -36,7 +41,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
 }
 
   return (
-    <Modal hasCloseBtn={true} isOpen={isOpen} onClose={() => onClose(color)}>
+    <Modal id="node-editor-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose} >
       <div className="node-editor-row">
         <label className="node-editor-title" htmlFor="actionNameEditor">Action Editor</label>
       </div>
@@ -58,7 +63,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                         <button 
                           className={"node-editor-io-delete"} 
                           style={{color: isBackgroundDark() ? 'white' : 'black'}} 
-                          onClick={() => {deleteInputPort(port[1], port[0]); forceUpdate();}}>-</button>
+                          onClick={() => {deleteInputPort(port[1], port[0]); reRender()}}>-</button>
                       </div>
                     );
                   }
@@ -66,7 +71,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                 <button 
                   className="node-editor-button" 
                   style={{color: isBackgroundDark() ? 'white' : 'black'}} 
-                  onClick={() => {addInputPort(); forceUpdate();}} 
+                  onClick={() => {addInputPort(); reRender()}} 
                   title='Add input'>
                   +
                 </button>
@@ -79,7 +84,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                         <button 
                           className={"node-editor-io-delete"} 
                           style={{color: isBackgroundDark() ? 'white' : 'black'}} 
-                          onClick={() => {deleteOutputPort(port[1], port[0]); forceUpdate();}}>-</button>
+                          onClick={() => {deleteOutputPort(port[1], port[0]); reRender()}}>-</button>
                         <label 
                           className="node-editor-io-name"
                           onWheel={horizontalScrolling}
@@ -91,7 +96,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                 <button 
                   className="node-editor-button" 
                   style={{color: isBackgroundDark() ? 'white' : 'black'}} 
-                  onClick={() => {addOutputPort(); forceUpdate();}} 
+                  onClick={() => {addOutputPort(); reRender()}} 
                   title='Add output'>
                   +
                 </button>

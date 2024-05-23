@@ -11,3 +11,7 @@
   box-shadow: hsl(0 0% 0% / 10%) 0 0 0.5rem 0.25rem;
   background: #12494c;
 }
+
+.modal:focus {
+  outline: none;
+}

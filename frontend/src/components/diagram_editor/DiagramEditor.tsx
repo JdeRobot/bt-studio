@@ -337,10 +337,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const handleOpenEditActionModal = () => {
     if (lastClickedNodeId.current !== "") {
-      console.log(model.current.getNodes());
       const genericNode = model.current.getNode(lastClickedNodeId.current);
       const node = genericNode as BasicNodeModel;
-      console.log(node);
       if (checkIfAction(node)) {
         forceNotReset.current = true;
         setCurrentActionNode(node);
@@ -350,8 +348,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   };
 
-  const handleCloseEditActionModal = (color:any) => {
+  const handleCloseEditActionModal = () => {
     setEditActionModalOpen(false);
+    console.log("closing");
   };
 
   const setColorActionNode = (r:number, g:number, b:number) => {
