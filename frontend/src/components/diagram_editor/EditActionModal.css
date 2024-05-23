@@ -1,12 +1,13 @@
-.form-row + .form-row {
+.node-editor-row + .node-editor-row {
   margin-top: 1rem;
 }
 
-.form-row {
+.node-editor-row {
   width: 400px;
 }
 
-.form-row label {
+.node-editor-title,
+.node-editor-name {
   width: 100%;
   display: block;
   background-color: #12494c;
@@ -15,31 +16,8 @@
   font-size: large;
   font-weight: bold;
   text-align: center;
-}
-
-.form-row button {
-  width: 100%;
-  display: block;
-  background-color: #12494c;
-  border: none;
-  color: #ffffff;
-  font-size: medium;
-}
-
-.form-row input {
-  border: 2px solid #000000 !important;
-  background-color: #0c3032 !important;
-  border-radius: 10px;
-  padding-left: 1em;
-}
-
-.form-row label {
   margin-bottom: 10px;
   margin-left: 5px;
-}
-
-#templates-list {
-  height: 130px;
 }
 
 #create-new-action:hover {
@@ -66,36 +44,58 @@
   background: none !important;
   border-radius: 7px;
   padding: 5px;
+  border: none;
+  width: 100%;
 }
 
 .node-editor-button:hover {
   background-color: hsla(0, 0%, 50%, 0.3) !important;
 }
 
-.node-editor-input + .node-editor-input {
+.node-editor-io-entry + .node-editor-io-entry{
   margin-top: .3em;
 }
 
-.node-editor-input {
+.node-editor-io-entry {
   border-radius: 7px;
   padding: 5px;
+  display: grid;
+  grid-template-columns: auto 20px;
 }
 
-.node-editor-input:hover {
+.node-editor-io-entry:hover {
   background-color: hsla(0, 0%, 50%, 0.3);
 }
 
-.node-editor-output + .node-editor-output {
-  margin-top: .3em;
+.node-editor-io-entry:hover .node-editor-io-delete{
+  display:inline-block;
+}
+
+.node-editor-io-delete:hover{
+  display:inline-block;
+  background-color: hsla(0, 100%, 50%, 0.75) !important;
 }
 
 .node-editor-output {
-  border-radius: 7px;
-  padding: 5px;
   text-align: right;
 }
 
-.node-editor-output:hover {
-  /* background-color: hsla(0, 0%, 50%, 0.3); */
-  filter: invert(100%);
+.node-editor-input {
+  text-align: left;
+}
+
+.node-editor-io-name {
+  text-align: left !important;
+  font-size: medium !important;
+}
+
+.node-editor-io-delete {
+  text-align: center !important;
+  background: none !important;
+  border-radius: 7px !important;
+  border: none;
+  display: none;
+  background-color: hsla(0, 100%, 50%, 0.25) !important;
+  height: 20px;
+  width: 20px;
 }
