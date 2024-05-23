@@ -25,6 +25,16 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
     return ((color.rgb['r'] + color.rgb['g'] + color.rgb['b']) / 3) < 123
   }
 
+  const horizontalScrolling = (e) => {
+    e.preventDefault()
+    var containerScrollPosition = e.target.scrollLeft
+    e.target.scrollBy({
+        top: 0,
+        left: e.deltaY,
+        behaviour: 'smooth'
+    })
+}
+
   return (
     <Modal hasCloseBtn={true} isOpen={isOpen} onClose={() => onClose(color)}>
       <div className="node-editor-row">
@@ -40,7 +50,11 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                   if (port[1] instanceof InputPortModel) {
                     return (
                       <div key={index} className="node-editor-input node-editor-io-entry">
-                        <label className="node-editor-io-name" style={{color: isBackgroundDark() ? 'white' : 'black'}}>{port[0]}</label>
+                        <label
+                          id={port[0]}
+                          className="node-editor-io-name"
+                          onWheel={horizontalScrolling}
+                          style={{color: isBackgroundDark() ? 'white' : 'black'}}>{port[0]}</label>
                         <button 
                           className={"node-editor-io-delete"} 
                           style={{color: isBackgroundDark() ? 'white' : 'black'}} 
@@ -62,11 +76,14 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                   if (port[1] instanceof OutputPortModel) {
                     return (
                       <div key={index} className="node-editor-output node-editor-io-entry" >
-                        <label className="node-editor-io-name" style={{color: isBackgroundDark() ? 'white' : 'black'}}>{port[0]}</label>
                         <button 
                           className={"node-editor-io-delete"} 
                           style={{color: isBackgroundDark() ? 'white' : 'black'}} 
                           onClick={() => {deleteOutputPort(port[1], port[0]); forceUpdate();}}>-</button>
+                        <label 
+                          className="node-editor-io-name"
+                          onWheel={horizontalScrolling}
+                          style={{color: isBackgroundDark() ? 'white' : 'black'}}>{port[0]}</label>
                       </div>
                     );
                   }
