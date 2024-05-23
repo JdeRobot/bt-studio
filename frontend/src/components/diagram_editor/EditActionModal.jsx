@@ -9,7 +9,7 @@ import Modal from '../Modal/Modal';
 import { OutputPortModel } from './nodes/basic_node/ports/output_port/OutputPortModel';
 import { InputPortModel } from './nodes/basic_node/ports/input_port/InputPortModel';
 
-const EditActionModal = ({ isOpen, onClose, currentActionNode, addInputPort, addOutputPort, deleteInputPort, deleteOutputPort}) => {
+const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNode, addInputPort, addOutputPort, deleteInputPort, deleteOutputPort}) => {
   // const [color, setColor] = useColor(currentActionNode ? currentActionNode.getColor().replaceAll(",", " ") : "rgb(128 0 128)");
   const [color, setColor] = useColor("rgb(128 0 128)");
   const [, updateState] = React.useState();
@@ -17,7 +17,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, addInputPort, add
 
   useEffect(() => {
     if (currentActionNode) {
-      currentActionNode.setColor('rgb('+Math.round(color.rgb['r'])+','+Math.round(color.rgb['g'])+','+Math.round(color.rgb['b'])+')');
+      setColorActionNode(color.rgb['r'], color.rgb['g'], color.rgb['b']);
     }
   }, [color]);
 

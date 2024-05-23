@@ -157,28 +157,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     });
   }, [graphJson]);
 
-  useEffect(() => {
-    if (!isEditActionModalOpen && currentActionNode !== null) {
-      for (const nodesId of actionNodesData[currentActionNode!.getName()]['ids']) {
-        let genericActionNode = model.current.getNode(nodesId);
-        let actionNode = genericActionNode as BasicNodeModel;
-        for (const inputs of actionNodesData[actionNode.getName()]['input']) {
-          if (!(inputs in actionNode.getPorts())) {
-            actionNode.addInputPort(inputs);
-          }
-        }
-        for (const outputs of actionNodesData[actionNode.getName()]['output']) {
-          if (!(outputs in actionNode.getPorts())) {
-            actionNode.addOutputPort(outputs);
-          }
-        }
-        actionNode.setColor(actionNodesData[actionNode.getName()]['color'])
-      }
-      engine.repaintCanvas();
-      setModelJson(JSON.stringify(model.current.serialize()));
-    }
-  }, [isEditActionModalOpen]);
-
   // Set the model in the engine ONLY on project change
   if (!forceNotReset.current) {
     if (graphJson === null) {
@@ -374,8 +352,19 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const handleCloseEditActionModal = (color:any) => {
     setEditActionModalOpen(false);
-    actionNodesData[currentActionNode.getName()]['color'] = 'rgb('+Math.round(color.rgb['r'])+','+Math.round(color.rgb['g'])+','+Math.round(color.rgb['b'])+')';
   };
+
+  const setColorActionNode = (r:number, g:number, b:number) => {
+    currentActionNode.setColor('rgb('+Math.round(r)+','+Math.round(g)+','+Math.round(b)+')');
+    actionNodesData[currentActionNode.getName()]['color'] = currentActionNode.getColor();
+    for (const nodesId of actionNodesData[currentActionNode!.getName()]['ids']) {
+      let genericActionNode = model.current.getNode(nodesId);
+      let actionNode = genericActionNode as BasicNodeModel;
+      actionNode.setColor(actionNodesData[actionNode.getName()]['color'])
+    }
+    engine.repaintCanvas();
+    setModelJson(JSON.stringify(model.current.serialize()));
+  }
 
   const addInputPort = () => {
     if (currentActionNode) {
@@ -601,6 +590,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         isOpen={isEditActionModalOpen}
         onClose={handleCloseEditActionModal}
         currentActionNode={currentActionNode}
+        setColorActionNode={setColorActionNode}
         addInputPort={addInputPort}
         addOutputPort={addOutputPort}
         deleteInputPort={deleteInputPort}
