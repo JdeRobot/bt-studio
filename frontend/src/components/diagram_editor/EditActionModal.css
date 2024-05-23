@@ -48,6 +48,11 @@
   width: 100%;
 }
 
+.node-editor-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 .node-editor-button:hover {
   background-color: hsla(0, 0%, 50%, 0.3) !important;
 }

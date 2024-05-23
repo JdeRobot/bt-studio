@@ -376,7 +376,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const handleCloseEditActionModal = (color:any) => {
     setEditActionModalOpen(false);
     actionNodesData[currentActionNode.getName()]['color'] = 'rgb('+Math.round(color.rgb['r'])+','+Math.round(color.rgb['g'])+','+Math.round(color.rgb['b'])+')';
-    console.log(actionNodesData)
+    lastClickedNodeId.current = currentActionNode.getID();
+    currentActionNode.selectNode();
   };
 
   const addInputPort = () => {
