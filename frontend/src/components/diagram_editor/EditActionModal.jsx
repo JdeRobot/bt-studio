@@ -60,7 +60,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, addInputPort, add
                     return (
                       <div key={index} className="node-editor-output node-editor-io-entry" >
                         <label className="node-editor-io-name" style={{color: isBackgroundDark() ? 'white' : 'black'}}>{port[0]}</label>
-                        <button className={"node-editor-io-delete"} style={{color: isBackgroundDark() ? 'white' : 'black'}} onClick={() => {deleteOutputPort(port[0]); forceUpdate();}}>-</button>
+                        <button className={"node-editor-io-delete"} style={{color: isBackgroundDark() ? 'white' : 'black'}} onClick={() => {deleteOutputPort(port[1], port[0]); forceUpdate();}}>-</button>
                       </div>
                     );
                   }

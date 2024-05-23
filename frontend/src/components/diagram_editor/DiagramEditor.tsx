@@ -438,7 +438,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   };
 
   const deleteInputPort = (port:InputPortModel, portName:string) => {
-    console.log(port);
     if (currentActionNode) {
       // Check restrictions
       if (checkIfAction(currentActionNode)) {
@@ -465,8 +464,31 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     }
   }
 
-  const deleteOutputPort = (port:string) => {
-    console.log(port);
+  const deleteOutputPort = (port:OutputPortModel, portName:string) => {
+    if (currentActionNode) {
+      // Check restrictions
+      if (checkIfAction(currentActionNode)) {
+        // Now you can call your custom method
+        if (port !== null) { // Check that the user didn't cancel
+          setProjectChanges(true);
+          currentActionNode.removeOutputPort(port);
+          actionNodesData[currentActionNode.getName()]['output'] = actionNodesData[currentActionNode.getName()]['output'].filter(item => item !== portName);
+          // Add the new port to all the cloned actions
+          for (const nodesId of actionNodesData[currentActionNode.getName()]['ids']) {
+            if (nodesId !== lastClickedNodeId.current) {
+              let genericActionNode = model.current.getNode(nodesId);
+              let actionNode = genericActionNode as BasicNodeModel;
+              actionNode.removeOutputPort(port);
+            }
+          }
+        }
+        setCurrentActionNode(currentActionNode);
+        engine.repaintCanvas();
+        setModelJson(JSON.stringify(model.current.serialize()));
+      } else {
+        window.alert("Ports can only be removed from action nodes")
+      }
+    }
   }
 
   const generateApp = () => {
