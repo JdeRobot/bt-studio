@@ -55,10 +55,12 @@ export class BasicNodeModel extends NodeModel<NodeModelGenerics & BasicNodeModel
 
     selectNode() {
         this.is_selected = true;
+        this.setSelected(true);
     }
 
     deselectNode() {
         this.is_selected = false;
+        this.setSelected(false);
     }
 
     addChildrenPort(name: string) {

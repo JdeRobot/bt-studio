@@ -39,6 +39,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
     setInputName(false)
     setOutputName(false)
     setFormState(initialEditActionModalData);
+    document.getElementById('node-editor-modal').focus();
   }, [isOpen]);
 
   useEffect(() => {

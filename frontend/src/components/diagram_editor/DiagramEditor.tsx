@@ -3,11 +3,12 @@ import createEngine, {
   DefaultLinkModel, 
   DefaultNodeModel,
   DiagramEngine,
-  DiagramModel 
+  DiagramModel,
 } from '@projectstorm/react-diagrams';
 
 import {
-  CanvasWidget
+  CanvasWidget,
+  BaseModelListener
 } from '@projectstorm/react-canvas-core';
 
 import './DiagramEditor.css';
@@ -341,16 +342,16 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       const node = genericNode as BasicNodeModel;
       if (checkIfAction(node)) {
         forceNotReset.current = true;
+        node.deselectNode();
         setCurrentActionNode(node);
         setEditActionModalOpen(true);
       }
     }
-
   };
 
   const handleCloseEditActionModal = () => {
     setEditActionModalOpen(false);
-    console.log("closing");
+    currentActionNode.selectNode();
   };
 
   const setColorActionNode = (r:number, g:number, b:number) => {
