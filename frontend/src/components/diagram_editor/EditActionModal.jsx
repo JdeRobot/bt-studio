@@ -143,7 +143,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                           onWheel={horizontalScrolling}
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}>{port[0]}</label>
                         <button
-                          className={"node-editor-io-delete"}
+                          className={"node-editor-io-delete node-editor-hidden"}
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Delete'
                           onClick={() => {deleteInputPort(port[1], port[0]); reRender()}}>
@@ -201,7 +201,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                     return (
                       <div key={index} className="node-editor-output node-editor-io-entry" >
                         <button
-                          className={"node-editor-io-delete"}
+                          className={"node-editor-io-delete node-editor-hidden"}
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Delete'
                           onClick={() => {deleteOutputPort(port[1], port[0]); reRender()}}>
