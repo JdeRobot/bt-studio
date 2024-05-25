@@ -365,12 +365,11 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     setModelJson(JSON.stringify(model.current.serialize()));
   }
 
-  const addInputPort = () => {
+  const addInputPort = (portName:string) => {
     if (currentActionNode) {
       // Check restrictions
       if (checkIfAction(currentActionNode)) {
         // Now you can call your custom method
-        const portName = prompt("Enter the name for the new input port:");
         if (portName !== null) { // Check that the user didn't cancel
           setProjectChanges(true);
           currentActionNode.addInputPort(portName);
@@ -394,12 +393,11 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     }
   };
 
-  const addOutputPort = () => {
+  const addOutputPort = (portName:string) => {
     if (currentActionNode) {
       // Check restrictions
       if (checkIfAction(currentActionNode)) {
         // Now you can call your custom method
-        const portName = prompt("Enter the name for the new output port:");
         if (portName !== null) { // Check that the user didn't cancel
           setProjectChanges(true);
           currentActionNode.addOutputPort(portName);
