@@ -71,7 +71,6 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
       ...prevFormData,
       [name]: value,
     }));
-    console.log(value)
     setAllowCreation((name === "newInputName" && isInputNameValid(value)) || (name === "newOutputName" && isOutputNameValid(value)));
   };
 
@@ -80,14 +79,18 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
     setOutputName(false)
     setFormState(initialEditActionModalData);
     document.getElementById('node-editor-modal').focus();
-    var colorRGB = currentActionNode.getColor().split('(')[1].split(')')[0].split(',')
-    color.rgb['r'] = colorRGB[0]
-    color.rgb['g'] = colorRGB[1]
-    color.rgb['b'] = colorRGB[2]
-    var hsvColor = rgb2hsv(colorRGB[0], colorRGB[1], colorRGB[2]);
-    color.hsv['h'] = hsvColor['h']
-    color.hsv['s'] = hsvColor['s']
-    setColor(color)
+    if (currentActionNode) {
+      var colorRGB = currentActionNode.getColor().split('(')[1].split(')')[0].split(',')
+      color.rgb['r'] = colorRGB[0]
+      color.rgb['g'] = colorRGB[1]
+      color.rgb['b'] = colorRGB[2]
+      var hsvColor = rgb2hsv(colorRGB[0], colorRGB[1], colorRGB[2]);
+      color.hsv['h'] = hsvColor['h']
+      color.hsv['s'] = hsvColor['s']
+      color.hsv['v'] = hsvColor['v']
+      setColor(color)
+      reRender();
+    }
   }, [isOpen]);
 
   useEffect(() => {
@@ -97,7 +100,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
   }, [color]);
 
   const isBackgroundDark = () => {
-    return ((color.rgb['r'] + color.rgb['g'] + color.rgb['b']) / 3) < 123
+    return color.hsv['v'] < 60 || color.hsv['s'] > 55
   }
 
   const reRender = () => {
