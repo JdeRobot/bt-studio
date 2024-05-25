@@ -20,6 +20,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
   const [color, setColor] = useColor("rgb(128 0 128)");
   const [inputName, setInputName] = React.useState(false);
   const [outputName, setOutputName] = React.useState(false);
+  const [allowCreation, setAllowCreation] = React.useState(false);
   const [formState, setFormState] = useState(initialEditActionModalData);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
@@ -30,6 +31,8 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
       ...prevFormData,
       [name]: value,
     }));
+    console.log(value)
+    setAllowCreation((name === "newInputName" && isInputNameValid(value)) || (name === "newOutputName" && isOutputNameValid(value)));
   };
 
   useEffect(() => {
@@ -67,24 +70,43 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
     if (!outputName) {
       setInputName(true)
     }
+    setAllowCreation(false)
   }
 
   const openOutputCreation = () => {
     if (!inputName) {
       setOutputName(true)
     }
+    setAllowCreation(false)
+  }
+
+  const isInputNameValid = (name) => {
+    var inputPorts = Object.entries(currentActionNode.getPorts()).filter(item => item[1] instanceof InputPortModel);
+    var merged = [].concat.apply([], inputPorts);
+    return (name !== '' && !name.includes(' ') && !merged.includes(name))
+  }
+
+  const isOutputNameValid = (name) => {
+    var outputPorts = Object.entries(currentActionNode.getPorts()).filter(item => item[1] instanceof OutputPortModel);
+    var merged = [].concat.apply([], outputPorts);
+    return (name !== '' && !name.includes(' ') && !merged.includes(name))
   }
 
   const addInput = () => {
-    //TODO: Check if the name is valid
-    addInputPort(formState['newInputName']);
+    //TODO: Maybe display some error message when the name is invalid
+    console.log('addInput')
+    if (isInputNameValid(formState['newInputName'])) {
+      addInputPort(formState['newInputName']);
+    }
     setInputName(false);
     reRender();
   }
 
   const addOutput = () => {
-    //TODO: Check if the name is valid
-    addOutputPort(formState['newOutputName']);
+    //TODO: Maybe display some error message when the name is invalid
+    if (isOutputNameValid(formState['newOutputName'])) {
+      addOutputPort(formState['newOutputName']);
+    }
     setOutputName(false);
     reRender();
   }
@@ -142,11 +164,13 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Cancel'
                           onClick={() => cancelCreation()}>x</button>
-                      <button
+                      { allowCreation &&
+                        <button
                           className={"node-editor-io-accept"}
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Create'
                           onClick={() => addInput()}>/</button>
+                      }
                   </div>
                     )
                     : (
@@ -196,11 +220,13 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Cancel'
                           onClick={() => cancelCreation()}>x</button>
-                      <button
+                      { allowCreation &&
+                        <button
                           className={"node-editor-io-accept"}
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Create'
                           onClick={() => addOutput()}>/</button>
+                      }
                   </div>
                     )
                     : (
