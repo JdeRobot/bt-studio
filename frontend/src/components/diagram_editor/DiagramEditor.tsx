@@ -113,7 +113,14 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }, []);
 
   // Update the graphJson when the project name changes
-  useEffect(() => {    
+  useEffect(() => {
+    // Deselect the current node
+    setCurrentActionNode(null);
+    if (lastClickedNodeId.current !== '') {
+      let node: any = model.current.getNode(lastClickedNodeId.current);
+      node.deselectNode();
+      lastClickedNodeId.current = "";
+    }
     if (currentProjectname) { // Only execute the API call if currentProjectname is set
       axios.get('/tree_api/get_project_graph/', {
         params: {
@@ -141,6 +148,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }, [currentProjectname]);
 
   useEffect(() => {
+    setCurrentActionNode(null);
     const nodes = model.current.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
     nodes.forEach((node) => {
       if (checkIfAction(node)) {
@@ -164,7 +172,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }, [graphJson]);
 
   // Set the model in the engine ONLY on project change
-  if (!forceNotReset.current) {
+  if (!forceNotReset.current || currentActionNode === null) {
     if (graphJson === null) {
       const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
       root_node.setPosition(200, 200);
