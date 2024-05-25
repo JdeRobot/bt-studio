@@ -15,8 +15,6 @@ const Modal = ({ id="", isOpen, hasCloseBtn = true, onClose, children }) => {
   const handleKeyDown = (event) => {
     if (event.key === 'Escape') {
       handleCloseModal();
-    } else if (event.key === 'Backspace') {
-      console.log(event);
     }
   };
 
@@ -29,6 +27,7 @@ const Modal = ({ id="", isOpen, hasCloseBtn = true, onClose, children }) => {
 
     if (modalElement) {
       if (isModalOpen) {
+        document.getElementById(id).focus();
         modalElement.showModal();
       } else {
         modalElement.close();

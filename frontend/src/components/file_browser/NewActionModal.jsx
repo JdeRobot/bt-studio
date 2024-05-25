@@ -64,7 +64,7 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
   };
 
   return (
-    <Modal hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
+    <Modal id="new-action-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
       <form onSubmit={handleSubmit} onReset={handleCancel}>
         <div className="form-row">
           <label htmlFor="actionName">Action Name</label>

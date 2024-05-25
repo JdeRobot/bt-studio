@@ -43,7 +43,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   let lastMovedNodePosition = { x: 200, y: 200 };
   
   // Initialize state for last moved node ID
-  // let lastClickedNodeId = "";
   const lastClickedNodeId = useRef<string>("");
   const forceNotReset = useRef(false);
   // Create the model
@@ -56,7 +55,13 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     ids: string[];
     color: string;
   }
-  // let actionNodesData: { [id: string]: ActionData; } = {};
+
+  const handleLostFocus = () => {
+    // TODO: Review this because it does not work for all modals
+    // console.log("Lost focus")
+    // const node: any = model.current.getNode(lastClickedNodeId.current);
+    // node.setSelected(false);
+  }
 
   // Listeners
   const attachPositionListener = (node:any) => {
@@ -342,8 +347,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       const node = genericNode as BasicNodeModel;
       if (checkIfAction(node)) {
         forceNotReset.current = true;
-        node.deselectNode();
         setCurrentActionNode(node);
+        node.setSelected(false);
         setEditActionModalOpen(true);
       }
     }
@@ -351,7 +356,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const handleCloseEditActionModal = () => {
     setEditActionModalOpen(false);
-    currentActionNode.selectNode();
   };
 
   const setColorActionNode = (r:number, g:number, b:number) => {
@@ -573,7 +577,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }
   
   return (
-    <div>
+    <div onBlur={() => {handleLostFocus()}} id='diagram-editor'>
       <NodeHeader 
         onNodeTypeSelected={nodeTypeSelector} 
         onDeleteNode={deleteLastClickedNode}

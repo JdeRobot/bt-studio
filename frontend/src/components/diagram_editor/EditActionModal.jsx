@@ -95,7 +95,6 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
 
   const addInput = () => {
     //TODO: Maybe display some error message when the name is invalid
-    console.log('addInput')
     if (isInputNameValid(formState['newInputName'])) {
       addInputPort(formState['newInputName']);
     }
