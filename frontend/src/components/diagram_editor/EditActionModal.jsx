@@ -9,6 +9,11 @@ import Modal from '../Modal/Modal';
 import { OutputPortModel } from './nodes/basic_node/ports/output_port/OutputPortModel';
 import { InputPortModel } from './nodes/basic_node/ports/input_port/InputPortModel';
 
+import add_icon from './img/add.svg';
+import delete_icon from './img/delete.svg';
+import cancel_icon from './img/cancel.svg';
+import accept_icon from './img/accept.svg';
+
 const initialEditActionModalData = {
   newInputName: '',
   newOutputName: '',
@@ -141,7 +146,9 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                           className={"node-editor-io-delete"}
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Delete'
-                          onClick={() => {deleteInputPort(port[1], port[0]); reRender()}}>-</button>
+                          onClick={() => {deleteInputPort(port[1], port[0]); reRender()}}>
+                          <img className="icon" src={delete_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
+                        </button>
                       </div>
                     );
                   }
@@ -160,16 +167,20 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                         style={{color: isBackgroundDark() ? 'white' : 'black'}}
                       />
                       <button
-                          className={"node-editor-io-delete"}
-                          style={{color: isBackgroundDark() ? 'white' : 'black'}}
-                          title='Cancel'
-                          onClick={() => cancelCreation()}>x</button>
+                        className={"node-editor-io-delete"}
+                        style={{color: isBackgroundDark() ? 'white' : 'black'}}
+                        title='Cancel'
+                        onClick={() => cancelCreation()}>
+                        <img className="icon" src={cancel_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>  
+                      </button>
                       { allowCreation &&
                         <button
                           className={"node-editor-io-accept"}
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Create'
-                          onClick={() => addInput()}>/</button>
+                          onClick={() => addInput()}>
+                          <img className="icon" src={accept_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
+                        </button>
                       }
                   </div>
                     )
@@ -179,7 +190,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                     style={{color: isBackgroundDark() ? 'white' : 'black'}}
                     onClick={() => {openInputCreation()}}
                     title='Add input'>
-                    +
+                    <img className="icon" src={add_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
                   </button>
                     )
                   }
@@ -193,7 +204,9 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                           className={"node-editor-io-delete"}
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Delete'
-                          onClick={() => {deleteOutputPort(port[1], port[0]); reRender()}}>-</button>
+                          onClick={() => {deleteOutputPort(port[1], port[0]); reRender()}}>
+                          <img className="icon" src={delete_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
+                        </button>
                         <label
                           className="node-editor-io-name"
                           onWheel={horizontalScrolling}
@@ -216,16 +229,20 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                         style={{color: isBackgroundDark() ? 'white' : 'black'}}
                       />
                       <button
-                          className={"node-editor-io-delete"}
-                          style={{color: isBackgroundDark() ? 'white' : 'black'}}
-                          title='Cancel'
-                          onClick={() => cancelCreation()}>x</button>
+                        className={"node-editor-io-delete"}
+                        style={{color: isBackgroundDark() ? 'white' : 'black'}}
+                        title='Cancel'
+                        onClick={() => cancelCreation()}>
+                        <img className="icon" src={cancel_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>  
+                      </button>
                       { allowCreation &&
                         <button
                           className={"node-editor-io-accept"}
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Create'
-                          onClick={() => addOutput()}>/</button>
+                          onClick={() => addOutput()}>
+                          <img className="icon" src={accept_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
+                        </button>
                       }
                   </div>
                     )
@@ -235,7 +252,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                     style={{color: isBackgroundDark() ? 'white' : 'black'}}
                     onClick={() => {openOutputCreation()}}
                     title='Add output'>
-                    +
+                    <img className="icon" src={add_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
                   </button>
                     )
                   }

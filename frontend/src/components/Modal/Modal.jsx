@@ -25,9 +25,9 @@ const Modal = ({ id="", isOpen, hasCloseBtn = true, onClose, children }) => {
   useEffect(() => {
     const modalElement = modalRef.current;
 
+    document.getElementById(id).focus();
     if (modalElement) {
       if (isModalOpen) {
-        document.getElementById(id).focus();
         modalElement.showModal();
       } else {
         modalElement.close();
