@@ -75,15 +75,15 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
   const openInputCreation = () => {
     if (!outputName) {
       setInputName(true)
+      setAllowCreation(false)
     }
-    setAllowCreation(false)
   }
 
   const openOutputCreation = () => {
     if (!inputName) {
       setOutputName(true)
+      setAllowCreation(false)
     }
-    setAllowCreation(false)
   }
 
   const isInputNameValid = (name) => {
@@ -190,7 +190,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                     style={{color: isBackgroundDark() ? 'white' : 'black'}}
                     onClick={() => {openInputCreation()}}
                     title='Add input'>
-                    <img className="icon" src={add_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
+                    <img className="icon action-icon" src={add_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
                   </button>
                     )
                   }
@@ -252,7 +252,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                     style={{color: isBackgroundDark() ? 'white' : 'black'}}
                     onClick={() => {openOutputCreation()}}
                     title='Add output'>
-                    <img className="icon" src={add_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
+                    <img className="icon action-icon" src={add_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
                   </button>
                     )
                   }
