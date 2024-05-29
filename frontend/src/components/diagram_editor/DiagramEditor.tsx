@@ -57,10 +57,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }
 
   const handleLostFocus = () => {
-    // TODO: Review this because it does not work for all modals
-    // console.log("Lost focus")
-    // const node: any = model.current.getNode(lastClickedNodeId.current);
-    // node.setSelected(false);
+    console.log("Lost focus")
+    const node: any = model.current.getNode(lastClickedNodeId.current);
+    node.setSelected(false);
   }
 
   // Listeners
@@ -585,7 +584,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }
   
   return (
-    <div onBlur={() => {handleLostFocus()}} id='diagram-editor'>
+    <div tabIndex={0} onBlur={() => {handleLostFocus()}} id='diagram-editor'>
       <NodeHeader 
         onNodeTypeSelected={nodeTypeSelector} 
         onDeleteNode={deleteLastClickedNode}
