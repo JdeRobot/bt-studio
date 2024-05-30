@@ -56,10 +56,16 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     color: string;
   }
 
-  const handleLostFocus = () => {
-    console.log("Lost focus")
-    const node: any = model.current.getNode(lastClickedNodeId.current);
-    node.setSelected(false);
+  const handleLostFocus = (e:any) => {
+    // TODO: deselect node depending on the trigger origin
+    console.log("Lost Focus" )
+    console.log(e)
+    if (lastClickedNodeId.current !== "") {
+      const node: any = model.current.getNode(lastClickedNodeId.current);
+      node.deselectNode();
+      // setCurrentActionNode(node);
+      // lastClickedNodeId.current = "";
+    }
   }
 
   // Listeners
@@ -188,6 +194,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           attachPositionListener(node);
           attachLinkListener(node);
           attachClickListener(node);
+          node.setSelected(false);
         });
       } catch (e) {
         // Log the error for debugging
@@ -264,7 +271,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
     if (isAction) {    
       saveActionNodeData(newNode);
-      console.log(actionNodesData)
     }
 
     // Attach listener to this node
@@ -320,6 +326,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }
 
   const deleteLastClickedNode = () => {
+    console.log(lastClickedNodeId.current)
     if (model.current && lastClickedNodeId.current) {
       const node: any = model.current.getNode(lastClickedNodeId.current);
       if (node) {
@@ -330,6 +337,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         setModelJson(JSON.stringify(model.current.serialize()));
       }
       lastClickedNodeId.current = "";
+      console.log(currentActionNode)
     }
   };
 
@@ -363,6 +371,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const handleCloseEditActionModal = () => {
     setEditActionModalOpen(false);
+    currentActionNode.selectNode();
+    document.getElementById('node-editor-modal')!.focus();
   };
 
   const setColorActionNode = (r:number, g:number, b:number) => {
@@ -584,7 +594,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }
   
   return (
-    <div tabIndex={0} onBlur={() => {handleLostFocus()}} id='diagram-editor'>
+    <div id='diagram-editor'>
       <NodeHeader 
         onNodeTypeSelected={nodeTypeSelector} 
         onDeleteNode={deleteLastClickedNode}
@@ -593,7 +603,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         onRunApp={runApp}
         currentProjectname={currentProjectname}
       />
-      <CanvasWidget className="canvas" engine={engine} />
+      <div tabIndex={0} onBlur={(e) => {handleLostFocus(e)}} onFocus={() => console.log("Focus")} id='diagram-view'>
+        <CanvasWidget className="canvas" engine={engine} />
+      </div>
       <EditActionModal
         isOpen={isEditActionModalOpen}
         onClose={handleCloseEditActionModal}
