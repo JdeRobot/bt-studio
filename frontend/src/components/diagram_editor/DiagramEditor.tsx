@@ -64,7 +64,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     setFocused(false)
     if (lastClickedNodeId.current !== "") {
       const node: any = model.current.getNode(lastClickedNodeId.current);
-      console.log(node)
       node.deselectNode();
       // setCurrentActionNode(node);
       // lastClickedNodeId.current = "";
@@ -131,12 +130,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     setCurrentActionNode(null);
     if (lastClickedNodeId.current !== '') {
       let node: any = model.current.getNode(lastClickedNodeId.current);
-      console.log(model)
       node.deselectNode();
       lastClickedNodeId.current = "";
     }
     if (currentProjectname) { // Only execute the API call if currentProjectname is set
-      setActionNodesData({})
       axios.get('/tree_api/get_project_graph/', {
         params: {
           project_name: currentProjectname
@@ -144,6 +141,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       })
       .then(response => {
         if (response.data.success) {
+          for (var member in actionNodesData) delete actionNodesData[member];
           // Set the model as the received json
           setGraphJson(response.data.graph_json);
           setModelJson(response.data.graph_json);
@@ -164,7 +162,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   useEffect(() => {
     setCurrentActionNode(null);
-    forceNotReset.current = true;
     const nodes = model.current.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
     nodes.forEach((node) => {
       if (checkIfAction(node)) {

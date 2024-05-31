@@ -11,14 +11,11 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
   const [fileList, setFileList] = useState(null);
   const [isNewActionModalOpen, setNewActionModalOpen] = useState(false);
   const [newsletterFormData, setNewsletterFormData] = useState(null);
+  const [, updateState] = React.useState();
 
   useEffect(() => {
     fetchFileList();
   }, [currentProjectname]);
-
-  useEffect(() => {
-    console.trace(actionNodesData)
-  }, [actionNodesData]);
 
   const fetchFileList = () => {
 
