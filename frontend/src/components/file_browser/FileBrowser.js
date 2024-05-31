@@ -115,7 +115,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
           {fileList.map((file, index) => (
             <div 
               key={index}
-              className={`file-item ${currentFilename === file ? 'file-item-selected' : ''}`}
+              className={`file-item ${currentFilename === file+'.py' ? 'file-item-selected' : ''}`}
               onClick={() => handleFileClick(file)}
             >
               <label>{file}</label>
