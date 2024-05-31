@@ -58,7 +58,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const model = useRef(new DiagramModel());
 
 
-
   const handleLostFocus = (e:any) => {
     // TODO: deselect node depending on the trigger origin
     forceNotReset.current = true;
@@ -137,6 +136,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       lastClickedNodeId.current = "";
     }
     if (currentProjectname) { // Only execute the API call if currentProjectname is set
+      setActionNodesData({})
       axios.get('/tree_api/get_project_graph/', {
         params: {
           project_name: currentProjectname
@@ -144,7 +144,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       })
       .then(response => {
         if (response.data.success) {
-          setActionNodesData({})
           // Set the model as the received json
           setGraphJson(response.data.graph_json);
           setModelJson(response.data.graph_json);
@@ -165,6 +164,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   useEffect(() => {
     setCurrentActionNode(null);
+    forceNotReset.current = true;
     const nodes = model.current.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
     nodes.forEach((node) => {
       if (checkIfAction(node)) {
@@ -190,9 +190,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   // Set the model in the engine ONLY on project change
   if (!forceNotReset.current) {
-    console.log(actionNodesData)
     // BUG only on project change
-    console.log(currentActionNode)
     if (graphJson === null) {
       const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
       root_node.setPosition(200, 200);

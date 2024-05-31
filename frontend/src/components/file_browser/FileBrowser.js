@@ -16,6 +16,10 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
     fetchFileList();
   }, [currentProjectname]);
 
+  useEffect(() => {
+    console.trace(actionNodesData)
+  }, [actionNodesData]);
+
   const fetchFileList = () => {
 
     if (currentProjectname !== '') {
