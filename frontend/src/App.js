@@ -15,6 +15,7 @@ const App = () => {
   const [editorWidth, setEditorWidth] = useState(807);
   const [currentFilename, setCurrentFilename] = useState('');
   const [currentProjectname, setCurrentProjectname] = useState('visual_follow_person');
+  const [actionNodesData, setActionNodesData] = useState({});
   const [modelJson, setModelJson] = useState('');
   const [projectChanges, setProjectChanges] = useState(false);
   const [gazeboEnabled, setGazeboEnabled] = useState(false);
@@ -96,6 +97,7 @@ const App = () => {
             currentFilename={currentFilename}
             currentProjectname={currentProjectname}
             setProjectChanges={setProjectChanges}
+            actionNodesData={actionNodesData}
           />
         </div>
         
@@ -122,6 +124,8 @@ const App = () => {
             setProjectChanges={setProjectChanges}
             gazeboEnabled={gazeboEnabled}
             manager={manager}
+            actionNodesData={actionNodesData}
+            setActionNodesData={setActionNodesData}
           />
           <VncViewer
             gazeboEnabled={gazeboEnabled}

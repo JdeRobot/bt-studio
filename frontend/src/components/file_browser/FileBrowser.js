@@ -6,7 +6,7 @@ import NewActionModal from './NewActionModal.jsx';
 import add_img from './img/add.svg'
 import delete_img from './img/delete.svg'
 
-const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, setProjectChanges}) => {
+const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, setProjectChanges, actionNodesData}) => {
 
   const [fileList, setFileList] = useState(null);
   const [isNewActionModalOpen, setNewActionModalOpen] = useState(false);
@@ -116,6 +116,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
             <div 
               key={index}
               className={`file-item ${currentFilename === file ? 'file-item-selected' : ''}`}
+              style={{color: actionNodesData[file] ? actionNodesData[file]['color'] : 'rgb(128,0,128)'}}
               onClick={() => handleFileClick(file)}
             >
               {file}

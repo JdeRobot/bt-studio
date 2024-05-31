@@ -30,14 +30,23 @@ import { TagInputPortModel } from './nodes/tag_node/ports/input_port/TagInputPor
 import { TagOutputPortModel } from './nodes/tag_node/ports/output_port/TagOutputPortModel';
 import EditActionModal from './EditActionModal.jsx';
 
-const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gazeboEnabled, manager} : {currentProjectname : any, setModelJson : any, setProjectChanges:any, gazeboEnabled:any, manager:any}) => {
+  // Store action nodes and their inputs and outputs
+  interface ActionData {
+    input: string[];
+    output: string[];
+    ids: string[];
+    color: string;
+  }
 
+const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gazeboEnabled, manager, actionNodesData, setActionNodesData} : {currentProjectname : any, setModelJson : any, setProjectChanges:any, gazeboEnabled:any, manager:any, actionNodesData:{ [id: string]: ActionData; }, setActionNodesData:any}) => {
+
+  const ref = useRef<any>(null);
   const [graphJson, setGraphJson] = useState(null);
   const [appRunning, setAppRunning] = useState(false);
+  const [isFocused, setFocused] = useState(false);
   const [isEditActionModalOpen, setEditActionModalOpen] = useState(false);
   const [currentActionNode, setCurrentActionNode] = useState<any>(null);
   const [modelProjectName, setModelProjectName] = useState("");
-  const [actionNodesData, setActionNodesData] = useState<{ [id: string]: ActionData; }>({});
 
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
@@ -48,24 +57,24 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   // Create the model
   const model = useRef(new DiagramModel());
 
-  // Store action nodes and their inputs and outputs
-  interface ActionData {
-    input: string[];
-    output: string[];
-    ids: string[];
-    color: string;
-  }
+
 
   const handleLostFocus = (e:any) => {
     // TODO: deselect node depending on the trigger origin
-    console.log("Lost Focus" )
-    console.log(e)
+    forceNotReset.current = true;
+    setFocused(false)
     if (lastClickedNodeId.current !== "") {
       const node: any = model.current.getNode(lastClickedNodeId.current);
+      console.log(node)
       node.deselectNode();
       // setCurrentActionNode(node);
       // lastClickedNodeId.current = "";
     }
+  }
+
+  const handleGainedFocus = (e:any) => {
+    forceNotReset.current = true;
+    setFocused(true)
   }
 
   // Listeners
@@ -123,6 +132,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     setCurrentActionNode(null);
     if (lastClickedNodeId.current !== '') {
       let node: any = model.current.getNode(lastClickedNodeId.current);
+      console.log(model)
       node.deselectNode();
       lastClickedNodeId.current = "";
     }
@@ -134,6 +144,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       })
       .then(response => {
         if (response.data.success) {
+          setActionNodesData({})
           // Set the model as the received json
           setGraphJson(response.data.graph_json);
           setModelJson(response.data.graph_json);
@@ -158,16 +169,17 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     nodes.forEach((node) => {
       if (checkIfAction(node)) {
         let castNode = node as BasicNodeModel;
-        if (!(castNode.getName() in actionNodesData)) {
+        let name = castNode.getName();
+        if (!(name in actionNodesData)) {
           saveActionNodeData(node);
           for (let key in node.getPorts()) {
             if (key !== 'parent') {
               if (node.getPorts()[key] instanceof InputPortModel) {
                 castNode.addInputPort(key);
-                actionNodesData[castNode.getName()]['input'] = actionNodesData[castNode.getName()]['input'].concat([key]);
+                actionNodesData[name]['input'] = actionNodesData[name]['input'].concat([key]);
               } else if (node.getPorts()[key] instanceof OutputPortModel) {
                 castNode.addOutputPort(key);
-                actionNodesData[castNode.getName()]['output'] = actionNodesData[castNode.getName()]['output'].concat([key]);
+                actionNodesData[name]['output'] = actionNodesData[name]['output'].concat([key]);
               }
             }
           }
@@ -177,7 +189,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }, [graphJson]);
 
   // Set the model in the engine ONLY on project change
-  if (!forceNotReset.current || currentActionNode === null) {
+  if (!forceNotReset.current) {
+    console.log(actionNodesData)
+    // BUG only on project change
+    console.log(currentActionNode)
     if (graphJson === null) {
       const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
       root_node.setPosition(200, 200);
@@ -207,6 +222,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   // Save action node data
   const saveActionNodeData = (node:any) => {
+    let name = node.name;
     if (actionNodesData[node.name]) {
       actionNodesData[node.name]['ids'] = actionNodesData[node.name]['ids'].concat([node.getID()]);
       for (const inputs of actionNodesData[node.name]['input']) {
@@ -271,6 +287,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
     if (isAction) {    
       saveActionNodeData(newNode);
+      setCurrentActionNode(newNode);
     }
 
     // Attach listener to this node
@@ -292,11 +309,13 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     // Add the node to the model
     if (model.current) {
       model.current.addNode(newNode);
+      newNode.selectNode();
       console.log(model.current.getNodes());
       setProjectChanges(true);
       engine.repaintCanvas();
       setModelJson(JSON.stringify(model.current.serialize()));
     }
+    forceNotReset.current = true;
   };
 
   const addTagNode = (nodeName:any) => {
@@ -319,14 +338,17 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     // Add the node to the model
     if (model.current) {
       model.current.addNode(newNode);
+      newNode.selectNode();
       setProjectChanges(true);
       engine.repaintCanvas();
       setModelJson(JSON.stringify(model.current.serialize()));
     }
+    forceNotReset.current = true;
   }
 
   const deleteLastClickedNode = () => {
     console.log(lastClickedNodeId.current)
+    forceNotReset.current = true;
     if (model.current && lastClickedNodeId.current) {
       const node: any = model.current.getNode(lastClickedNodeId.current);
       if (node) {
@@ -371,8 +393,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const handleCloseEditActionModal = () => {
     setEditActionModalOpen(false);
-    currentActionNode.selectNode();
-    document.getElementById('node-editor-modal')!.focus();
+    // currentActionNode.selectNode();
+    setFocused(true);
+    ref.current.focus();
   };
 
   const setColorActionNode = (r:number, g:number, b:number) => {
@@ -603,7 +626,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         onRunApp={runApp}
         currentProjectname={currentProjectname}
       />
-      <div tabIndex={0} onBlur={(e) => {handleLostFocus(e)}} onFocus={() => console.log("Focus")} id='diagram-view'>
+      <div tabIndex={0} ref={ref} onBlur={(e) => handleLostFocus(e)} onFocus={(e) => handleGainedFocus(e)} id='diagram-view'>
         <CanvasWidget className="canvas" engine={engine} />
       </div>
       <EditActionModal
