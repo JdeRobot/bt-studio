@@ -2,9 +2,19 @@
 
 .file-item {
     list-style-type: none;
-    padding: 8px;
+    padding: 0px;
     cursor: pointer;
+    display: grid;
+    grid-template-columns: auto 5px;
+    grid-gap: 5px;
+    padding-right: 0px;
 }
+
+.file-item label {
+    list-style-type: none;
+    padding: 8px;
+}
+
 
 .file-item:hover {
     background-color: rgba(62, 81, 58, 0.321);
@@ -50,5 +60,13 @@
 
 .icon {
     width: 20px;
+}
+
+.accent-color {
+    position: relative;
+    right: 0px;
+    z-index: 10;
+    width: 5px;
+    height: 100%;
 }
   

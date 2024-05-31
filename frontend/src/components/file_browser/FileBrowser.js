@@ -116,10 +116,10 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
             <div 
               key={index}
               className={`file-item ${currentFilename === file ? 'file-item-selected' : ''}`}
-              style={{color: actionNodesData[file] ? actionNodesData[file]['color'] : 'rgb(128,0,128)'}}
               onClick={() => handleFileClick(file)}
             >
-              {file}
+              <label>{file}</label>
+              <div className="accent-color" style={{backgroundColor: actionNodesData[file] ? actionNodesData[file]['color'] : 'none'}}/>
             </div>
           ))}
         </div>
