@@ -63,8 +63,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     forceNotReset.current = true;
     setFocused(false)
     if (lastClickedNodeId.current !== "") {
-      const node: any = model.current.getNode(lastClickedNodeId.current);
-      node.deselectNode();
+      try {
+        const node: any = model.current.getNode(lastClickedNodeId.current);
+        node.deselectNode();
+      } catch {}
       // setCurrentActionNode(node);
       // lastClickedNodeId.current = "";
     }

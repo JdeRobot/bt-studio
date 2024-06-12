@@ -1,0 +1,123 @@
+.form-row + .form-row {
+  margin-top: 1rem;
+}
+
+.form-row label,
+.form-row input,
+.form-row select,
+.form-row button {
+  width: 100%;
+  display: block;
+  background-color: #12494c;
+  border: none;
+  color: #ffffff;
+  font-size: medium;
+}
+
+#project-modal {
+  width:50%;
+  height:75%;
+}
+
+.project-entry-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px;
+}
+
+.project-entry {
+  width: 75%;
+  height: 3rem;
+  background-color: #1f7f84;
+  padding: 5px;
+  align-items: center;
+}
+
+.project-entry:hover {
+  background-color: #2f9da3;
+}
+
+.project-entry + .project-entry {
+  margin-top: 2px;
+}
+
+.project-entry:first-of-type {
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+}
+
+.project-entry:last-of-type {
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.form-row input {
+  border: 2px solid #000000 !important;
+  background-color: #0c3032 !important;
+  border-radius: 10px;
+  padding-left: 1em;
+}
+
+.form-row label {
+  margin-bottom: 10px;
+  margin-left: 5px;
+}
+
+#templates-list {
+  height: 130px;
+}
+
+.form-row button {
+  margin-bottom: 10px;
+  border-radius: 10px;
+  height: 2em;
+  font-size: medium;
+}
+
+#cancel-new-action:hover {
+  background-color: hsla(0, 100%, 49%, 0.5);
+}
+
+#create-new-action:hover {
+  background-color: hsla(93, 100%, 49%, 0.5);
+}
+
+.templates-col{
+  background-color: none;
+  float: left; /* Float the buttons side by side */
+  width:30%;
+  border-radius: 10px;
+}
+
+.templates-col div{
+  border-radius: 10px; 
+  cursor: pointer; /* Pointer/hand icon */
+  text-align: center;
+  margin: 3px;
+  padding: 5px; 
+}
+
+.templates-col:hover div{
+  background-color: #0c3032;
+}
+
+.templates-col .icon {
+    height: 50px;
+    width: 30px;
+}
+
+.templates-col p {
+  margin: 3px !important;
+  color: #ffffff;
+}
+
+.templates-col input[type="radio"] {
+  display: none;
+  z-index: 100;
+}
+
+.templates-col input[type="radio"]:checked + div {
+  background-color: #1f7f84 !important;
+  color: black;
+}

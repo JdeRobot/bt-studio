@@ -11,6 +11,7 @@
 }
 
 .file-item label {
+    cursor: pointer;
     list-style-type: none;
     padding: 8px;
 }

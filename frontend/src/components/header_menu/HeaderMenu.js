@@ -10,10 +10,14 @@ import './HeaderMenu.css'
 import add_project_img from './img/add_project.svg'
 import change_project_img from './img/change_project.svg'
 import save_project_img from './img/save_project.svg'
+import ProjectModal from './ProjectModal';
 
 var dropdown_shown = false;
 
 const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, projectChanges, setProjectChanges} ) => {
+
+  const [isProjectModalOpen, setProjectModalOpen] = useState(true);
+  const [existingProjects, setExistingProjects] = useState("");
 
   const createProject = () => {
 
@@ -47,9 +51,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
       });
   };
 
-  const changeProject = function(event) {
-    var projectName = event.target.innerText;
-    const existingProjects = document.getElementById('dropdown').innerText;
+  const changeProject = function(projectName) {
     
     if (projectName === null || projectName === '') {
       // User pressed cancel or entered an empty string
@@ -67,35 +69,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
   }
 
   const dropdownProject = (e) => {
-    var sel = document.getElementById('dropdown');
-    var opt = null;
-
-    e.stopPropagation();
-    sel.classList.toggle("show");
-    dropdown_shown = !dropdown_shown;
-    sel.innerHTML = ""; // Delete all things from previous iterations
-
-    if (!dropdown_shown) {return;}
-
-    // API call to get the list of existing projects
-    const listApiUrl = `/tree_api/get_project_list`;
-  
-    axios.get(listApiUrl)
-      .then(response => {
-        const existingProjects = response.data.project_list;
-        var i;
-
-        for(i = 0; i<existingProjects.length; i++) { 
-          opt = document.createElement('option');
-          opt.value = existingProjects[i];
-          opt.innerHTML = existingProjects[i];
-          sel.appendChild(opt);
-        }
-      })
-      .catch(error => {
-        console.error('Error while fetching project list:', error);
-        window.alert(`An error occurred while fetching the project list`);
-      });
+    setProjectModalOpen(true)
   };
 
   const saveProject = () => {
@@ -125,12 +99,31 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
     });
 
   };
+
+  const handleCloseProjectModal = (project) => {
+    if (project) {
+      changeProject(project)
+    }
+    setProjectModalOpen(false);
+  };
+
+  const handleFormSubmit = (data) => {
+    console.log(data)
+
+  }
   
   return (
     <AppBar position="static" sx={{ backgroundColor: '#12494c' }}>
       <Toolbar>
         <img src={logo_img} className="jde-icon" alt="JdeRobot logo"></img>
         <h1 className="Header-text">BT Studio IDE</h1>
+        <ProjectModal
+          isOpen={isProjectModalOpen}
+          onSubmit={handleFormSubmit}
+          onClose={handleCloseProjectModal}
+          existingProjects={existingProjects}
+          setExistingProjects={setExistingProjects}
+        />
 
         <div className='header-button-container'>
           {currentProjectname && (

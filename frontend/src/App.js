@@ -14,7 +14,7 @@ const App = () => {
 
   const [editorWidth, setEditorWidth] = useState(807);
   const [currentFilename, setCurrentFilename] = useState('');
-  const [currentProjectname, setCurrentProjectname] = useState('visual_follow_person');
+  const [currentProjectname, setCurrentProjectname] = useState('');
   const [actionNodesData, setActionNodesData] = useState({});
   const [modelJson, setModelJson] = useState('');
   const [projectChanges, setProjectChanges] = useState(false);
