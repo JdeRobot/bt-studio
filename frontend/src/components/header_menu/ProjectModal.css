@@ -56,3 +56,20 @@
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
 }
+
+.project-modal-create-button {
+    bottom: 30px;
+    height: 45px;
+    padding: 15px;
+    position: absolute;
+    border-radius: 10px;
+    background-color: #226d72;
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    user-select: none;
+}
+
+.project-modal-create-button:hover {
+    background-color: #2f9da3;
+}

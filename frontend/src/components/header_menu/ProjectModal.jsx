@@ -3,7 +3,7 @@ import './ProjectModal.css';
 import Modal from '../Modal/Modal';
 import axios from 'axios';
 
-const ProjectModal = ({ onSubmit, isOpen, onClose, existingProjects, setExistingProjects}) => {
+const ProjectModal = ({ onSubmit, isOpen, onClose, existingProjects, setExistingProjects, createProject}) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState("");
 
@@ -58,6 +58,9 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, existingProjects, setExisting
             )
           })}
           </ul>
+        </div>
+        <div className="form-row">
+          <div className='project-modal-create-button' onClick={() => {createProject(); onClose()}}>Create New Project</div>
         </div>
       </form>
     </Modal>

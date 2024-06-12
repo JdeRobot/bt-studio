@@ -123,6 +123,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
           onClose={handleCloseProjectModal}
           existingProjects={existingProjects}
           setExistingProjects={setExistingProjects}
+          createProject={createProject}
         />
 
         <div className='header-button-container'>
