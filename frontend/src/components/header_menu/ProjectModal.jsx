@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './ProjectModal.css';
 import Modal from '../Modal/Modal';
 import close_modal_img from '../Modal/img/close.svg'
+import delete_icon from '../diagram_editor/img/delete.svg';
 import axios from 'axios';
 
 const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProjects, setExistingProjects, createProject}) => {
@@ -61,7 +62,16 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
           <ul className='project-entry-list'>
           {Object.entries(existingProjects).map((project) => {
             return (
-              <div className='project-entry' onClick={() => onClose(project[1])}>{project[1]}</div>
+              <div className='project-entry' onClick={() => onClose(project[1])}>
+                <label className='project-entry-name'>{project[1]}</label>
+                <img
+                  className="project-entry-delete icon"
+                  style={{color: 'white'}}
+                  title='Delete'
+                  onClick={(e) => {console.log("delete");e.stopPropagation();}}
+                  src={delete_icon}>
+                </img>
+              </div>
             )
           })}
           </ul>
