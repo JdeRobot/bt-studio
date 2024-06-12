@@ -43,6 +43,38 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
     }
   };
 
+  const deleteProject = (project) => {
+    const apiUrl = `/tree_api/delete_project?project_name=${encodeURIComponent(project)}`;
+    axios.get(apiUrl)
+      .then(response => {
+        if (response.data.success) {
+          const listApiUrl = `/tree_api/get_project_list`;
+  
+          axios.get(listApiUrl)
+            .then(response => {
+              setExistingProjects(response.data.project_list)
+            })
+            .catch(error => {
+              console.error('Error while fetching project list:', error);
+              window.alert(`An error occurred while fetching the project list`);
+            });
+          console.log('Project deleted successfully');
+        } 
+      })
+      .catch(error => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          if (error.response.status === 409) {
+            window.alert(`The project ${project} does not exist`);
+          } else {
+            // Handle other statuses or general API errors
+            window.alert('Unable to connect with the backend server. Please check the backend status.');
+          }
+        }
+      });
+  }
+
   return (
     <Modal id="project-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
       <form onSubmit={onSubmit} onReset={handleCancel}>
@@ -68,7 +100,7 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
                   className="project-entry-delete icon"
                   style={{color: 'white'}}
                   title='Delete'
-                  onClick={(e) => {console.log("delete");e.stopPropagation();}}
+                  onClick={(e) => {deleteProject(project[1]);e.stopPropagation();}}
                   src={delete_icon}>
                 </img>
               </div>
