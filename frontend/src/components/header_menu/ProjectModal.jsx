@@ -44,6 +44,10 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
   };
 
   const deleteProject = (project) => {
+    if (currentProject === project) {
+      //TODO: change this to change project before deleting
+      return;
+    }
     const apiUrl = `/tree_api/delete_project?project_name=${encodeURIComponent(project)}`;
     axios.get(apiUrl)
       .then(response => {
