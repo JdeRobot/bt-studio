@@ -60,7 +60,11 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, existingProjects, setExisting
           </ul>
         </div>
         <div className="form-row">
-          <div className='project-modal-create-button' onClick={() => {createProject(); onClose()}}>Create New Project</div>
+          <div className="project-modal-creation-buttons-container">
+            <div className='project-modal-create-button' onClick={() => {createProject(); onClose()}}>Create New Project</div>
+            <div className='project-modal-create-button'>Other</div>
+            <div className='project-modal-create-button'>Other</div>
+          </div>
         </div>
       </form>
     </Modal>

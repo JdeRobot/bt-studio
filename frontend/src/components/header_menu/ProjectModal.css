@@ -10,6 +10,12 @@
     padding: 0px;
     overflow-y: auto;
     max-height: 60vh;
+
+    --g:radial-gradient(50% 20px, #0009, #0000);  
+    background: 
+      linear-gradient(#12494c 10px, #0000 40px calc(100% - 40px),#12494c calc(100% - 10px)) local, 
+      var(--g) top   /100% 200%,    
+      var(--g) bottom/100% 200%;
 }
 
 /* width */
@@ -57,11 +63,21 @@
   border-bottom-left-radius: 5px;
 }
 
-.project-modal-create-button {
-    bottom: 30px;
-    height: 45px;
-    padding: 15px;
+.project-modal-creation-buttons-container {
     position: absolute;
+    bottom: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: calc(100% - 48px);
+    justify-content: center;
+    column-gap: 20px;
+}
+
+.project-modal-create-button {
+    height: 45px;
+    width: 175px;
+    padding: 15px;
     border-radius: 10px;
     background-color: #226d72;
     color: white;
