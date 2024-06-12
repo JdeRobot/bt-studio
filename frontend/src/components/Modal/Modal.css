@@ -37,7 +37,15 @@
   border-radius: 10px;
 }
 
-.modal-titlebar-close:hover {
+.modal-titlebar-back {
+  margin-right: auto;
+  height: 100%;
+  background-color: #226d72;
+  border-radius: 10px;
+}
+
+.modal-titlebar-close:hover,
+.modal-titlebar-back:hover {
   background-color: #2f9da3;
 }
 

@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './ProjectModal.css';
 import Modal from '../Modal/Modal';
+import back_modal_img from '../Modal/img/back.svg'
 import close_modal_img from '../Modal/img/close.svg'
 import delete_icon from '../diagram_editor/img/delete.svg';
 import axios from 'axios';
 
 const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProjects, setExistingProjects, createProject}) => {
   const focusInputRef = useRef(null);
-  const [formState, setFormState] = useState("");
+  const [createProjectOpen, setCreateProjectOpen] = useState(false);
 
   const onOptionChange = e => {
     handleInputChange(e)
@@ -82,43 +83,55 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
   return (
     <Modal id="project-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
       <form onSubmit={onSubmit} onReset={handleCancel}>
-        <div className="modal-titlebar">
-          <label className='modal-titlebar-title' htmlFor="actionName" style={{textAlign: "center"}}>Open a Project</label>
-          <img className="modal-titlebar-close" onClick={() => {handleCancel()}} src={close_modal_img}></img>
-        </div>
-        <div className="form-row">
-          {/* <input
-            ref={focusInputRef}
-            type="text"
-            id="actionName"
-            name="actionName"
-            onChange={handleInputChange}
-            autoComplete='off'
-          /> */}
-          <ul className='project-entry-list'>
-          {Object.entries(existingProjects).map((project) => {
-            return (
-              <div className='project-entry' onClick={() => onClose(project[1])}>
-                <label className='project-entry-name'>{project[1]}</label>
-                <img
-                  className="project-entry-delete icon"
-                  style={{color: 'white'}}
-                  title='Delete'
-                  onClick={(e) => {deleteProject(project[1]);e.stopPropagation();}}
-                  src={delete_icon}>
-                </img>
-              </div>
-            )
-          })}
-          </ul>
-        </div>
-        <div className="form-row">
-          <div className="project-modal-creation-buttons-container">
-            <div className='project-modal-create-button' onClick={() => {createProject(); onClose()}}>Create New Project</div>
-            <div className='project-modal-create-button'>Other</div>
-            <div className='project-modal-create-button'>Other</div>
+        { !createProjectOpen ? (
+          <>
+          <div className="modal-titlebar">
+            <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Open a Project</label>
+            <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
           </div>
-        </div>
+          <div className="form-row">
+                      {/* <input
+              ref={focusInputRef}
+              type="text"
+              id="actionName"
+              name="actionName"
+              onChange={handleInputChange}
+              autoComplete='off'
+            /> */}
+              <ul className='project-entry-list'>
+                {Object.entries(existingProjects).map((project) => {
+                  return (
+                    <div className='project-entry' onClick={() => onClose(project[1])}>
+                      <label className='project-entry-name'>{project[1]}</label>
+                      <img
+                        className="project-entry-delete icon"
+                        style={{ color: 'white' }}
+                        title='Delete'
+                        onClick={(e) => { deleteProject(project[1]); e.stopPropagation(); } }
+                        src={delete_icon}>
+                      </img>
+                    </div>
+                  );
+                })}
+              </ul>
+            </div><div className="form-row">
+              <div className="project-modal-creation-buttons-container">
+                <div className='project-modal-create-button' onClick={() => { setCreateProjectOpen(true) } }>Create New Project</div>
+                <div className='project-modal-create-button'>Other</div>
+                <div className='project-modal-create-button'>Other</div>
+              </div>
+            </div>
+            </>
+        ) : (
+          <>
+          <div className="modal-titlebar">
+            <img className="modal-titlebar-back" title='Open a Project' onClick={() => { setCreateProjectOpen(false); } } src={back_modal_img}></img>
+            <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Create New Project</label>
+            <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
+          </div>
+          </>
+        )
+        }
       </form>
     </Modal>
   );
