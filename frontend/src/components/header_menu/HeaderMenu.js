@@ -18,9 +18,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
   const [existingProjects, setExistingProjects] = useState("");
 
-  const createProject = () => {
-
-    const projectName = window.prompt('Enter the name for the new project:');
+  const createProject = (projectName) => {
   
     if (projectName === null || projectName === '') {
       // User pressed cancel or entered an empty string

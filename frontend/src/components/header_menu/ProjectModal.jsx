@@ -6,13 +6,14 @@ import close_modal_img from '../Modal/img/close.svg'
 import delete_icon from '../diagram_editor/img/delete.svg';
 import axios from 'axios';
 
+const initialProjectData = {
+  projectName: '',
+};
+
 const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProjects, setExistingProjects, createProject}) => {
   const focusInputRef = useRef(null);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
-
-  const onOptionChange = e => {
-    handleInputChange(e)
-  }
+  const [formState, setFormState] = useState(initialProjectData);
 
   useEffect(() => {
     if (isOpen && focusInputRef.current) {
@@ -30,9 +31,15 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
         console.error('Error while fetching project list:', error);
         window.alert(`An error occurred while fetching the project list`);
       });
+    setFormState(initialProjectData)
   }, [isOpen]);
 
   const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormState((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = (event) => {
@@ -42,6 +49,15 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
     if (currentProject !== '') {
       onClose()
     }
+  };
+
+  const handleCreate = () => {
+    if (formState.projectName === '') {
+      return;
+    }
+    setCreateProjectOpen(false);
+    createProject(formState.projectName);
+    onClose()
   };
 
   const deleteProject = (project) => {
@@ -90,14 +106,6 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
             <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
           </div>
           <div className="form-row">
-                      {/* <input
-              ref={focusInputRef}
-              type="text"
-              id="actionName"
-              name="actionName"
-              onChange={handleInputChange}
-              autoComplete='off'
-            /> */}
               <ul className='project-entry-list'>
                 {Object.entries(existingProjects).map((project) => {
                   return (
@@ -128,6 +136,23 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
             <img className="modal-titlebar-back" title='Open a Project' onClick={() => { setCreateProjectOpen(false); } } src={back_modal_img}></img>
             <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Create New Project</label>
             <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
+          </div>
+          <div className="project-create-name-container">
+            <div className="project-create-name">
+              <input
+                ref={focusInputRef}
+                type="text"
+                id="projectName"
+                name="projectName"
+                onChange={handleInputChange}
+                autoComplete='off'
+                placeholder="Project Name"
+              />
+              <label for="projectName" class="project-create-name-label">Project Name</label>
+            </div>
+          </div>
+          <div className="project-create-name-container">
+            <div id="create-new-project" onClick={() => handleCreate()}>Create Project</div>
           </div>
           </>
         )
