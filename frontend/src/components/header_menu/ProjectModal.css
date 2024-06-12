@@ -70,8 +70,7 @@
     flex-direction: row;
     align-items: center;
     width: calc(100% - 48px);
-    justify-content: center;
-    column-gap: 20px;
+    justify-content: space-evenly;
 }
 
 .project-modal-create-button {

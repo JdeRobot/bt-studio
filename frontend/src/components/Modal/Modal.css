@@ -15,3 +15,34 @@
 .modal:focus {
   outline: none;
 }
+
+.modal-titlebar {
+  position: relative;
+  top: -10px;
+  width: 100%;
+  display: block;
+  border: none;
+  color: #ffffff;
+  font-size: large;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-column-gap: 5px;
+  justify-items: center;
+}
+
+.modal-titlebar-close {
+  margin-left: auto;
+  height: 100%;
+  background-color: #226d72;
+  border-radius: 10px;
+}
+
+.modal-titlebar-close:hover {
+  background-color: #2f9da3;
+}
+
+.modal-titlebar-title {
+  font-weight: 600;
+  align-self: center;
+  grid-column-start: 2;
+}

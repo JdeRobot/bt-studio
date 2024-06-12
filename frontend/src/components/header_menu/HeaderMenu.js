@@ -7,7 +7,6 @@ import axios from 'axios';
 import logo_img from './img/logo.png'
 
 import './HeaderMenu.css'
-import add_project_img from './img/add_project.svg'
 import change_project_img from './img/change_project.svg'
 import save_project_img from './img/save_project.svg'
 import ProjectModal from './ProjectModal';
@@ -121,6 +120,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
           isOpen={isProjectModalOpen}
           onSubmit={handleFormSubmit}
           onClose={handleCloseProjectModal}
+          currentProject={currentProjectname}
           existingProjects={existingProjects}
           setExistingProjects={setExistingProjects}
           createProject={createProject}
@@ -136,8 +136,6 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
           
           <button className="header-button" onClick={dropdownProject} title="Change project">
             <img className="header-icon" src={change_project_img}></img>
-            <div class="dropdown" id="dropdown" onClick={changeProject} >
-            </div>
           </button>
           <button className="header-button" onClick={saveProject} title="Save project">
             <img className="header-icon" src={save_project_img}></img>

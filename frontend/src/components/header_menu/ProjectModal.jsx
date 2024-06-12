@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './ProjectModal.css';
 import Modal from '../Modal/Modal';
+import close_modal_img from '../Modal/img/close.svg'
 import axios from 'axios';
 
-const ProjectModal = ({ onSubmit, isOpen, onClose, existingProjects, setExistingProjects, createProject}) => {
+const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProjects, setExistingProjects, createProject}) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState("");
 
@@ -35,14 +36,20 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, existingProjects, setExisting
   const handleSubmit = (event) => {
   };
 
-  const handleCancel = (event) => {
+  const handleCancel = () => {
+    if (currentProject !== '') {
+      onClose()
+    }
   };
 
   return (
     <Modal id="project-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
       <form onSubmit={onSubmit} onReset={handleCancel}>
+        <div className="modal-titlebar">
+          <label className='modal-titlebar-title' htmlFor="actionName" style={{textAlign: "center"}}>Open a Project</label>
+          <img className="modal-titlebar-close" onClick={() => {handleCancel()}} src={close_modal_img}></img>
+        </div>
         <div className="form-row">
-          <label htmlFor="actionName" style={{textAlign: "center"}}>Open a Project</label>
           {/* <input
             ref={focusInputRef}
             type="text"
