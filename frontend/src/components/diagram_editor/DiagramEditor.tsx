@@ -97,14 +97,26 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     });
   };
 
-  const attachLinkListener = (node:any) => {
-    node.registerListener({
-      linksUpdated: (event:any) => {
-        if (event.isCreated) {
-          setProjectChanges(true);
-          setModelJson(JSON.stringify(model.current.serialize())); // Update when a new link is created
-        }
-      },
+  const attachLinkListener = (model:any) => {
+    model.registerListener({
+      linksUpdated:(event : any) => {
+        const { link, isCreated } = event;
+        link.registerListener({
+          targetPortChanged:(link  :any) => {
+            if(isCreated){
+              const {sourcePort, targetPort} = link.entity;
+              if(Object.keys(targetPort.getLinks()).length > 1){
+                model.removeLink(link.entity);
+              } else if (sourcePort instanceof ChildrenPortModel && ! (targetPort instanceof ParentPortModel)) {
+                model.removeLink(link.entity);
+              } else if (sourcePort instanceof TagOutputPortModel && ! (targetPort instanceof InputPortModel)) {
+                model.removeLink(link.entity);
+              } else {
+                model.clearSelection();
+              }
+            }
+          }
+        })}
     });
   };
 
@@ -132,6 +144,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('input', (config) => new InputPortModel("")));
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('tag output', (config) => new TagOutputPortModel()));
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('tag input', (config) => new TagInputPortModel()));
+    const state:any = newEngine.getStateMachine().getCurrentState();
+    state.dragNewLink.config.allowLooseLinks = false;
     return newEngine;
   }, []);
 
@@ -216,10 +230,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         const nodes = model.current.getNodes();  // Assuming getNodes() method exists to retrieve all nodes
         nodes.forEach((node) => {
           attachPositionListener(node);
-          attachLinkListener(node);
           attachClickListener(node);
           node.setSelected(false);
         });
+        attachLinkListener(model.current);
       } catch (e) {
         // Log the error for debugging
         console.error("An error occurred while parsing the JSON:", e);
@@ -302,7 +316,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     // Attach listener to this node
     attachPositionListener(newNode);
     attachClickListener(newNode);
-    attachLinkListener(newNode);
     lastClickedNodeId.current = newNode.getID();
 
     // Setup the node position and ports
@@ -361,7 +374,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     if (model.current && lastClickedNodeId.current) {
       const node: any = model.current.getNode(lastClickedNodeId.current);
       if (node) {
-        actionNodesData[node!.getName()]['ids'] = actionNodesData[node!.getName()]['ids'].filter(obj => obj !== lastClickedNodeId.current);
+        if (checkIfAction(node)) {
+          actionNodesData[node!.getName()]['ids'] = actionNodesData[node!.getName()]['ids'].filter(obj => obj !== lastClickedNodeId.current);
+        }
         node.remove();
         setProjectChanges(true);
         engine.repaintCanvas();
