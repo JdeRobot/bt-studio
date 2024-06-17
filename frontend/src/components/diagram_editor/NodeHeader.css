@@ -44,3 +44,7 @@
     border-radius: 50%; /* Circular highlight */
 }
 
+.action-icon {
+    margin-top: 4px;
+}
+
