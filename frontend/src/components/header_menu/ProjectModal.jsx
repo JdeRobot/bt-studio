@@ -46,6 +46,7 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
   };
 
   const handleCancel = () => {
+    setCreateProjectOpen(false);
     if (currentProject !== '') {
       onClose()
     }
