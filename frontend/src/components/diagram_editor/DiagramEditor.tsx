@@ -59,16 +59,18 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
 
   const handleLostFocus = (e:any) => {
-    // TODO: deselect node depending on the trigger origin
     forceNotReset.current = true;
+    if (e.relatedTarget && e.relatedTarget.id === "node-action-edit-button") {
+      return;
+    }
     setFocused(false)
     if (lastClickedNodeId.current !== "") {
       try {
         const node: any = model.current.getNode(lastClickedNodeId.current);
         node.deselectNode();
+        setCurrentActionNode(null);
+        lastClickedNodeId.current = "";
       } catch {}
-      // setCurrentActionNode(node);
-      // lastClickedNodeId.current = "";
     }
   }
 
@@ -390,7 +392,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const handleCloseEditActionModal = () => {
     setEditActionModalOpen(false);
-    // currentActionNode.selectNode();
+    setCurrentActionNode(null);
+    lastClickedNodeId.current = "";
     setFocused(true);
     ref.current.focus();
   };

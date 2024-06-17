@@ -115,7 +115,7 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode,
           <button className="node-action-button" onClick={onDeleteNode} title='Delete node'>
             <img className="icon action-icon" src={del_img}></img>
           </button>
-          <button className="node-action-button" onClick={onEditAction} title='Edit action'>
+          <button id='node-action-edit-button' className="node-action-button" onClick={onEditAction} title='Edit action'>
             <img className="icon action-icon" src={edit_action_img}></img>
           </button>
           <button className="node-action-button" onClick={onGenerateApp} title='Download app'>
