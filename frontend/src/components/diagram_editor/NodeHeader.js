@@ -112,7 +112,7 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode,
         </Menu>
 
         <div className='action-buttons'>
-          <button className="node-action-button" onClick={onDeleteNode} title='Delete node'>
+          <button id='node-action-delete-button' className="node-action-button" onClick={onDeleteNode} title='Delete node'>
             <img className="icon action-icon" src={del_img}></img>
           </button>
           <button id='node-action-edit-button' className="node-action-button" onClick={onEditAction} title='Edit action'>

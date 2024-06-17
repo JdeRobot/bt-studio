@@ -60,16 +60,23 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const handleLostFocus = (e:any) => {
     forceNotReset.current = true;
-    if (e.relatedTarget && e.relatedTarget.id === "node-action-edit-button") {
+    if (e.relatedTarget && (
+        e.relatedTarget.id === "node-action-edit-button" ||
+        e.relatedTarget.id === "node-action-delete-button"))
+    {
       return;
     }
+    console.log(e)
     setFocused(false)
     if (lastClickedNodeId.current !== "") {
       try {
         const node: any = model.current.getNode(lastClickedNodeId.current);
-        node.deselectNode();
+        if (node) {
+          node.deselectNode();
+        }
         setCurrentActionNode(null);
         lastClickedNodeId.current = "";
+        setModelJson(JSON.stringify(model.current.serialize()));
       } catch {}
     }
   }
@@ -383,8 +390,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const handleOpenEditActionModal = () => {
     if (lastClickedNodeId.current !== "") {
       const genericNode = model.current.getNode(lastClickedNodeId.current);
+      console.log(genericNode)
       const node = genericNode as BasicNodeModel;
-      if (checkIfAction(node)) {
+      if (node && checkIfAction(node)) {
         forceNotReset.current = true;
         setCurrentActionNode(node);
         node.setSelected(false);
@@ -404,10 +412,15 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const setColorActionNode = (r:number, g:number, b:number) => {
     currentActionNode.setColor('rgb('+Math.round(r)+','+Math.round(g)+','+Math.round(b)+')');
     actionNodesData[currentActionNode.getName()]['color'] = currentActionNode.getColor();
-    for (const nodesId of actionNodesData[currentActionNode!.getName()]['ids']) {
+    let name = currentActionNode.getName();
+    for (const nodesId of actionNodesData[name]['ids']) {
       let genericActionNode = model.current.getNode(nodesId);
       let actionNode = genericActionNode as BasicNodeModel;
-      actionNode.setColor(actionNodesData[actionNode.getName()]['color'])
+      if (actionNode) {
+        actionNode.setColor(actionNodesData[name]['color'])
+      } else {
+        actionNodesData[name]['ids'] = actionNodesData[name]['ids'].filter(obj => obj !== nodesId);
+      }
     }
     engine.repaintCanvas();
     setModelJson(JSON.stringify(model.current.serialize()));
@@ -415,6 +428,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const addInputPort = (portName:string) => {
     if (currentActionNode) {
+      let name = currentActionNode.getName();
       // Check restrictions
       if (checkIfAction(currentActionNode)) {
         // Now you can call your custom method
@@ -422,13 +436,17 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           setProjectChanges(true);
           currentActionNode.addInputPort(portName);
           console.log(currentActionNode)
-          actionNodesData[currentActionNode.getName()]['input'] = actionNodesData[currentActionNode.getName()]['input'].concat([portName]);
+          actionNodesData[name]['input'] = actionNodesData[name]['input'].concat([portName]);
           // Add the new port to all the cloned actions
-          for (const nodesId of actionNodesData[currentActionNode.getName()]['ids']) {
+          for (const nodesId of actionNodesData[name]['ids']) {
             if (nodesId !== lastClickedNodeId.current) {
               let genericActionNode = model.current.getNode(nodesId);
               let actionNode = genericActionNode as BasicNodeModel;
-              actionNode.addInputPort(portName);
+              if (actionNode) {
+                actionNode.addInputPort(portName);
+              } else {
+                actionNodesData[name]['ids'] = actionNodesData[name]['ids'].filter(obj => obj !== nodesId);
+              }
             }
           }
         }
@@ -443,6 +461,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const addOutputPort = (portName:string) => {
     if (currentActionNode) {
+      let name = currentActionNode.getName();
       // Check restrictions
       if (checkIfAction(currentActionNode)) {
         // Now you can call your custom method
@@ -450,13 +469,17 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           setProjectChanges(true);
           currentActionNode.addOutputPort(portName);
           console.log(currentActionNode)
-          actionNodesData[currentActionNode.getName()]['output'] = actionNodesData[currentActionNode.getName()]['output'].concat([portName]);
+          actionNodesData[name]['output'] = actionNodesData[name]['output'].concat([portName]);
           // Add the new port to all the cloned actions
-          for (const nodesId of actionNodesData[currentActionNode.getName()]['ids']) {
+          for (const nodesId of actionNodesData[name]['ids']) {
             if (nodesId !== lastClickedNodeId.current) {
               let genericActionNode = model.current.getNode(nodesId);
               let actionNode = genericActionNode as BasicNodeModel;
-              actionNode.addOutputPort(portName);
+              if (actionNode) {
+                actionNode.addOutputPort(portName);
+              } else {
+                actionNodesData[name]['ids'] = actionNodesData[name]['ids'].filter(obj => obj !== nodesId);
+              }
             }
           }
         }
@@ -471,19 +494,24 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const deleteInputPort = (port:InputPortModel, portName:string) => {
     if (currentActionNode) {
+      let name = currentActionNode.getName();
       // Check restrictions
       if (checkIfAction(currentActionNode)) {
         // Now you can call your custom method
         if (port !== null) { // Check that the user didn't cancel
           setProjectChanges(true);
           currentActionNode.removeInputPort(port);
-          actionNodesData[currentActionNode.getName()]['input'] = actionNodesData[currentActionNode.getName()]['input'].filter(item => item !== portName);
+          actionNodesData[name]['input'] = actionNodesData[name]['input'].filter(item => item !== portName);
           // Add the new port to all the cloned actions
-          for (const nodesId of actionNodesData[currentActionNode.getName()]['ids']) {
+          for (const nodesId of actionNodesData[name]['ids']) {
             if (nodesId !== lastClickedNodeId.current) {
               let genericActionNode = model.current.getNode(nodesId);
               let actionNode = genericActionNode as BasicNodeModel;
-              actionNode.removeInputPort(port);
+              if (actionNode) {
+                actionNode.removeInputPort(port);
+              } else {
+                actionNodesData[name]['ids'] = actionNodesData[name]['ids'].filter(obj => obj !== nodesId);
+              }
             }
           }
         }
@@ -498,19 +526,24 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const deleteOutputPort = (port:OutputPortModel, portName:string) => {
     if (currentActionNode) {
+      let name = currentActionNode.getName();
       // Check restrictions
       if (checkIfAction(currentActionNode)) {
         // Now you can call your custom method
         if (port !== null) { // Check that the user didn't cancel
           setProjectChanges(true);
           currentActionNode.removeOutputPort(port);
-          actionNodesData[currentActionNode.getName()]['output'] = actionNodesData[currentActionNode.getName()]['output'].filter(item => item !== portName);
+          actionNodesData[name]['output'] = actionNodesData[name]['output'].filter(item => item !== portName);
           // Add the new port to all the cloned actions
-          for (const nodesId of actionNodesData[currentActionNode.getName()]['ids']) {
+          for (const nodesId of actionNodesData[name]['ids']) {
             if (nodesId !== lastClickedNodeId.current) {
               let genericActionNode = model.current.getNode(nodesId);
               let actionNode = genericActionNode as BasicNodeModel;
-              actionNode.removeOutputPort(port);
+              if (actionNode) {
+                actionNode.removeOutputPort(port);
+              } else {
+                actionNodesData[name]['ids'] = actionNodesData[name]['ids'].filter(obj => obj !== nodesId);
+              }
             }
           }
         }
