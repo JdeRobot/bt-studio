@@ -8,7 +8,8 @@ import createEngine, {
 
 import {
   CanvasWidget,
-  BaseModelListener
+  BaseModelListener,
+  ZoomCanvasAction
 } from '@projectstorm/react-canvas-core';
 
 import './DiagramEditor.css';
@@ -135,7 +136,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   // Create the engine
   const engine = useMemo(() => {
-    const newEngine = createEngine();
+    const newEngine = createEngine({
+      registerDefaultZoomCanvasAction: false,
+    });
     newEngine.getNodeFactories().registerFactory(new BasicNodeFactory());
     newEngine.getNodeFactories().registerFactory(new TagNodeFactory());
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('children', (config) => new ChildrenPortModel()));
@@ -146,6 +149,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('tag input', (config) => new TagInputPortModel()));
     const state:any = newEngine.getStateMachine().getCurrentState();
     state.dragNewLink.config.allowLooseLinks = false;
+    newEngine.getActionEventBus().registerAction(new ZoomCanvasAction({ inverseZoom: true }));
     return newEngine;
   }, []);
 
