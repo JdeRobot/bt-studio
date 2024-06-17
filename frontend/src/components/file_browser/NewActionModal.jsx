@@ -66,17 +66,21 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
   return (
     <Modal id="new-action-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
       <form onSubmit={handleSubmit} onReset={handleCancel}>
-        <div className="form-row">
-          <label htmlFor="actionName">Action Name</label>
-          <input
-            ref={focusInputRef}
-            type="text"
-            id="actionName"
-            name="actionName"
-            onChange={handleInputChange}
-            autoComplete='off'
-            required
-          />
+        <div className="modal-complex-input-row-container">
+          <div className="modal-complex-input-container">
+            <input
+              ref={focusInputRef}
+              type="text"
+              id="actionName"
+              name="actionName"
+              className='modal-complex-input'
+              onChange={handleInputChange}
+              autoComplete='off'
+              placeholder="Action Name"
+              required
+            />
+            <label for="actionName" class="modal-complex-input-label">Action Name</label>
+          </div>
         </div>
         <div className="form-row" id="templates-list">
           <label htmlFor="templateType">Template Type</label>

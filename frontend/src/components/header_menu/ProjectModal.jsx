@@ -138,8 +138,8 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
             <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Create New Project</label>
             <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
           </div>
-          <div className="project-create-name-container">
-            <div className="project-create-name">
+          <div className="modal-complex-input-row-container">
+            <div className="project-create-name modal-complex-input-container">
               <input
                 ref={focusInputRef}
                 type="text"
@@ -151,12 +151,12 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
                 placeholder="Project Name"
               />
               <label for="projectName" class="modal-complex-input-label">Project Name</label>
-              <label for="projectName" class="project-create-name-indications">
+              <label for="projectName" class="modal-complex-input-indications">
                 A unique name that is used for the project folder and other resources. The name should be in lower case without spaces and should not start with a number. 
               </label>
             </div>
           </div>
-          <div className="project-create-name-container">
+          <div className="modal-complex-input-row-container">
             <div id="create-new-project" onClick={() => handleCreate()}>Create Project</div>
           </div>
           </>

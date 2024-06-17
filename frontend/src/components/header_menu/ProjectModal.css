@@ -117,22 +117,9 @@
   margin-bottom: 0px !important;
 }
 
-.project-create-name-container {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-}
-
 .project-create-name{
-  position: relative;
   margin-top: 30px;
   width: 75%;
-}
-
-.project-create-name input:focus {
-  border-color: #2f9da3 !important;
-  outline: none !important;
 }
 
 #create-new-project {
@@ -147,9 +134,4 @@
 
 #create-new-project:hover {
   background-color: hsla(93, 100%, 49%, 0.5);
-}
-
-.project-create-name-indications {
-  color: #838383;
-  font-size: 0.7rem;
 }

@@ -57,6 +57,17 @@
 
 /* Modal Input with changing placeholder text */
 
+.modal-complex-input-row-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.modal-complex-input-container {
+  position: relative;
+}
+
 .modal-complex-input {
   border: 2px solid #000000;
   background-color: #0c3032 !important;
@@ -72,8 +83,14 @@
   transition: border-color 0.2s;
 }
 
+.modal-complex-input:focus {
+  border-color: #2f9da3 !important;
+  outline: none !important;
+}
+
 .modal-complex-input::placeholder {
   color: transparent;
+  user-select: none; 
 }
 
 .modal-complex-input:placeholder-shown ~ .modal-complex-input-label {
@@ -98,7 +115,7 @@
   display: block;
   transition: 0.2s;
   font-size: 0.9rem;
-  font-weight:700;  
+  font-weight:700;
 }
 
 /* reset input */
@@ -116,3 +133,10 @@
   color: #585858;
   user-select: none;
 }
+
+.modal-complex-input-indications {
+  color: #838383;
+  font-size: 0.7rem;
+}
+
+/* End of complex input */
