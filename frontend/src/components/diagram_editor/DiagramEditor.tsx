@@ -63,7 +63,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     forceNotReset.current = true;
     if (e.relatedTarget && (
         e.relatedTarget.id === "node-action-edit-button" ||
-        e.relatedTarget.id === "node-action-delete-button"))
+        e.relatedTarget.id === "node-action-delete-button"||
+        e.relatedTarget.className === "node-editor-button"))
     {
       return;
     }
@@ -134,12 +135,35 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     });
   };
 
+  const handleOpenEditActionModal = () => {
+    console.log(lastClickedNodeId.current)
+    if (lastClickedNodeId.current !== "") {
+      const genericNode = model.current.getNode(lastClickedNodeId.current);
+      console.log(genericNode)
+      const node = genericNode as BasicNodeModel;
+      if (node && checkIfAction(node)) {
+        forceNotReset.current = true;
+        setCurrentActionNode(node);
+        node.setSelected(false);
+        setEditActionModalOpen(true);
+      }
+    }
+  };
+
+  const handleCloseEditActionModal = () => {
+    setEditActionModalOpen(false);
+    setCurrentActionNode(null);
+    lastClickedNodeId.current = "";
+    setFocused(true);
+    ref.current.focus();
+  };
+
   // Create the engine
   const engine = useMemo(() => {
     const newEngine = createEngine({
       registerDefaultZoomCanvasAction: false,
     });
-    newEngine.getNodeFactories().registerFactory(new BasicNodeFactory());
+    newEngine.getNodeFactories().registerFactory(new BasicNodeFactory(handleOpenEditActionModal));
     newEngine.getNodeFactories().registerFactory(new TagNodeFactory());
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('children', (config) => new ChildrenPortModel()));
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('parent', (config) => new ParentPortModel()));
@@ -405,28 +429,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         "ForceFailure", "KeepRunningUntilFailure", "Repeat", "RunOnce", "Delay",
         "Input port value", "Output port value", "Tree Root"].includes(name))
   }
-
-  const handleOpenEditActionModal = () => {
-    if (lastClickedNodeId.current !== "") {
-      const genericNode = model.current.getNode(lastClickedNodeId.current);
-      console.log(genericNode)
-      const node = genericNode as BasicNodeModel;
-      if (node && checkIfAction(node)) {
-        forceNotReset.current = true;
-        setCurrentActionNode(node);
-        node.setSelected(false);
-        setEditActionModalOpen(true);
-      }
-    }
-  };
-
-  const handleCloseEditActionModal = () => {
-    setEditActionModalOpen(false);
-    setCurrentActionNode(null);
-    lastClickedNodeId.current = "";
-    setFocused(true);
-    ref.current.focus();
-  };
 
   const setColorActionNode = (r:number, g:number, b:number) => {
     currentActionNode.setColor('rgb('+Math.round(r)+','+Math.round(g)+','+Math.round(b)+')');
