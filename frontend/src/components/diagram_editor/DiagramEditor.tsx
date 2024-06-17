@@ -159,6 +159,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       })
       .catch(error => {
         setGraphJson(null);
+        forceNotReset.current = false;
+        model.current = new DiagramModel();
       });
     }
   
