@@ -64,4 +64,10 @@
 .icon {
     width: 20px;
 }
-  
+
+.splash-icon {
+    --size: 400px;
+    margin-top: calc(50% - var(--size) / 2);
+    margin-left: calc(50% - var(--size) / 2);
+    width: var(--size);
+}
