@@ -127,72 +127,12 @@
 .project-create-name{
   position: relative;
   margin-top: 30px;
-  width: 50%;
-}
-
-#projectName {
-  border: 2px solid #000000;
-  background-color: #0c3032 !important;
-  border-radius: 10px;
-  padding-left: 1em;
-  padding-top: 13px;
-  width: 100%;
-  align-self: center;
-  height: 50px;
-  color: white;
-  outline: 0;
-  font-size: 1rem;
-  transition: border-color 0.2s;
-}
-
-#projectName::placeholder {
-  color: transparent;
-}
-
-#projectName:placeholder-shown ~ .project-create-name-label {
-  font-size: 1rem;
-  cursor: text;
-  top: 15px;
-}
-
-#projectName:not(placeholder-shown) ~ .project-create-name-label {
-  position: absolute;
-  top: 5px;
-  display: block;
-  transition: 0.2s;
-  font-size: 0.9rem;
-  font-weight:700;
-  cursor: text;
+  width: 75%;
 }
 
 .project-create-name input:focus {
   border-color: #2f9da3 !important;
   outline: none !important;
-}
-
-.project-create-name-label {
-  position: absolute;
-  top: 15px;
-  left: 17px;
-  display: block;
-  transition: 0.2s;
-  font-size: 1rem;
-  color: #585858;
-  user-select: none;
-}
-
-#projectName:focus ~ .project-create-name-label {
-  position: absolute;
-  top: 5px;
-  display: block;
-  transition: 0.2s;
-  font-size: 0.9rem;
-  font-weight:700;  
-}
-
-/* reset input */
-#projectName:required, #projectName:invalid{
-  box-shadow:none;
 }
 
 #create-new-project {
@@ -207,4 +147,9 @@
 
 #create-new-project:hover {
   background-color: hsla(93, 100%, 49%, 0.5);
+}
+
+.project-create-name-indications {
+  color: #838383;
+  font-size: 0.7rem;
 }

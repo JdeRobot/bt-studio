@@ -145,11 +145,15 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
                 type="text"
                 id="projectName"
                 name="projectName"
+                className='modal-complex-input'
                 onChange={handleInputChange}
                 autoComplete='off'
                 placeholder="Project Name"
               />
-              <label for="projectName" class="project-create-name-label">Project Name</label>
+              <label for="projectName" class="modal-complex-input-label">Project Name</label>
+              <label for="projectName" class="project-create-name-indications">
+                A unique name that is used for the project folder and other resources. The name should be in lower case without spaces and should not start with a number. 
+              </label>
             </div>
           </div>
           <div className="project-create-name-container">
