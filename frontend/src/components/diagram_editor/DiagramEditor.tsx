@@ -193,12 +193,13 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   // Set the model in the engine ONLY on project change
   if (!forceNotReset.current) {
-    // BUG only on project change
     if (graphJson === null) {
       const root_node = new BasicNodeModel('Tree Root', 'rgb(0,204,0)');
       root_node.setPosition(200, 200);
       root_node.addChildrenPort("Children Port");
       model.current.addAll(root_node);
+      setModelJson(JSON.stringify(model.current.serialize()));
+      forceNotReset.current = true;
     } else {
       try {
         // Try parsing the JSON string

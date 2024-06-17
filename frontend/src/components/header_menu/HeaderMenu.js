@@ -65,8 +65,9 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
     }
   }
 
-  const dropdownProject = (e) => {
+  const openProjectView = (e) => {
     setProjectModalOpen(true)
+    saveProject();
   };
 
   const saveProject = () => {
@@ -132,7 +133,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
               </span>
           )}
           
-          <button className="header-button" onClick={dropdownProject} title="Change project">
+          <button className="header-button" onClick={openProjectView} title="Change project">
             <img className="header-icon" src={change_project_img}></img>
           </button>
           <button className="header-button" onClick={saveProject} title="Save project">
