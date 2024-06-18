@@ -67,7 +67,9 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
 
   const openProjectView = (e) => {
     setProjectModalOpen(true)
-    saveProject();
+    if (projectChanges) {
+      saveProject();
+    }
   };
 
   const saveProject = () => {

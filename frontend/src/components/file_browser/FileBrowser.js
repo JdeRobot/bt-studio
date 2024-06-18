@@ -14,6 +14,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
   
   useEffect(() => {
     fetchFileList();
+    setCurrentFilename("");
   }, [currentProjectname]);
 
   const fetchFileList = () => {
