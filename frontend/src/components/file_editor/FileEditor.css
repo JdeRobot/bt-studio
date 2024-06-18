@@ -93,3 +93,7 @@
   background: var(--scrollbar);
   border-radius: 10px;
 }
+
+.ace_scrollbar-h {
+    margin-bottom: 10px;
+}
