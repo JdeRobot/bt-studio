@@ -90,48 +90,50 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
         </div>
       </div>
         <div className="form-row" id="templates-list">
-          <label htmlFor="templateType">Template Type</label>
-          <div className="templates-col">
-            <label>
-            <input type="radio"
-              name="templateType" 
-              value="empty"
-              id="emptyTemplate"
-              checked={template === "empty"}
-              onChange={onOptionChange}/>
-            <div htmlFor="emptyTemplate">
-              <img className="icon" src={empty_template}></img>
-              <p> Empty </p>
+          <label htmlFor="templateType" className='templates-list-title'>Template</label>
+          <div className="templates-list-container">
+            <div className="templates-col">
+              <label>
+              <input type="radio"
+                name="templateType" 
+                value="empty"
+                id="emptyTemplate"
+                checked={template === "empty"}
+                onChange={onOptionChange}/>
+              <div htmlFor="emptyTemplate">
+                <img className="icon" src={empty_template}></img>
+                <p> Empty </p>
+              </div>
+              </label>
             </div>
-            </label>
-          </div>
-          <div className="templates-col">
-            <label>
-            <input type="radio"
-              name="templateType" 
-              value="action"
-              id="actionTemplate"
-              checked={template === "action"}
-              onChange={onOptionChange}/>
-            <div htmlFor="actionTemplate">
-              <img className="icon" src={action_template}></img>
-              <p> Action </p>
+            <div className="templates-col">
+              <label>
+              <input type="radio"
+                name="templateType" 
+                value="action"
+                id="actionTemplate"
+                checked={template === "action"}
+                onChange={onOptionChange}/>
+              <div htmlFor="actionTemplate">
+                <img className="icon" src={action_template}></img>
+                <p> Action </p>
+              </div>
+              </label>
             </div>
-            </label>
-          </div>
-          <div className="templates-col">
-            <label>
-            <input type="radio"
-              name="templateType" 
-              value="io"
-              id="ioTemplate"
-              checked={template === "io"}
-              onChange={onOptionChange}/>
-            <div htmlFor="ioTemplate">
-              <img className="icon" src={io_template}></img>
-              <p> I/O </p>
+            <div className="templates-col">
+              <label>
+              <input type="radio"
+                name="templateType" 
+                value="io"
+                id="ioTemplate"
+                checked={template === "io"}
+                onChange={onOptionChange}/>
+              <div htmlFor="ioTemplate">
+                <img className="icon" src={io_template}></img>
+                <p> I/O </p>
+              </div>
+              </label>
             </div>
-            </label>
           </div>
         </div>
         <div className="form-row">
