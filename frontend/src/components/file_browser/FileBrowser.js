@@ -92,7 +92,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
   };
 
   return (
-    <div style={{ flex: '2', border: '1px solid black' }}>
+    <div style={{ flex: '2'}}>
       <div className='browser-menu'>
         <h2>Action Browser</h2>
         <div className='buttons'>

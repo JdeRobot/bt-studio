@@ -1,5 +1,6 @@
 // App.js
 import React, { useMemo, useState, useEffect } from 'react';
+// import useLocalStorage from 'use-local-storage'
 import { useUnload } from './components/comms_manager/useUnload';
 import { Resizable } from 'react-resizable';
 import HeaderMenu from './components/header_menu/HeaderMenu';
@@ -20,6 +21,9 @@ const App = () => {
   const [projectChanges, setProjectChanges] = useState(false);
   const [gazeboEnabled, setGazeboEnabled] = useState(false);
   const [manager, setManager] = useState(null);
+
+  // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
 
   var universe_config = {
     "name": "follow_person_ros2",
@@ -79,7 +83,7 @@ const App = () => {
   };
 
   return (
-    <div className="App">
+    <div className="App" data-theme={"dark"}>
 
       <HeaderMenu 
         setCurrentProjectname={setCurrentProjectname} 

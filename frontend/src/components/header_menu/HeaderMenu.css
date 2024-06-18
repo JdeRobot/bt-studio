@@ -59,4 +59,5 @@
 /* Header bar */
 .css-hip9hq-MuiPaper-root-MuiAppBar-root{
   background-color: var(--header) !important;
+  box-shadow: none !important;
 }
