@@ -33,6 +33,8 @@
 .browser-menu {
     display: flex;
     align-items: center;
+    height: 50px;
+    max-height: 50px;
 }
 
 .editor-buttons {

@@ -119,7 +119,7 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
         theme="monokai"
         name="fileEditor"
         width="100%"
-        height="calc(100% - 51px)"
+        height="calc(100% - 50px)"
         value={fileContent}
         fontSize={fontSize}
         onChange={newContent => {
