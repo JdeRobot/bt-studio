@@ -119,7 +119,7 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode,
           <button id='node-action-edit-button' className="node-action-button" onClick={onEditAction} title='Edit'>
             <img className="icon action-icon" src={edit_action_img}></img>
           </button>
-          <button id='node-action-help-button' className="node-action-button" onClick={() => {openInNewTab('https://github.com/JdeRobot/bt-studio/tree/unibotics-devel')}} title='Help'>
+          <button id='node-action-help-button' className="node-action-button" onClick={() => {openInNewTab('https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation')}} title='Help'>
             <img className="icon action-icon" src={help_img}></img>
           </button>
           <button className="node-action-button" onClick={onGenerateApp} title='Download app'>
