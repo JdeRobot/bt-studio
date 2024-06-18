@@ -32,7 +32,6 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
       setFileContent("");
       setHasUnsavedChanges(false);
     }
-    console.log(filenameToSave);
     // Autosave
     if (filenameToSave) {
       axios.post('/tree_api/save_file/', {
@@ -62,7 +61,6 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
     }
     setProjectToSave(currentProjectname);
     setFileContent("");
-    console.log(currentFilename);
   }, [currentProjectname]);
 
   const handleSaveFile = () => {

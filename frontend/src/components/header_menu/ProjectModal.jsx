@@ -10,7 +10,7 @@ const initialProjectData = {
   projectName: '',
 };
 
-const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProjects, setExistingProjects, createProject}) => {
+const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProjects, setExistingProjects, createProject, openError}) => {
   const focusInputRef = useRef(null);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
   const [formState, setFormState] = useState(initialProjectData);
@@ -29,7 +29,7 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
       })
       .catch(error => {
         console.error('Error while fetching project list:', error);
-        window.alert(`An error occurred while fetching the project list`);
+        openError(`An error occurred while fetching the project list`);
       });
     setFormState(initialProjectData)
   }, [isOpen]);
@@ -78,7 +78,7 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
             })
             .catch(error => {
               console.error('Error while fetching project list:', error);
-              window.alert(`An error occurred while fetching the project list`);
+              openError(`An error occurred while fetching the project list`);
             });
           console.log('Project deleted successfully');
         } 
@@ -88,10 +88,10 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
           if (error.response.status === 409) {
-            window.alert(`The project ${project} does not exist`);
+            openError(`The project ${project} does not exist`);
           } else {
             // Handle other statuses or general API errors
-            window.alert('Unable to connect with the backend server. Please check the backend status.');
+            openError('Unable to connect with the backend server. Please check the backend status.');
           }
         }
       });
@@ -123,7 +123,8 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
                   );
                 })}
               </ul>
-            </div><div className="form-row">
+            </div>
+            <div className="form-row">
               <div className="project-modal-creation-buttons-container">
                 <div className='project-modal-create-button' onClick={() => { setCreateProjectOpen(true) } }>Create New Project</div>
                 {/* <div className='project-modal-create-button'>Other</div>

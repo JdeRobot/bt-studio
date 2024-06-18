@@ -10,6 +10,7 @@ import './App.css';
 import DiagramEditor from './components/diagram_editor/DiagramEditor';
 import VncViewer from './components/vnc_viewer/VncViewer'
 import CommsManager from './components/comms_manager/CommsManager';
+import ErrorModal from './components/error_popup/ErrorModal';
 
 const App = () => {
 
@@ -18,6 +19,7 @@ const App = () => {
   const [currentProjectname, setCurrentProjectname] = useState('');
   const [actionNodesData, setActionNodesData] = useState({});
   const [modelJson, setModelJson] = useState('');
+  const [isErrorModalOpen, setErrorModalOpen] = useState(false);
   const [projectChanges, setProjectChanges] = useState(false);
   const [gazeboEnabled, setGazeboEnabled] = useState(false);
   const [manager, setManager] = useState(null);
@@ -37,11 +39,11 @@ const App = () => {
 
   useEffect(() => {
     const newManager = CommsManager("ws://127.0.0.1:7163");
-    // setManager(newManager);
+    setManager(newManager);
   }, []);
 
   useUnload(() => {
-    // manager.disconnect();
+    manager.disconnect();
   });
 
   const connectWithRetry = () => {
@@ -82,8 +84,22 @@ const App = () => {
     }
   };
 
+  const openError = (err) => {
+    document.getElementById('errorMsg').innerText  = err;
+    setErrorModalOpen(true);
+  }
+
+  const closeError = () => {
+    setErrorModalOpen(false);
+  }
+
   return (
     <div className="App" data-theme={"dark"}>
+
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        onClose={closeError}
+      />
 
       <HeaderMenu 
         setCurrentProjectname={setCurrentProjectname} 
@@ -91,6 +107,7 @@ const App = () => {
         modelJson={modelJson}
         projectChanges={projectChanges}
         setProjectChanges={setProjectChanges}
+        openError={openError}
       />
 
       <div className="App-main" style={{ display: 'flex' }}>
@@ -129,6 +146,7 @@ const App = () => {
             gazeboEnabled={gazeboEnabled}
             manager={manager}
             actionNodesData={actionNodesData}
+            openError={openError}
           />
           <VncViewer
             gazeboEnabled={gazeboEnabled}
