@@ -73,22 +73,22 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
         <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Create new action</label>
         <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
       </div>
-        <div className="modal-complex-input-row-container">
-          <div className="modal-complex-input-container">
-            <input
-              ref={focusInputRef}
-              type="text"
-              id="actionName"
-              name="actionName"
-              className='modal-complex-input'
-              onChange={handleInputChange}
-              autoComplete='off'
-              placeholder="Action Name"
-              required
-            />
-            <label for="actionName" class="modal-complex-input-label">Action Name</label>
-          </div>
+      <div className="modal-complex-input-row-container">
+        <div className="modal-complex-input-container">
+          <input
+            ref={focusInputRef}
+            type="text"
+            id="actionName"
+            name="actionName"
+            className='modal-complex-input'
+            onChange={handleInputChange}
+            autoComplete='off'
+            placeholder="Action Name"
+            required
+          />
+          <label for="actionName" class="modal-complex-input-label">Action Name</label>
         </div>
+      </div>
         <div className="form-row" id="templates-list">
           <label htmlFor="templateType">Template Type</label>
           <div className="templates-col">

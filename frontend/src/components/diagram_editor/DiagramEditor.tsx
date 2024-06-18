@@ -1,14 +1,10 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import createEngine, { 
-  DefaultLinkModel, 
-  DefaultNodeModel,
-  DiagramEngine,
   DiagramModel,
 } from '@projectstorm/react-diagrams';
 
 import {
   CanvasWidget,
-  BaseModelListener,
   ZoomCanvasAction
 } from '@projectstorm/react-canvas-core';
 
@@ -30,6 +26,7 @@ import { InputPortModel } from './nodes/basic_node/ports/input_port/InputPortMod
 import { TagInputPortModel } from './nodes/tag_node/ports/input_port/TagInputPortModel';
 import { TagOutputPortModel } from './nodes/tag_node/ports/output_port/TagOutputPortModel';
 import EditActionModal from './modals/EditActionModal.jsx';
+import EditTagModal from './modals/EditTagModal.jsx';
 
   // Store action nodes and their inputs and outputs
   interface ActionData {
@@ -44,8 +41,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const ref = useRef<any>(null);
   const [graphJson, setGraphJson] = useState(null);
   const [appRunning, setAppRunning] = useState(false);
-  const [isFocused, setFocused] = useState(false);
+  const [, setFocused] = useState(false);
   const [isEditActionModalOpen, setEditActionModalOpen] = useState(false);
+  const [isEditTagModalOpen, setEditTagModalOpen] = useState(false);
   const [currentActionNode, setCurrentActionNode] = useState<any>(null);
 
   // Initial node position
@@ -63,6 +61,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     if (e.relatedTarget && (
         e.relatedTarget.id === "node-action-edit-button" ||
         e.relatedTarget.id === "node-action-delete-button"||
+        e.relatedTarget.id === "tagName"||
         e.relatedTarget.className === "node-editor-button"))
     {
       return;
@@ -125,6 +124,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     node.registerListener({
       selectionChanged: (event:any) => {
         if (event.isSelected) {
+          console.log(node)
           lastClickedNodeId.current = node.getID();
           node.selectNode();
         } else {
@@ -145,16 +145,32 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         setCurrentActionNode(node);
         node.setSelected(false);
         setEditActionModalOpen(true);
+      } else if (node && checkIfTag(node)) {
+        forceNotReset.current = true;
+        setCurrentActionNode(node);
+        node.setSelected(false);
+        setEditTagModalOpen(true);
       }
     }
   };
 
   const handleCloseEditActionModal = () => {
     setEditActionModalOpen(false);
+    setEditTagModalOpen(false);
     setCurrentActionNode(null);
     lastClickedNodeId.current = "";
     setFocused(true);
     ref.current.focus();
+  };
+
+  const handleCloseEditTagModal = () => {
+    setEditActionModalOpen(false);
+    setEditTagModalOpen(false);
+    setCurrentActionNode(null);
+    lastClickedNodeId.current = "";
+    setFocused(true);
+    ref.current.focus();
+    setModelJson(JSON.stringify(model.current.serialize()));
   };
 
   // Create the engine
@@ -163,7 +179,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       registerDefaultZoomCanvasAction: false,
     });
     newEngine.getNodeFactories().registerFactory(new BasicNodeFactory(handleOpenEditActionModal));
-    newEngine.getNodeFactories().registerFactory(new TagNodeFactory());
+    newEngine.getNodeFactories().registerFactory(new TagNodeFactory(handleOpenEditActionModal));
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('children', (config) => new ChildrenPortModel()));
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('parent', (config) => new ParentPortModel()));
     newEngine.getPortFactories().registerFactory(new SimplePortFactory('output', (config) => new OutputPortModel("")));
@@ -273,17 +289,17 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   // Save action node data
   const saveActionNodeData = (node:any) => {
     let name = node.name;
-    if (actionNodesData[node.name]) {
-      actionNodesData[node.name]['ids'] = actionNodesData[node.name]['ids'].concat([node.getID()]);
-      for (const inputs of actionNodesData[node.name]['input']) {
+    if (actionNodesData[name]) {
+      actionNodesData[name]['ids'] = actionNodesData[name]['ids'].concat([node.getID()]);
+      for (const inputs of actionNodesData[name]['input']) {
           node.addInputPort(inputs);
       }
-      for (const outputs of actionNodesData[node.name]['output']) {
+      for (const outputs of actionNodesData[name]['output']) {
           node.addOutputPort(outputs);
       }
-      node.setColor(actionNodesData[node.getName()]['color'])
+      node.setColor(actionNodesData[name]['color'])
     } else {
-      actionNodesData[node.name] = {input: [], output: [], ids: [node.getID()], color: node.getColor()};
+      actionNodesData[name] = {input: [], output: [], ids: [node.getID()], color: node.getColor()};
     }
   }
 
@@ -308,7 +324,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const addBasicNode = (nodeName:any) => {
 
     // Control parameters
-    let nodeColor = 'rgb(255,153,51)'; // Default color
+    let nodeColor = 'rgb(128,128,128)'; // Default color
     let hasInputPort = true;
     let hasOutputPort = true;
     let isAction = false;
@@ -369,7 +385,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
 
   const addTagNode = (nodeName:any) => {
 
-    const newNode = new TagNodeModel('value', 'rgb(255,153,51)'); 
+    const newNode = new TagNodeModel('value', 'rgb(128,128,128)'); 
     
     if (nodeName === "Input port value") newNode.addOutputPort();
     else newNode.addInputPort();
@@ -698,6 +714,11 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         addOutputPort={addOutputPort}
         deleteInputPort={deleteInputPort}
         deleteOutputPort={deleteOutputPort}
+      />
+      <EditTagModal
+        isOpen={isEditTagModalOpen}
+        onClose={handleCloseEditTagModal}
+        currentActionNode={currentActionNode}
       />
     </div>
   );

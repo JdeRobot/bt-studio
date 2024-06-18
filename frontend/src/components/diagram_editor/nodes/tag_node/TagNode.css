@@ -8,7 +8,6 @@
     display: flex;
     justify-content: space-between;
     border: 1px solid black;
-    background-color: grey;
     padding-top: 5px;
     padding-bottom: 5px;
     flex-direction: column;

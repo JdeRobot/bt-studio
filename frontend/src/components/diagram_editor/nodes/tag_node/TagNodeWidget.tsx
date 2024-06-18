@@ -8,14 +8,12 @@ import './TagNode.css'
 // The node widget controls the visualization of the custom node
 export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
 
-    const [nodeName, setNodeName] = useState(node.getName() || "Value");
-
     // Tag style
     let tagStyle: React.CSSProperties = {
         display: 'flex',
         justifyContent: "space-between",
         border: node.getBorderRadius() + 'px solid ' +  node.getBorderColor(),
-        background: 'grey',
+        background: node.isFromBlackboard() ? 'black' : 'gray',
         paddingTop: '5px',
         paddingBottom: '5px',
         flexDirection: "column"
@@ -47,26 +45,12 @@ export const TagNodeWidget = ({ engine, node }: { engine: any, node: any }) => {
         nodeClass = "tag-node tag-output";
     }
 
-    const showPromptAndUpdateText = () => {
-        const newText = prompt("Enter new node name:", nodeName);
-        if (newText !== null) {
-            if (newText.length <= 25) {
-                setNodeName(newText);
-                node.setName(newText);  // Update the node object as well
-            } else {
-                alert("Name should be less than or equal to 25 characters.");
-            }
-        }
-    };
-
     // Return the node to render
     return (
         <div className={nodeClass} style={tagStyle}>
             <div className='tag-layer'>
                 {inputPorts}
-                <div onDoubleClick={showPromptAndUpdateText}>
-                    {nodeName}
-                </div>
+                {node.getName()}
                 {outputPorts}
             </div>
         </div>

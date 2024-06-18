@@ -6,8 +6,11 @@ import { TagNodeWidget } from './TagNodeWidget';
 
 export class TagNodeFactory extends AbstractReactFactory<NodeModel, any> {
 
-    constructor() {
+    private callback:any;
+
+    constructor(func:any) {
         super('tag');
+        this.callback = func;
     }
 
     // Setup the generator method
@@ -16,6 +19,10 @@ export class TagNodeFactory extends AbstractReactFactory<NodeModel, any> {
     }
 
     generateReactWidget(event: GenerateWidgetEvent<NodeModel>): JSX.Element {
-        return <TagNodeWidget engine={this.engine} node={event.model} />;
+        return (
+            <div onDoubleClick={this.callback}>
+                <TagNodeWidget engine={this.engine} node={event.model} />
+            </div>
+        );
     }
 }
