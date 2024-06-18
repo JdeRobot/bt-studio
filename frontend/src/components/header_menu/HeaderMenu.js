@@ -7,17 +7,18 @@ import axios from 'axios';
 import logo_img from './img/logo.png'
 
 import './HeaderMenu.css'
-import add_project_img from './img/add_project.svg'
 import change_project_img from './img/change_project.svg'
 import save_project_img from './img/save_project.svg'
+import ProjectModal from './ProjectModal';
 
 var dropdown_shown = false;
 
 const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, projectChanges, setProjectChanges} ) => {
 
-  const createProject = () => {
+  const [isProjectModalOpen, setProjectModalOpen] = useState(true);
+  const [existingProjects, setExistingProjects] = useState("");
 
-    const projectName = window.prompt('Enter the name for the new project:');
+  const createProject = (projectName) => {
   
     if (projectName === null || projectName === '') {
       // User pressed cancel or entered an empty string
@@ -47,9 +48,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
       });
   };
 
-  const changeProject = function(event) {
-    var projectName = event.target.innerText;
-    const existingProjects = document.getElementById('dropdown').innerText;
+  const changeProject = function(projectName) {
     
     if (projectName === null || projectName === '') {
       // User pressed cancel or entered an empty string
@@ -66,36 +65,11 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
     }
   }
 
-  const dropdownProject = (e) => {
-    var sel = document.getElementById('dropdown');
-    var opt = null;
-
-    e.stopPropagation();
-    sel.classList.toggle("show");
-    dropdown_shown = !dropdown_shown;
-    sel.innerHTML = ""; // Delete all things from previous iterations
-
-    if (!dropdown_shown) {return;}
-
-    // API call to get the list of existing projects
-    const listApiUrl = `/tree_api/get_project_list`;
-  
-    axios.get(listApiUrl)
-      .then(response => {
-        const existingProjects = response.data.project_list;
-        var i;
-
-        for(i = 0; i<existingProjects.length; i++) { 
-          opt = document.createElement('option');
-          opt.value = existingProjects[i];
-          opt.innerHTML = existingProjects[i];
-          sel.appendChild(opt);
-        }
-      })
-      .catch(error => {
-        console.error('Error while fetching project list:', error);
-        window.alert(`An error occurred while fetching the project list`);
-      });
+  const openProjectView = (e) => {
+    setProjectModalOpen(true)
+    if (projectChanges) {
+      saveProject();
+    }
   };
 
   const saveProject = () => {
@@ -125,12 +99,33 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
     });
 
   };
+
+  const handleCloseProjectModal = (project) => {
+    if (project) {
+      changeProject(project)
+    }
+    setProjectModalOpen(false);
+  };
+
+  const handleFormSubmit = (data) => {
+    console.log(data)
+
+  }
   
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#12494c' }}>
+    <AppBar position="static">
       <Toolbar>
         <img src={logo_img} className="jde-icon" alt="JdeRobot logo"></img>
         <h1 className="Header-text">BT Studio IDE</h1>
+        <ProjectModal
+          isOpen={isProjectModalOpen}
+          onSubmit={handleFormSubmit}
+          onClose={handleCloseProjectModal}
+          currentProject={currentProjectname}
+          existingProjects={existingProjects}
+          setExistingProjects={setExistingProjects}
+          createProject={createProject}
+        />
 
         <div className='header-button-container'>
           {currentProjectname && (
@@ -140,13 +135,8 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
               </span>
           )}
           
-          <button className="header-button" onClick={createProject} title="Create new project">
-            <img className="header-icon" src={add_project_img}></img>
-          </button>
-          <button className="header-button" onClick={dropdownProject} title="Change project">
+          <button className="header-button" onClick={openProjectView} title="Change project">
             <img className="header-icon" src={change_project_img}></img>
-            <div class="dropdown" id="dropdown" onClick={changeProject} >
-            </div>
           </button>
           <button className="header-button" onClick={saveProject} title="Save project">
             <img className="header-icon" src={save_project_img}></img>

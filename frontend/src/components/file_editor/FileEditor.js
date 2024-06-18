@@ -6,7 +6,7 @@ import 'ace-builds/src-noconflict/theme-monokai';
 import './FileEditor.css'
 
 import save_img from './img/save.svg' 
-import splash_img from './img/logo_jderobot_monocolor.svg' 
+import { ReactComponent as SplashIcon } from './img/logo_jderobot_monocolor.svg' ;
 
 const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) => {
   
@@ -119,16 +119,19 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
         theme="monokai"
         name="fileEditor"
         width="100%"
-        height="80vh"
+        height="calc(100% - 50px)"
         value={fileContent}
         fontSize={fontSize}
         onChange={newContent => {
           setProjectChanges(true);
           setFileContent(newContent);
           setHasUnsavedChanges(true); // Set the unsaved changes flag
+        }}
+        setOptions={{
+          scrollPastEnd: 0.5,
         }}/>
       ) : (
-        <img className="splash-icon" src={splash_img}></img>
+         <SplashIcon className='splash-icon' fill='var(--header)'/>
       )
       }
     </div>

@@ -6,8 +6,11 @@ import { BasicNodeWidget } from './BasicNodeWidget';
 
 export class BasicNodeFactory extends AbstractReactFactory<NodeModel, any> {
 
-    constructor() {
+    private callback:any;
+
+    constructor(func:any) {
         super('basic');
+        this.callback = func;
     }
 
     // Setup the generator method
@@ -16,6 +19,10 @@ export class BasicNodeFactory extends AbstractReactFactory<NodeModel, any> {
     }
 
     generateReactWidget(event: GenerateWidgetEvent<NodeModel>): JSX.Element {
-        return <BasicNodeWidget engine={this.engine} node={event.model} />;
-    }
+        return (
+            <div onDoubleClick={this.callback}>
+                <BasicNodeWidget engine={this.engine} node={event.model} />
+            </div>
+    
+    )}
 }

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './Modal.css';
 
-const Modal = ({ isOpen, hasCloseBtn = true, onClose, children }) => {
+const Modal = ({ id="", isOpen, hasCloseBtn = true, onClose, children }) => {
   const [isModalOpen, setModalOpen] = useState(isOpen);
   const modalRef = useRef(null);
 
@@ -25,6 +25,7 @@ const Modal = ({ isOpen, hasCloseBtn = true, onClose, children }) => {
   useEffect(() => {
     const modalElement = modalRef.current;
 
+    document.getElementById(id).focus();
     if (modalElement) {
       if (isModalOpen) {
         modalElement.showModal();
@@ -35,7 +36,7 @@ const Modal = ({ isOpen, hasCloseBtn = true, onClose, children }) => {
   }, [isModalOpen]);
 
   return (
-    <dialog ref={modalRef} onKeyDown={handleKeyDown} className="modal">
+    <dialog id={id} ref={modalRef} onKeyDown={handleKeyDown} className="modal">
       {children}
     </dialog>
   );

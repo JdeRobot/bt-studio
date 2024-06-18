@@ -6,14 +6,15 @@ import NewActionModal from './NewActionModal.jsx';
 import add_img from './img/add.svg'
 import delete_img from './img/delete.svg'
 
-const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, setProjectChanges}) => {
+const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, setProjectChanges, actionNodesData}) => {
 
   const [fileList, setFileList] = useState(null);
   const [isNewActionModalOpen, setNewActionModalOpen] = useState(false);
   const [newsletterFormData, setNewsletterFormData] = useState(null);
-
+  
   useEffect(() => {
     fetchFileList();
+    setCurrentFilename("");
   }, [currentProjectname]);
 
   const fetchFileList = () => {
@@ -92,7 +93,7 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
   };
 
   return (
-    <div style={{ flex: '2', border: '1px solid black' }}>
+    <div style={{ flex: '2'}}>
       <div className='browser-menu'>
         <h2>Action Browser</h2>
         <div className='buttons'>
@@ -115,10 +116,11 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
           {fileList.map((file, index) => (
             <div 
               key={index}
-              className={`file-item ${currentFilename === file ? 'file-item-selected' : ''}`}
+              className={`file-item ${currentFilename === file+'.py' ? 'file-item-selected' : ''}`}
               onClick={() => handleFileClick(file)}
             >
-              {file}
+              <label>{file}</label>
+              <div className="accent-color" style={{backgroundColor: actionNodesData[file] ? actionNodesData[file]['color'] : 'none'}}/>
             </div>
           ))}
         </div>

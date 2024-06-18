@@ -1,5 +1,5 @@
 .canvas {
     height: 40vh;
     width: 100%;
-    background-color: #e0e0d1;
+    background-color: var(--canvas-background);
 }

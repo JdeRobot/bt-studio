@@ -2,32 +2,27 @@
   margin-top: 1rem;
 }
 
-.form-row label,
-.form-row input,
+
 .form-row select,
 .form-row button {
   width: 100%;
   display: block;
-  background-color: #12494c;
   border: none;
-  color: #ffffff;
+  color: var(--text);
   font-size: medium;
 }
 
-.form-row input {
-  border: 2px solid #000000 !important;
-  background-color: #0c3032 !important;
-  border-radius: 10px;
-  padding-left: 1em;
+.form-row button {
+  background-color: var(--buttons);
 }
 
-.form-row label {
-  margin-bottom: 10px;
-  margin-left: 5px;
+.form-row {
+  margin-top: 10px;
 }
+
 
 #templates-list {
-  height: 130px;
+  height: 170px;
 }
 
 .form-row button {
@@ -37,16 +32,11 @@
   font-size: medium;
 }
 
-#cancel-new-action:hover {
-  background-color: hsla(0, 100%, 49%, 0.5);
-}
-
 #create-new-action:hover {
   background-color: hsla(93, 100%, 49%, 0.5);
 }
 
 .templates-col{
-  background-color: none;
   float: left; /* Float the buttons side by side */
   width:30%;
   border-radius: 10px;
@@ -61,17 +51,17 @@
 }
 
 .templates-col:hover div{
-  background-color: #0c3032;
+  background-color: var(--buttons-hover);
 }
 
 .templates-col .icon {
-    height: 50px;
+    height: 90px;
     width: 30px;
 }
 
 .templates-col p {
   margin: 3px !important;
-  color: #ffffff;
+  color: var(--text);
 }
 
 .templates-col input[type="radio"] {
@@ -80,6 +70,27 @@
 }
 
 .templates-col input[type="radio"]:checked + div {
-  background-color: #1f7f84 !important;
-  color: black;
+  /* background-color: var(--secondary) !important; */
+  background: linear-gradient(-45deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%) !important;
+}
+
+.templates-list-container {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: calc(100% - 48px);
+    justify-content: space-evenly;
+}
+
+.templates-list-title {
+  width: 100%;
+  display: block;
+  border: none;
+  color: var(--text);
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }

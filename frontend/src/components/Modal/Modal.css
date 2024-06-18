@@ -1,13 +1,143 @@
 .modal::backdrop {
-  background: hsl(0 0% 0% / 50%);
+  background: hsla(0, 0%, 0%, 0.5);
 }
 
 .modal {
   /* max-width: 20rem; */
+  width: 500px;
   padding: 1.5rem;
-  border: 2px solid #000000;
+  border: 2px solid var(--buttons);
   border-radius: 0.5rem;
   position: relative;
   box-shadow: hsl(0 0% 0% / 10%) 0 0 0.5rem 0.25rem;
-  background: #12494c;
+  background: var(--background);
 }
+
+.modal:focus {
+  outline: none;
+}
+
+.modal-titlebar {
+  position: relative;
+  top: -10px;
+  width: 100%;
+  display: block;
+  border: none;
+  color: var(--text);
+  font-size: large;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-column-gap: 5px;
+  justify-items: center;
+}
+
+.modal-titlebar-close {
+  margin-left: auto;
+  height: 100%;
+  border-radius: 10px;
+  background-color: var(--buttons);
+}
+
+.modal-titlebar-back {
+  margin-right: auto;
+  height: 100%;
+  border-radius: 10px;
+  background-color: var(--buttons);
+}
+
+.modal-titlebar-close:hover,
+.modal-titlebar-back:hover {
+  background-color: var(--buttons-hover);
+}
+
+.modal-titlebar-title {
+  font-weight: 600;
+  align-self: center;
+  grid-column-start: 2;
+}
+
+/* Modal Input with changing placeholder text */
+
+.modal-complex-input-row-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.modal-complex-input-container {
+  position: relative;
+}
+
+.modal-complex-input {
+  border: 2px solid #000000;
+  background-color: var(--input-background) !important;
+  border-radius: 10px;
+  padding-left: 1em;
+  padding-top: 13px;
+  width: 100%;
+  align-self: center;
+  height: 50px;
+  color: var(--text);
+  outline: 0;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.modal-complex-input:focus {
+  border-color: var(--input-focus-border) !important;
+  outline: none !important;
+}
+
+.modal-complex-input::placeholder {
+  color: transparent;
+  user-select: none; 
+}
+
+.modal-complex-input:placeholder-shown ~ .modal-complex-input-label {
+  font-size: 1rem;
+  cursor: text;
+  top: 15px;
+}
+
+.modal-complex-input:not(placeholder-shown) ~ .modal-complex-input-label {
+  position: absolute;
+  top: 5px;
+  display: block;
+  transition: 0.2s;
+  font-size: 0.9rem;
+  font-weight:700;
+  cursor: text;
+}
+
+.modal-complex-input:focus ~ .modal-complex-input-label {
+  position: absolute;
+  top: 5px;
+  display: block;
+  transition: 0.2s;
+  font-size: 0.9rem;
+  font-weight:700;
+}
+
+/* reset input */
+.modal-complex-input:required, .modal-complex-input:invalid{
+  box-shadow:none;
+}
+
+.modal-complex-input-label {
+  position: absolute;
+  top: 15px;
+  left: 17px;
+  display: block;
+  transition: 0.2s;
+  font-size: 1rem;
+  color: var(--input-placeholder-text);
+  user-select: none;
+}
+
+.modal-complex-input-indications {
+  color: var(--input-placeholder-text);
+  font-size: 0.7rem;
+}
+
+/* End of complex input */

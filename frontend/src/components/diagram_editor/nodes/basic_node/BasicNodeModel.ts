@@ -35,6 +35,10 @@ export class BasicNodeModel extends NodeModel<NodeModelGenerics & BasicNodeModel
         return this.name;
     }
 
+    setColor(color: string): void {
+        this.color = color;
+    }
+
     getColor(): string {
         return this.color;
     }
@@ -51,10 +55,12 @@ export class BasicNodeModel extends NodeModel<NodeModelGenerics & BasicNodeModel
 
     selectNode() {
         this.is_selected = true;
+        this.setSelected(true);
     }
 
     deselectNode() {
         this.is_selected = false;
+        this.setSelected(false);
     }
 
     addChildrenPort(name: string) {
@@ -75,10 +81,18 @@ export class BasicNodeModel extends NodeModel<NodeModelGenerics & BasicNodeModel
         return port;
     }
 
+    removeInputPort(port: InputPortModel) {
+        this.removePort(port);
+    }
+
     addOutputPort(name: string) {
         const port = new OutputPortModel(name);
         this.addPort(port);
         return port;
+    }
+
+    removeOutputPort(port: OutputPortModel) {
+        this.removePort(port);
     }
 
     serialize() {

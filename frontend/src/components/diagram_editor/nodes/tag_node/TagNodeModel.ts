@@ -11,6 +11,7 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
 
     private name: string;
     private color: string;
+    private is_blackboard: boolean;
     private is_selected: boolean;
 
     private static select_border_color: string = 'rgb(18,109,114)';
@@ -19,12 +20,14 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
     private static select_border_radius: string = '5';
     private static base_border_radius: string = '1';
 
-    constructor(name: string = 'Tag Node', color: string = 'rgb(0,192,255)') {
+    constructor(name: string = 'Tag Node', color: string = 'rgb(128,128,128)') {
         super({
             type: "tag",
         });
+        console.log(color)
         this.name = name;
         this.color = color;
+        this.is_blackboard = false;
         this.is_selected = false;
     }
 
@@ -34,6 +37,15 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
 
     setName(newName : string) {
         this.name = newName;
+        if (this.name.match(/\{([^)]+)\}/)) {
+            this.is_blackboard = true;
+        } else {
+            this.is_blackboard = false;
+        }
+    }
+
+    isFromBlackboard() {
+        return this.is_blackboard;
     }
 
     getColor(): string {

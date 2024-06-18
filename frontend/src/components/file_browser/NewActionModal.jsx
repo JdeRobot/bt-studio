@@ -4,6 +4,7 @@ import Modal from '../Modal/Modal';
 import empty_template from './img/empty_template.svg';
 import action_template from './img/action_template.svg';
 import io_template from './img/io_template.svg';
+import close_modal_img from '../Modal/img/close.svg'
 
 const initialNewActionModalData = {
   actionName: '',
@@ -57,75 +58,86 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
   };
 
   const handleCancel = (event) => {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
     onClose(formState);
     setFormState(initialNewActionModalData);
     setcreateButton(false);
   };
 
   return (
-    <Modal hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
+    <Modal id="new-action-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
       <form onSubmit={handleSubmit} onReset={handleCancel}>
-        <div className="form-row">
-          <label htmlFor="actionName">Action Name</label>
+      <div className="modal-titlebar">
+        <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Create new action</label>
+        <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
+      </div>
+      <div className="modal-complex-input-row-container">
+        <div className="modal-complex-input-container">
           <input
             ref={focusInputRef}
             type="text"
             id="actionName"
             name="actionName"
+            className='modal-complex-input'
             onChange={handleInputChange}
             autoComplete='off'
+            placeholder="Action Name"
             required
           />
+          <label for="actionName" class="modal-complex-input-label">Action Name</label>
         </div>
+      </div>
         <div className="form-row" id="templates-list">
-          <label htmlFor="templateType">Template Type</label>
-          <div className="templates-col">
-            <label>
-            <input type="radio"
-              name="templateType" 
-              value="empty"
-              id="emptyTemplate"
-              checked={template === "empty"}
-              onChange={onOptionChange}/>
-            <div htmlFor="emptyTemplate">
-              <img className="icon" src={empty_template}></img>
-              <p> Empty </p>
+          <label htmlFor="templateType" className='templates-list-title'>Template</label>
+          <div className="templates-list-container">
+            <div className="templates-col">
+              <label>
+              <input type="radio"
+                name="templateType" 
+                value="empty"
+                id="emptyTemplate"
+                checked={template === "empty"}
+                onChange={onOptionChange}/>
+              <div htmlFor="emptyTemplate">
+                <img className="icon" src={empty_template}></img>
+                <p> Empty </p>
+              </div>
+              </label>
             </div>
-            </label>
-          </div>
-          <div className="templates-col">
-            <label>
-            <input type="radio"
-              name="templateType" 
-              value="action"
-              id="actionTemplate"
-              checked={template === "action"}
-              onChange={onOptionChange}/>
-            <div htmlFor="actionTemplate">
-              <img className="icon" src={action_template}></img>
-              <p> Action </p>
+            <div className="templates-col">
+              <label>
+              <input type="radio"
+                name="templateType" 
+                value="action"
+                id="actionTemplate"
+                checked={template === "action"}
+                onChange={onOptionChange}/>
+              <div htmlFor="actionTemplate">
+                <img className="icon" src={action_template}></img>
+                <p> Action </p>
+              </div>
+              </label>
             </div>
-            </label>
-          </div>
-          <div className="templates-col">
-            <label>
-            <input type="radio"
-              name="templateType" 
-              value="io"
-              id="ioTemplate"
-              checked={template === "io"}
-              onChange={onOptionChange}/>
-            <div htmlFor="ioTemplate">
-              <img className="icon" src={io_template}></img>
-              <p> I/O </p>
+            <div className="templates-col">
+              <label>
+              <input type="radio"
+                name="templateType" 
+                value="io"
+                id="ioTemplate"
+                checked={template === "io"}
+                onChange={onOptionChange}/>
+              <div htmlFor="ioTemplate">
+                <img className="icon" src={io_template}></img>
+                <p> I/O </p>
+              </div>
+              </label>
             </div>
-            </label>
           </div>
         </div>
         <div className="form-row">
           <CreateButton hasToDisplay={createButton}/>
-          <button type="reset" id="cancel-new-action">Cancel</button>
         </div>
       </form>
     </Modal>

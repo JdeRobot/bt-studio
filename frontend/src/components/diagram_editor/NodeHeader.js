@@ -8,13 +8,13 @@ import Button from '@mui/material/Button';
 import './NodeHeader.css';
 
 import del_img from './img/del_node.svg'
-import add_input_img from './img/add_input.svg'
+import edit_action_img from './img/edit_action.svg'
 import add_output_img from './img/add_output.svg'
 import download_img from './img/download.svg'
 import run_img from './img/run.svg'
 
 const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, 
-  onAddInputPort, onAddOutputPort, onGenerateApp, onRunApp, currentProjectname }) => {
+  onEditAction, onGenerateApp, onRunApp, currentProjectname }) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuLabel, setMenuLabel] = useState("");
@@ -112,14 +112,11 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode,
         </Menu>
 
         <div className='action-buttons'>
-          <button className="node-action-button" onClick={onDeleteNode} title='Delete node'>
+          <button id='node-action-delete-button' className="node-action-button" onClick={onDeleteNode} title='Delete node'>
             <img className="icon action-icon" src={del_img}></img>
           </button>
-          <button className="node-action-button" onClick={onAddInputPort} title='Add input port'>
-            <img className="icon action-icon" src={add_input_img}></img>
-          </button>
-          <button className="node-action-button" onClick={onAddOutputPort} title='Add output port'>
-            <img className="icon action-icon" src={add_output_img}></img>
+          <button id='node-action-edit-button' className="node-action-button" onClick={onEditAction} title='Edit action'>
+            <img className="icon action-icon" src={edit_action_img}></img>
           </button>
           <button className="node-action-button" onClick={onGenerateApp} title='Download app'>
             <img className="icon action-icon" src={download_img}></img>

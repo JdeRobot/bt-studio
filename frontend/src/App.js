@@ -1,5 +1,6 @@
 // App.js
 import React, { useMemo, useState, useEffect } from 'react';
+// import useLocalStorage from 'use-local-storage'
 import { useUnload } from './components/comms_manager/useUnload';
 import { Resizable } from 'react-resizable';
 import HeaderMenu from './components/header_menu/HeaderMenu';
@@ -14,11 +15,15 @@ const App = () => {
 
   const [editorWidth, setEditorWidth] = useState(807);
   const [currentFilename, setCurrentFilename] = useState('');
-  const [currentProjectname, setCurrentProjectname] = useState('visual_follow_person');
+  const [currentProjectname, setCurrentProjectname] = useState('');
+  const [actionNodesData, setActionNodesData] = useState({});
   const [modelJson, setModelJson] = useState('');
   const [projectChanges, setProjectChanges] = useState(false);
   const [gazeboEnabled, setGazeboEnabled] = useState(false);
   const [manager, setManager] = useState(null);
+
+  // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
 
   var universe_config = {
     "name": "follow_person_ros2",
@@ -32,11 +37,11 @@ const App = () => {
 
   useEffect(() => {
     const newManager = CommsManager("ws://127.0.0.1:7163");
-    setManager(newManager);
+    // setManager(newManager);
   }, []);
 
   useUnload(() => {
-    manager.disconnect();
+    // manager.disconnect();
   });
 
   const connectWithRetry = () => {
@@ -78,7 +83,7 @@ const App = () => {
   };
 
   return (
-    <div className="App">
+    <div className="App" data-theme={"dark"}>
 
       <HeaderMenu 
         setCurrentProjectname={setCurrentProjectname} 
@@ -90,12 +95,13 @@ const App = () => {
 
       <div className="App-main" style={{ display: 'flex' }}>
 
-        <div style={{ width: '200px'}}>
+        <div style={{ width: '200px', paddingLeft: "1vw"}}>
           <FileBrowser 
             setCurrentFilename={setCurrentFilename} 
             currentFilename={currentFilename}
             currentProjectname={currentProjectname}
             setProjectChanges={setProjectChanges}
+            actionNodesData={actionNodesData}
           />
         </div>
         
@@ -122,6 +128,7 @@ const App = () => {
             setProjectChanges={setProjectChanges}
             gazeboEnabled={gazeboEnabled}
             manager={manager}
+            actionNodesData={actionNodesData}
           />
           <VncViewer
             gazeboEnabled={gazeboEnabled}
