@@ -8,6 +8,8 @@ Two options:
 
 - Double click on the node
 - Select the node, then click on the edit button
+- 
+<video controls src="videos/edit.mp4" title="Title"></video>
 
 ## Delete node
 
