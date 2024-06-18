@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
 import './NodeHeader.css';
 
 import del_img from './img/del_node.svg'
 import edit_action_img from './img/edit_action.svg'
-import add_output_img from './img/add_output.svg'
+import help_img from './img/help.svg'
 import download_img from './img/download.svg'
 import run_img from './img/run.svg'
 
@@ -76,6 +73,10 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode,
     return [];
   };
 
+  const openInNewTab = (url) => {
+    window.open(url, '_blank').focus();
+  }
+
   return (
     <div className='node-header-container'>
 
@@ -112,11 +113,14 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode,
         </Menu>
 
         <div className='action-buttons'>
-          <button id='node-action-delete-button' className="node-action-button" onClick={onDeleteNode} title='Delete node'>
+          <button id='node-action-delete-button' className="node-action-button" onClick={onDeleteNode} title='Delete'>
             <img className="icon action-icon" src={del_img}></img>
           </button>
-          <button id='node-action-edit-button' className="node-action-button" onClick={onEditAction} title='Edit action'>
+          <button id='node-action-edit-button' className="node-action-button" onClick={onEditAction} title='Edit'>
             <img className="icon action-icon" src={edit_action_img}></img>
+          </button>
+          <button id='node-action-help-button' className="node-action-button" onClick={() => {openInNewTab('https://github.com/JdeRobot/bt-studio/tree/unibotics-devel')}} title='Help'>
+            <img className="icon action-icon" src={help_img}></img>
           </button>
           <button className="node-action-button" onClick={onGenerateApp} title='Download app'>
             <img className="icon action-icon" src={download_img}></img>
