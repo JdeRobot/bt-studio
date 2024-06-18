@@ -24,7 +24,6 @@ const EditTagModal = ({ isOpen, onClose, currentActionNode}) => {
   useEffect(() => {
     setFormState(initialEditTagModalData);
     document.getElementById('node-editor-modal').focus();
-    console.log(currentActionNode)
     if (currentActionNode) {
       document.getElementById('tagName').value  = currentActionNode.getName();
     }

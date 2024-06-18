@@ -66,7 +66,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     {
       return;
     }
-    console.log(e)
     setFocused(false)
     if (lastClickedNodeId.current !== "") {
       try {
@@ -124,7 +123,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     node.registerListener({
       selectionChanged: (event:any) => {
         if (event.isSelected) {
-          console.log(node)
           lastClickedNodeId.current = node.getID();
           node.selectNode();
         } else {
@@ -135,10 +133,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   };
 
   const handleOpenEditActionModal = () => {
-    console.log(lastClickedNodeId.current)
     if (lastClickedNodeId.current !== "") {
       const genericNode = model.current.getNode(lastClickedNodeId.current);
-      console.log(genericNode)
       const node = genericNode as BasicNodeModel;
       if (node && checkIfAction(node)) {
         forceNotReset.current = true;
@@ -375,7 +371,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     if (model.current) {
       model.current.addNode(newNode);
       newNode.selectNode();
-      console.log(model.current.getNodes());
       setProjectChanges(true);
       engine.repaintCanvas();
       setModelJson(JSON.stringify(model.current.serialize()));
@@ -412,7 +407,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   }
 
   const deleteLastClickedNode = () => {
-    console.log(lastClickedNodeId.current)
     forceNotReset.current = true;
     if (model.current && lastClickedNodeId.current) {
       const node: any = model.current.getNode(lastClickedNodeId.current);
@@ -426,7 +420,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         setModelJson(JSON.stringify(model.current.serialize()));
       }
       lastClickedNodeId.current = "";
-      console.log(currentActionNode)
     }
   };
 
@@ -475,7 +468,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         if (portName !== null) { // Check that the user didn't cancel
           setProjectChanges(true);
           currentActionNode.addInputPort(portName);
-          console.log(currentActionNode)
           actionNodesData[name]['input'] = actionNodesData[name]['input'].concat([portName]);
           // Add the new port to all the cloned actions
           for (const nodesId of actionNodesData[name]['ids']) {
@@ -508,7 +500,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         if (portName !== null) { // Check that the user didn't cancel
           setProjectChanges(true);
           currentActionNode.addOutputPort(portName);
-          console.log(currentActionNode)
           actionNodesData[name]['output'] = actionNodesData[name]['output'].concat([portName]);
           // Add the new port to all the cloned actions
           for (const nodesId of actionNodesData[name]['ids']) {

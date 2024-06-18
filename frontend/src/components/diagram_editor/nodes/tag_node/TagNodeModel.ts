@@ -24,7 +24,6 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
         super({
             type: "tag",
         });
-        console.log(color)
         this.name = name;
         this.color = color;
         this.is_blackboard = false;

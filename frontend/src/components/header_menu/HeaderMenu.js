@@ -106,8 +106,6 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
   };
 
   const handleFormSubmit = (data) => {
-    console.log(data)
-
   }
   
   return (
