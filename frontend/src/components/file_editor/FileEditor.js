@@ -119,13 +119,16 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
         theme="monokai"
         name="fileEditor"
         width="100%"
-        height="80vh"
+        height="calc(100% - 51px)"
         value={fileContent}
         fontSize={fontSize}
         onChange={newContent => {
           setProjectChanges(true);
           setFileContent(newContent);
           setHasUnsavedChanges(true); // Set the unsaved changes flag
+        }}
+        setOptions={{
+          scrollPastEnd: 0.5,
         }}/>
       ) : (
          <SplashIcon className='splash-icon' fill='var(--header)'/>
