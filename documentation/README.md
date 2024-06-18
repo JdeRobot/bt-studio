@@ -9,8 +9,6 @@ Two options:
 - Double click on the node
 - Select the node, then click on the edit button
 
-<video controls src="https://github.com/javizqh/bt-studio/blob/adding-documentation-for-bt/documentation/videos/add.mp4" title="Title"></video>
-
 ## Delete node
 
 Two options:
