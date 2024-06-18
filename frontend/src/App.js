@@ -125,7 +125,6 @@ const App = () => {
             gazeboEnabled={gazeboEnabled}
             manager={manager}
             actionNodesData={actionNodesData}
-            setActionNodesData={setActionNodesData}
           />
           <VncViewer
             gazeboEnabled={gazeboEnabled}

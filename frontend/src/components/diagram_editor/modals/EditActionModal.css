@@ -10,9 +10,8 @@
 .node-editor-name {
   width: 100%;
   display: block;
-  background-color: #12494c;
   border: none;
-  color: #ffffff;
+  color: var(--text);
   font-size: large;
   font-weight: bold;
   text-align: center;
@@ -25,7 +24,7 @@
 }
 
 .node-editor {
-  border: #000000 solid 3px;
+  border: #000000 solid 2px;
   border-radius: 10px;
   padding: 10px;
 }

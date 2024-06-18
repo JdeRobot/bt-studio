@@ -1,6 +1,6 @@
 .Header-text {
   font-family: 'Spline Sans Mono', sans-serif;
-  color: #cafddc;
+  color: var(--text);
 }
 
 .jde-icon {
@@ -12,8 +12,8 @@
 .project-name-box {
   display: flex;
   flex-direction: column;
-  background-color: #12494c; /* Transparent background */
-  color: white;
+  background-color: none; /* Transparent background */
+  color: var(--text);
   padding: 10px;
   justify-content: center;
   /* Other styling as needed */
@@ -39,14 +39,14 @@
   justify-content: center;
   width: 25px;
   height: 25px;
-  background-color: #12494c;
+  background-color: var(--header);
   border: 0;
   margin-left: 3px;
   margin-right: 3px;
 }
 
 .header-button:hover {
-  background-color: rgba(255, 255, 255, 0.264);
+  background-color: var(--buttons-hover);
   border-radius: 50%; /* Circular highlight */
 }
 
@@ -54,4 +54,9 @@
   transform: translateY(0rem);
   visibility: visible;
   opacity: 1;
+}
+
+/* Header bar */
+.css-hip9hq-MuiPaper-root-MuiAppBar-root{
+  background-color: var(--header) !important;
 }

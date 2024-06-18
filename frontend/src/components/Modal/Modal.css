@@ -1,5 +1,5 @@
 .modal::backdrop {
-  background: hsl(0 0% 0% / 50%);
+  background: hsla(0, 0%, 0%, 0.5);
 }
 
 .modal {
@@ -9,7 +9,7 @@
   border-radius: 0.5rem;
   position: relative;
   box-shadow: hsl(0 0% 0% / 10%) 0 0 0.5rem 0.25rem;
-  background: #12494c;
+  background: var(--background);
 }
 
 .modal:focus {
@@ -22,7 +22,7 @@
   width: 100%;
   display: block;
   border: none;
-  color: #ffffff;
+  color: var(--text);
   font-size: large;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -33,20 +33,20 @@
 .modal-titlebar-close {
   margin-left: auto;
   height: 100%;
-  background-color: #226d72;
   border-radius: 10px;
+  background-color: var(--buttons);
 }
 
 .modal-titlebar-back {
   margin-right: auto;
   height: 100%;
-  background-color: #226d72;
   border-radius: 10px;
+  background-color: var(--buttons);
 }
 
 .modal-titlebar-close:hover,
 .modal-titlebar-back:hover {
-  background-color: #2f9da3;
+  background-color: var(--buttons-hover);
 }
 
 .modal-titlebar-title {
@@ -70,21 +70,21 @@
 
 .modal-complex-input {
   border: 2px solid #000000;
-  background-color: #0c3032 !important;
+  background-color: var(--input-background) !important;
   border-radius: 10px;
   padding-left: 1em;
   padding-top: 13px;
   width: 100%;
   align-self: center;
   height: 50px;
-  color: white;
+  color: var(--text);
   outline: 0;
   font-size: 1rem;
   transition: border-color 0.2s;
 }
 
 .modal-complex-input:focus {
-  border-color: #2f9da3 !important;
+  border-color: var(--input-focus-border) !important;
   outline: none !important;
 }
 
@@ -130,12 +130,12 @@
   display: block;
   transition: 0.2s;
   font-size: 1rem;
-  color: #585858;
+  color: var(--input-placeholder-text);
   user-select: none;
 }
 
 .modal-complex-input-indications {
-  color: #838383;
+  color: var(--input-placeholder-text);
   font-size: 0.7rem;
 }
 

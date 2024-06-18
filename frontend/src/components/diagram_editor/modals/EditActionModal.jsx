@@ -4,14 +4,15 @@ import { Saturation, Hue, ColorPicker, useColor, TColor } from "react-color-pale
 import "react-color-palette/css";
 
 import './EditActionModal.css';
-import Modal from '../Modal/Modal';
-import { OutputPortModel } from './nodes/basic_node/ports/output_port/OutputPortModel';
-import { InputPortModel } from './nodes/basic_node/ports/input_port/InputPortModel';
+import Modal from '../../Modal/Modal';
+import { OutputPortModel } from '../nodes/basic_node/ports/output_port/OutputPortModel';
+import { InputPortModel } from '../nodes/basic_node/ports/input_port/InputPortModel';
 
-import add_icon from './img/add.svg';
-import delete_icon from './img/delete.svg';
-import cancel_icon from './img/cancel.svg';
-import accept_icon from './img/accept.svg';
+import add_icon from '../img/add.svg';
+import delete_icon from '../img/delete.svg';
+import cancel_icon from '../img/cancel.svg';
+import accept_icon from '../img/accept.svg';
+import close_modal_img from '../../Modal/img/close.svg'
 
 const initialEditActionModalData = {
   newInputName: '',
@@ -170,8 +171,9 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
 
   return (
     <Modal id="node-editor-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose} >
-      <div className="node-editor-row">
-        <label className="node-editor-title" htmlFor="actionNameEditor">Action Editor</label>
+      <div className="modal-titlebar">
+        <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Edit action value</label>
+        <img className="modal-titlebar-close" onClick={() => { onClose(); } } src={close_modal_img}></img>
       </div>
       <div className="node-editor-row">
         {currentActionNode &&

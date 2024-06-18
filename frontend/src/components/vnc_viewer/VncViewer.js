@@ -18,7 +18,7 @@ const VncViewer = ({gazeboEnabled}) => {
         />
       ):(
         <div className='loader'>
-          <BounceLoader color="#36d7b7" size={80} speedMultiplier={0.7}/>
+          <BounceLoader color="var(--header)" size={80} speedMultiplier={0.7}/>
         </div>
       )}
     </div>

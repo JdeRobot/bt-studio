@@ -4,6 +4,7 @@ import Modal from '../Modal/Modal';
 import empty_template from './img/empty_template.svg';
 import action_template from './img/action_template.svg';
 import io_template from './img/io_template.svg';
+import close_modal_img from '../Modal/img/close.svg'
 
 const initialNewActionModalData = {
   actionName: '',
@@ -57,7 +58,9 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
   };
 
   const handleCancel = (event) => {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
     onClose(formState);
     setFormState(initialNewActionModalData);
     setcreateButton(false);
@@ -66,6 +69,10 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
   return (
     <Modal id="new-action-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
       <form onSubmit={handleSubmit} onReset={handleCancel}>
+      <div className="modal-titlebar">
+        <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Create new action</label>
+        <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
+      </div>
         <div className="modal-complex-input-row-container">
           <div className="modal-complex-input-container">
             <input
@@ -129,7 +136,6 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
         </div>
         <div className="form-row">
           <CreateButton hasToDisplay={createButton}/>
-          <button type="reset" id="cancel-new-action">Cancel</button>
         </div>
       </form>
     </Modal>

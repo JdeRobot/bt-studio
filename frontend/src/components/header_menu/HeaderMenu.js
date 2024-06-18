@@ -111,7 +111,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
   }
   
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#12494c' }}>
+    <AppBar position="static">
       <Toolbar>
         <img src={logo_img} className="jde-icon" alt="JdeRobot logo"></img>
         <h1 className="Header-text">BT Studio IDE</h1>

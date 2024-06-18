@@ -21,7 +21,7 @@ export class BasicNodeFactory extends AbstractReactFactory<NodeModel, any> {
     generateReactWidget(event: GenerateWidgetEvent<NodeModel>): JSX.Element {
         return (
             <div onDoubleClick={this.callback}>
-                <BasicNodeWidget engine={this.engine} node={event.model} />;
+                <BasicNodeWidget engine={this.engine} node={event.model} />
             </div>
     
     )}

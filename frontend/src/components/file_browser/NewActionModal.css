@@ -3,27 +3,23 @@
 }
 
 .form-row label,
-.form-row input,
 .form-row select,
 .form-row button {
   width: 100%;
   display: block;
-  background-color: #12494c;
   border: none;
-  color: #ffffff;
+  color: var(--text);
   font-size: medium;
+}
+
+.form-row button {
+  background-color: var(--buttons);
 }
 
 .form-row {
   margin-top: 10px;
 }
 
-.form-row input {
-  border: 2px solid #000000 !important;
-  background-color: #0c3032 !important;
-  border-radius: 10px;
-  padding-left: 1em;
-}
 
 .form-row label {
   margin-bottom: 10px;
@@ -65,7 +61,7 @@
 }
 
 .templates-col:hover div{
-  background-color: #0c3032;
+  background-color: var(--buttons-hover);
 }
 
 .templates-col .icon {
@@ -75,7 +71,7 @@
 
 .templates-col p {
   margin: 3px !important;
-  color: #ffffff;
+  color: var(--text);
 }
 
 .templates-col input[type="radio"] {
@@ -84,6 +80,6 @@
 }
 
 .templates-col input[type="radio"]:checked + div {
-  background-color: #1f7f84 !important;
+  background-color: var(--secondary) !important;
   color: black;
 }

@@ -29,7 +29,7 @@ import { OutputPortModel } from './nodes/basic_node/ports/output_port/OutputPort
 import { InputPortModel } from './nodes/basic_node/ports/input_port/InputPortModel';
 import { TagInputPortModel } from './nodes/tag_node/ports/input_port/TagInputPortModel';
 import { TagOutputPortModel } from './nodes/tag_node/ports/output_port/TagOutputPortModel';
-import EditActionModal from './EditActionModal.jsx';
+import EditActionModal from './modals/EditActionModal.jsx';
 
   // Store action nodes and their inputs and outputs
   interface ActionData {
@@ -39,7 +39,7 @@ import EditActionModal from './EditActionModal.jsx';
     color: string;
   }
 
-const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gazeboEnabled, manager, actionNodesData, setActionNodesData} : {currentProjectname : any, setModelJson : any, setProjectChanges:any, gazeboEnabled:any, manager:any, actionNodesData:{ [id: string]: ActionData; }, setActionNodesData:any}) => {
+const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gazeboEnabled, manager, actionNodesData} : {currentProjectname : any, setModelJson : any, setProjectChanges:any, gazeboEnabled:any, manager:any, actionNodesData:{ [id: string]: ActionData; }}) => {
 
   const ref = useRef<any>(null);
   const [graphJson, setGraphJson] = useState(null);
@@ -47,7 +47,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const [isFocused, setFocused] = useState(false);
   const [isEditActionModalOpen, setEditActionModalOpen] = useState(false);
   const [currentActionNode, setCurrentActionNode] = useState<any>(null);
-  const [modelProjectName, setModelProjectName] = useState("");
 
   // Initial node position
   let lastMovedNodePosition = { x: 200, y: 200 };
@@ -428,6 +427,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         "Fallback", "ReactiveFallback", "RetryUntilSuccessful", "Inverter", "ForceSuccess", 
         "ForceFailure", "KeepRunningUntilFailure", "Repeat", "RunOnce", "Delay",
         "Input port value", "Output port value", "Tree Root"].includes(name))
+  }
+
+  const checkIfTag = (node:any) => {
+    return node.getOptions().type === 'tag';
   }
 
   const setColorActionNode = (r:number, g:number, b:number) => {

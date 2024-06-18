@@ -11,9 +11,9 @@
     overflow-y: auto;
     max-height: 60vh;
 
-    --g:radial-gradient(50% 20px, #0009, #0000);  
+    --g:radial-gradient(50% 20px, var(--background-500), var(--background));  
     background: 
-      linear-gradient(#12494c 10px, #0000 40px calc(100% - 40px),#12494c calc(100% - 10px)) local, 
+      linear-gradient(var(--background) 10px, #0000 40px calc(100% - 40px),var(--background) calc(100% - 10px)) local, 
       var(--g) top   /100% 200%,    
       var(--g) bottom/100% 200%;
 }
@@ -25,13 +25,13 @@
 
 /* Track */
 .project-entry-list::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px grey;
+  box-shadow: inset 0 0 5px var(--scrollbar);
   border-radius: 10px;
 }
 
 /* Handle */
 .project-entry-list::-webkit-scrollbar-thumb {
-  background: #2f9da3;
+  background: var(--scrollbar);
   border-radius: 10px;
 }
 
@@ -39,17 +39,17 @@
   width: 75%;
   height: 3rem;
   min-height: 3rem;
-  background-color: #226d72;
+  background-color: var(--buttons);
   padding: 5px;
   align-content: center;
-  color: white;
+  color: var(--text);
   display: grid;
   grid-gap: 5px;
   grid-template-columns: auto 20px;
 }
 
 .project-entry:hover {
-  background-color: #2f9da3;
+  background-color: var(--buttons-hover);
 }
 
 .project-entry-delete{
@@ -101,15 +101,15 @@
     width: 175px;
     padding: 15px;
     border-radius: 10px;
-    background-color: #226d72;
-    color: white;
+    background-color: var(--buttons);
+    color: var(--text);
     font-weight: 600;
     text-align: center;
     user-select: none;
 }
 
 .project-modal-create-button:hover {
-    background-color: #2f9da3;
+    background-color: var(--buttons-hover);
 }
 
 .project-entry-name {
@@ -127,11 +127,12 @@
   height: 30px;
   width: auto;
   padding: 5px;
-  background-color: #226d72;
+  color: var(--text);
+  background-color: var(--buttons);
   border: none;
   border-radius: 5px;
 }
 
 #create-new-project:hover {
-  background-color: hsla(93, 100%, 49%, 0.5);
+  background-color: var(--buttons-hover);
 }
