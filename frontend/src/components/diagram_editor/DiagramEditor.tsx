@@ -36,7 +36,7 @@ import EditTagModal from './modals/EditTagModal.jsx';
     color: string;
   }
 
-const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gazeboEnabled, manager, actionNodesData} : {currentProjectname : any, setModelJson : any, setProjectChanges:any, gazeboEnabled:any, manager:any, actionNodesData:{ [id: string]: ActionData; }}) => {
+const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gazeboEnabled, manager, actionNodesData, openError} : {currentProjectname : any, setModelJson : any, setProjectChanges:any, gazeboEnabled:any, manager:any, actionNodesData:{ [id: string]: ActionData; }, openError:any}) => {
 
   const ref = useRef<any>(null);
   const [graphJson, setGraphJson] = useState(null);
@@ -494,7 +494,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         engine.repaintCanvas();
         setModelJson(JSON.stringify(model.current.serialize()));
       } else {
-        window.alert("Ports can only be added to action nodes")
+        openError("Ports can only be added to action nodes")
       }
     }
   };
@@ -527,7 +527,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         engine.repaintCanvas();
         setModelJson(JSON.stringify(model.current.serialize()));
       } else {
-        window.alert("Ports can only be added to action nodes")
+        openError("Ports can only be added to action nodes")
       }
     }
   };
@@ -559,7 +559,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         engine.repaintCanvas();
         setModelJson(JSON.stringify(model.current.serialize()));
       } else {
-        window.alert("Ports can only be removed from action nodes")
+        openError("Ports can only be removed from action nodes")
       }
     }
   }
@@ -591,7 +591,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         engine.repaintCanvas();
         setModelJson(JSON.stringify(model.current.serialize()));
       } else {
-        window.alert("Ports can only be removed from action nodes")
+        openError("Ports can only be removed from action nodes")
       }
     }
   }

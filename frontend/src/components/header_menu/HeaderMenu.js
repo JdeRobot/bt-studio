@@ -13,7 +13,7 @@ import ProjectModal from './ProjectModal';
 
 var dropdown_shown = false;
 
-const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, projectChanges, setProjectChanges} ) => {
+const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, projectChanges, setProjectChanges, openError} ) => {
 
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
   const [existingProjects, setExistingProjects] = useState("");
@@ -39,10 +39,10 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
           if (error.response.status === 409) {
-            window.alert(`The project ${projectName} already exists`);
+            openError(`The project ${projectName} already exists`);
           } else {
             // Handle other statuses or general API errors
-            window.alert('Unable to connect with the backend server. Please check the backend status.');
+            openError('Unable to connect with the backend server. Please check the backend status.');
           }
         }
       });
@@ -61,7 +61,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
       console.log(`Switched to project ${projectName}`);
     } else {
       // Project doesn't exist
-      window.alert(`The project ${projectName} does not exist`);
+      openError(`The project ${projectName} does not exist`);
     }
   }
 
@@ -75,7 +75,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
     // Assuming modelJson and currentProjectname are correctly populated
     if (!modelJson || !currentProjectname) {
       console.error('Either modelJson or currentProjectname is not set.');
-      window.alert("Please, select or create a project to store changes")
+      openError("Please, select or create a project to store changes")
       return;
     }
 
@@ -123,6 +123,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
           existingProjects={existingProjects}
           setExistingProjects={setExistingProjects}
           createProject={createProject}
+          openError={openError}
         />
 
         <div className='header-button-container'>

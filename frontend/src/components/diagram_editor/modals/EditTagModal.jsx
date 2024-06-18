@@ -10,12 +10,7 @@ const initialEditTagModalData = {
 
 const EditTagModal = ({ isOpen, onClose, currentActionNode}) => {
   const focusInputRef = useRef(null);
-  const [inputName, setInputName] = React.useState(false);
-  const [outputName, setOutputName] = React.useState(false);
-  const [allowCreation, setAllowCreation] = React.useState(false);
   const [formState, setFormState] = useState(initialEditTagModalData);
-  const [, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -27,8 +22,6 @@ const EditTagModal = ({ isOpen, onClose, currentActionNode}) => {
   };
 
   useEffect(() => {
-    setInputName(false)
-    setOutputName(false)
     setFormState(initialEditTagModalData);
     document.getElementById('node-editor-modal').focus();
     console.log(currentActionNode)

@@ -177,6 +177,19 @@ h2 {
   --accent-800: #ced3c5;
   --accent-900: #e6e9e2;
   --accent-950: #f3f4f0;
+
+  --error: #802626;
+  --error-50: #140606;
+  --error-100: #280b0b;
+  --error-200: #4f1717;
+  --error-300: #772222;
+  --error-400: #9e2e2e;
+  --error-500: #c63939;
+  --error-600: #d16161;
+  --error-700: #dd8888;
+  --error-800: #e8b0b0;
+  --error-900: #f4d7d7;
+  --error-950: #f9ebeb;
 }
 
 :root, .App {
@@ -192,4 +205,9 @@ h2 {
   --input-background: var(--background-300);
   --input-placeholder-text: var(--text-700);
   --input-focus-border: var(--accent);
+
+  --error-bg: var(--error);
+  --error-border: var(--error-300);
+  --error-button: var(--error-400);
+  --error-button-hover: var(--error-500);
 }
