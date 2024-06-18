@@ -37,11 +37,11 @@ const App = () => {
 
   useEffect(() => {
     const newManager = CommsManager("ws://127.0.0.1:7163");
-    setManager(newManager);
+    // setManager(newManager);
   }, []);
 
   useUnload(() => {
-    manager.disconnect();
+    // manager.disconnect();
   });
 
   const connectWithRetry = () => {
@@ -95,7 +95,7 @@ const App = () => {
 
       <div className="App-main" style={{ display: 'flex' }}>
 
-        <div style={{ width: '200px'}}>
+        <div style={{ width: '200px', paddingLeft: "1vw"}}>
           <FileBrowser 
             setCurrentFilename={setCurrentFilename} 
             currentFilename={currentFilename}

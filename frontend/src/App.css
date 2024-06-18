@@ -16,7 +16,6 @@
 .App-main {
   flex-grow: 1;
   display: flex;
-  padding-left: 1vw;
   overflow: auto;
 }
 
