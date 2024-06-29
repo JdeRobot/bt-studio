@@ -1,1 +1,0 @@
-{"version":3,"sources":["components/Elements/Icon/index.js"],"names":[],"mappings":";;;;;;;;;;;;AAAA","sourcesContent":["export { default } from './Icon';\n"],"file":"index.js"}
