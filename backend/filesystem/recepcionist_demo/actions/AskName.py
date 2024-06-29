@@ -1,8 +1,7 @@
 import py_trees
-import geometry_msgs
-import tree_tools
+from tree_gardener import tree_tools
 
-class ACTION(py_trees.behaviour.Behaviour):
+class AskName(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, ports = None):
 
@@ -25,8 +24,6 @@ class ACTION(py_trees.behaviour.Behaviour):
         except KeyError as e:
             error_message = "Couldn't find the tree node"
             raise KeyError(error_message) from e
-        
-        self.input = int(tree_tools.get_port_content(self.ports["input"]))
 
     def initialise(self) -> None:
 
@@ -39,8 +36,14 @@ class ACTION(py_trees.behaviour.Behaviour):
 
         """ Executed when the action is ticked. Do not block! """
 
-        tree_tools.set_port_content(self.ports["output"], output_value)
-        return py_trees.common.Status.RUNNING 
+        name = input("What is your name? ")
+        
+        if len(name) == 0:
+            return py_trees.common.Status.FAILURE 
+        
+        tree_tools.set_port_content(self.ports["person"], name)
+
+        return py_trees.common.Status.SUCCESS 
     
     def terminate(self, new_status: py_trees.common.Status) -> None:
 

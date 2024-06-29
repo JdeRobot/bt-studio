@@ -1,7 +1,7 @@
 import py_trees
-import geometry_msgs
+from tree_gardener import tree_tools
 
-class ACTION(py_trees.behaviour.Behaviour):
+class ServeDrink(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, ports = None):
 
@@ -35,8 +35,15 @@ class ACTION(py_trees.behaviour.Behaviour):
     def update(self) -> py_trees.common.Status:
 
         """ Executed when the action is ticked. Do not block! """
+        
+        drink = tree_tools.get_port_content(self.ports["drink"])
+        name = tree_tools.get_port_content(self.ports["person"])
 
-        return py_trees.common.Status.RUNNING 
+        self.logger.info("%s! Here is your %s. Hope you enjoy your stay." % (name, drink))
+
+        response = input("(Press enter to recive the drink)")
+
+        return py_trees.common.Status.SUCCESS 
     
     def terminate(self, new_status: py_trees.common.Status) -> None:
 
