@@ -1,0 +1,96 @@
+.form-row + .form-row {
+  margin-top: 1rem;
+}
+
+
+.form-row select,
+.form-row button {
+  width: 100%;
+  display: block;
+  border: none;
+  color: var(--text);
+  font-size: medium;
+}
+
+.form-row button {
+  background-color: var(--buttons);
+}
+
+.form-row {
+  margin-top: 10px;
+}
+
+
+#templates-list {
+  height: 170px;
+}
+
+.form-row button {
+  margin-bottom: 10px;
+  border-radius: 10px;
+  height: 2em;
+  font-size: medium;
+}
+
+#create-new-action:hover {
+  background-color: hsla(93, 100%, 49%, 0.5);
+}
+
+.templates-col{
+  float: left; /* Float the buttons side by side */
+  width:30%;
+  border-radius: 10px;
+}
+
+.templates-col div{
+  border-radius: 10px; 
+  cursor: pointer; /* Pointer/hand icon */
+  text-align: center;
+  margin: 3px;
+  padding: 5px; 
+}
+
+.templates-col:hover div{
+  background-color: var(--buttons-hover);
+}
+
+.templates-col .icon {
+    height: 90px;
+    width: 30px;
+}
+
+.templates-col p {
+  margin: 3px !important;
+  color: var(--text);
+}
+
+.templates-col input[type="radio"] {
+  display: none;
+  z-index: 100;
+}
+
+.templates-col input[type="radio"]:checked + div {
+  /* background-color: var(--secondary) !important; */
+  background: linear-gradient(-45deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%) !important;
+}
+
+.templates-list-container {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: calc(100% - 48px);
+    justify-content: space-evenly;
+}
+
+.templates-list-title {
+  width: 100%;
+  display: block;
+  border: none;
+  color: var(--text);
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}

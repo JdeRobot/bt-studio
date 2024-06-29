@@ -6,12 +6,15 @@ import 'ace-builds/src-noconflict/theme-monokai';
 import './FileEditor.css'
 
 import save_img from './img/save.svg' 
+import { ReactComponent as SplashIcon } from './img/logo_jderobot_monocolor.svg' ;
 
 const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) => {
   
   const [fileContent, setFileContent] = useState("");
   const [fontSize, setFontSize] = useState(14);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [filenameToSave, setFilenameToSave] = useState('');
+  const [projectToSave, setProjectToSave] = useState(currentProjectname);
 
   useEffect(() => {
     if (currentFilename != '') {
@@ -29,18 +32,41 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
       setFileContent("");
       setHasUnsavedChanges(false);
     }
+    // Autosave
+    if (filenameToSave) {
+      axios.post('/tree_api/save_file/', {
+        project_name: currentProjectname,
+        filename: filenameToSave,
+        content: fileContent
+      })
+      .then(response => {
+        if (response.data.success) {
+          setHasUnsavedChanges(false); // Reset the unsaved changes flag
+          setProjectChanges(false);
+        } else {
+          alert(`Failed to save file: ${response.data.message}`);
+        }
+      })
+      .catch(error => {
+        console.error('Error saving file:', error);
+      });
+    }
+    setFilenameToSave(currentFilename)
   }, [currentFilename]);
 
   useEffect(() => {
-    
+    setFilenameToSave('');
+    if (currentFilename) {
+      handleSaveFile();
+    }
+    setProjectToSave(currentProjectname);
     setFileContent("");
   }, [currentProjectname]);
 
   const handleSaveFile = () => {
-
     if (currentFilename) {
       axios.post('/tree_api/save_file/', {
-        project_name: currentProjectname,
+        project_name: projectToSave,
         filename: currentFilename,
         content: fileContent
       })
@@ -56,7 +82,7 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
         console.error('Error saving file:', error);
       });
     } else {
-      alert("No file is currently selected.");
+      alert("No file is currentlyyy selected.");
     }
   };
 
@@ -79,23 +105,33 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
           </button>
         </div>
       </div>
-      <div className="zoom-buttons">
-        <button className="zoom-in" onClick={handleZoomIn}>+</button>
-        <button className="zoom-in" onClick={handleZoomOut}>-</button>
-      </div>
+      {fileContent !== "" &&(
+        <div className="zoom-buttons">
+          <button className="zoom-in" onClick={handleZoomIn}>+</button>
+          <button className="zoom-in" onClick={handleZoomOut}>-</button>
+        </div>
+      )}
+      {fileContent !== "" ?(
       <AceEditor
         mode="python"
         theme="monokai"
         name="fileEditor"
         width="100%"
-        height="80vh"
+        height="calc(100% - 50px)"
         value={fileContent}
         fontSize={fontSize}
         onChange={newContent => {
           setProjectChanges(true);
           setFileContent(newContent);
           setHasUnsavedChanges(true); // Set the unsaved changes flag
+        }}
+        setOptions={{
+          scrollPastEnd: 0.5,
         }}/>
+      ) : (
+         <SplashIcon className='splash-icon' fill='var(--header)'/>
+      )
+      }
     </div>
   );
 };

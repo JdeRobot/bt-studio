@@ -1,5 +1,6 @@
 // App.js
 import React, { useMemo, useState, useEffect } from 'react';
+// import useLocalStorage from 'use-local-storage'
 import { useUnload } from './components/comms_manager/useUnload';
 import { Resizable } from 'react-resizable';
 import HeaderMenu from './components/header_menu/HeaderMenu';
@@ -9,16 +10,22 @@ import './App.css';
 import DiagramEditor from './components/diagram_editor/DiagramEditor';
 import VncViewer from './components/vnc_viewer/VncViewer'
 import CommsManager from './components/comms_manager/CommsManager';
+import ErrorModal from './components/error_popup/ErrorModal';
 
 const App = () => {
 
   const [editorWidth, setEditorWidth] = useState(807);
   const [currentFilename, setCurrentFilename] = useState('');
-  const [currentProjectname, setCurrentProjectname] = useState('visual_follow_person');
+  const [currentProjectname, setCurrentProjectname] = useState('');
+  const [actionNodesData, setActionNodesData] = useState({});
   const [modelJson, setModelJson] = useState('');
+  const [isErrorModalOpen, setErrorModalOpen] = useState(false);
   const [projectChanges, setProjectChanges] = useState(false);
   const [gazeboEnabled, setGazeboEnabled] = useState(false);
   const [manager, setManager] = useState(null);
+
+  // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
 
   var universe_config = {
     "name": "follow_person_ros2",
@@ -77,8 +84,22 @@ const App = () => {
     }
   };
 
+  const openError = (err) => {
+    document.getElementById('errorMsg').innerText  = err;
+    setErrorModalOpen(true);
+  }
+
+  const closeError = () => {
+    setErrorModalOpen(false);
+  }
+
   return (
-    <div className="App">
+    <div className="App" data-theme={"dark"}>
+
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        onClose={closeError}
+      />
 
       <HeaderMenu 
         setCurrentProjectname={setCurrentProjectname} 
@@ -86,16 +107,18 @@ const App = () => {
         modelJson={modelJson}
         projectChanges={projectChanges}
         setProjectChanges={setProjectChanges}
+        openError={openError}
       />
 
       <div className="App-main" style={{ display: 'flex' }}>
 
-        <div style={{ width: '200px'}}>
+        <div style={{ width: '200px', paddingLeft: "1vw"}}>
           <FileBrowser 
             setCurrentFilename={setCurrentFilename} 
             currentFilename={currentFilename}
             currentProjectname={currentProjectname}
             setProjectChanges={setProjectChanges}
+            actionNodesData={actionNodesData}
           />
         </div>
         
@@ -122,6 +145,8 @@ const App = () => {
             setProjectChanges={setProjectChanges}
             gazeboEnabled={gazeboEnabled}
             manager={manager}
+            actionNodesData={actionNodesData}
+            openError={openError}
           />
           <VncViewer
             gazeboEnabled={gazeboEnabled}

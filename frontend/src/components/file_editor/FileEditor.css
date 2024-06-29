@@ -2,7 +2,8 @@
 
 .editor-container {
     position: relative; /* Establish a stacking context */
-    margin-right: 2px;
+    padding-right: 2px;
+    height: 100%;
 }
   
 .zoom-buttons {
@@ -18,16 +19,22 @@
 .zoom-in {
     width: 25px;
     height: 25px;
-    background-color: white;
-    color: black;
+    background-color: var(--buttons);
+    color: var(--text);
     border: none;
-    border-radius: 2px;
+    border-radius: 4px;
     font-size: 16px;
+}
+
+.zoom-in:hover {
+    background-color: var(--buttons-hover);
 }
 
 .browser-menu {
     display: flex;
     align-items: center;
+    height: 50px;
+    max-height: 50px;
 }
 
 .editor-buttons {
@@ -41,21 +48,21 @@
     justify-content: center;
     width: 25px;
     height: 25px;
-    background-color: black;
+    background-color: var(--buttons-invisible);
     border: 0;
     margin-left: 3px;
     margin-right: 3px;
 }
 
 .save-button:hover {
-    background-color: rgba(255, 255, 255, 0.264);
+    background-color: var(--buttons-hover);
     border-radius: 50%; /* Circular highlight */
 }
 
 .unsaved-dot {
     width: 10px;
     height: 10px;
-    background-color: white;
+    background-color: var(--text);
     border-radius: 50%;
     display: inline-block;
     margin-right: 5px;
@@ -64,4 +71,31 @@
 .icon {
     width: 20px;
 }
-  
+
+.splash-icon {
+    --size: 400px;
+    margin-top: calc(50% - var(--size) / 2);
+    margin-left: calc(50% - var(--size) / 2);
+    width: var(--size);
+}
+
+/* Ace editor config */
+
+.ace_scrollbar::-webkit-scrollbar {
+  height: 5px;
+  width: 5px;
+}
+
+.ace_scrollbar::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--scrollbar);
+  border-radius: 10px;
+}
+
+.ace_scrollbar::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 10px;
+}
+
+.ace_scrollbar-h {
+    margin-bottom: 10px;
+}

@@ -27,6 +27,18 @@ def create_project(request):
         return Response({'success': True})
     else:
         return Response({'success': False, 'message': 'Project already exists'}, status=400)
+    
+@api_view(['GET'])
+def delete_project(request):
+    project_name = request.GET.get('project_name')
+    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(folder_path, project_name)
+    
+    if os.path.exists(project_path):
+        shutil.rmtree(project_path)
+        return Response({'success': True})
+    else:
+        return Response({'success': False, 'message': 'Project does not exist'}, status=400)
 
 @api_view(['GET'])
 def get_project_list(request):

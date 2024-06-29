@@ -2,21 +2,20 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: black;
-  color: white;
+  background-color: var(--background);
+  color: var(--text);
   /* Other styles */
 }
 
 .HeaderMenu {
-  background-color: black;
-  color: white;
+  background-color: var(--background);
+  color: var(--text);
   /* Other styles */
 }
 
 .App-main {
   flex-grow: 1;
   display: flex;
-  padding-left: 1vw;
   overflow: auto;
 }
 
@@ -44,4 +43,171 @@ h1 {
 
 h2 {
   font-size: 18px;
+}
+
+:root, .App[data-theme="light"] {
+  --text: #0d0d12;
+  --text-50: #f0f0f4;
+  --text-100: #e1e1ea;
+  --text-200: #c4c4d4;
+  --text-300: #a6a6bf;
+  --text-400: #8989a9;
+  --text-500: #6b6b94;
+  --text-600: #565676;
+  --text-700: #404059;
+  --text-800: #2b2b3b;
+  --text-900: #15151e;
+  --text-950: #0b0b0f;
+
+  --background: #e8e8ed;
+  --background-50: #f1f1f4;
+  --background-100: #e2e2e9;
+  --background-200: #c6c6d2;
+  --background-300: #a9a9bc;
+  --background-400: #8d8da5;
+  --background-500: #70708f;
+  --background-600: #5a5a72;
+  --background-700: #434356;
+  --background-800: #2d2d39;
+  --background-900: #16161d;
+  --background-950: #0b0b0e;
+
+  --primary: #b5ebee;
+  --primary-50: #eaf9fa;
+  --primary-100: #d5f4f6;
+  --primary-200: #ace9ec;
+  --primary-300: #82dee3;
+  --primary-400: #59d3d9;
+  --primary-500: #2fc8d0;
+  --primary-600: #26a0a6;
+  --primary-700: #1c787d;
+  --primary-800: #135053;
+  --primary-900: #09282a;
+  --primary-950: #051415;
+
+  --secondary: #bdb4a8;
+  --secondary-50: #f4f2f0;
+  --secondary-100: #e9e6e2;
+  --secondary-200: #d3cdc5;
+  --secondary-300: #bdb4a8;
+  --secondary-400: #a79b8b;
+  --secondary-500: #91826e;
+  --secondary-600: #746858;
+  --secondary-700: #574e42;
+  --secondary-800: #3a342c;
+  --secondary-900: #1d1a16;
+  --secondary-950: #0f0d0b;
+
+  --accent: #778363;
+  --accent-50: #f3f4f0;
+  --accent-100: #e6e9e2;
+  --accent-200: #ced3c5;
+  --accent-300: #b5bda8;
+  --accent-400: #9da78b;
+  --accent-500: #84916e;
+  --accent-600: #6a7458;
+  --accent-700: #4f5742;
+  --accent-800: #353a2c;
+  --accent-900: #1a1d16;
+  --accent-950: #0d0f0b;
+}
+
+:root, .App[data-theme="dark"] {
+  --text: #ededf2;
+  --text-50: #0b0b0f;
+  --text-100: #15151e;
+  --text-200: #2b2b3b;
+  --text-300: #404059;
+  --text-400: #565676;
+  --text-500: #6b6b94;
+  --text-600: #8989a9;
+  --text-700: #a6a6bf;
+  --text-800: #c4c4d4;
+  --text-900: #e1e1ea;
+  --text-950: #f0f0f4;
+
+  --background: #111116;
+  --background-50: #0b0b0e;
+  --background-100: #16161d;
+  --background-200: #2c2c3a;
+  --background-300: #434356;
+  --background-400: #595973;
+  --background-500: #6f6f90;
+  --background-600: #8c8ca6;
+  --background-700: #a9a9bc;
+  --background-800: #c5c5d3;
+  --background-900: #e2e2e9;
+  --background-950: #f1f1f4;
+
+  --primary: #12494c;
+  --primary-50: #051415;
+  --primary-100: #0a2829;
+  --primary-200: #134f53;
+  --primary-300: #1d777c;
+  --primary-400: #279fa5;
+  --primary-500: #30c7cf;
+  --primary-600: #5ad2d8;
+  --primary-700: #83dde2;
+  --primary-800: #ace8ec;
+  --primary-900: #d6f4f5;
+  --primary-950: #eaf9fa;
+
+  --secondary: #584f42;
+  --secondary-50: #0f0d0b;
+  --secondary-100: #1d1a16;
+  --secondary-200: #3a342c;
+  --secondary-300: #574e42;
+  --secondary-400: #746858;
+  --secondary-500: #91826e;
+  --secondary-600: #a79b8b;
+  --secondary-700: #bdb4a8;
+  --secondary-800: #d3cdc5;
+  --secondary-900: #e9e6e2;
+  --secondary-950: #f4f3f0;
+
+  --accent: #909c7b;
+  --accent-50: #0d0f0b;
+  --accent-100: #1a1d16;
+  --accent-200: #353a2c;
+  --accent-300: #4f5742;
+  --accent-400: #6a7458;
+  --accent-500: #84916e;
+  --accent-600: #9da78b;
+  --accent-700: #b5bda8;
+  --accent-800: #ced3c5;
+  --accent-900: #e6e9e2;
+  --accent-950: #f3f4f0;
+
+  --error: #802626;
+  --error-50: #140606;
+  --error-100: #280b0b;
+  --error-200: #4f1717;
+  --error-300: #772222;
+  --error-400: #9e2e2e;
+  --error-500: #c63939;
+  --error-600: #d16161;
+  --error-700: #dd8888;
+  --error-800: #e8b0b0;
+  --error-900: #f4d7d7;
+  --error-950: #f9ebeb;
+}
+
+:root, .App {
+  --header: var(--background-300);
+  --canvas-background: var(--secondary-800);
+
+  --buttons: var(--background-300);
+  --buttons-invisible: var(--background);
+  --buttons-hover: var(--background-500);
+
+  --scrollbar: var(--background-500);
+
+  --input-background: var(--background-300);
+  --input-placeholder-text: var(--text-700);
+  --input-focus-border: var(--accent);
+
+  --error-bg: var(--error);
+  --error-border: var(--error-300);
+  --error-button: var(--error-400);
+  --error-button-hover: var(--error-500);
 }
