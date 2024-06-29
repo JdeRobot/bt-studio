@@ -1,1 +1,0 @@
-{"version":3,"sources":["components/Elements/Placeholder/index.js"],"names":[],"mappings":";;;;;;;;;;;;AAAA","sourcesContent":["export { default } from './Placeholder';\n"],"file":"index.js"}

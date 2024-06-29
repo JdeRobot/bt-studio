@@ -1,1 +1,0 @@
-{"version":3,"sources":["components/Elements/Pill/index.js"],"names":[],"mappings":";;;;;;;;;;;;AAAA","sourcesContent":["export { default } from './Pill';\n"],"file":"index.js"}

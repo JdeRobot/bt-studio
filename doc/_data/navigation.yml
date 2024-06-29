@@ -1,0 +1,29 @@
+# main links
+main:
+
+  - title: LogBook
+    url: /logbook/
+
+  - title: Installation
+    url: /install/
+
+  - title: References
+    url: /references/
+
+# left side bar
+docs:
+  - title: LogBook
+    children:
+      - title: Check it out
+        url: /
+
+  - title: Installation
+    children: 
+    - title: How to install
+      url: /install/
+
+  - title: About
+    children:
+    - title: References
+      url: /references/
+  

@@ -1,1 +1,0 @@
-{"version":3,"sources":["components/Forms/Label/index.js"],"names":[],"mappings":";;;;;;;;;;;;AAAA","sourcesContent":["export { default } from './Label';\n"],"file":"index.js"}
