@@ -233,8 +233,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       if (checkIfAction(node)) {
         let castNode = node as BasicNodeModel;
         let name = castNode.getName();
+        saveActionNodeData(node);
         if (!(name in actionNodesData)) {
-          saveActionNodeData(node);
           for (let key in node.getPorts()) {
             if (key !== 'parent') {
               if (node.getPorts()[key] instanceof InputPortModel) {
@@ -445,6 +445,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const setColorActionNode = (r:number, g:number, b:number) => {
     currentActionNode.setColor('rgb('+Math.round(r)+','+Math.round(g)+','+Math.round(b)+')');
     actionNodesData[currentActionNode.getName()]['color'] = currentActionNode.getColor();
+    console.log(actionNodesData)
     let name = currentActionNode.getName();
     for (const nodesId of actionNodesData[name]['ids']) {
       let genericActionNode = model.current.getNode(nodesId);
