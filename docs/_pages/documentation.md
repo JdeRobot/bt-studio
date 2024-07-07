@@ -32,6 +32,7 @@ Two options:
 - Select the node, then click on the delete button
 
 https://github.com/JdeRobot/bt-studio/assets/124056014/4d280c54-0789-4d76-9944-a15153a8b984
+![alt_text]({{ "assets/videos/delete.mp4" | https://github.com/JdeRobot/bt-studio/assets/124056014/4d280c54-0789-4d76-9944-a15153a8b984 }})
 
 ## Add input/output to node
 
