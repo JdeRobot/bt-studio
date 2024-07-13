@@ -24,6 +24,7 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
         super({
             type: "tag",
         });
+        console.log(name);
         this.name = name;
         this.color = color;
         this.is_blackboard = false;
@@ -48,7 +49,7 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
     }
 
     getColor(): string {
-        return this.color;
+        return this.is_blackboard ? TagNodeModel.base_border_color : this.color;
     }
 
     getBorderColor(): string {
@@ -86,8 +87,9 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
         return {
           ...super.serialize(),
           name: this.name,
-          color: this.color,
-          is_selected: this.is_selected
+          color: this.is_blackboard ? TagNodeModel.base_border_color : this.color,
+          is_selected: this.is_selected,
+          is_blackboard: this.is_blackboard
         };
     }
 
@@ -96,5 +98,6 @@ export class TagNodeModel extends NodeModel<NodeModelGenerics & TagNodeModelGene
         this.name = event.data.name;
         this.color = event.data.color;
         this.is_selected = event.data.is_selected;
+        this.is_blackboard = event.data.is_blackboard;
     }
 }
