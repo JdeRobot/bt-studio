@@ -234,19 +234,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         let castNode = node as BasicNodeModel;
         let name = castNode.getName();
         saveActionNodeData(node);
-        if (!(name in actionNodesData)) {
-          for (let key in node.getPorts()) {
-            if (key !== 'parent') {
-              if (node.getPorts()[key] instanceof InputPortModel) {
-                castNode.addInputPort(key);
-                actionNodesData[name]['input'] = actionNodesData[name]['input'].concat([key]);
-              } else if (node.getPorts()[key] instanceof OutputPortModel) {
-                castNode.addOutputPort(key);
-                actionNodesData[name]['output'] = actionNodesData[name]['output'].concat([key]);
-              }
-            }
-          }
-        }
       }
     });
   }, [graphJson]);
@@ -296,6 +283,17 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       node.setColor(actionNodesData[name]['color'])
     } else {
       actionNodesData[name] = {input: [], output: [], ids: [node.getID()], color: node.getColor()};
+      for (let key in node.getPorts()) {
+        if (key !== 'parent') {
+          if (node.getPorts()[key] instanceof InputPortModel) {
+            node.addInputPort(key);
+            actionNodesData[name]['input'] = actionNodesData[name]['input'].concat([key]);
+          } else if (node.getPorts()[key] instanceof OutputPortModel) {
+            node.addOutputPort(key);
+            actionNodesData[name]['output'] = actionNodesData[name]['output'].concat([key]);
+          }
+        }
+      }
     }
   }
 
