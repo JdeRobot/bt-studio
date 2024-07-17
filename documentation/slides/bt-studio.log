@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.3.15)  13 JUL 2024 17:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.3.15)  17 JUL 2024 08:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -714,7 +714,7 @@ LaTeX Font Warning: Font shape `OT1/cmss/bx/sl' undefined
 
 File: logo-jderobot.png Graphic file (type png)
 <use logo-jderobot.png>
-Package pdftex.def Info: logo-jderobot.png  used on input line 51.
+Package pdftex.def Info: logo-jderobot.png  used on input line 56.
 (pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -723,7 +723,7 @@ Overfull \vbox (0.14795pt too high) has occurred while \output is active []
 [3]
 File: logo-jderobot.png Graphic file (type png)
 <use logo-jderobot.png>
-Package pdftex.def Info: logo-jderobot.png  used on input line 62.
+Package pdftex.def Info: logo-jderobot.png  used on input line 67.
 (pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -735,11 +735,15 @@ Overfull \vbox (0.14795pt too high) has occurred while \output is active []
 <figs/screenshot1.png, id=35, 2515.3975pt x 1165.35374pt>
 File: figs/screenshot1.png Graphic file (type png)
 <use figs/screenshot1.png>
-Package pdftex.def Info: figs/screenshot1.png  used on input line 71.
+Package pdftex.def Info: figs/screenshot1.png  used on input line 77.
 (pdftex.def)             Requested size: 187.78836pt x 86.98877pt.
+
+
+LaTeX Warning: Slide 5 overfull by 9.53722pt on input line 80.
+
 File: logo-jderobot.png Graphic file (type png)
 <use logo-jderobot.png>
-Package pdftex.def Info: logo-jderobot.png  used on input line 74.
+Package pdftex.def Info: logo-jderobot.png  used on input line 80.
 (pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -748,20 +752,24 @@ Overfull \vbox (0.14795pt too high) has occurred while \output is active []
 [5 <./figs/screenshot1.png>]
 
 LaTeX Font Warning: Font shape `OT1/cmss/bx/it' undefined
-(Font)              using `OT1/cmss/bx/sl' instead on input line 77.
+(Font)              using `OT1/cmss/bx/sl' instead on input line 83.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/bx/it' undefined
-(Font)              using `OT1/cmss/bx/sl' instead on input line 77.
+(Font)              using `OT1/cmss/bx/sl' instead on input line 83.
+
+
+LaTeX Font Warning: Font shape `OT1/cmss/bx/it' undefined
+(Font)              using `OT1/cmss/bx/sl' instead on input line 83.
 
 <figs/screenshot3.png, id=42, 2485.285pt x 1280.785pt>
 File: figs/screenshot3.png Graphic file (type png)
 <use figs/screenshot3.png>
-Package pdftex.def Info: figs/screenshot3.png  used on input line 84.
+Package pdftex.def Info: figs/screenshot3.png  used on input line 90.
 (pdftex.def)             Requested size: 270.30118pt x 139.28424pt.
 File: logo-jderobot.png Graphic file (type png)
 <use logo-jderobot.png>
-Package pdftex.def Info: logo-jderobot.png  used on input line 88.
+Package pdftex.def Info: logo-jderobot.png  used on input line 94.
 (pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -771,35 +779,82 @@ Overfull \vbox (0.14795pt too high) has occurred while \output is active []
 <figs/screenshot2.png, id=49, 851.18pt x 575.14874pt>
 File: figs/screenshot2.png Graphic file (type png)
 <use figs/screenshot2.png>
-Package pdftex.def Info: figs/screenshot2.png  used on input line 105.
+Package pdftex.def Info: figs/screenshot2.png  used on input line 111.
 (pdftex.def)             Requested size: 130.88284pt x 88.43626pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 104--106
+Underfull \hbox (badness 10000) in paragraph at lines 110--112
 []
  []
 
 
-Overfull \hbox (2.84544pt too wide) in paragraph at lines 104--106
+Overfull \hbox (2.84544pt too wide) in paragraph at lines 110--112
 [] 
  []
 
 
-Overfull \hbox (10.65367pt too wide) in paragraph at lines 90--109
+Overfull \hbox (10.65367pt too wide) in paragraph at lines 96--115
 [] [] 
  []
 
 File: logo-jderobot.png Graphic file (type png)
 <use logo-jderobot.png>
-Package pdftex.def Info: logo-jderobot.png  used on input line 110.
+Package pdftex.def Info: logo-jderobot.png  used on input line 116.
 (pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
 
 
 [7 <./figs/screenshot2.png>]
+LaTeX Font Info:    Trying to load font information for TS1+cmss on input line 
+124.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmss.fd
+File: ts1cmss.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+<figs/html5.png, id=55, 1113.15875pt x 433.62pt>
+File: figs/html5.png Graphic file (type png)
+<use figs/html5.png>
+Package pdftex.def Info: figs/html5.png  used on input line 141.
+(pdftex.def)             Requested size: 113.81102pt x 44.33054pt.
+<figs/Django-Logo.png, id=56, 3854.4pt x 2409.0pt>
+File: figs/Django-Logo.png Graphic file (type png)
+<use figs/Django-Logo.png>
+Package pdftex.def Info: figs/Django-Logo.png  used on input line 142.
+(pdftex.def)             Requested size: 42.67912pt x 26.64978pt.
+<figs/react-logo.png, id=57, 820.06375pt x 820.06375pt>
+File: figs/react-logo.png Graphic file (type png)
+<use figs/react-logo.png>
+Package pdftex.def Info: figs/react-logo.png  used on input line 143.
+(pdftex.def)             Requested size: 56.9055pt x 56.89728pt.
+<figs/docker-logo.png, id=58, 652.839pt x 582.978pt>
+File: figs/docker-logo.png Graphic file (type png)
+<use figs/docker-logo.png>
+Package pdftex.def Info: figs/docker-logo.png  used on input line 144.
+(pdftex.def)             Requested size: 45.52458pt x 40.6525pt.
+<figs/Ros-logo.png, id=59, 1284.8pt x 341.275pt>
+File: figs/Ros-logo.png Graphic file (type png)
+<use figs/Ros-logo.png>
+Package pdftex.def Info: figs/Ros-logo.png  used on input line 145.
+(pdftex.def)             Requested size: 42.67912pt x 11.33656pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 142--146
+[][] []
+ []
+
+
+Overfull \hbox (39.10643pt too wide) in paragraph at lines 120--148
+[] [] 
+ []
+
+
+LaTeX Warning: Slide 8 overfull by 6.74364pt on input line 150.
+
+
+Overfull \vbox (5.04703pt too high) has occurred while \output is active []
+
 File: logo-jderobot.png Graphic file (type png)
 <use logo-jderobot.png>
-Package pdftex.def Info: logo-jderobot.png  used on input line 134.
+Package pdftex.def Info: logo-jderobot.png  used on input line 150.
 (pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -807,53 +862,29 @@ Overfull \vbox (0.14795pt too high) has occurred while \output is active []
 
 [8
 
-]
-LaTeX Font Info:    Trying to load font information for TS1+cmss on input line 
-142.
- (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmss.fd
-File: ts1cmss.fd 2019/12/16 v2.5j Standard LaTeX font definitions
-)
-<figs/html5.png, id=59, 1113.15875pt x 433.62pt>
-File: figs/html5.png Graphic file (type png)
-<use figs/html5.png>
-Package pdftex.def Info: figs/html5.png  used on input line 159.
-(pdftex.def)             Requested size: 113.81102pt x 44.33054pt.
-<figs/Django-Logo.png, id=60, 3854.4pt x 2409.0pt>
-File: figs/Django-Logo.png Graphic file (type png)
-<use figs/Django-Logo.png>
-Package pdftex.def Info: figs/Django-Logo.png  used on input line 160.
-(pdftex.def)             Requested size: 42.67912pt x 26.64978pt.
-<figs/react-logo.png, id=61, 820.06375pt x 820.06375pt>
-File: figs/react-logo.png Graphic file (type png)
-<use figs/react-logo.png>
-Package pdftex.def Info: figs/react-logo.png  used on input line 161.
-(pdftex.def)             Requested size: 56.9055pt x 56.89728pt.
-<figs/docker-logo.png, id=62, 652.839pt x 582.978pt>
-File: figs/docker-logo.png Graphic file (type png)
-<use figs/docker-logo.png>
-Package pdftex.def Info: figs/docker-logo.png  used on input line 162.
-(pdftex.def)             Requested size: 45.52458pt x 40.6525pt.
-<figs/Ros-logo.png, id=63, 1284.8pt x 341.275pt>
-File: figs/Ros-logo.png Graphic file (type png)
-<use figs/Ros-logo.png>
-Package pdftex.def Info: figs/Ros-logo.png  used on input line 163.
-(pdftex.def)             Requested size: 42.67912pt x 11.33656pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 160--164
-[][] []
- []
+ <./figs/html5.png> <./figs/Django-Logo.png> <./figs/react-logo.png> <./figs/do
+cker-logo.png> <./figs/Ros-logo.png>]
+<figs/screenshot4.png, id=70, 906.38625pt x 1204.5pt>
+File: figs/screenshot4.png Graphic file (type png)
+<use figs/screenshot4.png>
+Package pdftex.def Info: figs/screenshot4.png  used on input line 156.
+(pdftex.def)             Requested size: 128.45602pt x 170.71652pt.
 
 
-Overfull \hbox (39.10643pt too wide) in paragraph at lines 138--166
-[] [] 
- []
+LaTeX Warning: Slide 9 overfull by 7.23645pt on input line 159.
 
 
-LaTeX Warning: Slide 9 overfull by 6.74364pt on input line 168.
+Overfull \vbox (2.16263pt too high) has occurred while \output is active []
+
+File: logo-jderobot.png Graphic file (type png)
+<use logo-jderobot.png>
+Package pdftex.def Info: logo-jderobot.png  used on input line 159.
+(pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
+
+Overfull \vbox (0.14795pt too high) has occurred while \output is active []
 
 
-Overfull \vbox (5.04703pt too high) has occurred while \output is active []
-
+[9 <./figs/screenshot4.png>]
 File: logo-jderobot.png Graphic file (type png)
 <use logo-jderobot.png>
 Package pdftex.def Info: logo-jderobot.png  used on input line 168.
@@ -862,34 +893,10 @@ Package pdftex.def Info: logo-jderobot.png  used on input line 168.
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
 
 
-[9
-
- <./figs/html5.png> <./figs/Django-Logo.png> <./figs/react-logo.png> <./figs/do
-cker-logo.png> <./figs/Ros-logo.png>]
-<figs/screenshot4.png, id=74, 906.38625pt x 1204.5pt>
-File: figs/screenshot4.png Graphic file (type png)
-<use figs/screenshot4.png>
-Package pdftex.def Info: figs/screenshot4.png  used on input line 174.
-(pdftex.def)             Requested size: 128.45602pt x 170.71652pt.
-
-
-LaTeX Warning: Slide 10 overfull by 7.23645pt on input line 177.
-
-
-Overfull \vbox (2.16263pt too high) has occurred while \output is active []
-
+[10]
 File: logo-jderobot.png Graphic file (type png)
 <use logo-jderobot.png>
-Package pdftex.def Info: logo-jderobot.png  used on input line 177.
-(pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
-
-Overfull \vbox (0.14795pt too high) has occurred while \output is active []
-
-
-[10 <./figs/screenshot4.png>]
-File: logo-jderobot.png Graphic file (type png)
-<use logo-jderobot.png>
-Package pdftex.def Info: logo-jderobot.png  used on input line 187.
+Package pdftex.def Info: logo-jderobot.png  used on input line 178.
 (pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -899,22 +906,22 @@ Overfull \vbox (0.14795pt too high) has occurred while \output is active []
 <figs/package-struct.png, id=84, 326.21875pt x 682.55pt>
 File: figs/package-struct.png Graphic file (type png)
 <use figs/package-struct.png>
-Package pdftex.def Info: figs/package-struct.png  used on input line 199.
+Package pdftex.def Info: figs/package-struct.png  used on input line 190.
 (pdftex.def)             Requested size: 97.90619pt x 204.85974pt.
 
-Overfull \hbox (39.10643pt too wide) in paragraph at lines 188--202
+Overfull \hbox (39.10643pt too wide) in paragraph at lines 179--193
 [][] [] 
  []
 
 
-LaTeX Warning: Slide 12 overfull by 8.33981pt on input line 204.
+LaTeX Warning: Slide 12 overfull by 8.33981pt on input line 194.
 
 
 Overfull \vbox (8.33981pt too high) has occurred while \output is active []
 
 File: logo-jderobot.png Graphic file (type png)
 <use logo-jderobot.png>
-Package pdftex.def Info: logo-jderobot.png  used on input line 204.
+Package pdftex.def Info: logo-jderobot.png  used on input line 194.
 (pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -923,13 +930,33 @@ Overfull \vbox (0.14795pt too high) has occurred while \output is active []
 [12 <./figs/package-struct.png>]
 File: logo-jderobot.png Graphic file (type png)
 <use logo-jderobot.png>
-Package pdftex.def Info: logo-jderobot.png  used on input line 213.
+Package pdftex.def Info: logo-jderobot.png  used on input line 200.
 (pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
 
 
-[13
+[13]
+File: logo-jderobot.png Graphic file (type png)
+<use logo-jderobot.png>
+Package pdftex.def Info: logo-jderobot.png  used on input line 208.
+(pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
+
+Overfull \vbox (0.14795pt too high) has occurred while \output is active []
+
+
+[14
+
+]
+File: logo-jderobot.png Graphic file (type png)
+<use logo-jderobot.png>
+Package pdftex.def Info: logo-jderobot.png  used on input line 232.
+(pdftex.def)             Requested size: 14.22546pt x 14.22636pt.
+
+Overfull \vbox (0.14795pt too high) has occurred while \output is active []
+
+
+[15
 
 ]
 
@@ -947,8 +974,8 @@ Package rerunfilecheck Info: File `bt-studio.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 20246 strings out of 478287
- 339691 string characters out of 5849289
+ 20248 strings out of 478287
+ 339705 string characters out of 5849289
  645724 words of memory out of 5000000
  38133 multiletter control sequences out of 15000+600000
  473293 words of font info for 41 fonts, out of 8000000 for 9000
@@ -965,10 +992,10 @@ fonts/cm/cmss10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
 mtt10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm0500.pfb></usr/shar
 e/texmf/fonts/type1/public/cm-super/sfss1000.pfb>
-Output written on bt-studio.pdf (14 pages, 1397115 bytes).
+Output written on bt-studio.pdf (16 pages, 1399387 bytes).
 PDF statistics:
- 149 PDF objects out of 1000 (max. 8388607)
- 89 compressed objects within 1 object stream
- 15 named destinations out of 1000 (max. 500000)
+ 157 PDF objects out of 1000 (max. 8388607)
+ 95 compressed objects within 1 object stream
+ 17 named destinations out of 1000 (max. 500000)
  56 words of extra memory for PDF output out of 10000 (max. 10000000)
 
