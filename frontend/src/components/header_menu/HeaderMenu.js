@@ -9,7 +9,8 @@ import logo_img from './img/logo.png'
 import './HeaderMenu.css'
 import change_project_img from './img/change_project.svg'
 import save_project_img from './img/save_project.svg'
-import ProjectModal from './ProjectModal';
+import universes_img from './img/universes.svg'
+import ProjectModal from './modals/ProjectModal';
 
 var dropdown_shown = false;
 
@@ -134,6 +135,9 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
           
           <button className="header-button" onClick={openProjectView} title="Change project">
             <img className="header-icon" src={change_project_img}></img>
+          </button>
+          <button className="header-button" onClick={openProjectView} title="Universe menu">
+            <img className="header-icon" src={universes_img}></img>
           </button>
           <button className="header-button" onClick={saveProject} title="Save project">
             <img className="header-icon" src={save_project_img}></img>

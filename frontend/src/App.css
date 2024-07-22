@@ -17,6 +17,7 @@
   flex-grow: 1;
   display: flex;
   overflow: auto;
+  background-color: var(--background);
 }
 
 .App-section {
