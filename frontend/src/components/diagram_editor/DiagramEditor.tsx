@@ -223,7 +223,14 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         model.current = new DiagramModel();
       });
     }
-  
+    if(gazeboEnabled) {
+      manager
+        .terminate_application()
+        .then(() => {
+          console.log("App terminated!");
+          setAppRunning(false);
+        })
+    }
   }, [currentProjectname]);
 
   useEffect(() => {
@@ -690,6 +697,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         onEditAction={handleOpenEditActionModal}
         onGenerateApp={generateApp}
         onRunApp={runApp}
+        isAppRunning={appRunning}
         currentProjectname={currentProjectname}
       />
       <div tabIndex={0} ref={ref} onBlur={(e) => handleLostFocus(e)} onFocus={(e) => handleGainedFocus(e)} id='diagram-view'>

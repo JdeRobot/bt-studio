@@ -46,7 +46,14 @@ class Move(py_trees.behaviour.Behaviour):
 
         """ Executed when the action is ticked. Do not block! """
 
-        person_pos = int(tree_tools.get_port_content(self.ports["person_pos"]))
+        port_content = tree_tools.get_port_content(self.ports["person_pos"])
+        person_pos = 0
+        if port_content != "":
+            person_pos = int(port_content)
+        else:
+            print("Person not found")
+            return py_trees.common.Status.FAILURE
+            
         error = self.image_x_center - person_pos
         print("PERSON POS:" + str(person_pos))
         print("ERROR:" + str(error))
