@@ -14,5 +14,6 @@ urlpatterns = [
     path('save_file/', views.save_file, name='save_file'),
     path('translate_json/', views.translate_json, name='translate_json'),
     path('generate_app/', views.generate_app, name='generate_app'),
-    path('get_simplified_app/', views.get_simplified_app, name='generate_app')
+    path('get_simplified_app/', views.get_simplified_app, name='generate_app'),
+    path('get_simplified_universe/', views.get_simplified_universe, name='generate_app'),
 ]
