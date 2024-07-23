@@ -11,12 +11,14 @@ import change_project_img from './img/change_project.svg'
 import save_project_img from './img/save_project.svg'
 import universes_img from './img/universes.svg'
 import ProjectModal from './modals/ProjectModal';
+import UniversesModal from './modals/UniverseModal';
 
 var dropdown_shown = false;
 
 const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, projectChanges, setProjectChanges, openError} ) => {
 
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
+  const [isUniversesModalOpen, setUniversesModalOpen] = useState(false);
   const [existingProjects, setExistingProjects] = useState("");
 
   const createProject = (projectName) => {
@@ -71,6 +73,11 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
     saveProject();
   };
 
+  const openUniversesView = (e) => {
+    setUniversesModalOpen(true)
+    saveProject();
+  };
+
   const saveProject = () => {
   
     // Assuming modelJson and currentProjectname are correctly populated
@@ -106,6 +113,10 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
     setProjectModalOpen(false);
   };
 
+  const handleCloseUniversesModal = () => {
+    setUniversesModalOpen(false);
+  };
+
   const handleFormSubmit = (data) => {
   }
   
@@ -124,6 +135,13 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
           createProject={createProject}
           openError={openError}
         />
+        <UniversesModal
+          isOpen={isUniversesModalOpen}
+          onSubmit={handleFormSubmit}
+          onClose={handleCloseUniversesModal}
+          currentProject={currentProjectname}
+          openError={openError}
+        />
 
         <div className='header-button-container'>
           {currentProjectname && (
@@ -136,7 +154,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
           <button className="header-button" onClick={openProjectView} title="Change project">
             <img className="header-icon" src={change_project_img}></img>
           </button>
-          <button className="header-button" onClick={openProjectView} title="Universe menu">
+          <button className="header-button" onClick={openUniversesView} title="Universe menu">
             <img className="header-icon" src={universes_img}></img>
           </button>
           <button className="header-button" onClick={saveProject} title="Save project">
