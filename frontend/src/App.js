@@ -17,6 +17,7 @@ const App = () => {
   const [editorWidth, setEditorWidth] = useState(807);
   const [currentFilename, setCurrentFilename] = useState('');
   const [currentProjectname, setCurrentProjectname] = useState('');
+  const [currentUniverseName, setCurrentUniverseName] = useState(null);
   const [actionNodesData, setActionNodesData] = useState({});
   const [modelJson, setModelJson] = useState('');
   const [isErrorModalOpen, setErrorModalOpen] = useState(false);
@@ -104,6 +105,8 @@ const App = () => {
       <HeaderMenu 
         setCurrentProjectname={setCurrentProjectname} 
         currentProjectname={currentProjectname}
+        setCurrentUniverseName={setCurrentUniverseName}
+        currentUniverseName={currentUniverseName}
         modelJson={modelJson}
         projectChanges={projectChanges}
         setProjectChanges={setProjectChanges}

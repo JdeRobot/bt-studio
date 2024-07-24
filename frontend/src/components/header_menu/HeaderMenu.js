@@ -15,7 +15,7 @@ import UniversesModal from './modals/UniverseModal';
 
 var dropdown_shown = false;
 
-const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, projectChanges, setProjectChanges, openError} ) => {
+const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUniverseName, currentUniverseName, modelJson, projectChanges, setProjectChanges, openError} ) => {
 
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
   const [isUniversesModalOpen, setUniversesModalOpen] = useState(false);
@@ -113,8 +113,9 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
     setProjectModalOpen(false);
   };
 
-  const handleCloseUniversesModal = () => {
+  const handleCloseUniversesModal = (universe_config) => {
     setUniversesModalOpen(false);
+    setCurrentUniverseName(universe_config);
   };
 
   const handleFormSubmit = (data) => {
@@ -146,7 +147,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
         <div className='header-button-container'>
           {currentProjectname && (
               <span className="project-name-box">
-                <div className='project-name'>{currentProjectname}</div>
+                <div className='project-name'>{currentProjectname + ' ~ ' + ((currentUniverseName) ? currentUniverseName : "No Universe selected")}</div>
                 {projectChanges && <div className="small-text">Unsaved</div>}
               </span>
           )}

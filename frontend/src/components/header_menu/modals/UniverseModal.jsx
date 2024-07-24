@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './UniverseModal.css';
 import Modal from '../../Modal/Modal';
-import back_modal_img from '../../Modal/img/back.svg'
-import close_modal_img from '../../Modal/img/close.svg'
+import back_modal_img from '../../Modal/img/back.svg';
+import close_modal_img from '../../Modal/img/close.svg';
+import delete_icon from '../../diagram_editor/img/delete.svg';
 import axios from 'axios';
 
 const initialProjectData = {
@@ -22,6 +23,7 @@ var universe_config = {
 const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialProjectData);
+  const [existingUniverses, setUniversesProjects] = useState([]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -38,7 +40,7 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
 
     axios.get(listApiUrl)
       .then(response => {
-        console.log(response.data.universes_list)
+        setUniversesProjects(response.data.universes_list)
       })
       .catch(error => {
         console.error('Error while fetching universes list:', error);
@@ -67,6 +69,10 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
     onClose()
   };
 
+  const deleteUniverse = (universe_name) => {
+    console.log('Deleting Universe ' + universe_name)
+  }
+
   return (
     <Modal id="universes-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
       <form onSubmit={onSubmit} onReset={handleCancel}>
@@ -75,16 +81,30 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
           <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
         </div>
         <div className="form-row">
-            <ul className='project-entry-list'>
-            </ul>
-          </div>
-          <div className="form-row">
-            <div className="project-modal-creation-buttons-container">
-              <div className='project-modal-create-button' onClick={() => {} }>Import Universe</div>
-              <div className='project-modal-create-button'>Other</div>
-              <div className='project-modal-create-button'>Other</div>
+              <ul className='project-entry-list'>
+                {Object.entries(existingUniverses).map((project) => {
+                  return (
+                    <div className='project-entry' onClick={() => onClose(project[1])}>
+                      <label className='project-entry-name'>{project[1]}</label>
+                      <img
+                        className="project-entry-delete icon"
+                        style={{ color: 'white' }}
+                        title='Delete'
+                        onClick={(e) => { deleteUniverse(project[1]); e.stopPropagation(); } }
+                        src={delete_icon}>
+                      </img>
+                    </div>
+                  );
+                })}
+              </ul>
             </div>
+        <div className="form-row">
+          <div className="project-modal-creation-buttons-container">
+            <div className='project-modal-create-button' onClick={() => {} }>Import Universe</div>
+            <div className='project-modal-create-button' onClick={() => {} }>Use Universe from Robotics Backend</div>
+            {/* <div className='project-modal-create-button'>Other</div> */}
           </div>
+        </div>
       </form>
     </Modal>
   );
