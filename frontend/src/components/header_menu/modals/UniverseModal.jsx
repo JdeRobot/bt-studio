@@ -10,16 +10,6 @@ const initialProjectData = {
   projectName: '',
 };
 
-var universe_config = {
-  "name": "follow_person_ros2",
-  "launch_file_path": "/opt/jderobot/Launchers/follow_person.launch.py",
-  "ros_version": "ROS2",
-  "visualization": "gazebo_rae",
-  "world": "gazebo",
-  "template": "RoboticsAcademy/exercises/static/exercises/follow_person_newmanager/python_template/",
-  "exercise_id": "follow_person_newmanager"
-}
-
 const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialProjectData);
@@ -70,7 +60,35 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
   };
 
   const deleteUniverse = (universe_name) => {
-    console.log('Deleting Universe ' + universe_name)
+    const apiUrl = `/tree_api/delete_universe?project_name=${currentProject}&universe_name=${universe_name}`;
+    axios.get(apiUrl)
+      .then(response => {
+        if (response.data.success) {
+        const listApiUrl = `/tree_api/get_universes_list?project_name=${currentProject}`;
+
+        axios.get(listApiUrl)
+          .then(response => {
+            setUniversesProjects(response.data.universes_list)
+          })
+          .catch(error => {
+            console.error('Error while fetching universes list:', error);
+            openError(`An error occurred while fetching the universes list`);
+          });
+          console.log('Universe deleted successfully');
+        } 
+      })
+      .catch(error => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          if (error.response.status === 409) {
+            openError(`The universe ${universe_name} does not exist`);
+          } else {
+            // Handle other statuses or general API errors
+            openError('Unable to connect with the backend server. Please check the backend status.');
+          }
+        }
+      });
   }
 
   return (

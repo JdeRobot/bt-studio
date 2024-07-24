@@ -12,6 +12,8 @@ import VncViewer from './components/vnc_viewer/VncViewer'
 import CommsManager from './components/comms_manager/CommsManager';
 import ErrorModal from './components/error_popup/ErrorModal';
 
+import axios from 'axios';
+
 const App = () => {
 
   const [editorWidth, setEditorWidth] = useState(807);
@@ -28,16 +30,6 @@ const App = () => {
   // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
 
-  var universe_config = {
-    "name": "follow_person_ros2",
-    "launch_file_path": "/opt/jderobot/Launchers/follow_person.launch.py",
-    "ros_version": "ROS2",
-    "visualization": "gazebo_rae",
-    "world": "gazebo",
-    "template": "RoboticsAcademy/exercises/static/exercises/follow_person_newmanager/python_template/",
-    "exercise_id": "follow_person_newmanager"
-  }
-
   useEffect(() => {
     const newManager = CommsManager("ws://127.0.0.1:7163");
     setManager(newManager);
@@ -52,21 +44,99 @@ const App = () => {
     manager.connect()
     .then(() => {
       console.log("Connected!");
-      manager.launchWorld(universe_config)
-      .then(() => {
-        console.log("World launched!")
-        manager.prepareVisualization(universe_config.visualization)
-        .then(() => {
-          console.log("Viz ready!")
-          setGazeboEnabled(true);
-        })
-      })
     })
     .catch((e) => {
       // Connection failed, try again after a delay
       console.log("Connection failed, trying again!")
       setTimeout(connectWithRetry, 1000);
     });
+  }
+
+  const launchUniverse = (universe_name) => {
+    const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(currentProjectname)}&universe_name=${encodeURIComponent(universe_name)}`;
+    axios.get(apiUrl)
+    .then((response) => {
+      console.log(response.data);
+      const universe_raw_config = JSON.parse(response.data);
+
+      if (universe_raw_config.type === "robotics_backend") {
+        const universe_config = {
+          "name": universe_raw_config.name,
+          "launch_file_path": universe_raw_config.config.launch_file_path,
+          "ros_version": "ROS2",
+          "visualization": "gazebo_rae",
+          "world": "gazebo",
+          "exercise_id": universe_raw_config.id
+        };
+        manager.launchWorld(universe_config)
+        .then(() => {
+          console.log("World launched!")
+          manager.prepareVisualization(universe_config.visualization)
+          .then(() => {
+            console.log("Viz ready!")
+            setGazeboEnabled(true);
+          })
+        })
+      } else {
+        // Other configurations like zip
+      }
+    })
+  }
+
+  const terminateUniverse = () => {
+    if (gazeboEnabled) {
+      manager.terminate_application()
+      .then(() => {
+        manager.terminate_visualization()
+        .then(() => {
+          manager.terminate_universe()
+          .then(() => {
+            setGazeboEnabled(false);
+            setCurrentUniverseName(null);
+          })
+        })
+      })
+    }
+  }
+
+  const changeUniverse = (universe_name) => {
+    if (gazeboEnabled) {
+      const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(currentProjectname)}&universe_name=${encodeURIComponent(universe_name)}`;
+      axios.get(apiUrl)
+      .then((response) => {
+        console.log(response.data);
+        const universe_raw_config = JSON.parse(response.data);
+
+        if (universe_raw_config.type === "robotics_backend") {
+          const universe_config = {
+            "name": universe_raw_config.name,
+            "launch_file_path": universe_raw_config.config.launch_file_path,
+            "ros_version": "ROS2",
+            "visualization": "gazebo_rae",
+            "world": "gazebo",
+            "exercise_id": universe_raw_config.id
+          };
+          manager.terminate_application()
+          .then(() => {
+            manager.terminate_visualization()
+            .then(() => {
+              manager.terminate_universe()
+              .then(() => {
+                manager.launchWorld(universe_config)
+                .then(() => {
+                  console.log("World launched!")
+                  manager.prepareVisualization(universe_config.visualization)
+                  .then(() => {
+                    console.log("Viz ready!")
+                    setGazeboEnabled(true);
+                  })
+                })
+              })
+            })
+          })
+        }
+      })
+    }
   }
 
   useEffect(() => {
@@ -107,6 +177,9 @@ const App = () => {
         currentProjectname={currentProjectname}
         setCurrentUniverseName={setCurrentUniverseName}
         currentUniverseName={currentUniverseName}
+        launchUniverse={launchUniverse}
+        terminateUniverse={terminateUniverse}
+        changeUniverse={changeUniverse}
         modelJson={modelJson}
         projectChanges={projectChanges}
         setProjectChanges={setProjectChanges}

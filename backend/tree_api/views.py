@@ -41,6 +41,22 @@ def delete_project(request):
         return Response({'success': True})
     else:
         return Response({'success': False, 'message': 'Project does not exist'}, status=400)
+    
+@api_view(['GET'])
+def delete_universe(request):
+    project_name = request.GET.get('project_name')
+    universe_name = request.GET.get('universe_name')
+
+    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(folder_path, project_name)
+    universes_path = os.path.join(project_path, 'universes/')
+    universe_path = os.path.join(universes_path, universe_name)
+    
+    if os.path.exists(universe_path):
+        shutil.rmtree(universe_path)
+        return Response({'success': True})
+    else:
+        return Response({'success': False, 'message': 'Project does not exist'}, status=400)
 
 @api_view(['GET'])
 def get_project_list(request):
@@ -124,6 +140,28 @@ def get_universes_list(request):
         
     except Exception as e:
         return Response({'error': f'An error occurred: {str(e)}'}, status=500)
+
+@api_view(['GET'])
+def get_universe_configuration(request):
+    
+    project_name = request.GET.get('project_name')
+    universe_name = request.GET.get('universe_name')
+
+    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(folder_path, project_name)
+    universes_path = os.path.join(project_path, 'universes/')
+
+    if universe_name:
+        universe_path = os.path.join(universes_path, universe_name)
+        config_path = os.path.join(universe_path, 'config.json')
+        if os.path.exists(config_path):
+            with open(config_path, 'r') as f:
+                content = f.read()
+            return Response(content)
+        else:
+            return Response({'error': 'File not found'}, status=404)
+    else:
+        return Response({'error': 'Universe parameter is missing'}, status=400)
 
 @api_view(['GET'])
 def get_file_list(request):

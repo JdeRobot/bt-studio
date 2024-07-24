@@ -15,7 +15,7 @@ import UniversesModal from './modals/UniverseModal';
 
 var dropdown_shown = false;
 
-const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUniverseName, currentUniverseName, modelJson, projectChanges, setProjectChanges, openError} ) => {
+const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUniverseName, currentUniverseName, launchUniverse, terminateUniverse, changeUniverse, modelJson, projectChanges, setProjectChanges, openError} ) => {
 
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
   const [isUniversesModalOpen, setUniversesModalOpen] = useState(false);
@@ -61,6 +61,8 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
     if (existingProjects.includes(projectName)) {
       // Project exists, proceed to change
       setCurrentProjectname(projectName);
+      // Close the universe
+      terminateUniverse();
       console.log(`Switched to project ${projectName}`);
     } else {
       // Project doesn't exist
@@ -113,9 +115,17 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
     setProjectModalOpen(false);
   };
 
-  const handleCloseUniversesModal = (universe_config) => {
+  const handleCloseUniversesModal = (universe_name) => {
     setUniversesModalOpen(false);
-    setCurrentUniverseName(universe_config);
+
+    if (universe_name === undefined) {
+      return;
+    }
+
+    if ((currentUniverseName !== null) && (universe_name !== currentUniverseName)) {
+      changeUniverse(universe_name);
+      setCurrentUniverseName(universe_name);
+    }
   };
 
   const handleFormSubmit = (data) => {
