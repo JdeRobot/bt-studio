@@ -107,6 +107,23 @@ def get_project_graph(request):
     else:
         return Response({'error': 'The project does not have a graph definition'}, status=404)
 
+@api_view(['GET'])
+def get_universes_list(request):
+    
+    project_name = request.GET.get('project_name')
+    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(folder_path, project_name)
+    universes_path = os.path.join(project_path, 'universes/')
+
+    try:
+        # List all files in the directory
+        universes_list = [d for d in os.listdir(universes_path) if os.path.isdir(os.path.join(universes_path, d))]
+        
+        # Return the list of files
+        return Response({'universes_list': universes_list})
+        
+    except Exception as e:
+        return Response({'error': f'An error occurred: {str(e)}'}, status=500)
 
 @api_view(['GET'])
 def get_file_list(request):

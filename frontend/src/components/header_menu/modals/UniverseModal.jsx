@@ -3,6 +3,7 @@ import './UniverseModal.css';
 import Modal from '../../Modal/Modal';
 import back_modal_img from '../../Modal/img/back.svg'
 import close_modal_img from '../../Modal/img/close.svg'
+import axios from 'axios';
 
 const initialProjectData = {
   projectName: '',
@@ -23,11 +24,26 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
   const [formState, setFormState] = useState(initialProjectData);
 
   useEffect(() => {
-    if (isOpen && focusInputRef.current) {
+    if (!isOpen) {
+      return
+    }
+
+    if (focusInputRef.current) {
       setTimeout(() => {
         focusInputRef.current.focus();
       }, 0);
     }
+
+    const listApiUrl = `/tree_api/get_universes_list?project_name=${currentProject}`;
+
+    axios.get(listApiUrl)
+      .then(response => {
+        console.log(response.data.universes_list)
+      })
+      .catch(error => {
+        console.error('Error while fetching universes list:', error);
+        openError(`An error occurred while fetching the universes list`);
+      });
   }, [isOpen]);
 
   const handleInputChange = (event) => {

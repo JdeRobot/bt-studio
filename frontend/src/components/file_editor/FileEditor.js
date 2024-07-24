@@ -82,7 +82,7 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
         console.error('Error saving file:', error);
       });
     } else {
-      alert("No file is currentlyyy selected.");
+      alert("No file is currently selected.");
     }
   };
 

@@ -8,6 +8,7 @@ urlpatterns = [
     path('get_project_graph/', views.get_project_graph, name='get_project_graph'),
     path('get_project_list/', views.get_project_list, name='get_project_list'),
     path('get_file_list/', views.get_file_list, name='get_file_list'),
+    path('get_universes_list/', views.get_universes_list, name='get_universes_list'),
     path('get_file/', views.get_file, name='get_file'),
     path('create_file/', views.create_file, name='create_file'),
     path('delete_file/', views.delete_file, name='delete_file'),
