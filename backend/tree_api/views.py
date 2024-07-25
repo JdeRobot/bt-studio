@@ -20,11 +20,13 @@ def create_project(request):
     project_name = request.GET.get('project_name')
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, 'actions')
+    action_path = os.path.join(project_path, 'code/actions')
+    universes_path = os.path.join(project_path, 'universes')
     
     if not os.path.exists(project_path):
         os.mkdir(project_path)
         os.mkdir(action_path)
+        os.mkdir(universes_path)
         return Response({'success': True})
     else:
         return Response({'success': False, 'message': 'Project already exists'}, status=400)
@@ -37,6 +39,22 @@ def delete_project(request):
     
     if os.path.exists(project_path):
         shutil.rmtree(project_path)
+        return Response({'success': True})
+    else:
+        return Response({'success': False, 'message': 'Project does not exist'}, status=400)
+    
+@api_view(['GET'])
+def delete_universe(request):
+    project_name = request.GET.get('project_name')
+    universe_name = request.GET.get('universe_name')
+
+    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(folder_path, project_name)
+    universes_path = os.path.join(project_path, 'universes/')
+    universe_path = os.path.join(universes_path, universe_name)
+    
+    if os.path.exists(universe_path):
+        shutil.rmtree(universe_path)
         return Response({'success': True})
     else:
         return Response({'success': False, 'message': 'Project does not exist'}, status=400)
@@ -66,7 +84,7 @@ def save_project(request):
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(base_path, project_name)
-    graph_path = os.path.join(project_path, "graph.json")
+    graph_path = os.path.join(project_path, "code/graph.json")
 
     if project_path and graph_json:
 
@@ -93,7 +111,7 @@ def get_project_graph(request):
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(base_path, project_name)
-    graph_path = os.path.join(project_path, "graph.json")
+    graph_path = os.path.join(project_path, "code/graph.json")
 
     # Check if the project exists
     if os.path.exists(graph_path):
@@ -106,6 +124,45 @@ def get_project_graph(request):
     else:
         return Response({'error': 'The project does not have a graph definition'}, status=404)
 
+@api_view(['GET'])
+def get_universes_list(request):
+    
+    project_name = request.GET.get('project_name')
+    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(folder_path, project_name)
+    universes_path = os.path.join(project_path, 'universes/')
+
+    try:
+        # List all files in the directory
+        universes_list = [d for d in os.listdir(universes_path) if os.path.isdir(os.path.join(universes_path, d))]
+        
+        # Return the list of files
+        return Response({'universes_list': universes_list})
+        
+    except Exception as e:
+        return Response({'error': f'An error occurred: {str(e)}'}, status=500)
+
+@api_view(['GET'])
+def get_universe_configuration(request):
+    
+    project_name = request.GET.get('project_name')
+    universe_name = request.GET.get('universe_name')
+
+    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(folder_path, project_name)
+    universes_path = os.path.join(project_path, 'universes/')
+
+    if universe_name:
+        universe_path = os.path.join(universes_path, universe_name)
+        config_path = os.path.join(universe_path, 'config.json')
+        if os.path.exists(config_path):
+            with open(config_path, 'r') as f:
+                content = f.read()
+            return Response(content)
+        else:
+            return Response({'error': 'File not found'}, status=404)
+    else:
+        return Response({'error': 'Universe parameter is missing'}, status=400)
 
 @api_view(['GET'])
 def get_file_list(request):
@@ -113,7 +170,7 @@ def get_file_list(request):
     project_name = request.GET.get('project_name')
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, 'actions')
+    action_path = os.path.join(project_path, 'code/actions')
 
     try:
         # List all files in the directory
@@ -134,7 +191,7 @@ def get_file(request):
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, 'actions')
+    action_path = os.path.join(project_path, 'code/actions')
     
     if filename:
         file_path = os.path.join(action_path, filename)
@@ -159,7 +216,7 @@ def create_file(request):
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, 'actions')
+    action_path = os.path.join(project_path, 'code/actions')
     file_path = os.path.join(action_path, filename)
     
     if not os.path.exists(file_path):
@@ -180,7 +237,7 @@ def delete_file(request):
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, 'actions')
+    action_path = os.path.join(project_path, 'code/actions')
     file_path = os.path.join(action_path, filename)
     
     if os.path.exists(file_path):
@@ -201,7 +258,7 @@ def save_file(request):
     
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, 'actions')
+    action_path = os.path.join(project_path, 'code/actions')
     file_path = os.path.join(action_path, filename)
 
     # If file doesn't exist simply return
@@ -242,7 +299,7 @@ def generate_app(request):
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(base_path, app_name)
-    action_path = os.path.join(project_path, 'actions')
+    action_path = os.path.join(project_path, 'code/actions')
     tree_path = os.path.join('/tmp/tree.xml')
     self_contained_tree_path = os.path.join('/tmp/self_contained_tree.xml')
     template_path = os.path.join(settings.BASE_DIR, 'ros_template')
@@ -287,7 +344,7 @@ def get_simplified_app(request):
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, 'filesystem')
     project_path = os.path.join(base_path, app_name)
-    action_path = os.path.join(project_path, 'actions')
+    action_path = os.path.join(project_path, 'code/actions')
 
     working_folder = "/tmp/wf"
     tree_path = "/tmp/tree.xml"
@@ -330,6 +387,53 @@ def get_simplified_app(request):
             response = HttpResponse(zip_file, content_type=mime_type)
             response['Content-Disposition'] = f'attachment; filename={os.path.basename(zip_path)}'         
 
+            return response
+        except Exception as e:
+            return Response({'success': False, 'message': str(e)}, status=400)
+    else:
+        return Response({'error': 'app_name parameter is missing'}, status=500)
+
+@api_view(['POST'])
+def get_simplified_universe(request):
+    print("Getting simplified universe")
+
+    # Get the app name
+    app_name = request.data.get('app_name')
+    universe_name = request.data.get('universe_name')
+
+    # Make folder path relative to Django app
+    base_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(base_path, app_name)
+    universes_path = os.path.join(project_path, 'universes')
+    universe_path = os.path.join(universes_path, universe_name)
+
+    working_folder = "/tmp/wf"
+
+    if app_name and universe_name:
+
+        try:
+            # 1. Create the working folder
+            if os.path.exists(working_folder):
+                shutil.rmtree(working_folder)
+            os.mkdir(working_folder)
+
+            # 2. Copy necessary files
+            shutil.copytree(universe_path, working_folder, dirs_exist_ok=True)
+            print(working_folder)
+
+            # 3. Generate the zip
+            zip_path = working_folder + ".zip"
+            with zipfile.ZipFile(zip_path, 'w') as zipf:
+                for root, dirs, files in os.walk(working_folder):
+                    for file in files:
+                        zipf.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), working_folder))
+
+            # 4. Return the zip
+            zip_file = open(zip_path, 'rb')
+            mime_type, _ = mimetypes.guess_type(zip_path)
+            response = HttpResponse(zip_file, content_type=mime_type)
+            response['Content-Disposition'] = f'attachment; filename={os.path.basename(zip_path)}'         
+            print(response)
             return response
         except Exception as e:
             return Response({'success': False, 'message': str(e)}, status=400)
