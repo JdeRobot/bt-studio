@@ -122,8 +122,13 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
       return;
     }
 
-    if ((currentUniverseName !== null) && (universe_name !== currentUniverseName)) {
-      changeUniverse(universe_name);
+    if (currentUniverseName !== null) {
+      if (universe_name !== currentUniverseName) {
+        changeUniverse(universe_name);
+        setCurrentUniverseName(universe_name);
+      }
+    } else {
+      launchUniverse(universe_name);
       setCurrentUniverseName(universe_name);
     }
   };
