@@ -1,4 +1,110 @@
-#universes-modal {
+#settings-modal {
   width:50%;
   height:75%;
+}
+
+.settings-entry-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px;
+    overflow-y: auto;
+    max-height: 65vh;
+
+    --g:radial-gradient(50% 20px, var(--background-500), var(--background));  
+    background: 
+      linear-gradient(var(--background) 10px, #0000 40px calc(100% - 40px),var(--background) calc(100% - 10px)) local, 
+      var(--g) top   /100% 200%,    
+      var(--g) bottom/100% 200%;
+}
+
+/* width */
+.settings-entry-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+.settings-entry-list::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--scrollbar);
+  border-radius: 10px;
+}
+
+/* Handle */
+.settings-entry-list::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 10px;
+}
+
+.setting-section {
+  width: 75%;
+  min-height: 3rem;
+  background-color: var(--background);
+  padding: 5px;
+  align-content: center;
+  color: var(--text);
+}
+
+.setting-section-title {
+  margin-top: 10px;
+  background-color: transparent !important;
+  margin-bottom: 0px !important;
+  font-size: larger;
+}
+
+.setting-subsection {
+  width: 100%;
+  min-height: 3rem;
+  margin-top: 5px;
+  margin-left: 10px;
+  padding: 5px;
+  align-content: center;
+  color: var(--text);
+}
+
+.setting-subsection-title {
+  margin-bottom: 0px !important;
+  font-size: large;
+}
+
+.setting-setting {
+  width: 100%;
+  min-height: 3rem;
+  margin-left: 10px;
+  margin-top: 5px;
+  padding: 5px;
+  align-content: center;
+  justify-content: left;
+  color: var(--text);
+  display: grid;
+  grid-gap: 5px;
+  grid-template-rows: auto 15px auto;
+}
+
+.setting-setting-title {
+  margin-bottom: 0px !important;
+  font-size: medium;
+}
+
+.setting-setting-checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--buttons);
+  height: 20px;
+  width: 20px;
+  border-radius: 4px;
+  display: grid;
+  place-content: center;
+}
+
+/* .setting-setting-checkbox::before {
+  content: "";
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em var(--buttons-hover);
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+} */
+
+.setting-setting-checkbox:checked {
+  background-color: var(--buttons-hover);
 }

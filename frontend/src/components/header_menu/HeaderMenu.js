@@ -17,7 +17,7 @@ import SettingsModal from '../settings_popup/SettingsModal';
 
 var dropdown_shown = false;
 
-const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUniverseName, currentUniverseName, launchUniverse, terminateUniverse, changeUniverse, modelJson, projectChanges, setProjectChanges, openError} ) => {
+const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUniverseName, currentUniverseName, launchUniverse, terminateUniverse, changeUniverse, modelJson, projectChanges, setProjectChanges, openError, settingsProps} ) => {
 
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
   const [isUniversesModalOpen, setUniversesModalOpen] = useState(false);
@@ -175,8 +175,8 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
           isOpen={isSettingsModalOpen}
           onSubmit={handleFormSubmit}
           onClose={handleCloseSettingsModal}
-          currentProject={currentProjectname}
-          openError={openError}
+          isDarkMode={settingsProps[0]}
+          enableDarkMode={settingsProps[1]}
         />
 
         <div className='header-button-container'>
