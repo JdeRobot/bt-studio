@@ -1,12 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Saturation, Hue, useColor } from "react-color-palette";
+import "react-color-palette/css";
 import './SettingsModal.css';
 import Modal from '../Modal/Modal';
 import close_modal_img from '../Modal/img/close.svg'
 
 const SettingsModal = ({ onSubmit, isOpen, onClose, isDarkMode, enableDarkMode}) => {
+  const [color, setColor] = useColor("rgb(128 0 128)");
 
   useEffect(() => {
   }, [isOpen]);
+
+  useEffect(() => {
+    console.log("rgb("+Math.round(color.rgb.r)+","+Math.round(color.rgb.g)+","+Math.round(color.rgb.b)+")")
+    document.documentElement.style.setProperty("--header", "rgb("+Math.round(color.rgb.r)+","+Math.round(color.rgb.g)+","+Math.round(color.rgb.b)+")");
+  }, [color]);
 
   const handleCancel = () => {
     onClose()
@@ -35,10 +43,13 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, isDarkMode, enableDarkMode})
                       <input type="checkbox" className='setting-setting-checkbox' checked={isDarkMode} onChange={() => enableDarkMode(!isDarkMode)}/>
                     </div>
                     {/* Only show next if above is on */}
-                    <div className='setting-setting'>
+                    { false &&
+                    <div className='setting-setting' id="setting-project-accent-color">
                       <label className='setting-setting-title'>Project accent color</label>
-                      {/* Color selection here */}
+                      <Saturation height={100} color={color} onChange={setColor} />
+                      <Hue width={300} color={color} onChange={setColor} />
                     </div>
+                    }
                 </div>
               </div>
               <div className='setting-section'>

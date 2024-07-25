@@ -67,7 +67,7 @@
 }
 
 .setting-setting {
-  width: 100%;
+  width: auto;
   min-height: 3rem;
   margin-left: 10px;
   margin-top: 5px;
@@ -75,15 +75,23 @@
   align-content: center;
   justify-content: left;
   color: var(--text);
-  display: grid;
-  grid-gap: 5px;
-  grid-template-rows: auto 15px auto;
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
 }
 
 .setting-setting-title {
   margin-bottom: 0px !important;
   font-size: medium;
 }
+
+#setting-project-accent-color {
+  width: 100%;
+}
+
+
+
+/* INPUTS */
 
 .setting-setting-checkbox {
   -webkit-appearance: none;
