@@ -5,6 +5,7 @@ import back_modal_img from '../../Modal/img/back.svg';
 import close_modal_img from '../../Modal/img/close.svg';
 import delete_icon from '../../diagram_editor/img/delete.svg';
 import axios from 'axios';
+import UniverseUploadModal from './UniverseUploadModal';
 
 const initialProjectData = {
   projectName: '',
@@ -14,6 +15,7 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialProjectData);
   const [existingUniverses, setUniversesProjects] = useState([]);
+  const [isUploadModalOpen, setUploadModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
@@ -91,8 +93,26 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
       });
   }
 
+  const importFromZip = () => {
+    console.log("Opening import modal");
+    setUploadModalOpen(true);
+  }
+
+  const handleCloseUploadUniverseModal = (universe_name) => {
+    setUploadModalOpen(false);
+  };
+
+  const handleFormSubmit = (data) => {
+  }
+
   return (
     <Modal id="universes-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
+        <UniverseUploadModal
+          isOpen={isUploadModalOpen}
+          onSubmit={handleFormSubmit}
+          onClose={handleCloseUploadUniverseModal}
+          openError={openError}
+        />
       <form onSubmit={onSubmit} onReset={handleCancel}>
         <div className="modal-titlebar">
           <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Manage your Universes</label>
@@ -118,8 +138,8 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
             </div>
         <div className="form-row">
           <div className="project-modal-creation-buttons-container">
-            <div className='project-modal-create-button' onClick={() => {} }>Import Universe</div>
-            <div className='project-modal-create-button' onClick={() => {} }>Use Universe from Robotics Backend</div>
+            <div className='project-modal-create-button' onClick={() => { importFromZip(); } }>Import from zip</div>
+            <div className='project-modal-create-button' onClick={() => {} }>Import from Robotics Backend library</div>
             {/* <div className='project-modal-create-button'>Other</div> */}
           </div>
         </div>
