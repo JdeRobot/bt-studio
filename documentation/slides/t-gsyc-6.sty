@@ -1,0 +1,278 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% t-gsyc-6.sty --- Slides style for GSyC.
+%% Author          : Francisco J. Ballesteros
+%% Created On      : Wed Jun 19 17:08:16 1996
+%% Last Modified By: Jose Centeno
+%% Last Modified On: lun mar 27 12:41:10 CEST 20001
+%% Update Count    : 81
+%% VC Id           : $Id: t-gsyc-6.sty,v 1.1 2004/06/21 08:31:20 rocapal Exp $ 
+%% Usage           : Use this file as a package:
+%%                 : 
+%%                 : You need seminar, notes, slidesec and dvips:
+%%                 :
+%%                 : \documentclass[notes,slidesec,dvips]{seminar}
+%%                 :
+%%                 : Use then this package: \usepackage{slgsyc}
+%%                 :
+%%                 : In the preamble you must include this:
+%%                 :
+%%                 : \title{ Your title here}  
+%%                 : \author{ Who will give this talk... }
+%%                 :
+%%                 : But may also include...
+%%                 : any desired date
+%%                 :    \date{Date for the talk} (default is \today)
+%%                 : any desired copyright text...
+%%                 :    \cop{year owner}     (default is \author)
+%%                 : your address for the title page...
+%%                 :    \address{Your address} (default is none)
+%%                 : the conference where the talk will be given
+%%                 :    \conference{Here and There}
+%%                 :
+%%                 : \def\notetext{text to say: space for notes}
+%%                 : \def\contstr{Text to append to continued slides}
+%%                 :
+%%                 : \maketitle will create a title page.
+%%                 : Environments hslide and vslide are available.
+%%                 : \twoup may be used (and other seminar options...)
+%%                 :
+%%                 : \hchap and \vchap commands start new chapters with
+%%                 : a title page
+%%                 :
+%%                 : Sectioning commands are
+%%                 : \slsect{} to start a section (will change heading) 
+%%                 : \slsubsect{} to make a heading inside a section.
+%%                 :
+%%                 : In \twoup `\twoupnotes' may be used and it will include
+%%                 : empty `notes' slide-size vertical space so that
+%%                 : it will be only one  (twoup sized) slide per page.
+%%                 :
+%% Status          : rather tested
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+                                      
+\def\fileversion{2}%
+\def\filedate{1996/06/19}%
+\ProvidesPackage{t-gsyc-6}[\filedate, \fileversion]
+\message{ Slides - GSyC }
+
+
+% Pedro de las Heras  5/10/94
+% Major rewrite -- nemo@nautilus Wed Jun 19 10:00:59 MET DST 1996
+% Preliminar pdftex support -- jcenteno lun mar 27 12:42:09 CEST 2000
+
+
+\RequirePackage{color}
+\RequirePackage{epsfig}
+
+\definecolor{darkblue}{rgb} {0.0, 0.0, 0.8}
+\definecolor{darkgreen}{rgb}{0.0, 0.4, 0.0}
+
+
+
+%%%%%%%%%%%%%%%% Smaller lists
+\def\@listI{\setlength\leftmargin{\leftmargini}
+            \setlength\parsep {0\p@}%
+            \setlength\topsep {.4em}%
+            \setlength\itemsep{.4em}}
+\let\@listi\@listI
+\@listi
+\def\@listii {\setlength  \leftmargin{\leftmarginii}%
+              \setlength  \labelwidth{\leftmarginii}%
+              \addtolength\labelwidth{-\labelsep}}
+\def\@listiii{\setlength  \leftmargin{\leftmarginiii}%
+              \setlength  \labelwidth{\leftmarginiii}%
+              \addtolength\labelwidth{-\labelsep}%
+              \setlength  \topsep    {.2em}%
+              \setlength  \itemsep   {\topsep}}
+\def\@listiv {\setlength  \leftmargin{\leftmarginiv}%
+              \setlength  \labelwidth{\leftmarginiv}%
+              \addtolength\labelwidth{-\labelsep}}
+\def\@listv  {\setlength  \leftmargin{\leftmarginv}%
+              \setlength  \labelwidth{\leftmarginv}%
+          \addtolength\labelwidth{-\labelsep}}
+\def\@listvi {\setlength  \leftmargin{\leftmarginvi}%
+              \setlength  \labelwidth{\leftmarginvi}%
+              \addtolength\labelwidth{-\labelsep}}
+
+\setlength{\columnseprule}{1pt}
+
+
+\def\makeslideheading#1{%
+\begin{center}
+    \begin{center}
+      \textbf{\Large{\textcolor{darkblue}{#1}}}
+    \end{center}
+\end{center} 
+\vspace{5mm}
+}
+
+
+\def\makeslidesubheading#1{%
+  \begin{center}
+  \textbf{\textsl{\textcolor{darkgreen}{#1}}}
+  \end{center}
+\vspace{2mm}
+}
+
+\def\sltitle{}
+\def\slauthor{}
+\def\sladdress{}
+\def\slcop{\slauthor}
+\def\slconf{}
+\def\sldate{\today}
+\def\slchap{}
+
+\def\contstr{(cont.)}
+\def\notetext{NOTAS:}
+
+\renewcommand{\title}[1]{%
+  \global\def\sltitle{#1}
+}
+
+\renewcommand{\author}[1]{%
+  \global\def\slauthor{#1}
+}
+
+\newcommand{\address}[1]{%
+  \global\def\sladdress{#1}
+}
+\newcommand{\cop}[1]{%
+  \global\def\slcop{#1}
+}
+\newcommand{\conference}[1]{%
+  \global\def\slconf{#1}
+}
+
+\renewcommand{\date}[1]{%
+  \global\def\sldate{#1}
+}
+
+\newcommand{\hchap}[1]{
+  \def\slchap{: #1}
+  \markboth{\sltitle}{} 
+  \begin{hslide}
+        \begin{center}
+         \textrm{\textbf{\Huge{\textcolor{red}{#1}}}}
+        \end{center}
+  \end{hslide}
+}
+
+\newcommand{\vchap}[1]{
+  \def\slchap{: #1}
+  \markboth{\sltitle}{} 
+  \begin{vslide}
+        \begin{center}
+         \textrm{\textbf{\huge{#1}}}                  
+        \end{center}
+  \end{vslide}
+}
+
+\def\maketitle{
+      \thispagestyle{empty}
+      \begin{center}\bf
+      {\LARGE    
+      \vfill
+      %\hrule
+
+      %\vspace{0.2cm}
+      %\includegraphics[height=1.9cm]{template/logo-urjc}
+      %\vspace{0.4cm}
+
+      \sltitle
+      \vspace{1.0cm}}
+
+      \centerline{\includegraphics[height=1.3cm]{logo-jderobot}}
+      %% \hspace{3.25cm}
+      %% \includegraphics[height=2cm]{template/logo-jderobot}
+
+      \vspace{0.45cm}
+
+      {\slconf
+      \vspace{0.6cm}}
+
+      {\textsl{\slauthor}
+      \vspace{0.1cm}}
+
+      {\textsl{\sladdress}
+      \vspace{0.95cm}}
+    
+      \begin{flushright} 
+      \textit{\sldate}
+      \end{flushright} 
+      \vspace{0.2cm}
+
+      %\hrule
+      \vfill
+   \end{center}
+   \twoup@title@note
+}
+
+\def\t@ema{}
+\def\t@emacont{}
+\newif\iffirst@tema
+
+\def\twoup@note{}
+\def\twoup@title@note{}
+
+\def\twoupnotes{%
+  \global\def\twoup@note{\thispagestyle{empty}\textbf{\notetext}}
+  \global\def\twoup@title@note{\newpage \ \ \ \thispagestyle{empty}}
+}
+
+\def\slsect#1{%
+  \global\def\t@ema{{#1}}
+  \first@tematrue
+  \global\def\rightmark{\t@ema\t@emacont}\global\def\leftmark{\sltitle\slchap}%
+  \makeslideheading{{#1}}
+}
+
+\def\set@cont{%
+  \global\def\t@emacont{\ \contstr}
+}
+\def\setno@cont{%
+  \global\def\t@emacont{}
+}
+
+\def\new@trans{%
+  {\iffirst@tema\setno@cont \else\set@cont \fi}}
+
+
+\newcommand{\slsubsect}{\makeslidesubheading}
+
+
+\newenvironment{hslide}{%
+  \begin{slide}\sffamily\first@temafalse}{\new@trans\end{slide}\twoup@note}
+
+
+\newenvironment{vslide}{%
+\begin{slide*}\sffamily\first@temafalse}{\new@trans\end{slide*}\twoup@note}
+
+
+\newpagestyle{slgsyc}% 
+  {\raisebox{-0.2cm}[0.5cm][0.2cm]{
+      \includegraphics[height=0.5cm]{logo-jderobot}
+      %% \hspace{0.15cm}
+      %% \includegraphics[height=0.7cm]{template/logo-jderobot}
+      }\hspace{\fill} 
+    \bf{\sl\rightmark}
+    \hspace{\fill}\thepage\hspace{-\textwidth}\rule[-2.4mm]{\textwidth}{0.2mm}}
+    {\rule[3mm]{\textwidth}{0.2mm}\hspace{-\textwidth}\tiny{\copyright
+    \slcop \hspace{\fill} \leftmark}}%
+
+
+\pagestyle{slgsyc}
+
+
+
+\raggedslides[0pt] % Con esto tenemos justificado 
+
+\slideframe{none} % El recuadro de la transpa
+
+\epsfslidesize  % Si no ponemos esto no escala bien 
+                % los eps (ver doc de seminar).
+
+

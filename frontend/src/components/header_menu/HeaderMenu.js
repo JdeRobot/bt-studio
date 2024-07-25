@@ -9,13 +9,16 @@ import logo_img from './img/logo.png'
 import './HeaderMenu.css'
 import change_project_img from './img/change_project.svg'
 import save_project_img from './img/save_project.svg'
-import ProjectModal from './ProjectModal';
+import universes_img from './img/universes.svg'
+import ProjectModal from './modals/ProjectModal';
+import UniversesModal from './modals/UniverseModal';
 
 var dropdown_shown = false;
 
-const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, projectChanges, setProjectChanges, openError} ) => {
+const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUniverseName, currentUniverseName, launchUniverse, terminateUniverse, changeUniverse, modelJson, projectChanges, setProjectChanges, openError} ) => {
 
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
+  const [isUniversesModalOpen, setUniversesModalOpen] = useState(false);
   const [existingProjects, setExistingProjects] = useState("");
 
   const createProject = (projectName) => {
@@ -58,6 +61,8 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
     if (existingProjects.includes(projectName)) {
       // Project exists, proceed to change
       setCurrentProjectname(projectName);
+      // Close the universe
+      terminateUniverse();
       console.log(`Switched to project ${projectName}`);
     } else {
       // Project doesn't exist
@@ -67,6 +72,11 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
 
   const openProjectView = (e) => {
     setProjectModalOpen(true)
+    saveProject();
+  };
+
+  const openUniversesView = (e) => {
+    setUniversesModalOpen(true)
     saveProject();
   };
 
@@ -105,6 +115,19 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
     setProjectModalOpen(false);
   };
 
+  const handleCloseUniversesModal = (universe_name) => {
+    setUniversesModalOpen(false);
+
+    if (universe_name === undefined) {
+      return;
+    }
+
+    if ((currentUniverseName !== null) && (universe_name !== currentUniverseName)) {
+      changeUniverse(universe_name);
+      setCurrentUniverseName(universe_name);
+    }
+  };
+
   const handleFormSubmit = (data) => {
   }
   
@@ -123,17 +146,27 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, modelJson, proj
           createProject={createProject}
           openError={openError}
         />
+        <UniversesModal
+          isOpen={isUniversesModalOpen}
+          onSubmit={handleFormSubmit}
+          onClose={handleCloseUniversesModal}
+          currentProject={currentProjectname}
+          openError={openError}
+        />
 
         <div className='header-button-container'>
           {currentProjectname && (
               <span className="project-name-box">
-                <div className='project-name'>{currentProjectname}</div>
+                <div className='project-name'>{currentProjectname + ' ~ ' + ((currentUniverseName) ? currentUniverseName : "No Universe selected")}</div>
                 {projectChanges && <div className="small-text">Unsaved</div>}
               </span>
           )}
           
           <button className="header-button" onClick={openProjectView} title="Change project">
             <img className="header-icon" src={change_project_img}></img>
+          </button>
+          <button className="header-button" onClick={openUniversesView} title="Universe menu">
+            <img className="header-icon" src={universes_img}></img>
           </button>
           <button className="header-button" onClick={saveProject} title="Save project">
             <img className="header-icon" src={save_project_img}></img>

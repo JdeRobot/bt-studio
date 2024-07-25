@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './ProjectModal.css';
-import Modal from '../Modal/Modal';
-import back_modal_img from '../Modal/img/back.svg'
-import close_modal_img from '../Modal/img/close.svg'
-import delete_icon from '../diagram_editor/img/delete.svg';
+import Modal from '../../Modal/Modal';
+import back_modal_img from '../../Modal/img/back.svg'
+import close_modal_img from '../../Modal/img/close.svg'
+import delete_icon from '../../diagram_editor/img/delete.svg';
 import axios from 'axios';
 
 const initialProjectData = {
