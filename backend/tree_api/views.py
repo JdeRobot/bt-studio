@@ -272,6 +272,25 @@ def save_file(request):
     except Exception as e:
         return Response({'success': False, 'message': str(e)}, status=400)
 
+@api_view(['GET'])
+def get_project_configuration(request):
+    
+    project_name = request.GET.get('project_name')
+
+    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+
+    if project_name:
+        project_path = os.path.join(folder_path, project_name)
+        config_path = os.path.join(project_path, 'config.json')
+        if os.path.exists(config_path):
+            with open(config_path, 'r') as f:
+                content = f.read()
+            return Response(content)
+        else:
+            return Response({'error': 'File not found'}, status=404)
+    else:
+        return Response({'error': 'Project parameter is missing'}, status=400)
+
 @api_view(['POST'])
 def translate_json(request):
 
