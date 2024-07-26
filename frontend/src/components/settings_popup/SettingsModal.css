@@ -11,11 +11,11 @@
     overflow-y: auto;
     max-height: 65vh;
 
-    --g:radial-gradient(50% 20px, var(--background-500), var(--background));  
+    /* --g:radial-gradient(50% 20px, var(--background-500), var(--background));  
     background: 
       linear-gradient(var(--background) 10px, #0000 40px calc(100% - 40px),var(--background) calc(100% - 10px)) local, 
       var(--g) top   /100% 200%,    
-      var(--g) bottom/100% 200%;
+      var(--g) bottom/100% 200%; */
 }
 
 /* width */
@@ -36,6 +36,7 @@
 }
 
 .setting-section {
+  display: inline-table;
   width: 75%;
   min-height: 3rem;
   background-color: var(--background);

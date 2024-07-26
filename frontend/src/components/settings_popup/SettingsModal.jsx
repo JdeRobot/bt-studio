@@ -42,7 +42,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
           <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Settings</label>
           <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
         </div>
-        <div className="form-row">
+        <div className="form-row" style={{height:"95%"}}>
             <ul className='settings-entry-list'>
               {/* <Section title="General">
                 <SubSection title="Accent Colors">
