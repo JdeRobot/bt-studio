@@ -6,7 +6,7 @@ import NewActionModal from './NewActionModal.jsx';
 import add_img from './img/add.svg'
 import delete_img from './img/delete.svg'
 
-const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, setProjectChanges, actionNodesData}) => {
+const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, setProjectChanges, actionNodesData, showAccentColor}) => {
 
   const [fileList, setFileList] = useState(null);
   const [isNewActionModalOpen, setNewActionModalOpen] = useState(false);
@@ -120,7 +120,9 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
               onClick={() => handleFileClick(file)}
             >
               <label>{file}</label>
-              <div className="accent-color" style={{backgroundColor: actionNodesData[file] ? actionNodesData[file]['color'] : 'none'}}/>
+              { showAccentColor &&
+                <div className="accent-color" style={{backgroundColor: actionNodesData[file] ? actionNodesData[file]['color'] : 'none'}}/>
+              }
             </div>
           ))}
         </div>

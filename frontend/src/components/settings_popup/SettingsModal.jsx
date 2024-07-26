@@ -5,6 +5,7 @@ import './SettingsModal.css';
 import Modal from '../Modal/Modal';
 import close_modal_img from '../Modal/img/close.svg'
 import Dropdown from './options/Dropdown';
+import Checkbox from './options/Checkbox';
 
 const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
   const [color, setColor] = useColor("rgb(128 0 128)");
@@ -36,16 +37,16 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
         </div>
         <div className="form-row">
             <ul className='settings-entry-list'>
-              <div className='setting-section'>
+              {/* <div className='setting-section'>
                 <label className='setting-section-title'>General</label>
                 <div className='setting-subsection'>
                   <label className='setting-subsection-title'>Accent Colors</label>
                     <div className='setting-setting'>
                       <label className='setting-setting-title'>Turn on project accent color</label>
-                      {/* Checkbox here */}
+                      Checkbox here
                       <input type="checkbox" className='setting-setting-checkbox' checked={settings.theme} onChange={() => settings.setTheme(!settings.theme)}/>
                     </div>
-                    {/* Only show next if above is on */}
+                    Only show next if above is on
                     { false &&
                     <div className='setting-setting' id="setting-project-accent-color">
                       <label className='setting-setting-title'>Project accent color</label>
@@ -54,7 +55,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
                     </div>
                     }
                 </div>
-              </div>
+              </div> */}
               <div className='setting-section'>
                 <label className='setting-section-title'>Style</label>
                 <div className='setting-subsection'>
@@ -65,6 +66,19 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
                       value={settings.theme}
                       setValue={settings.setTheme}
                       possibleValues={["dark", "light"]}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className='setting-section'>
+                <label className='setting-section-title'>Editor</label>
+                <div className='setting-subsection'>
+                  <label className='setting-subsection-title'>Accent Color</label>
+                  <div className='setting-setting'>
+                    <label className='setting-setting-title'>Show actions accent color</label>
+                    <Checkbox
+                      value={settings.editor.accentColors}
+                      setValue={settings.editor.setAccentColors}
                     />
                   </div>
                 </div>

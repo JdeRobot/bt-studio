@@ -29,8 +29,17 @@ const App = () => {
 
   // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
-  const [btOrder, setBtOrder] = useState("bottom-to-top");
+  ////////////////////// SETTINGS //////////////////////
+  const [editorShowAccentColors, setEditorShowAccentColors] = useState(true);
   const [theme, setTheme] = useState("dark");
+  const [btOrder, setBtOrder] = useState("bottom-to-top");
+
+  const settings = {
+    editor: {accentColors: editorShowAccentColors, setAccentColors: setEditorShowAccentColors},
+    theme:theme, setTheme:setTheme,
+    btOrder:btOrder, setBtOrder:setBtOrder
+  };
+  //////////////////////////////////////////////////////
 
   useEffect(() => {
     const newManager = CommsManager("ws://127.0.0.1:7163");
@@ -186,7 +195,7 @@ const App = () => {
         projectChanges={projectChanges}
         setProjectChanges={setProjectChanges}
         openError={openError}
-        settingsProps={{theme:theme, setTheme:setTheme, btOrder:btOrder, setBtOrder:setBtOrder}}
+        settingsProps={settings}
       />
 
       <div className="App-main" style={{ display: 'flex' }}>
@@ -198,6 +207,7 @@ const App = () => {
             currentProjectname={currentProjectname}
             setProjectChanges={setProjectChanges}
             actionNodesData={actionNodesData}
+            showAccentColor={editorShowAccentColors}
           />
         </div>
         
