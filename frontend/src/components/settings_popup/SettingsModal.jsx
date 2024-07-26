@@ -35,6 +35,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
   // Subsection: plain text
   // Setting: all of them
 
+  if (isOpen) {
   return (
     <Modal id="settings-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
       <form onSubmit={onSubmit} onReset={handleCancel} style={{display: "flex", flexDirection: "column", flexGrow: "1"}}>
@@ -126,6 +127,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
       </form>
     </Modal>
   );
+  }
 };
 
 export default SettingsModal;
