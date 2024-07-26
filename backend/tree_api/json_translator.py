@@ -70,7 +70,7 @@ def get_data_ports(node_models, link_models, node_id):
     
   return data_ports
 
-def build_xml(node_models, link_models, tree_structure, node_id, xml_parent):
+def build_xml(node_models, link_models, tree_structure, node_id, xml_parent, order):
 
   node_name = node_models[node_id]['name']
   data_ports = get_data_ports(node_models, link_models, node_id)
@@ -86,7 +86,7 @@ def build_xml(node_models, link_models, tree_structure, node_id, xml_parent):
                                      key=lambda item: node_models[item]['y'], 
                                      reverse=True)  # Fixed: issue #73
     for child_id in tree_structure[node_id]:
-      build_xml(node_models, link_models, tree_structure, child_id, current_element)
+      build_xml(node_models, link_models, tree_structure, child_id, current_element, order)
 
 def get_start_node_id(node_models, link_models):
 
@@ -106,7 +106,7 @@ def get_start_node_id(node_models, link_models):
   return start_node_id
       
 
-def translate(content, tree_path):
+def translate(content, tree_path, raw_order):
 
   # Parse the JSON data
   parsed_json = json.loads(content)
@@ -118,12 +118,15 @@ def translate(content, tree_path):
   # Get the tree structure
   tree_structure = get_tree_structure(link_models, node_models)
 
+  # Get the order of bt: True = Ascendent; False = Descendent
+  order = raw_order == "bottom-to-top"
+
   # Generate XML
   root = Element("Root", name="Tree Root")
   behavior_tree = SubElement(root, "BehaviorTree")
   start_node_id = get_start_node_id(node_models, link_models)
   print(start_node_id)
-  build_xml(node_models, link_models, tree_structure, start_node_id, behavior_tree)
+  build_xml(node_models, link_models, tree_structure, start_node_id, behavior_tree, order)
   
   # Save the xml in the specified route
   xml_string = prettify_xml(root)

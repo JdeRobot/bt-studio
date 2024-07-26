@@ -276,6 +276,7 @@ def save_file(request):
 def translate_json(request):
 
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    bt_order = request.data.get('bt_order')
 
     try:
         content = request.data.get('content')
@@ -283,7 +284,7 @@ def translate_json(request):
             return Response({'success': False, 'message': 'Content is missing'}, status=400)
         
         # Pass the JSON content to the translate function
-        json_translator.translate(content, folder_path + "/tree.xml")
+        json_translator.translate(content, folder_path + "/tree.xml", bt_order)
         
         return Response({'success': True})
     except Exception as e:
@@ -295,6 +296,7 @@ def generate_app(request):
     # Get the app name
     app_name = request.data.get('app_name')
     content = request.data.get('content')
+    bt_order = request.data.get('bt_order')
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, 'filesystem')
@@ -309,7 +311,7 @@ def generate_app(request):
 
         try:
             # Generate a basic tree from the JSON definition 
-            json_translator.translate(content, tree_path)
+            json_translator.translate(content, tree_path, bt_order)
 
             # Generate a self-contained tree 
             tree_generator.generate(tree_path, action_path, self_contained_tree_path)
@@ -340,6 +342,7 @@ def get_simplified_app(request):
     # Get the app name
     app_name = request.data.get('app_name')
     tree_graph = request.data.get('content')
+    bt_order = request.data.get('bt_order')
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, 'filesystem')
@@ -361,7 +364,7 @@ def get_simplified_app(request):
             os.mkdir(working_folder)
 
             # 2. Generate a basic tree from the JSON definition 
-            json_translator.translate(tree_graph, tree_path)
+            json_translator.translate(tree_graph, tree_path, bt_order)
 
             # 3. Generate a self-contained tree 
             tree_generator.generate(tree_path, action_path, self_contained_tree_path)
