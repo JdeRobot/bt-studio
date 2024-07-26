@@ -9,9 +9,11 @@ import edit_action_img from './img/edit_action.svg'
 import help_img from './img/help.svg'
 import download_img from './img/download.svg'
 import run_img from './img/run.svg'
+import stop_img from './img/stop.svg'
+import reset_img from './img/reset.svg'
 
 const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, 
-  onEditAction, onGenerateApp, onRunApp, currentProjectname }) => {
+  onEditAction, onGenerateApp, onRunApp, onResetApp, isAppRunning, currentProjectname }) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuLabel, setMenuLabel] = useState("");
@@ -126,7 +128,10 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode,
             <img className="icon action-icon" src={download_img}></img>
           </button>
           <button className="node-action-button" onClick={onRunApp} title='Run app'>
-            <img className="icon action-icon" src={run_img}></img>
+            <img className="icon action-icon" src={(isAppRunning) ? stop_img : run_img}></img>
+          </button>
+          <button className="node-action-button" onClick={onResetApp} title='Reset app'>
+            <img className="icon action-icon" src={reset_img}></img>
           </button>
         </div>
 

@@ -41,6 +41,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const ref = useRef<any>(null);
   const [graphJson, setGraphJson] = useState(null);
   const [appRunning, setAppRunning] = useState(false);
+  const [appLoaded, setAppLoaded] = useState(false);
   const [, setFocused] = useState(false);
   const [isEditActionModalOpen, setEditActionModalOpen] = useState(false);
   const [isEditTagModalOpen, setEditTagModalOpen] = useState(false);
@@ -223,7 +224,14 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         model.current = new DiagramModel();
       });
     }
-  
+    if(gazeboEnabled) {
+      manager
+        .terminate_application()
+        .then(() => {
+          console.log("App terminated!");
+          setAppRunning(false);
+        })
+    }
   }, [currentProjectname]);
 
   useEffect(() => {
@@ -234,19 +242,6 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         let castNode = node as BasicNodeModel;
         let name = castNode.getName();
         saveActionNodeData(node);
-        if (!(name in actionNodesData)) {
-          for (let key in node.getPorts()) {
-            if (key !== 'parent') {
-              if (node.getPorts()[key] instanceof InputPortModel) {
-                castNode.addInputPort(key);
-                actionNodesData[name]['input'] = actionNodesData[name]['input'].concat([key]);
-              } else if (node.getPorts()[key] instanceof OutputPortModel) {
-                castNode.addOutputPort(key);
-                actionNodesData[name]['output'] = actionNodesData[name]['output'].concat([key]);
-              }
-            }
-          }
-        }
       }
     });
   }, [graphJson]);
@@ -296,6 +291,17 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       node.setColor(actionNodesData[name]['color'])
     } else {
       actionNodesData[name] = {input: [], output: [], ids: [node.getID()], color: node.getColor()};
+      for (let key in node.getPorts()) {
+        if (key !== 'parent') {
+          if (node.getPorts()[key] instanceof InputPortModel) {
+            node.addInputPort(key);
+            actionNodesData[name]['input'] = actionNodesData[name]['input'].concat([key]);
+          } else if (node.getPorts()[key] instanceof OutputPortModel) {
+            node.addOutputPort(key);
+            actionNodesData[name]['output'] = actionNodesData[name]['output'].concat([key]);
+          }
+        }
+      }
     }
   }
 
@@ -626,60 +632,86 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   };  
 
   const runApp = () => {
-    if(gazeboEnabled) 
-    {
-      if(!appRunning) 
-      {
-        const tree_graph = JSON.stringify(model.current.serialize());
-        fetch("/tree_api/get_simplified_app/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ app_name: currentProjectname, content: tree_graph }),
-        })
-        .then((response) => {
-          if (!response.ok) {
-            return response.json().then((data) => {
-              throw new Error(data.message || "An error occurred.");
-            });
-          }
-          return response.blob();
-        })
-        .then((blob) => {
-          var reader = new FileReader();
-          reader.readAsDataURL(blob); 
-          reader.onloadend = function() {
-            var base64data = reader.result;                
-            console.log(base64data);
-            
-            // Send the zip
-            manager
-            .run({type: "bt-studio", code: base64data})
-            .then(() => {
-              console.log("App running!");
-              setAppRunning(true);
-            })
-            .catch((response:any) => {
-              let linterMessage = JSON.stringify(response.data.message).split("\\n");
-              alert(`Received linter message: ${linterMessage}`);
-            });
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-      }
-      else {
+    if(gazeboEnabled) {
+      if(!appRunning) {
+        if (!appLoaded) {
+          const tree_graph = JSON.stringify(model.current.serialize());
+          fetch("/tree_api/get_simplified_app/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ app_name: currentProjectname, content: tree_graph }),
+          })
+          .then((response) => {
+            if (!response.ok) {
+              return response.json().then((data) => {
+                throw new Error(data.message || "An error occurred.");
+              });
+            }
+            return response.blob();
+          })
+          .then((blob) => {
+            var reader = new FileReader();
+            reader.readAsDataURL(blob); 
+            reader.onloadend = function() {
+              var base64data = reader.result;                
+              console.log(base64data);
+              
+              // Send the zip
+              manager
+              .run({type: "bt-studio", code: base64data})
+              .then(() => {
+                console.log("App running!");
+                setAppRunning(true);
+                setAppLoaded(true);
+              })
+              .catch((response:any) => {
+                let linterMessage = JSON.stringify(response.data.message).split("\\n");
+                alert(`Received linter message: ${linterMessage}`);
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+        } else {
+          // Send the zip
+          manager
+          .resume()
+          .then(() => {
+            console.log("App resumed!");
+            setAppRunning(true);
+          })
+          .catch((response:any) => {
+            let linterMessage = JSON.stringify(response.data.message).split("\\n");
+            alert(`Received linter message: ${linterMessage}`);
+          });
+        }
+      } else {
         manager
-        .terminate_application()
+        .pause()
         .then(() => {
-          console.log("App terminated!");
+          console.log("App paused!");
           setAppRunning(false);
         })
       }
     }
     else {
+      console.log("Gazebo is not up!");
+    }
+  }
+
+  const resetApp = () => {
+    if(gazeboEnabled) {
+      manager
+      .terminate_application()
+      .then(() => {
+        console.log("App reseted!");
+        setAppRunning(false);
+        setAppLoaded(false);
+      })
+    } else {
       console.log("Gazebo is not up!");
     }
   }
@@ -692,6 +724,8 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         onEditAction={handleOpenEditActionModal}
         onGenerateApp={generateApp}
         onRunApp={runApp}
+        onResetApp={resetApp}
+        isAppRunning={appRunning}
         currentProjectname={currentProjectname}
       />
       <div tabIndex={0} ref={ref} onBlur={(e) => handleLostFocus(e)} onFocus={(e) => handleGainedFocus(e)} id='diagram-view'>
