@@ -29,7 +29,8 @@ const App = () => {
 
   // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
-  const [darkMode, setDarkMode] = useState(true);
+  const [btOrder, setBtOrder] = useState("bottom-to-top");
+  const [theme, setTheme] = useState("dark");
 
   useEffect(() => {
     const newManager = CommsManager("ws://127.0.0.1:7163");
@@ -166,7 +167,7 @@ const App = () => {
   }
 
   return (
-    <div className="App" data-theme={(darkMode) ? "dark" : "light"}>
+    <div className="App" data-theme={theme}>
 
       <ErrorModal
         isOpen={isErrorModalOpen}
@@ -185,7 +186,7 @@ const App = () => {
         projectChanges={projectChanges}
         setProjectChanges={setProjectChanges}
         openError={openError}
-        settingsProps={[darkMode, setDarkMode]}
+        settingsProps={{theme:theme, setTheme:setTheme, btOrder:btOrder, setBtOrder:setBtOrder}}
       />
 
       <div className="App-main" style={{ display: 'flex' }}>

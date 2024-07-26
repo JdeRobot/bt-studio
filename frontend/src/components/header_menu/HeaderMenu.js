@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import axios from 'axios';
 
 import logo_img from './img/logo.png'
@@ -14,8 +13,6 @@ import settings_img from './img/settings.svg'
 import ProjectModal from './modals/ProjectModal';
 import UniversesModal from './modals/UniverseModal';
 import SettingsModal from '../settings_popup/SettingsModal';
-
-var dropdown_shown = false;
 
 const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUniverseName, currentUniverseName, launchUniverse, terminateUniverse, changeUniverse, modelJson, projectChanges, setProjectChanges, openError, settingsProps} ) => {
 
@@ -175,8 +172,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
           isOpen={isSettingsModalOpen}
           onSubmit={handleFormSubmit}
           onClose={handleCloseSettingsModal}
-          isDarkMode={settingsProps[0]}
-          enableDarkMode={settingsProps[1]}
+          settings={settingsProps}
         />
 
         <div className='header-button-container'>

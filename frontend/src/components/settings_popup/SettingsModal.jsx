@@ -4,17 +4,20 @@ import "react-color-palette/css";
 import './SettingsModal.css';
 import Modal from '../Modal/Modal';
 import close_modal_img from '../Modal/img/close.svg'
+import Dropdown from './options/Dropdown';
 
-const SettingsModal = ({ onSubmit, isOpen, onClose, isDarkMode, enableDarkMode}) => {
+const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
   const [color, setColor] = useColor("rgb(128 0 128)");
+  const [open, setOpen] = useState(false);
+
 
   useEffect(() => {
   }, [isOpen]);
 
-  useEffect(() => {
-    console.log("rgb("+Math.round(color.rgb.r)+","+Math.round(color.rgb.g)+","+Math.round(color.rgb.b)+")")
-    document.documentElement.style.setProperty("--header", "rgb("+Math.round(color.rgb.r)+","+Math.round(color.rgb.g)+","+Math.round(color.rgb.b)+")");
-  }, [color]);
+  // useEffect(() => {
+  //   console.log("rgb("+Math.round(color.rgb.r)+","+Math.round(color.rgb.g)+","+Math.round(color.rgb.b)+")")
+  //   document.documentElement.style.setProperty("--header", "rgb("+Math.round(color.rgb.r)+","+Math.round(color.rgb.g)+","+Math.round(color.rgb.b)+")");
+  // }, [color]);
 
   const handleCancel = () => {
     onClose()
@@ -40,7 +43,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, isDarkMode, enableDarkMode})
                     <div className='setting-setting'>
                       <label className='setting-setting-title'>Turn on project accent color</label>
                       {/* Checkbox here */}
-                      <input type="checkbox" className='setting-setting-checkbox' checked={isDarkMode} onChange={() => enableDarkMode(!isDarkMode)}/>
+                      <input type="checkbox" className='setting-setting-checkbox' checked={settings.theme} onChange={() => settings.setTheme(!settings.theme)}/>
                     </div>
                     {/* Only show next if above is on */}
                     { false &&
@@ -58,8 +61,11 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, isDarkMode, enableDarkMode})
                   <label className='setting-subsection-title'>Color theme</label>
                   <div className='setting-setting'>
                     <label className='setting-setting-title'>Dark mode enabled</label>
-                    {/* Options here */}
-                    <input type="checkbox" className='setting-setting-checkbox' checked={isDarkMode} onChange={() => enableDarkMode(!isDarkMode)}/>
+                    <Dropdown
+                      value={settings.theme}
+                      setValue={settings.setTheme}
+                      possibleValues={["dark", "light"]}
+                    />
                   </div>
                 </div>
               </div>
@@ -69,8 +75,12 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, isDarkMode, enableDarkMode})
                   <label className='setting-subsection-title'>Execution settings</label>
                   <div className='setting-setting'>
                     <label className='setting-setting-title'>Order of execution of the behavior tree</label>
-                    {/* Options here */}
                     {/* Add explanation here */}
+                    <Dropdown
+                      value={settings.btOrder}
+                      setValue={settings.setBtOrder}
+                      possibleValues={["bottom-to-top", "top-to-bottom"]}
+                    />
                   </div>
                 </div>
               </div>
