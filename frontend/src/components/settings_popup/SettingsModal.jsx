@@ -44,26 +44,17 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
         </div>
         <div className="form-row">
             <ul className='settings-entry-list'>
-              {/* <div className='setting-section'>
-                <label className='setting-section-title'>General</label>
-                <div className='setting-subsection'>
-                  <label className='setting-subsection-title'>Accent Colors</label>
-                    <div className='setting-setting'>
-                      <label className='setting-setting-title'>Turn on project accent color</label>
-                      Checkbox here
-                      <input type="checkbox" className='setting-setting-checkbox' checked={settings.theme} onChange={() => settings.setTheme(!settings.theme)}/>
-                    </div>
-                    Only show next if above is on
-                    { false &&
-                    <div className='setting-setting' id="setting-project-accent-color">
-                      <label className='setting-setting-title'>Project accent color</label>
-                      <Saturation height={100} color={color} onChange={setColor} />
-                      <Hue width={300} color={color} onChange={setColor} />
-                    </div>
-                    }
-                </div>
-              </div> */}
-              <Section title="Style">
+              {/* <Section title="General">
+                <SubSection title="Accent Colors">
+                  <Setting title ="Turn on project accent color">
+                  </Setting>
+                  <Setting title ="Project accent color">
+                    <Saturation height={100} color={color} onChange={setColor} />
+                    <Hue width={300} color={color} onChange={setColor} />
+                  </Setting>
+                </SubSection>
+              </Section> */}
+              <Section title="Appearance">
                 <SubSection title="Color theme">
                   <Setting title ="Set color theme">
                     <Dropdown
@@ -73,9 +64,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
                     />
                   </Setting>
                 </SubSection>
-              </Section>
-              <Section title="Editor">
-                <SubSection title="Accent Color">
+                <SubSection title="Editor">
                   <Setting title ="Show actions accent color">
                     <Checkbox
                       value={settings.editor.accentColors}
