@@ -37,12 +37,12 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
 
   return (
     <Modal id="settings-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
-      <form onSubmit={onSubmit} onReset={handleCancel}>
+      <form onSubmit={onSubmit} onReset={handleCancel} style={{display: "flex", flexDirection: "column", flexGrow: "1"}}>
         <div className="modal-titlebar">
           <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Settings</label>
           <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
         </div>
-        <div className="form-row" style={{height:"95%"}}>
+        <div className="form-row" style={{display: "flex", flexDirection: "column", flexGrow: "1"}}>
             <ul className='settings-entry-list'>
               {/* <Section title="General">
                 <SubSection title="Accent Colors">
@@ -69,6 +69,42 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
                     <Checkbox
                       value={settings.editor.accentColors}
                       setValue={settings.editor.setAccentColors}
+                    />
+                  </Setting>
+                </SubSection>
+              </Section>
+              <Section title="Behaviour Tree">
+                <SubSection title="Execution settings">
+                  <Setting title ="Order of execution of the behavior tree">
+                    {/* Add explanation here */}
+                    <Dropdown
+                      value={settings.btOrder}
+                      setValue={settings.setBtOrder}
+                      possibleValues={["bottom-to-top", "top-to-bottom"]}
+                    />
+                  </Setting>
+                </SubSection>
+              </Section>
+              <Section title="Behaviour Tree">
+                <SubSection title="Execution settings">
+                  <Setting title ="Order of execution of the behavior tree">
+                    {/* Add explanation here */}
+                    <Dropdown
+                      value={settings.btOrder}
+                      setValue={settings.setBtOrder}
+                      possibleValues={["bottom-to-top", "top-to-bottom"]}
+                    />
+                  </Setting>
+                </SubSection>
+              </Section>
+              <Section title="Behaviour Tree">
+                <SubSection title="Execution settings">
+                  <Setting title ="Order of execution of the behavior tree">
+                    {/* Add explanation here */}
+                    <Dropdown
+                      value={settings.btOrder}
+                      setValue={settings.setBtOrder}
+                      possibleValues={["bottom-to-top", "top-to-bottom"]}
                     />
                   </Setting>
                 </SubSection>
