@@ -172,6 +172,7 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
           isOpen={isSettingsModalOpen}
           onSubmit={handleFormSubmit}
           onClose={handleCloseSettingsModal}
+          currentProjectname={currentProjectname}
           settings={settingsProps}
         />
 

@@ -292,6 +292,29 @@ def get_project_configuration(request):
         return Response({'error': 'Project parameter is missing'}, status=400)
 
 @api_view(['POST'])
+def save_project_configuration(request):
+
+    project_name = request.data.get('project_name')
+
+    folder_path = os.path.join(settings.BASE_DIR, 'filesystem')
+    project_path = os.path.join(folder_path, project_name)
+    config_path = os.path.join(project_path, 'config.json')
+
+    try:
+        content = request.data.get('settings')
+        if content is None:
+            return Response({'success': False, 'message': 'Settings are missing'}, status=400)
+        
+        d = json.loads(content)
+
+        with open(config_path, 'w') as f:
+            json.dump(d, f, indent=4)
+        
+        return Response({'success': True})
+    except Exception as e:
+        return Response({'success': False, 'message': str(e)}, status=400)
+
+@api_view(['POST'])
 def translate_json(request):
 
     folder_path = os.path.join(settings.BASE_DIR, 'filesystem')

@@ -30,21 +30,18 @@ const App = () => {
   // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
   ////////////////////// SETTINGS //////////////////////
-  const settings_defaults = {
-    editorShowAccentColors: true,
-    theme:"dark",
-    btOrder:"bottom-to-top"
-  };
 
-  const [editorShowAccentColors, setEditorShowAccentColors] = useState(settings_defaults.editorShowAccentColors);
-  const [theme, setTheme] = useState(settings_defaults.theme);
-  const [btOrder, setBtOrder] = useState(settings_defaults.btOrder);
+  // TODO: try to not repeat the default values
+  const [editorShowAccentColors, setEditorShowAccentColors] = useState(true);
+  const [theme, setTheme] = useState("dark");
+  const [btOrder, setBtOrder] = useState("bottom-to-top");
 
+  // Setting => name: {setter: function, value: name, default_value: default_value}
   const settings = {
-    editor: {accentColors: editorShowAccentColors, setAccentColors: setEditorShowAccentColors},
-    theme:theme, setTheme:setTheme,
-    btOrder:btOrder, setBtOrder:setBtOrder
-  };
+    "editorShowAccentColors": {setter: setEditorShowAccentColors, value: editorShowAccentColors, default_value: true},
+    "theme": {setter: setTheme, value: theme, default_value: "dark"},
+    "btOrder": {setter: setBtOrder, value: btOrder, default_value: "bottom-to-top"},
+  }
   //////////////////////////////////////////////////////
 
   useEffect(() => {
@@ -168,14 +165,15 @@ const App = () => {
       axios.get(apiUrl)
       .then((response) => {
         let raw_config = JSON.parse(response.data);
-        let settings = raw_config.config;
+        let project_settings = raw_config.config;
 
         // Load all the settings
-        loadSetting(setBtOrder, settings.btOrder, settings_defaults.btOrder);
-        loadSetting(setTheme, settings.theme, settings_defaults.theme);
-        loadSetting(setEditorShowAccentColors, settings.editorShowAccentColors, settings_defaults.setEditorShowAccentColors);
+        Object.entries(settings).map( ([key, value]) => {
+          value.setter((project_settings[key]) ? project_settings[key] : value.default_value);
+        })
       })
       .catch(error => {
+        console.log(error);
         if (error.response) {
           if (error.response.status === 404) {
             openError(`The project ${currentProjectname} has no configuration available`);
@@ -183,17 +181,14 @@ const App = () => {
             openError('Failed to load configuration');
           }
         }
+
         console.log("Loading default settings")
-        loadSetting(setBtOrder, null, settings_defaults.btOrder);
-        loadSetting(setTheme, null, settings_defaults.theme);
-        loadSetting(setEditorShowAccentColors, null, settings_defaults.setEditorShowAccentColors);
+        Object.entries(settings).map( ([key, value]) => {
+          value.setter(value.default_value);
+        })
       });
     }
   }, [currentProjectname]); // Reload project configuration
-
-  const loadSetting = (setter, value, default_value) => {
-    setter((value) ? value : default_value);
-  }
 
   const onResize = (key, size) => {
     switch (key) {

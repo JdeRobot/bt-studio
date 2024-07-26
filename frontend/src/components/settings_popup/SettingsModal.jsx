@@ -12,7 +12,7 @@ import Setting from './sections/Setting';
 import Dropdown from './options/Dropdown';
 import Checkbox from './options/Checkbox';
 
-const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
+const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname, settings}) => {
   const [color, setColor] = useColor("rgb(128 0 128)");
   const [open, setOpen] = useState(false);
 
@@ -28,12 +28,32 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
 
   const handleCancel = () => {
     // Save settings
+    let json_settings = {"name": currentProjectname, "config":{}}
+
+    Object.entries(settings).map( ([key, setting]) => {
+      json_settings.config[key] = setting.value;
+    })
+
+    const str = JSON.stringify(json_settings);
+
+    console.log(str);
+    
+    fetch("/tree_api/save_project_configuration/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ project_name: currentProjectname, settings: str,}),
+    })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((data) => {
+          throw new Error(data.message || "An error occurred.");
+        });
+      }
+    })
     onClose()
   };
-
-  // Section: Collapsable
-  // Subsection: plain text
-  // Setting: all of them
 
   if (isOpen) {
   return (
@@ -59,18 +79,14 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
                 <SubSection title="Color theme">
                   <Setting title ="Set color theme">
                     <Dropdown
-                      value={settings.theme}
-                      setValue={settings.setTheme}
+                      setting={settings.theme}
                       possibleValues={["dark", "light"]}
                     />
                   </Setting>
                 </SubSection>
                 <SubSection title="Editor">
                   <Setting title ="Show actions accent color">
-                    <Checkbox
-                      value={settings.editor.accentColors}
-                      setValue={settings.editor.setAccentColors}
-                    />
+                    <Checkbox setting={settings.editorShowAccentColors}/>
                   </Setting>
                 </SubSection>
               </Section>
@@ -79,8 +95,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
                   <Setting title ="Order of execution of the behavior tree">
                     {/* Add explanation here */}
                     <Dropdown
-                      value={settings.btOrder}
-                      setValue={settings.setBtOrder}
+                      setting={settings.btOrder}
                       possibleValues={["bottom-to-top", "top-to-bottom"]}
                     />
                   </Setting>
