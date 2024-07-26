@@ -86,42 +86,6 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
                   </Setting>
                 </SubSection>
               </Section>
-              <Section title="Behaviour Tree">
-                <SubSection title="Execution settings">
-                  <Setting title ="Order of execution of the behavior tree">
-                    {/* Add explanation here */}
-                    <Dropdown
-                      value={settings.btOrder}
-                      setValue={settings.setBtOrder}
-                      possibleValues={["bottom-to-top", "top-to-bottom"]}
-                    />
-                  </Setting>
-                </SubSection>
-              </Section>
-              <Section title="Behaviour Tree">
-                <SubSection title="Execution settings">
-                  <Setting title ="Order of execution of the behavior tree">
-                    {/* Add explanation here */}
-                    <Dropdown
-                      value={settings.btOrder}
-                      setValue={settings.setBtOrder}
-                      possibleValues={["bottom-to-top", "top-to-bottom"]}
-                    />
-                  </Setting>
-                </SubSection>
-              </Section>
-              <Section title="Behaviour Tree">
-                <SubSection title="Execution settings">
-                  <Setting title ="Order of execution of the behavior tree">
-                    {/* Add explanation here */}
-                    <Dropdown
-                      value={settings.btOrder}
-                      setValue={settings.setBtOrder}
-                      possibleValues={["bottom-to-top", "top-to-bottom"]}
-                    />
-                  </Setting>
-                </SubSection>
-              </Section>
             </ul>
           </div>
       </form>
