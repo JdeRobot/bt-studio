@@ -94,7 +94,6 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
   }
 
   const importFromZip = () => {
-    console.log("Opening import modal");
     setUploadModalOpen(true);
   }
 

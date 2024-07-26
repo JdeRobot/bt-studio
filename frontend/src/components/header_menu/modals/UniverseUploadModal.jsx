@@ -11,9 +11,7 @@ const initialProjectData = {
 };
 
 const UniverseUploadModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) => {
-  const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialProjectData);
-  const [existingUniverses, setUniversesProjects] = useState([]);
   const [uploadFile, setUploadFile] = useState("")
 
   const handleInputChange = (event) => {
@@ -30,13 +28,6 @@ const UniverseUploadModal = ({ onSubmit, isOpen, onClose, currentProject, openEr
     }
   };
 
-  const handleCreate = () => {
-    if (formState.projectName === '') {
-      return;
-    }
-    onClose()
-  };
-
   const handleFileReader = (event) => {
     let reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
@@ -47,6 +38,7 @@ const UniverseUploadModal = ({ onSubmit, isOpen, onClose, currentProject, openEr
 
   const saveZipUniverse = () => {
     console.log("Call the saving API");
+    onClose();
   }
 
   return (
@@ -57,15 +49,17 @@ const UniverseUploadModal = ({ onSubmit, isOpen, onClose, currentProject, openEr
           <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
         </div>
         <div className="form-row">
-          <input
-            onChange={handleFileReader}                
-            type="file"
-            accept=".zip,.rar,.7zip"
-          />
+          <div className="modal-complex-input-row-container">
+            <input className='modal-complex-input'
+              onChange={handleFileReader}                
+              type="file"
+              accept=".zip,.rar,.7zip"
+            />
+          </div>
         </div>
         <div className="form-row">
           <div className="project-modal-creation-buttons-container">
-            <div className='project-modal-create-button' onClick={() => { saveZipUniverse(); } }>accept</div>
+            <div className='project-modal-create-button' onClick={() => { saveZipUniverse(); } }>Accept</div>
           </div>
         </div>
       </form>
