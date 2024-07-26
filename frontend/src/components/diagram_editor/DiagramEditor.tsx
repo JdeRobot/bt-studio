@@ -36,7 +36,7 @@ import EditTagModal from './modals/EditTagModal.jsx';
     color: string;
   }
 
-const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gazeboEnabled, manager, actionNodesData, openError} : {currentProjectname : any, setModelJson : any, setProjectChanges:any, gazeboEnabled:any, manager:any, actionNodesData:{ [id: string]: ActionData; }, openError:any}) => {
+const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gazeboEnabled, manager, actionNodesData, btOrder, openError} : {currentProjectname : any, setModelJson : any, setProjectChanges:any, gazeboEnabled:any, manager:any, actionNodesData:{ [id: string]: ActionData; }, btOrder:string , openError:any}) => {
 
   const ref = useRef<any>(null);
   const [graphJson, setGraphJson] = useState(null);
@@ -603,7 +603,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ app_name: currentProjectname, content: str }),
+        body: JSON.stringify({ app_name: currentProjectname, content: str, bt_order: btOrder }),
       })
       .then((response) => {
         if (!response.ok) {
@@ -641,7 +641,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ app_name: currentProjectname, content: tree_graph }),
+          body: JSON.stringify({ app_name: currentProjectname, content: tree_graph, bt_order: btOrder }),
         })
         .then((response) => {
           if (!response.ok) {
@@ -703,6 +703,18 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       <div tabIndex={0} ref={ref} onBlur={(e) => handleLostFocus(e)} onFocus={(e) => handleGainedFocus(e)} id='diagram-view'>
         <CanvasWidget className="canvas" engine={engine} />
       </div>
+      <button
+        className="node-action-button"
+        style={{position:'relative', bottom:'25px', marginLeft:'auto', backgroundColor:'transparent'}}
+        title={'BT Order: ' + btOrder}>
+        <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          {btOrder === 'bottom-to-top' ? (
+            <path stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v13m0-13 4 4m-4-4-4 4"/>
+          ) : (
+            <path stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19V5m0 14-4-4m4 4 4-4"/>
+          )}
+        </svg>
+      </button>
       <EditActionModal
         isOpen={isEditActionModalOpen}
         onClose={handleCloseEditActionModal}

@@ -235,6 +235,7 @@ const App = () => {
             gazeboEnabled={gazeboEnabled}
             manager={manager}
             actionNodesData={actionNodesData}
+            btOrder={btOrder}
             openError={openError}
           />
           <VncViewer
