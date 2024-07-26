@@ -4,6 +4,11 @@ import "react-color-palette/css";
 import './SettingsModal.css';
 import Modal from '../Modal/Modal';
 import close_modal_img from '../Modal/img/close.svg'
+
+import Section from './sections/Section';
+import SubSection from './sections/SubSection';
+import Setting from './sections/Setting';
+
 import Dropdown from './options/Dropdown';
 import Checkbox from './options/Checkbox';
 
@@ -13,6 +18,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
 
 
   useEffect(() => {
+    // Load settings
   }, [isOpen]);
 
   // useEffect(() => {
@@ -21,6 +27,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
   // }, [color]);
 
   const handleCancel = () => {
+    // Save settings
     onClose()
   };
 
@@ -56,48 +63,39 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, settings}) => {
                     }
                 </div>
               </div> */}
-              <div className='setting-section'>
-                <label className='setting-section-title'>Style</label>
-                <div className='setting-subsection'>
-                  <label className='setting-subsection-title'>Color theme</label>
-                  <div className='setting-setting'>
-                    <label className='setting-setting-title'>Dark mode enabled</label>
+              <Section title="Style">
+                <SubSection title="Color theme">
+                  <Setting title ="Set color theme">
                     <Dropdown
                       value={settings.theme}
                       setValue={settings.setTheme}
                       possibleValues={["dark", "light"]}
                     />
-                  </div>
-                </div>
-              </div>
-              <div className='setting-section'>
-                <label className='setting-section-title'>Editor</label>
-                <div className='setting-subsection'>
-                  <label className='setting-subsection-title'>Accent Color</label>
-                  <div className='setting-setting'>
-                    <label className='setting-setting-title'>Show actions accent color</label>
+                  </Setting>
+                </SubSection>
+              </Section>
+              <Section title="Editor">
+                <SubSection title="Accent Color">
+                  <Setting title ="Show actions accent color">
                     <Checkbox
                       value={settings.editor.accentColors}
                       setValue={settings.editor.setAccentColors}
                     />
-                  </div>
-                </div>
-              </div>
-              <div className='setting-section'>
-                <label className='setting-section-title'>Behaviour Tree</label>
-                <div className='setting-subsection'>
-                  <label className='setting-subsection-title'>Execution settings</label>
-                  <div className='setting-setting'>
-                    <label className='setting-setting-title'>Order of execution of the behavior tree</label>
+                  </Setting>
+                </SubSection>
+              </Section>
+              <Section title="Behaviour Tree">
+                <SubSection title="Execution settings">
+                  <Setting title ="Order of execution of the behavior tree">
                     {/* Add explanation here */}
                     <Dropdown
                       value={settings.btOrder}
                       setValue={settings.setBtOrder}
                       possibleValues={["bottom-to-top", "top-to-bottom"]}
                     />
-                  </div>
-                </div>
-              </div>
+                  </Setting>
+                </SubSection>
+              </Section>
             </ul>
           </div>
       </form>

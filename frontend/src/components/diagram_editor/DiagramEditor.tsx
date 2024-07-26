@@ -709,9 +709,9 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         title={'BT Order: ' + btOrder}>
         <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
           {btOrder === 'bottom-to-top' ? (
-            <path stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v13m0-13 4 4m-4-4-4 4"/>
+            <path stroke="var(--background)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v13m0-13 4 4m-4-4-4 4"/>
           ) : (
-            <path stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19V5m0 14-4-4m4 4 4-4"/>
+            <path stroke="var(--background)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19V5m0 14-4-4m4 4 4-4"/>
           )}
         </svg>
       </button>
