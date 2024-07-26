@@ -10,7 +10,7 @@ import { ReactComponent as SplashIcon } from './img/logo_jderobot_monocolor.svg'
 
 const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) => {
   
-  const [fileContent, setFileContent] = useState("");
+  const [fileContent, setFileContent] = useState(null);
   const [fontSize, setFontSize] = useState(14);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [filenameToSave, setFilenameToSave] = useState('');
@@ -29,9 +29,10 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
         });
     }
     else {
-      setFileContent("");
+      setFileContent(null);
       setHasUnsavedChanges(false);
     }
+
     // Autosave
     if (filenameToSave) {
       axios.post('/tree_api/save_file/', {
@@ -60,11 +61,11 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
       handleSaveFile();
     }
     setProjectToSave(currentProjectname);
-    setFileContent("");
+    setFileContent(null);
   }, [currentProjectname]);
 
   const handleSaveFile = () => {
-    if (currentFilename) {
+    if (currentFilename !== "") {
       axios.post('/tree_api/save_file/', {
         project_name: projectToSave,
         filename: currentFilename,
@@ -82,7 +83,7 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
         console.error('Error saving file:', error);
       });
     } else {
-      alert("No file is currentlyyy selected.");
+      alert("No file is currently selected.");
     }
   };
 
@@ -105,13 +106,13 @@ const FileEditor = ({ currentFilename, currentProjectname, setProjectChanges }) 
           </button>
         </div>
       </div>
-      {fileContent !== "" &&(
+      {fileContent !== null &&(
         <div className="zoom-buttons">
           <button className="zoom-in" onClick={handleZoomIn}>+</button>
           <button className="zoom-in" onClick={handleZoomOut}>-</button>
         </div>
       )}
-      {fileContent !== "" ?(
+      {fileContent !== null ?(
       <AceEditor
         mode="python"
         theme="monokai"
