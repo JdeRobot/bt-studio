@@ -2,3 +2,11 @@
   width:20%;
   height:30%;
 }
+
+.upload-percentage {
+  display: flex;
+  font-size: 2em;
+  font-weight: 600;
+  justify-content: center;
+  color: white;
+}

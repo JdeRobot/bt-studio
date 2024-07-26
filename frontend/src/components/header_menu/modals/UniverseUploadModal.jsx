@@ -11,16 +11,12 @@ const initialProjectData = {
 };
 
 const UniverseUploadModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) => {
-  const [formState, setFormState] = useState(initialProjectData);
-  const [uploadFile, setUploadFile] = useState("")
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormState((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
+  const [formState, setFormState] = useState(initialProjectData);
+  const [uploadedUniverse, setUploadedUniverse] = useState("");
+  const [uploadStatus, setUploadStatus] = useState("");
+  const [uploadPercentage, setUploadPercentage] = useState(0);
+  const [universeName, setUniverseName] = useState("");
 
   const handleCancel = () => {
     if (currentProject !== '') {
@@ -29,15 +25,66 @@ const UniverseUploadModal = ({ onSubmit, isOpen, onClose, currentProject, openEr
   };
 
   const handleFileReader = (event) => {
+
+    setUploadStatus('Uploading');
     let reader = new FileReader();
-    reader.readAsDataURL(event.target.files[0]);
+    let file = event.target.files[0];
+    let fileName = file.name.toString().split(".")[0];
+
+    reader.readAsDataURL(file);
+
+    reader.onloadstart = () => {
+      setUploadPercentage(0);
+    };
+
+    reader.onprogress = (data) => {
+      if (data.lengthComputable) {
+        const progress = Math.round((data.loaded / data.total) * 100);
+        console.log(progress); 
+        setUploadPercentage(progress);
+      }
+    };
+
     reader.onload = (e) => {
-      setUploadFile(e.target.result)
+      console.log("Loaded!");
+      const base64String = e.target.result.split(',')[1]; // Remove the data URL prefix
+      setUploadedUniverse(base64String);
+      setUniverseName(fileName);
+      setUploadStatus('Uploaded');
+      setUploadPercentage(100);
+    };
+
+    reader.onerror = () => {
+      setUploadStatus('Error');
+      setUploadPercentage(0);
     };
   }
 
   const saveZipUniverse = () => {
+    
     console.log("Call the saving API");
+
+    if (uploadPercentage != 100){
+      console.warn("Not yet uploaded!");
+      return;
+    }
+
+    axios.post('/tree_api/upload_universe/', {
+      universe_name: universeName,
+      zip_file: uploadedUniverse,
+      app_name: currentProject,
+    })
+    .then(response => {
+      if (response.data.success) {
+        console.log('Universe saved successfully.');
+      } else {
+        console.error('Error saving project:', response.data.message || 'Unknown error');
+      }
+    })
+    .catch(error => {
+      console.error('Axios Error:', error);
+    });
+
     onClose();
   }
 
@@ -56,6 +103,9 @@ const UniverseUploadModal = ({ onSubmit, isOpen, onClose, currentProject, openEr
               accept=".zip,.rar,.7zip"
             />
           </div>
+        </div>
+        <div className='upload-percentage'>
+          {uploadPercentage}
         </div>
         <div className="form-row">
           <div className="project-modal-creation-buttons-container">

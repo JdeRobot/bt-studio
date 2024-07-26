@@ -13,6 +13,9 @@ import mimetypes
 import json
 import shutil
 import zipfile
+from rest_framework import status
+from django.core.files.storage import default_storage
+import base64
 
 
 @api_view(["GET"])
@@ -204,7 +207,6 @@ def import_universe_from_zip(request):
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     universes_path = os.path.join(project_path, "universes/")
-    
 
 
 @api_view(["GET"])
@@ -527,3 +529,63 @@ def get_simplified_universe(request):
             return Response({"success": False, "message": str(e)}, status=400)
     else:
         return Response({"error": "app_name parameter is missing"}, status=500)
+
+
+@api_view(["POST"])
+def upload_universe(request):
+
+    # Check if 'name' and 'zipfile' are in the request data
+    if (
+        "universe_name" not in request.data
+        or "app_name" not in request.data
+        or "zip_file" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the name and the zip file from the request
+    universe_name = request.data["universe_name"]
+    app_name = request.data["app_name"]
+    zip_file = request.data["zip_file"]
+
+    # Make folder path relative to Django app
+    base_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(base_path, app_name)
+    universes_path = os.path.join(project_path, "universes")
+    universe_path = os.path.join(universes_path, universe_name)
+
+    # Create the folder if it doesn't exist
+    if not os.path.exists(universe_path):
+        os.makedirs(universe_path)
+
+    try:
+        zip_file_data = base64.b64decode(zip_file)
+    except (TypeError, ValueError):
+        return Response(
+            {"error": "Invalid zip file data."}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Save the zip file temporarily
+    temp_zip_path = os.path.join(universe_path, "temp.zip")
+    with open(temp_zip_path, "wb") as temp_zip_file:
+        temp_zip_file.write(zip_file_data)
+
+    # Unzip the file
+    try:
+        with zipfile.ZipFile(temp_zip_path, "r") as zip_ref:
+            zip_ref.extractall(universe_path)
+    except zipfile.BadZipFile:
+        return Response(
+            {"error": "Invalid zip file."}, status=status.HTTP_400_BAD_REQUEST
+        )
+    finally:
+        # Clean up the temporary zip file
+        if os.path.exists(temp_zip_path):
+            os.remove(temp_zip_path)
+
+    return Response(
+        {"message": "File uploaded and extracted successfully."},
+        status=status.HTTP_200_OK,
+    )

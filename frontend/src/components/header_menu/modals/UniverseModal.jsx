@@ -110,6 +110,7 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
           isOpen={isUploadModalOpen}
           onSubmit={handleFormSubmit}
           onClose={handleCloseUploadUniverseModal}
+          currentProject={currentProject}
           openError={openError}
         />
       <form onSubmit={onSubmit} onReset={handleCancel}>
