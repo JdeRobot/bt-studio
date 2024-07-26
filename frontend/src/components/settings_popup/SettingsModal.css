@@ -88,31 +88,3 @@
 #setting-project-accent-color {
   width: 100%;
 }
-
-
-
-/* INPUTS */
-
-.setting-setting-checkbox {
-  -webkit-appearance: none;
-  appearance: none;
-  background-color: var(--buttons);
-  height: 20px;
-  width: 20px;
-  border-radius: 4px;
-  display: grid;
-  place-content: center;
-}
-
-/* .setting-setting-checkbox::before {
-  content: "";
-  transform: scale(0);
-  transition: 120ms transform ease-in-out;
-  box-shadow: inset 1em 1em var(--buttons-hover);
-  transform-origin: bottom left;
-  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-} */
-
-.setting-setting-checkbox:checked {
-  background-color: var(--buttons-hover);
-}
