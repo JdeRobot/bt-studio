@@ -56,15 +56,19 @@
     border: 0;
     margin-left: 3px;
     margin-right: 3px;
+    padding: 0 0 0 0;
+    align-content: center;
+    flex-wrap: wrap;
 }
 
 .menu-button:hover {
     background-color: var(--buttons-hover);
-    border-radius: 100%;
+    border-radius: 5px;
 }
 
 .icon {
     width: 20px;
+    height: 20px;
 }
 
 .accent-color {

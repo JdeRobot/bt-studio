@@ -52,11 +52,14 @@
     border: 0;
     margin-left: 3px;
     margin-right: 3px;
+    padding: 0 0 0 0;
+    align-content: center;
+    flex-wrap: wrap;
 }
 
 .save-button:hover {
     background-color: var(--buttons-hover);
-    border-radius: 50%; /* Circular highlight */
+    border-radius: 5px; /* Circular highlight */
 }
 
 .unsaved-dot {

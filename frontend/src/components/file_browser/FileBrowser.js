@@ -3,8 +3,8 @@ import axios from 'axios';
 import './FileBrowser.css';
 import NewActionModal from './NewActionModal.jsx';
 
-import add_img from './img/add.svg'
-import delete_img from './img/delete.svg'
+import { ReactComponent as AddIcon } from './img/add.svg'
+import { ReactComponent as DeleteIcon } from './img/delete.svg'
 
 const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, setProjectChanges, actionNodesData, showAccentColor}) => {
 
@@ -98,10 +98,10 @@ const FileBrowser = ({ setCurrentFilename, currentFilename, currentProjectname, 
         <h2>Action Browser</h2>
         <div className='buttons'>
           <button className="menu-button" onClick={handleCreateFile} title='Create a new action file'>
-            <img className="icon" src={add_img}></img>
+            <AddIcon className="icon" fill={"var(--icon)"}/>
           </button>
           <button className="menu-button" onClick={handleDeleteFile} title='Delete file'>
-            <img className="icon" src={delete_img}></img>
+            <DeleteIcon className="icon" fill={"var(--icon)"}/>
           </button>
         </div>
       </div>

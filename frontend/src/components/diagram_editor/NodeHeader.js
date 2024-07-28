@@ -4,14 +4,14 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import './NodeHeader.css';
 
-import del_img from './img/del_node.svg'
-import edit_action_img from './img/edit_action.svg'
-import help_img from './img/help.svg'
-import download_img from './img/download.svg'
-import run_img from './img/run.svg'
-import stop_img from './img/stop.svg'
-import zoom_to_fit_img from './img/zoom_to_fit.svg'
-import reset_img from './img/reset.svg'
+import { ReactComponent as DeleteIcon } from './img/del_node.svg'
+import { ReactComponent as EditActionIcon } from './img/edit_action.svg'
+import { ReactComponent as HelpIcon } from './img/help.svg'
+import { ReactComponent as DownloadIcon } from './img/download.svg'
+import { ReactComponent as RunIcon } from './img/run.svg'
+import { ReactComponent as StopIcon } from './img/stop.svg'
+import { ReactComponent as ZoomToFitIcon } from './img/zoom_to_fit.svg'
+import { ReactComponent as ResetIcon } from './img/reset_img.svg'
 
 const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, 
   onEditAction, onGenerateApp, onRunApp, isAppRunning, currentProjectname, zoomToFit }) => {
@@ -117,25 +117,29 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode,
 
         <div className='action-buttons'>
           <button id='node-action-delete-button' className="node-action-button" onClick={onDeleteNode} title='Delete'>
-            <img className="icon action-icon" src={del_img}></img>
+            <DeleteIcon className="icon action-icon" fill={"var(--icon)"}/>
           </button>
           <button id='node-action-edit-button' className="node-action-button" onClick={onEditAction} title='Edit'>
-            <img className="icon action-icon" src={edit_action_img}></img>
+            <EditActionIcon className="icon action-icon" stroke={"var(--icon)"}/>
           </button>
           <button id='node-action-zoom-button' className="node-action-button" onClick={zoomToFit} title='Zoom To Fit'>
-            <img className="icon action-icon" src={zoom_to_fit_img}></img>
+            <ZoomToFitIcon className="icon action-icon" fill={"var(--icon)"}/>
           </button>
           <button id='node-action-help-button' className="node-action-button" onClick={() => {openInNewTab('https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation')}} title='Help'>
-            <img className="icon action-icon" src={help_img}></img>
+            <HelpIcon className="icon action-icon" fill={"var(--icon)"}/>
           </button>
           <button className="node-action-button" onClick={onGenerateApp} title='Download app'>
-            <img className="icon action-icon" src={download_img}></img>
+            <DownloadIcon className="icon action-icon" stroke={"var(--icon)"}/>
           </button>
           <button className="node-action-button" onClick={onRunApp} title='Run app'>
-            <img className="icon action-icon" src={(isAppRunning) ? stop_img : run_img}></img>
+            {isAppRunning ? (
+            <StopIcon className="icon action-icon" fill={"var(--icon)"}/>
+            ) : (
+            <RunIcon className="icon action-icon" fill={"var(--icon)"}/>
+            )}
           </button>
           <button className="node-action-button" onClick={onResetApp} title='Reset app'>
-            <img className="icon action-icon" src={reset_img}></img>
+            <ResetIcon className="icon action-icon" fill={"var(--icon)"}/>
           </button>
         </div>
 

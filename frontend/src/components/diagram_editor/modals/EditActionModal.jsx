@@ -8,11 +8,12 @@ import Modal from '../../Modal/Modal';
 import { OutputPortModel } from '../nodes/basic_node/ports/output_port/OutputPortModel';
 import { InputPortModel } from '../nodes/basic_node/ports/input_port/InputPortModel';
 
-import add_icon from '../img/add.svg';
-import delete_icon from '../img/delete.svg';
-import cancel_icon from '../img/cancel.svg';
-import accept_icon from '../img/accept.svg';
-import close_modal_img from '../../Modal/img/close.svg'
+import { ReactComponent as AddIcon } from '../img/add.svg'
+import { ReactComponent as DeleteIcon } from '../img/delete.svg'
+import { ReactComponent as CancelIcon } from '../img/cancel.svg'
+import { ReactComponent as AcceptIcon } from '../img/accept.svg'
+import { ReactComponent as CloseIcon } from '../../Modal/img/close.svg'
+
 
 const initialEditActionModalData = {
   newInputName: '',
@@ -173,7 +174,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
     <Modal id="node-editor-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose} >
       <div className="modal-titlebar">
         <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Edit action value</label>
-        <img className="modal-titlebar-close" onClick={() => { onClose(); } } src={close_modal_img}></img>
+        <CloseIcon className="modal-titlebar-close icon" onClick={() => { onClose(); } } fill={"var(--icon)"}/>
       </div>
       <div className="node-editor-row">
         {currentActionNode &&
@@ -195,7 +196,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Delete'
                           onClick={() => {deleteInputPort(port[1], port[0]); reRender()}}>
-                          <img className="icon" src={delete_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
+                          <DeleteIcon className="icon" fill={"var(--icon)"} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}/>
                         </button>
                       </div>
                     );
@@ -219,7 +220,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                         style={{color: isBackgroundDark() ? 'white' : 'black'}}
                         title='Cancel'
                         onClick={() => cancelCreation()}>
-                        <img className="icon" src={cancel_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>  
+                        <CancelIcon className="icon" fill={"var(--icon)"} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}/>
                       </button>
                       { allowCreation &&
                         <button
@@ -227,7 +228,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Create'
                           onClick={() => addInput()}>
-                          <img className="icon" src={accept_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
+                          <AcceptIcon className="icon" fill={"var(--icon)"} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}/>
                         </button>
                       }
                   </div>
@@ -238,7 +239,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                     style={{color: isBackgroundDark() ? 'white' : 'black'}}
                     onClick={() => {openInputCreation()}}
                     title='Add input'>
-                    <img className="icon action-icon" src={add_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
+                    <AddIcon className="icon action-icon" fill={"var(--icon)"} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}/>
                   </button>
                     )
                   }
@@ -253,7 +254,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Delete'
                           onClick={() => {deleteOutputPort(port[1], port[0]); reRender()}}>
-                          <img className="icon" src={delete_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
+                          <DeleteIcon className="icon" fill={"var(--icon)"} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}/>
                         </button>
                         <label
                           className="node-editor-io-name"
@@ -281,7 +282,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                         style={{color: isBackgroundDark() ? 'white' : 'black'}}
                         title='Cancel'
                         onClick={() => cancelCreation()}>
-                        <img className="icon" src={cancel_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>  
+                        <CancelIcon className="icon" fill={"var(--icon)"} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}/>
                       </button>
                       { allowCreation &&
                         <button
@@ -289,7 +290,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                           style={{color: isBackgroundDark() ? 'white' : 'black'}}
                           title='Create'
                           onClick={() => addOutput()}>
-                          <img className="icon" src={accept_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
+                          <AcceptIcon className="icon" fill={"var(--icon)"} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}/>
                         </button>
                       }
                   </div>
@@ -300,7 +301,7 @@ const EditActionModal = ({ isOpen, onClose, currentActionNode, setColorActionNod
                     style={{color: isBackgroundDark() ? 'white' : 'black'}}
                     onClick={() => {openOutputCreation()}}
                     title='Add output'>
-                    <img className="icon action-icon" src={add_icon} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}></img>
+                    <AddIcon className="icon action-icon" fill={"var(--icon)"} style={{filter: isBackgroundDark() ? 'invert(0)' : 'invert(1)'}}/>
                   </button>
                     )
                   }

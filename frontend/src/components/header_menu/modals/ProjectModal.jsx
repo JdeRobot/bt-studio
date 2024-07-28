@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './ProjectModal.css';
 import Modal from '../../Modal/Modal';
-import back_modal_img from '../../Modal/img/back.svg'
-import close_modal_img from '../../Modal/img/close.svg'
-import delete_icon from '../../diagram_editor/img/delete.svg';
+
+import { ReactComponent as BackIcon } from '../../Modal/img/back.svg'
+import { ReactComponent as CloseIcon } from '../../Modal/img/close.svg'
+import { ReactComponent as DeleteIcon } from '../../diagram_editor/img/delete.svg'
+
 import axios from 'axios';
 
 const initialProjectData = {
@@ -104,7 +106,7 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
           <>
           <div className="modal-titlebar">
             <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Open a Project</label>
-            <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
+            <CloseIcon className="modal-titlebar-close icon" onClick={() => { handleCancel(); } } fill={"var(--icon)"}/>
           </div>
           <div className="form-row">
               <ul className='project-entry-list'>
@@ -112,13 +114,11 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
                   return (
                     <div className='project-entry' onClick={() => onClose(project[1])}>
                       <label className='project-entry-name'>{project[1]}</label>
-                      <img
-                        className="project-entry-delete icon"
-                        style={{ color: 'white' }}
+                      <DeleteIcon 
+                        className="project-entry-delete icon" 
                         title='Delete'
                         onClick={(e) => { deleteProject(project[1]); e.stopPropagation(); } }
-                        src={delete_icon}>
-                      </img>
+                        fill={"var(--icon)"}/>
                     </div>
                   );
                 })}
@@ -135,9 +135,9 @@ const ProjectModal = ({ onSubmit, isOpen, onClose, currentProject, existingProje
         ) : (
           <>
           <div className="modal-titlebar">
-            <img className="modal-titlebar-back" title='Open a Project' onClick={() => { setCreateProjectOpen(false); } } src={back_modal_img}></img>
+            <BackIcon className="modal-titlebar-back icon" onClick={() => { setCreateProjectOpen(false); } } fill={"var(--icon)"}/>
             <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Create New Project</label>
-            <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
+            <CloseIcon className="modal-titlebar-close icon" onClick={() => { handleCancel(); } } fill={"var(--icon)"}/>
           </div>
           <div className="modal-complex-input-row-container">
             <div className="project-create-name modal-complex-input-container">
