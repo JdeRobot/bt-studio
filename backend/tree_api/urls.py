@@ -21,7 +21,11 @@ urlpatterns = [
         name="get_universe_configuration",
     ),
     path("generate_app/", views.generate_app, name="generate_app"),
-    path("get_simplified_app/", views.get_simplified_app, name="generate_app"),
+    path(
+        "generate_dockerized_app/",
+        views.generate_dockerized_app,
+        name="generate_dockerized_app",
+    ),
     path(
         "get_simplified_universe/", views.get_simplified_universe, name="generate_app"
     ),

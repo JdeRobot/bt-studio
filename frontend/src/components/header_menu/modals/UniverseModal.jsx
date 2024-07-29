@@ -15,9 +15,11 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialProjectData);
   const [existingUniverses, setUniversesProjects] = useState([]);
-  const [isUploadModalOpen, setUploadModalOpen] = useState(false);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [universeAdded, setUniverseAdded] = useState(false);
 
   useEffect(() => {
+
     if (!isOpen) {
       return
     }
@@ -32,13 +34,14 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
 
     axios.get(listApiUrl)
       .then(response => {
-        setUniversesProjects(response.data.universes_list)
+        setUniversesProjects(response.data.universes_list);
+        setUniverseAdded(false);
       })
       .catch(error => {
         console.error('Error while fetching universes list:', error);
         openError(`An error occurred while fetching the universes list`);
       });
-  }, [isOpen]);
+  }, [isOpen, universeAdded]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -107,11 +110,12 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
   return (
     <Modal id="universes-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
         <UniverseUploadModal
-          isOpen={isUploadModalOpen}
+          isOpen={uploadModalOpen}
           onSubmit={handleFormSubmit}
           onClose={handleCloseUploadUniverseModal}
           currentProject={currentProject}
           openError={openError}
+          setUniverseAdded={setUniverseAdded}
         />
       <form onSubmit={onSubmit} onReset={handleCancel}>
         <div className="modal-titlebar">

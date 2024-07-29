@@ -636,7 +636,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
       if(!appRunning) 
       {
         const tree_graph = JSON.stringify(model.current.serialize());
-        fetch("/tree_api/get_simplified_app/", {
+        fetch("/tree_api/generate_dockerized_app/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -656,7 +656,7 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           reader.readAsDataURL(blob); 
           reader.onloadend = function() {
             var base64data = reader.result;                
-            console.log(base64data);
+            // console.log(base64data);
             
             // Send the zip
             manager

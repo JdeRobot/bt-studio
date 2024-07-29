@@ -10,7 +10,7 @@ const initialProjectData = {
   projectName: '',
 };
 
-const UniverseUploadModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) => {
+const UniverseUploadModal = ({ onSubmit, isOpen, onClose, currentProject, openError, setUniverseAdded}) => {
 
   const [formState, setFormState] = useState(initialProjectData);
   const [uploadedUniverse, setUploadedUniverse] = useState("");
@@ -62,7 +62,7 @@ const UniverseUploadModal = ({ onSubmit, isOpen, onClose, currentProject, openEr
 
   const saveZipUniverse = () => {
     
-    console.log("Call the saving API");
+    console.log("Calling the saving API");
 
     if (uploadPercentage != 100){
       console.warn("Not yet uploaded!");
@@ -77,8 +77,7 @@ const UniverseUploadModal = ({ onSubmit, isOpen, onClose, currentProject, openEr
     .then(response => {
       if (response.data.success) {
         console.log('Universe saved successfully.');
-      } else {
-        console.error('Error saving project:', response.data.message || 'Unknown error');
+        setUniverseAdded(true);
       }
     })
     .catch(error => {

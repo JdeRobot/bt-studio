@@ -414,9 +414,16 @@ def generate_app(request):
 
 
 @api_view(["POST"])
-def get_simplified_app(request):
+def generate_dockerized_app(request):
 
-    # Get the app name
+    # Check if 'name' and 'zipfile' are in the request data
+    if "app_name" not in request.data or "tree_graph" not in request.data:
+        return Response(
+            {"error": "Incorrect request parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the request parameters
     app_name = request.data.get("app_name")
     tree_graph = request.data.get("content")
 
@@ -439,13 +446,13 @@ def get_simplified_app(request):
                 shutil.rmtree(working_folder)
             os.mkdir(working_folder)
 
-            # 2. Generate a basic tree from the JSON definition
+            # 2. Generate a basic xml tree from the JSON definition
             json_translator.translate(tree_graph, tree_path)
 
-            # 3. Generate a self-contained tree
+            # 3. Generate a self-contained xml tree
             tree_generator.generate(tree_path, action_path, self_contained_tree_path)
 
-            # 4. Copy necessary files from tree_gardener and ros_template
+            # 4. Copy necessary files to execute the app in the RB
             factory_location = tree_gardener_src + "/tree_gardener/tree_factory.py"
             tools_location = tree_gardener_src + "/tree_gardener/tree_tools.py"
             entrypoint_location = template_path + "/ros_template/execute_docker.py"
@@ -586,6 +593,6 @@ def upload_universe(request):
             os.remove(temp_zip_path)
 
     return Response(
-        {"message": "File uploaded and extracted successfully."},
+        {"success": True, "message": "Universe uploaded successfully"},
         status=status.HTTP_200_OK,
     )
