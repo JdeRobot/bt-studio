@@ -58,17 +58,17 @@ const App = () => {
     )}&universe_name=${encodeURIComponent(universe_name)}`;
 
     axios.get(apiUrl).then((response) => {
-      console.log(response.data);
-      const universe_cfg = JSON.parse(response.data);
+      console.log("Stored universe config: " + response.data);
+      const stored_cfg = JSON.parse(response.data);
 
-      if (universe_cfg.type === "robotics_backend") {
+      if (stored_cfg.type === "robotics_backend") {
         const universe_config = {
-          name: universe_cfg.name,
-          launch_file_path: universe_cfg.config.launch_file_path,
+          name: stored_cfg.name,
+          launch_file_path: stored_cfg.config.launch_file_path,
           ros_version: "ROS2",
           visualization: "gazebo_rae",
           world: "gazebo",
-          exercise_id: universe_cfg.id,
+          exercise_id: stored_cfg.id,
         };
         manager.launchWorld(universe_config).then(() => {
           console.log("World launched!");
@@ -80,7 +80,52 @@ const App = () => {
             });
         });
       } else {
-        console.log("Launching a zip universe!");
+        console.log("Launching a zip universe: " + universe_name);
+
+        fetch("/tree_api/get_universe_zip/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            app_name: currentProjectname,
+            universe_name: universe_name,
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.json().then((data) => {
+                throw new Error(data.message || "An error occurred.");
+              });
+            }
+            return response.blob();
+          })
+          .then((blob) => {
+            var reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+              // Get the zip in base64
+              var base64data = reader.result;
+
+              // Prepare the config
+              const universe_cfg = {
+                name: stored_cfg.name,
+                launch_file_path: stored_cfg.config.launch_file_path,
+                ros_version: stored_cfg.config.ros_version,
+                world: stored_cfg.config.world,
+                zip: base64data,
+              };
+
+              // Launch the world
+              manager.launchWorld(universe_cfg).then(() => {
+                console.log("World launched!");
+                manager.prepareVisualization("gazebo_rae").then(() => {
+                  console.log("Viz ready!");
+                  setGazeboEnabled(true);
+                });
+              });
+            };
+          });
       }
     });
   };

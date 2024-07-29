@@ -486,10 +486,16 @@ def generate_dockerized_app(request):
 
 
 @api_view(["POST"])
-def get_simplified_universe(request):
-    print("Getting simplified universe")
+def get_universe_zip(request):
 
-    # Get the app name
+    # Check if 'name' and 'zipfile' are in the request data
+    if "app_name" not in request.data or "universe_name" not in request.data:
+        return Response(
+            {"error": "Incorrect request parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the request parameters
     app_name = request.data.get("app_name")
     universe_name = request.data.get("universe_name")
 
@@ -501,41 +507,38 @@ def get_simplified_universe(request):
 
     working_folder = "/tmp/wf"
 
-    if app_name and universe_name:
+    try:
+        # 1. Create the working folder
+        if os.path.exists(working_folder):
+            shutil.rmtree(working_folder)
+        os.mkdir(working_folder)
 
-        try:
-            # 1. Create the working folder
-            if os.path.exists(working_folder):
-                shutil.rmtree(working_folder)
-            os.mkdir(working_folder)
+        # 2. Copy necessary files
+        shutil.copytree(universe_path, working_folder, dirs_exist_ok=True)
 
-            # 2. Copy necessary files
-            shutil.copytree(universe_path, working_folder, dirs_exist_ok=True)
-            print(working_folder)
+        # 3. Generate the zip
+        zip_path = working_folder + ".zip"
+        with zipfile.ZipFile(zip_path, "w") as zipf:
+            for root, dirs, files in os.walk(working_folder):
+                for file in files:
+                    zipf.write(
+                        os.path.join(root, file),
+                        os.path.relpath(os.path.join(root, file), working_folder),
+                    )
 
-            # 3. Generate the zip
-            zip_path = working_folder + ".zip"
-            with zipfile.ZipFile(zip_path, "w") as zipf:
-                for root, dirs, files in os.walk(working_folder):
-                    for file in files:
-                        zipf.write(
-                            os.path.join(root, file),
-                            os.path.relpath(os.path.join(root, file), working_folder),
-                        )
+        # 4. Return the zip
+        zip_file = open(zip_path, "rb")
+        mime_type, _ = mimetypes.guess_type(zip_path)
+        response = HttpResponse(zip_file, content_type=mime_type)
+        response["Content-Disposition"] = (
+            f"attachment; filename={os.path.basename(zip_path)}"
+        )
 
-            # 4. Return the zip
-            zip_file = open(zip_path, "rb")
-            mime_type, _ = mimetypes.guess_type(zip_path)
-            response = HttpResponse(zip_file, content_type=mime_type)
-            response["Content-Disposition"] = (
-                f"attachment; filename={os.path.basename(zip_path)}"
-            )
-            print(response)
-            return response
-        except Exception as e:
-            return Response({"success": False, "message": str(e)}, status=400)
-    else:
-        return Response({"error": "app_name parameter is missing"}, status=500)
+        return response
+    except Exception as e:
+        return Response(
+            {"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @api_view(["POST"])

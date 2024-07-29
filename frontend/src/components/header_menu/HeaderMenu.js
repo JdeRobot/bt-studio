@@ -1,43 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import axios from "axios";
 
-import logo_img from './img/logo.png'
+import logo_img from "./img/logo.png";
 
-import './HeaderMenu.css'
-import change_project_img from './img/change_project.svg'
-import save_project_img from './img/save_project.svg'
-import universes_img from './img/universes.svg'
-import ProjectModal from './modals/ProjectModal';
-import UniversesModal from './modals/UniverseModal';
+import "./HeaderMenu.css";
+import change_project_img from "./img/change_project.svg";
+import save_project_img from "./img/save_project.svg";
+import universes_img from "./img/universes.svg";
+import ProjectModal from "./modals/ProjectModal";
+import UniversesModal from "./modals/UniverseModal";
 
 var dropdown_shown = false;
 
-const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUniverseName, currentUniverseName, launchUniverse, terminateUniverse, changeUniverse, modelJson, projectChanges, setProjectChanges, openError} ) => {
-
+const HeaderMenu = ({
+  setCurrentProjectname,
+  currentProjectname,
+  setCurrentUniverseName,
+  currentUniverseName,
+  launchUniverse,
+  terminateUniverse,
+  changeUniverse,
+  modelJson,
+  projectChanges,
+  setProjectChanges,
+  openError,
+}) => {
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
   const [isUniversesModalOpen, setUniversesModalOpen] = useState(false);
   const [existingProjects, setExistingProjects] = useState("");
 
   const createProject = (projectName) => {
-  
-    if (projectName === null || projectName === '') {
+    if (projectName === null || projectName === "") {
       // User pressed cancel or entered an empty string
       return;
     }
-  
-    const apiUrl = `/tree_api/create_project?project_name=${encodeURIComponent(projectName)}`;
-    axios.get(apiUrl)
-      .then(response => {
+
+    const apiUrl = `/tree_api/create_project?project_name=${encodeURIComponent(
+      projectName
+    )}`;
+    axios
+      .get(apiUrl)
+      .then((response) => {
         if (response.data.success) {
           // Successfully created the project
           setCurrentProjectname(projectName);
-          console.log('Project created successfully');
-        } 
+          console.log("Project created successfully");
+        }
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -45,15 +58,16 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
             openError(`The project ${projectName} already exists`);
           } else {
             // Handle other statuses or general API errors
-            openError('Unable to connect with the backend server. Please check the backend status.');
+            openError(
+              "Unable to connect with the backend server. Please check the backend status."
+            );
           }
         }
       });
   };
 
-  const changeProject = function(projectName) {
-    
-    if (projectName === null || projectName === '') {
+  const changeProject = function (projectName) {
+    if (projectName === null || projectName === "") {
       // User pressed cancel or entered an empty string
       return;
     }
@@ -68,49 +82,51 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
       // Project doesn't exist
       openError(`The project ${projectName} does not exist`);
     }
-  }
+  };
 
   const openProjectView = (e) => {
-    setProjectModalOpen(true)
+    setProjectModalOpen(true);
     saveProject();
   };
 
   const openUniversesView = (e) => {
-    setUniversesModalOpen(true)
+    setUniversesModalOpen(true);
     saveProject();
   };
 
   const saveProject = () => {
-  
     // Assuming modelJson and currentProjectname are correctly populated
     if (!modelJson || !currentProjectname) {
-      console.error('Either modelJson or currentProjectname is not set.');
-      openError("Please, select or create a project to store changes")
+      console.error("Either modelJson or currentProjectname is not set.");
+      openError("Please, select or create a project to store changes");
       return;
     }
 
     setProjectChanges(false);
 
-    axios.post('/tree_api/save_project/', {
-      project_name: currentProjectname,
-      graph_json: modelJson
-    })
-    .then(response => {
-      if (response.data.success) {
-        console.log('Project saved successfully.');
-      } else {
-        console.error('Error saving project:', response.data.message || 'Unknown error');
-      }
-    })
-    .catch(error => {
-      console.error('Axios Error:', error);
-    });
-
+    axios
+      .post("/tree_api/save_project/", {
+        project_name: currentProjectname,
+        graph_json: modelJson,
+      })
+      .then((response) => {
+        if (response.data.success) {
+          console.log("Project saved successfully.");
+        } else {
+          console.error(
+            "Error saving project:",
+            response.data.message || "Unknown error"
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Axios Error:", error);
+      });
   };
 
   const handleCloseProjectModal = (project) => {
     if (project) {
-      changeProject(project)
+      changeProject(project);
     }
     setProjectModalOpen(false);
   };
@@ -124,18 +140,17 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
 
     if (currentUniverseName !== null) {
       if (universe_name !== currentUniverseName) {
-        changeUniverse(universe_name);
         setCurrentUniverseName(universe_name);
+        changeUniverse(universe_name);
       }
     } else {
-      launchUniverse(universe_name);
       setCurrentUniverseName(universe_name);
+      launchUniverse(universe_name);
     }
   };
 
-  const handleFormSubmit = (data) => {
-  }
-  
+  const handleFormSubmit = (data) => {};
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -159,26 +174,42 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
           openError={openError}
         />
 
-        <div className='header-button-container'>
+        <div className="header-button-container">
           {currentProjectname && (
-              <span className="project-name-box">
-                <div className='project-name'>{currentProjectname + ' ~ ' + ((currentUniverseName) ? currentUniverseName : "No Universe selected")}</div>
-                {projectChanges && <div className="small-text">Unsaved</div>}
-              </span>
+            <span className="project-name-box">
+              <div className="project-name">
+                {currentProjectname +
+                  " ~ " +
+                  (currentUniverseName
+                    ? currentUniverseName
+                    : "No Universe selected")}
+              </div>
+              {projectChanges && <div className="small-text">Unsaved</div>}
+            </span>
           )}
-          
-          <button className="header-button" onClick={openProjectView} title="Change project">
+
+          <button
+            className="header-button"
+            onClick={openProjectView}
+            title="Change project"
+          >
             <img className="header-icon" src={change_project_img}></img>
           </button>
-          <button className="header-button" onClick={openUniversesView} title="Universe menu">
+          <button
+            className="header-button"
+            onClick={openUniversesView}
+            title="Universe menu"
+          >
             <img className="header-icon" src={universes_img}></img>
           </button>
-          <button className="header-button" onClick={saveProject} title="Save project">
+          <button
+            className="header-button"
+            onClick={saveProject}
+            title="Save project"
+          >
             <img className="header-icon" src={save_project_img}></img>
           </button>
         </div>
-
-
       </Toolbar>
     </AppBar>
   );

@@ -26,8 +26,6 @@ urlpatterns = [
         views.generate_dockerized_app,
         name="generate_dockerized_app",
     ),
-    path(
-        "get_simplified_universe/", views.get_simplified_universe, name="generate_app"
-    ),
+    path("get_universe_zip/", views.get_universe_zip, name="generate_app"),
     path("upload_universe/", views.upload_universe, name="upload_universe"),
 ]

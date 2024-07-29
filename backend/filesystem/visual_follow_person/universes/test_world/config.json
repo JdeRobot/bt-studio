@@ -1,0 +1,9 @@
+{
+  "name": "test_world",
+  "type": "custom",
+  "config": {
+    "ros_version": "ROS2",
+    "world": "gazebo",
+    "launch_file_path": "/workspace/worlds/test_world/universe.launch.py"
+  }
+}
