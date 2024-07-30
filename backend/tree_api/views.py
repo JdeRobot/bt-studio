@@ -595,6 +595,23 @@ def upload_universe(request):
         if os.path.exists(temp_zip_path):
             os.remove(temp_zip_path)
 
+    # Fill the config dictionary of the universe
+    ram_launch_path = "/workspace/worlds/" + universe_name + "/universe.launch.py"
+    universe_config = {
+        "name": universe_name,
+        "type": "custom",
+        "ram_config": {
+            "ros_version": "ROS2",
+            "world": "gazebo",
+            "launch_file_path": ram_launch_path,
+        },
+    }
+
+    # Generate the json config
+    config_path = os.path.join(universe_path, "config.json")
+    with open(config_path, "w") as config_file:
+        json.dump(universe_config, config_file, ensure_ascii=False, indent=4)
+
     return Response(
         {"success": True, "message": "Universe uploaded successfully"},
         status=status.HTTP_200_OK,
