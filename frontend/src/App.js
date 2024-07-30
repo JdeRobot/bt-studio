@@ -150,42 +150,14 @@ const App = () => {
     }
   };
 
-  const changeUniverse = (universe_name) => {
-    if (gazeboEnabled) {
-      const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
-        currentProjectname
-      )}&universe_name=${encodeURIComponent(universe_name)}`;
-      axios.get(apiUrl).then((response) => {
-        console.log(response.data);
-        const universe_raw_config = JSON.parse(response.data);
+  const changeUniverse = async (universe_name) => {
+    await manager.terminate_application();
+    await manager.terminate_visualization();
+    await manager.terminate_universe();
 
-        if (universe_raw_config.type === "robotics_backend") {
-          const universe_config = {
-            name: universe_raw_config.name,
-            launch_file_path: universe_raw_config.config.launch_file_path,
-            ros_version: "ROS2",
-            visualization: "gazebo_rae",
-            world: "gazebo",
-            exercise_id: universe_raw_config.id,
-          };
-          manager.terminate_application().then(() => {
-            manager.terminate_visualization().then(() => {
-              manager.terminate_universe().then(() => {
-                manager.launchWorld(universe_config).then(() => {
-                  console.log("World launched!");
-                  manager
-                    .prepareVisualization(universe_config.visualization)
-                    .then(() => {
-                      console.log("Viz ready!");
-                      setGazeboEnabled(true);
-                    });
-                });
-              });
-            });
-          });
-        }
-      });
-    }
+    setGazeboEnabled(false); // This allows for smooth reload
+
+    launchUniverse(universe_name);
   };
 
   useEffect(() => {
