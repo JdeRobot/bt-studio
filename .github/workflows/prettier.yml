@@ -17,10 +17,15 @@ jobs:
         with:
           # Make sure the actual branch is checked out when running on pull requests
           fetch-depth: 0
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.head_ref || github.ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Prettier
+        run: npm install -g prettier
 
       - name: Prettify code
-        uses: creyD/prettier_action@v4.3
-        with:
-          dry: True
-          prettier_options: --check "frontend/src/**/*.{js,jsx,css,tsx,html}"
+        run: prettier --check "frontend/src/**/*.{js,jsx,css,tsx,html}"
