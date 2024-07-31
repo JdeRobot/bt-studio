@@ -1,16 +1,21 @@
-import { LinkModel, PortModel, DefaultLinkModel, DefaultPortModel } from '@projectstorm/react-diagrams';
+import {
+  LinkModel,
+  PortModel,
+  DefaultLinkModel,
+  DefaultPortModel,
+} from "@projectstorm/react-diagrams";
 
 export class TagInputPortModel extends DefaultPortModel {
-	constructor() {
-		super({
-			type: 'tag input',
-			name: 'tag input',
-			label: 'tag input',
-			in: true
-		});
-	}
+  constructor() {
+    super({
+      type: "tag input",
+      name: "tag input",
+      label: "tag input",
+      in: true,
+    });
+  }
 
-	createLinkModel(): LinkModel {
-		return new DefaultLinkModel();
-	}
+  createLinkModel(): LinkModel {
+    return new DefaultLinkModel();
+  }
 }

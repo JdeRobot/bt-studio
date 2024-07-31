@@ -1,82 +1,82 @@
 /* FileEditor.css */
 
 .editor-container {
-    position: relative; /* Establish a stacking context */
-    padding-right: 2px;
-    height: 100%;
+  position: relative; /* Establish a stacking context */
+  padding-right: 2px;
+  height: 100%;
 }
-  
+
 .zoom-buttons {
-    position: absolute; /* Absolute positioning relative to .editor-container */
-    bottom: 20px; /* From the bottom */
-    right: 5px; /* From the right */
-    z-index: 1; /* Ensure it's above the editor content */
-    width: 75px;
-    display: flex;
-    justify-content: space-evenly;
+  position: absolute; /* Absolute positioning relative to .editor-container */
+  bottom: 20px; /* From the bottom */
+  right: 5px; /* From the right */
+  z-index: 1; /* Ensure it's above the editor content */
+  width: 75px;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .zoom-in {
-    width: 25px;
-    height: 25px;
-    background-color: var(--buttons);
-    color: var(--text);
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
+  width: 25px;
+  height: 25px;
+  background-color: var(--buttons);
+  color: var(--text);
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
 }
 
 .zoom-in:hover {
-    background-color: var(--buttons-hover);
+  background-color: var(--buttons-hover);
 }
 
 .browser-menu {
-    display: flex;
-    align-items: center;
-    height: 50px;
-    max-height: 50px;
+  display: flex;
+  align-items: center;
+  height: 50px;
+  max-height: 50px;
 }
 
 .editor-buttons {
-    display: flex;
-    align-items: center;
-    margin-right: 30px;
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
 }
 
 .save-button {
-    display: flex;
-    justify-content: center;
-    width: 25px;
-    height: 25px;
-    background-color: var(--buttons-invisible);
-    border: 0;
-    margin-left: 3px;
-    margin-right: 3px;
+  display: flex;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  background-color: var(--buttons-invisible);
+  border: 0;
+  margin-left: 3px;
+  margin-right: 3px;
 }
 
 .save-button:hover {
-    background-color: var(--buttons-hover);
-    border-radius: 50%; /* Circular highlight */
+  background-color: var(--buttons-hover);
+  border-radius: 50%; /* Circular highlight */
 }
 
 .unsaved-dot {
-    width: 10px;
-    height: 10px;
-    background-color: var(--text);
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 5px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--text);
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
 }
 
 .icon {
-    width: 20px;
+  width: 20px;
 }
 
 .splash-icon {
-    --size: 400px;
-    margin-top: calc(50% - var(--size) / 2);
-    margin-left: calc(50% - var(--size) / 2);
-    width: var(--size);
+  --size: 400px;
+  margin-top: calc(50% - var(--size) / 2);
+  margin-left: calc(50% - var(--size) / 2);
+  width: var(--size);
 }
 
 /* Ace editor config */
@@ -97,5 +97,5 @@
 }
 
 .ace_scrollbar-h {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }

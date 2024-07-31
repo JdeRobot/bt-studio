@@ -1,22 +1,22 @@
 #settings-modal {
-  width:50%;
-  height:75%;
+  width: 50%;
+  height: 75%;
   display: flex;
   flex-direction: column;
-  flex-grow: 1
+  flex-grow: 1;
 }
 
 .settings-entry-list {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0px;
-    overflow-y: auto;
-    max-height: 65vh;
-    flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px;
+  overflow-y: auto;
+  max-height: 65vh;
+  flex: 1;
 
-    /* --g:radial-gradient(50% 20px, var(--background-500), var(--background));  
+  /* --g:radial-gradient(50% 20px, var(--background-500), var(--background));  
     background: 
       linear-gradient(var(--background) 10px, #0000 40px calc(100% - 40px),var(--background) calc(100% - 10px)) local, 
       var(--g) top   /100% 200%,    
