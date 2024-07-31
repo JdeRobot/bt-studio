@@ -1,50 +1,48 @@
 /* FileBrowser.css */
 
 .file-item {
-    list-style-type: none;
-    padding: 0px;
-    cursor: pointer;
-    display: grid;
-    grid-template-columns: auto 5px;
-    grid-gap: 5px;
-    padding-right: 0px;
+  list-style-type: none;
+  padding: 0px;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: auto 5px;
+  grid-gap: 5px;
+  padding-right: 0px;
 }
 
 .file-item label {
-    cursor: pointer;
-    list-style-type: none;
-    padding: 8px;
-    color: var(--text)
+  cursor: pointer;
+  list-style-type: none;
+  padding: 8px;
+  color: var(--text);
 }
 
-
 .file-item:hover {
-    background-color: var(--buttons-hover);
+  background-color: var(--buttons-hover);
 }
 
 .file-item-selected {
-    background-color: var(--buttons);
+  background-color: var(--buttons);
 }
 
 .file-item-selected:hover {
-    background-color: var(--buttons-hover);
+  background-color: var(--buttons-hover);
 }
 
-  
 .editor-menu {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-left: 10px;
-    height: 50px;
-    max-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
+  height: 50px;
+  max-height: 50px;
 }
 
 .buttons {
-    padding-left: 10px;
-    display: flex;
-    width: 70px;
-    justify-content: space-around;
+  padding-left: 10px;
+  display: flex;
+  width: 70px;
+  justify-content: space-around;
 }
 
 .menu-button {
@@ -72,10 +70,9 @@
 }
 
 .accent-color {
-    position: relative;
-    right: 0px;
-    z-index: 10;
-    width: 5px;
-    height: 100%;
+  position: relative;
+  right: 0px;
+  z-index: 10;
+  width: 5px;
+  height: 100%;
 }
-  

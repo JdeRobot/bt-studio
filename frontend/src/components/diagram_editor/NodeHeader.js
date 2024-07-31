@@ -156,7 +156,7 @@ const NodeHeader = ({
           className="node-action-button"
           onClick={() => {
             openInNewTab(
-              "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
+              "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
             );
           }}
           title="Help"

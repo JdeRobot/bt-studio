@@ -1,25 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './UniverseModal.css';
-import Modal from '../../Modal/Modal';
-
+import React, { useState, useEffect, useRef } from "react";
+import "./UniverseModal.css";
+import Modal from "../../Modal/Modal";
 import { ReactComponent as BackIcon } from '../../Modal/img/back.svg'
 import { ReactComponent as CloseIcon } from '../../Modal/img/close.svg'
 import { ReactComponent as DeleteIcon } from '../../diagram_editor/img/delete.svg'
-
-import axios from 'axios';
+import axios from "axios";
+import UniverseUploadModal from "./UniverseUploadModal";
 
 const initialProjectData = {
-  projectName: '',
+  projectName: "",
 };
 
-const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) => {
+const UniverseModal = ({
+  onSubmit,
+  isOpen,
+  onClose,
+  currentProject,
+  openError,
+}) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialProjectData);
   const [existingUniverses, setUniversesProjects] = useState([]);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [universeAdded, setUniverseAdded] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
-      return
+      return;
     }
 
     if (focusInputRef.current) {
@@ -30,15 +37,17 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
 
     const listApiUrl = `/tree_api/get_universes_list?project_name=${currentProject}`;
 
-    axios.get(listApiUrl)
-      .then(response => {
-        setUniversesProjects(response.data.universes_list)
+    axios
+      .get(listApiUrl)
+      .then((response) => {
+        setUniversesProjects(response.data.universes_list);
+        setUniverseAdded(false);
       })
-      .catch(error => {
-        console.error('Error while fetching universes list:', error);
+      .catch((error) => {
+        console.error("Error while fetching universes list:", error);
         openError(`An error occurred while fetching the universes list`);
       });
-  }, [isOpen]);
+  }, [isOpen, universeAdded]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -49,37 +58,39 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
   };
 
   const handleCancel = () => {
-    if (currentProject !== '') {
-      onClose()
+    if (currentProject !== "") {
+      onClose();
     }
   };
 
   const handleCreate = () => {
-    if (formState.projectName === '') {
+    if (formState.projectName === "") {
       return;
     }
-    onClose()
+    onClose();
   };
 
   const deleteUniverse = (universe_name) => {
     const apiUrl = `/tree_api/delete_universe?project_name=${currentProject}&universe_name=${universe_name}`;
-    axios.get(apiUrl)
-      .then(response => {
+    axios
+      .get(apiUrl)
+      .then((response) => {
         if (response.data.success) {
-        const listApiUrl = `/tree_api/get_universes_list?project_name=${currentProject}`;
+          const listApiUrl = `/tree_api/get_universes_list?project_name=${currentProject}`;
 
-        axios.get(listApiUrl)
-          .then(response => {
-            setUniversesProjects(response.data.universes_list)
-          })
-          .catch(error => {
-            console.error('Error while fetching universes list:', error);
-            openError(`An error occurred while fetching the universes list`);
-          });
-          console.log('Universe deleted successfully');
-        } 
+          axios
+            .get(listApiUrl)
+            .then((response) => {
+              setUniversesProjects(response.data.universes_list);
+            })
+            .catch((error) => {
+              console.error("Error while fetching universes list:", error);
+              openError(`An error occurred while fetching the universes list`);
+            });
+          console.log("Universe deleted successfully");
+        }
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -87,39 +98,82 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
             openError(`The universe ${universe_name} does not exist`);
           } else {
             // Handle other statuses or general API errors
-            openError('Unable to connect with the backend server. Please check the backend status.');
+            openError(
+              "Unable to connect with the backend server. Please check the backend status.",
+            );
           }
         }
       });
-  }
+  };
+
+  const importFromZip = () => {
+    setUploadModalOpen(true);
+  };
+
+  const handleCloseUploadUniverseModal = (universe_name) => {
+    setUploadModalOpen(false);
+  };
+
+  const handleFormSubmit = (data) => {};
 
   return (
-    <Modal id="universes-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      id="universes-modal"
+      hasCloseBtn={true}
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <UniverseUploadModal
+        isOpen={uploadModalOpen}
+        onSubmit={handleFormSubmit}
+        onClose={handleCloseUploadUniverseModal}
+        currentProject={currentProject}
+        openError={openError}
+        setUniverseAdded={setUniverseAdded}
+      />
       <form onSubmit={onSubmit} onReset={handleCancel}>
         <div className="modal-titlebar">
-          <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Manage your Universes</label>
+          <label
+            className="modal-titlebar-title"
+            htmlFor="actionName"
+            style={{ textAlign: "center" }}
+          >
+            Manage your Universes
+          </label>
           <CloseIcon className="modal-titlebar-close icon" onClick={() => { handleCancel(); } } fill={"var(--icon)"}/>
         </div>
         <div className="form-row">
-              <ul className='project-entry-list'>
-                {Object.entries(existingUniverses).map((project) => {
-                  return (
-                    <div className='project-entry' onClick={() => onClose(project[1])}>
-                      <label className='project-entry-name'>{project[1]}</label>
-                      <DeleteIcon 
+          <ul className="project-entry-list">
+            {Object.entries(existingUniverses).map((project) => {
+              return (
+                <div
+                  className="project-entry"
+                  onClick={() => onClose(project[1])}
+                >
+                  <label className="project-entry-name">{project[1]}</label>
+                  <DeleteIcon 
                         className="project-entry-delete icon" 
                         title='Delete'
                         onClick={(e) => { deleteUniverse(project[1]); e.stopPropagation(); } }
                         fill={"var(--icon)"}/>
-                    </div>
-                  );
-                })}
-              </ul>
-            </div>
+                </div>
+              );
+            })}
+          </ul>
+        </div>
         <div className="form-row">
           <div className="project-modal-creation-buttons-container">
-            <div className='project-modal-create-button' onClick={() => {} }>Import Universe</div>
-            <div className='project-modal-create-button' onClick={() => {} }>Use Universe from Robotics Backend</div>
+            <div
+              className="project-modal-create-button"
+              onClick={() => {
+                importFromZip();
+              }}
+            >
+              Import from zip
+            </div>
+            <div className="project-modal-create-button" onClick={() => {}}>
+              Import from Robotics Backend library
+            </div>
             {/* <div className='project-modal-create-button'>Other</div> */}
           </div>
         </div>

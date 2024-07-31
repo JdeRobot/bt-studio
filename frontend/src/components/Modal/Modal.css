@@ -91,7 +91,7 @@
 
 .modal-complex-input::placeholder {
   color: transparent;
-  user-select: none; 
+  user-select: none;
 }
 
 .modal-complex-input:placeholder-shown ~ .modal-complex-input-label {
@@ -106,7 +106,7 @@
   display: block;
   transition: 0.2s;
   font-size: 0.9rem;
-  font-weight:700;
+  font-weight: 700;
   cursor: text;
 }
 
@@ -116,12 +116,13 @@
   display: block;
   transition: 0.2s;
   font-size: 0.9rem;
-  font-weight:700;
+  font-weight: 700;
 }
 
 /* reset input */
-.modal-complex-input:required, .modal-complex-input:invalid{
-  box-shadow:none;
+.modal-complex-input:required,
+.modal-complex-input:invalid {
+  box-shadow: none;
 }
 
 .modal-complex-input-label {

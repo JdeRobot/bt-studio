@@ -61,8 +61,8 @@
   background-color: hsla(0, 0%, 50%, 0.3) !important;
 }
 
-.node-editor-io-entry + .node-editor-io-entry{
-  margin-top: .3em;
+.node-editor-io-entry + .node-editor-io-entry {
+  margin-top: 0.3em;
 }
 
 .node-editor-io-entry {
@@ -84,11 +84,11 @@
   background-color: hsla(0, 0%, 50%, 0.3);
 }
 
-.node-editor-io-entry:hover .node-editor-io-delete{
+.node-editor-io-entry:hover .node-editor-io-delete {
   visibility: visible;
 }
 
-.node-editor-io-entry:hover .node-editor-io-accept{
+.node-editor-io-entry:hover .node-editor-io-accept {
   visibility: visible;
 }
 
@@ -109,8 +109,8 @@
   font-size: medium !important;
   display: block;
   overflow-x: scroll;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .node-editor-io-name::-webkit-scrollbar {

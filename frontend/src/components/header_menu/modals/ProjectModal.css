@@ -1,21 +1,26 @@
 #project-modal {
-  width:50%;
-  height:75%;
+  width: 50%;
+  height: 75%;
 }
 
 .project-entry-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0px;
-    overflow-y: auto;
-    max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px;
+  overflow-y: auto;
+  max-height: 60vh;
 
-    --g:radial-gradient(50% 20px, var(--background-500), var(--background));  
-    background: 
-      linear-gradient(var(--background) 10px, #0000 40px calc(100% - 40px),var(--background) calc(100% - 10px)) local, 
-      var(--g) top   /100% 200%,    
-      var(--g) bottom/100% 200%;
+  --g: radial-gradient(50% 20px, var(--background-500), var(--background));
+  background:
+    linear-gradient(
+        var(--background) 10px,
+        #0000 40px calc(100% - 40px),
+        var(--background) calc(100% - 10px)
+      )
+      local,
+    var(--g) top / 100% 200%,
+    var(--g) bottom/100% 200%;
 }
 
 /* width */
@@ -52,7 +57,7 @@
   background-color: var(--buttons-hover);
 }
 
-.project-entry-delete{
+.project-entry-delete {
   padding: 0px;
   background: none !important;
   border-radius: 7px !important;
@@ -63,8 +68,7 @@
   visibility: hidden;
 }
 
-
-.project-entry:hover .project-entry-delete{
+.project-entry:hover .project-entry-delete {
   visibility: visible;
 }
 
@@ -87,29 +91,29 @@
 }
 
 .project-modal-creation-buttons-container {
-    position: absolute;
-    bottom: 30px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: calc(100% - 48px);
-    justify-content: space-evenly;
+  position: absolute;
+  bottom: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: calc(100% - 48px);
+  justify-content: space-evenly;
 }
 
 .project-modal-create-button {
-    height: 45px;
-    width: 175px;
-    align-content: center;
-    border-radius: 10px;
-    background-color: var(--buttons);
-    color: var(--text);
-    font-weight: 600;
-    text-align: center;
-    user-select: none;
+  height: 45px;
+  width: 175px;
+  align-content: center;
+  border-radius: 10px;
+  background-color: var(--buttons);
+  color: var(--text);
+  font-weight: 600;
+  text-align: center;
+  user-select: none;
 }
 
 .project-modal-create-button:hover {
-    background-color: var(--buttons-hover);
+  background-color: var(--buttons-hover);
 }
 
 .project-entry-name {
@@ -117,7 +121,7 @@
   margin-bottom: 0px !important;
 }
 
-.project-create-name{
+.project-create-name {
   margin-top: 30px;
   width: 75%;
 }

@@ -46,7 +46,8 @@ h2 {
   font-size: 18px;
 }
 
-:root, .App[data-theme="light"] {
+:root,
+.App[data-theme="light"] {
   --text: #0d0d12;
   --text-50: #f0f0f4;
   --text-100: #e1e1ea;
@@ -113,7 +114,8 @@ h2 {
   --accent-950: #0d0f0b;
 }
 
-:root, .App[data-theme="dark"] {
+:root,
+.App[data-theme="dark"] {
   --text: #ededf2;
   --text-50: #0b0b0f;
   --text-100: #15151e;
@@ -193,7 +195,8 @@ h2 {
   --error-950: #f9ebeb;
 }
 
-:root, .App {
+:root,
+.App {
   --header: var(--background-300);
   --canvas-background: var(--secondary-800);
 
