@@ -716,8 +716,7 @@ const DiagramEditor = ({
 
   const generateApp = () => {
     if (model.current) {
-      const str = JSON.stringify(model.current.serialize());
-
+      const tree_graph = JSON.stringify(model.current.serialize());
       fetch("/tree_api/generate_app/", {
         method: "POST",
         headers: {
@@ -725,7 +724,7 @@ const DiagramEditor = ({
         },
         body: JSON.stringify({
           app_name: currentProjectname,
-          content: str,
+          tree_graph: tree_graph,
           bt_order: btOrder,
         }),
       })
@@ -757,68 +756,48 @@ const DiagramEditor = ({
   const runApp = () => {
     if (gazeboEnabled) {
       if (!appRunning) {
-        if (!appLoaded) {
-          const tree_graph = JSON.stringify(model.current.serialize());
-          fetch("/tree_api/get_simplified_app/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              app_name: currentProjectname,
-              content: tree_graph,
-              bt_order: btOrder,
-            }),
+        const tree_graph = JSON.stringify(model.current.serialize());
+        fetch("/tree_api/generate_dockerized_app/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            app_name: currentProjectname,
+            tree_graph: tree_graph,
+            bt_order: btOrder,
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.json().then((data) => {
+                throw new Error(data.message || "An error occurred.");
+              });
+            }
+            return response.blob();
           })
-            .then((response) => {
-              if (!response.ok) {
-                return response.json().then((data) => {
-                  throw new Error(data.message || "An error occurred.");
-                });
-              }
-              return response.blob();
-            })
-            .then((blob) => {
-              var reader = new FileReader();
-              reader.readAsDataURL(blob);
-              reader.onloadend = function () {
-                var base64data = reader.result;
-                // console.log(base64data);
+          .then((blob) => {
+            var reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+              var base64data = reader.result;
+              // console.log(base64data);
 
-                // Send the zip
-                manager
-                  .run({ type: "bt-studio", code: base64data })
-                  .then(() => {
-                    console.log("App running!");
-                    setAppRunning(true);
-                    setAppLoaded(true);
-                  })
-                  .catch((response: any) => {
-                    let linterMessage = JSON.stringify(
-                      response.data.message,
-                    ).split("\\n");
-                    alert(`Received linter message: ${linterMessage}`);
-                  });
-              };
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
-        } else {
-          // Send the zip
-          manager
-            .resume()
-            .then(() => {
-              console.log("App resumed!");
-              setAppRunning(true);
-            })
-            .catch((response: any) => {
-              let linterMessage = JSON.stringify(response.data.message).split(
-                "\\n",
-              );
-              alert(`Received linter message: ${linterMessage}`);
-            });
-        }
+              // Send the zip
+              manager
+                .run({ type: "bt-studio", code: base64data })
+                .then(() => {
+                  console.log("App resumed!");
+                  setAppRunning(true);
+                })
+                .catch((response: any) => {
+                  let linterMessage = JSON.stringify(
+                    response.data.message,
+                  ).split("\\n");
+                  alert(`Received linter message: ${linterMessage}`);
+                });
+            };
+          });
       } else {
         manager.pause().then(() => {
           console.log("App paused!");

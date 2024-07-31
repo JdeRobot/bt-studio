@@ -13,6 +13,9 @@ import mimetypes
 import json
 import shutil
 import zipfile
+from rest_framework import status
+from django.core.files.storage import default_storage
+import base64
 
 
 @api_view(["GET"])
@@ -193,6 +196,17 @@ def get_universe_configuration(request):
             return Response({"error": "File not found"}, status=404)
     else:
         return Response({"error": "Universe parameter is missing"}, status=400)
+
+
+@api_view(["GET"])
+def import_universe_from_zip(request):
+
+    project_name = request.GET.get("project_name")
+    zip_file = request.GET.get("zip_file")
+
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    universes_path = os.path.join(project_path, "universes/")
 
 
 @api_view(["GET"])
@@ -393,9 +407,19 @@ def translate_json(request):
 @api_view(["POST"])
 def generate_app(request):
 
-    # Get the app name
+    if (
+        "app_name" not in request.data
+        or "tree_graph" not in request.data
+        or "bt_order" not in request.data
+    ):
+        return Response(
+            {"error": "Incorrect request parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the parameters
     app_name = request.data.get("app_name")
-    content = request.data.get("content")
+    tree_graph = request.data.get("tree_graph")
     bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
@@ -407,52 +431,55 @@ def generate_app(request):
     template_path = os.path.join(settings.BASE_DIR, "ros_template")
     tree_gardener_src = os.path.join(settings.BASE_DIR, "tree_gardener")
 
-    if app_name and content:
+    try:
+        # Generate a basic tree from the JSON definition
+        json_translator.translate(tree_graph, tree_path, bt_order)
 
-        try:
-            # Generate a basic tree from the JSON definition
-            json_translator.translate(content, tree_path, bt_order)
+        # Generate a self-contained tree
+        tree_generator.generate(tree_path, action_path, self_contained_tree_path)
 
-            # Generate a self-contained tree
-            tree_generator.generate(tree_path, action_path, self_contained_tree_path)
+        # Using the self-contained tree, package the ROS 2 app
+        zip_file_path = app_generator.generate(
+            self_contained_tree_path,
+            app_name,
+            template_path,
+            action_path,
+            tree_gardener_src,
+        )
 
-            # Using the self-contained tree, package the ROS 2 app
-            zip_file_path = app_generator.generate(
-                self_contained_tree_path,
-                app_name,
-                template_path,
-                action_path,
-                tree_gardener_src,
+        # Confirm ZIP file exists
+        if not os.path.exists(zip_file_path):
+            return Response(
+                {"success": False, "message": "ZIP file not found"}, status=400
             )
 
-            # Confirm ZIP file exists
-            if not os.path.exists(zip_file_path):
-                return Response(
-                    {"success": False, "message": "ZIP file not found"}, status=400
-                )
+        # Prepare file response
+        zip_file = open(zip_file_path, "rb")
+        mime_type, _ = mimetypes.guess_type(zip_file_path)
+        response = HttpResponse(zip_file, content_type=mime_type)
+        response["Content-Disposition"] = (
+            f"attachment; filename={os.path.basename(zip_file_path)}"
+        )
 
-            # Prepare file response
-            zip_file = open(zip_file_path, "rb")
-            mime_type, _ = mimetypes.guess_type(zip_file_path)
-            response = HttpResponse(zip_file, content_type=mime_type)
-            response["Content-Disposition"] = (
-                f"attachment; filename={os.path.basename(zip_file_path)}"
-            )
+        return response
 
-            return response
-
-        except Exception as e:
-            return Response({"success": False, "message": str(e)}, status=400)
-    else:
-        return Response({"error": "app_name parameter is missing"}, status=500)
+    except Exception as e:
+        return Response({"success": False, "message": str(e)}, status=400)
 
 
 @api_view(["POST"])
-def get_simplified_app(request):
+def generate_dockerized_app(request):
 
-    # Get the app name
+    # Check if 'name' and 'zipfile' are in the request data
+    if "app_name" not in request.data or "tree_graph" not in request.data:
+        return Response(
+            {"error": "Incorrect request parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the request parameters
     app_name = request.data.get("app_name")
-    tree_graph = request.data.get("content")
+    tree_graph = request.data.get("tree_graph")
     bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
@@ -480,7 +507,7 @@ def get_simplified_app(request):
             # 3. Generate a self-contained tree
             tree_generator.generate(tree_path, action_path, self_contained_tree_path)
 
-            # 4. Copy necessary files from tree_gardener and ros_template
+            # 4. Copy necessary files to execute the app in the RB
             factory_location = tree_gardener_src + "/tree_gardener/tree_factory.py"
             tools_location = tree_gardener_src + "/tree_gardener/tree_tools.py"
             entrypoint_location = template_path + "/ros_template/execute_docker.py"
@@ -514,10 +541,16 @@ def get_simplified_app(request):
 
 
 @api_view(["POST"])
-def get_simplified_universe(request):
-    print("Getting simplified universe")
+def get_universe_zip(request):
 
-    # Get the app name
+    # Check if 'name' and 'zipfile' are in the request data
+    if "app_name" not in request.data or "universe_name" not in request.data:
+        return Response(
+            {"error": "Incorrect request parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the request parameters
     app_name = request.data.get("app_name")
     universe_name = request.data.get("universe_name")
 
@@ -529,38 +562,112 @@ def get_simplified_universe(request):
 
     working_folder = "/tmp/wf"
 
-    if app_name and universe_name:
+    try:
+        # 1. Create the working folder
+        if os.path.exists(working_folder):
+            shutil.rmtree(working_folder)
+        os.mkdir(working_folder)
 
-        try:
-            # 1. Create the working folder
-            if os.path.exists(working_folder):
-                shutil.rmtree(working_folder)
-            os.mkdir(working_folder)
+        # 2. Copy necessary files
+        shutil.copytree(universe_path, working_folder, dirs_exist_ok=True)
 
-            # 2. Copy necessary files
-            shutil.copytree(universe_path, working_folder, dirs_exist_ok=True)
-            print(working_folder)
+        # 3. Generate the zip
+        zip_path = working_folder + ".zip"
+        with zipfile.ZipFile(zip_path, "w") as zipf:
+            for root, dirs, files in os.walk(working_folder):
+                for file in files:
+                    zipf.write(
+                        os.path.join(root, file),
+                        os.path.relpath(os.path.join(root, file), working_folder),
+                    )
 
-            # 3. Generate the zip
-            zip_path = working_folder + ".zip"
-            with zipfile.ZipFile(zip_path, "w") as zipf:
-                for root, dirs, files in os.walk(working_folder):
-                    for file in files:
-                        zipf.write(
-                            os.path.join(root, file),
-                            os.path.relpath(os.path.join(root, file), working_folder),
-                        )
+        # 4. Return the zip
+        zip_file = open(zip_path, "rb")
+        mime_type, _ = mimetypes.guess_type(zip_path)
+        response = HttpResponse(zip_file, content_type=mime_type)
+        response["Content-Disposition"] = (
+            f"attachment; filename={os.path.basename(zip_path)}"
+        )
 
-            # 4. Return the zip
-            zip_file = open(zip_path, "rb")
-            mime_type, _ = mimetypes.guess_type(zip_path)
-            response = HttpResponse(zip_file, content_type=mime_type)
-            response["Content-Disposition"] = (
-                f"attachment; filename={os.path.basename(zip_path)}"
-            )
-            print(response)
-            return response
-        except Exception as e:
-            return Response({"success": False, "message": str(e)}, status=400)
-    else:
-        return Response({"error": "app_name parameter is missing"}, status=500)
+        return response
+    except Exception as e:
+        return Response(
+            {"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(["POST"])
+def upload_universe(request):
+
+    # Check if 'name' and 'zipfile' are in the request data
+    if (
+        "universe_name" not in request.data
+        or "app_name" not in request.data
+        or "zip_file" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the name and the zip file from the request
+    universe_name = request.data["universe_name"]
+    app_name = request.data["app_name"]
+    zip_file = request.data["zip_file"]
+
+    # Make folder path relative to Django app
+    base_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(base_path, app_name)
+    universes_path = os.path.join(project_path, "universes")
+    universe_path = os.path.join(universes_path, universe_name)
+
+    # Create the folder if it doesn't exist
+    if not os.path.exists(universe_path):
+        os.makedirs(universe_path)
+
+    try:
+        zip_file_data = base64.b64decode(zip_file)
+    except (TypeError, ValueError):
+        return Response(
+            {"error": "Invalid zip file data."}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Save the zip file temporarily
+    temp_zip_path = os.path.join(universe_path, "temp.zip")
+    with open(temp_zip_path, "wb") as temp_zip_file:
+        temp_zip_file.write(zip_file_data)
+
+    # Unzip the file
+    try:
+        with zipfile.ZipFile(temp_zip_path, "r") as zip_ref:
+            zip_ref.extractall(universe_path)
+    except zipfile.BadZipFile:
+        return Response(
+            {"error": "Invalid zip file."}, status=status.HTTP_400_BAD_REQUEST
+        )
+    finally:
+        # Clean up the temporary zip file
+        if os.path.exists(temp_zip_path):
+            os.remove(temp_zip_path)
+
+    # Fill the config dictionary of the universe
+    ram_launch_path = "/workspace/worlds/" + universe_name + "/universe.launch.py"
+    universe_config = {
+        "name": universe_name,
+        "type": "custom",
+        "ram_config": {
+            "ros_version": "ROS2",
+            "world": "gazebo",
+            "launch_file_path": ram_launch_path,
+        },
+    }
+
+    # Generate the json config
+    config_path = os.path.join(universe_path, "config.json")
+    with open(config_path, "w") as config_file:
+        json.dump(universe_config, config_file, ensure_ascii=False, indent=4)
+
+    return Response(
+        {"success": True, "message": "Universe uploaded successfully"},
+        status=status.HTTP_200_OK,
+    )

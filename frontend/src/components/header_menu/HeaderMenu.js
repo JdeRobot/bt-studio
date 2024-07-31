@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 import axios from "axios";
 
 import logo_img from "./img/logo.png";
@@ -39,7 +40,9 @@ const HeaderMenu = ({
       return;
     }
 
-    const apiUrl = `/tree_api/create_project?project_name=${encodeURIComponent(projectName)}`;
+    const apiUrl = `/tree_api/create_project?project_name=${encodeURIComponent(
+      projectName,
+    )}`;
     axios
       .get(apiUrl)
       .then((response) => {
@@ -144,12 +147,12 @@ const HeaderMenu = ({
 
     if (currentUniverseName !== null) {
       if (universe_name !== currentUniverseName) {
-        changeUniverse(universe_name);
         setCurrentUniverseName(universe_name);
+        changeUniverse(universe_name);
       }
     } else {
-      launchUniverse(universe_name);
       setCurrentUniverseName(universe_name);
+      launchUniverse(universe_name);
     }
   };
 

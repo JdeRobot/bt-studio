@@ -5,6 +5,7 @@ import back_modal_img from "../../Modal/img/back.svg";
 import close_modal_img from "../../Modal/img/close.svg";
 import delete_icon from "../../diagram_editor/img/delete.svg";
 import axios from "axios";
+import UniverseUploadModal from "./UniverseUploadModal";
 
 const initialProjectData = {
   projectName: "",
@@ -20,6 +21,8 @@ const UniverseModal = ({
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialProjectData);
   const [existingUniverses, setUniversesProjects] = useState([]);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [universeAdded, setUniverseAdded] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
@@ -38,12 +41,13 @@ const UniverseModal = ({
       .get(listApiUrl)
       .then((response) => {
         setUniversesProjects(response.data.universes_list);
+        setUniverseAdded(false);
       })
       .catch((error) => {
         console.error("Error while fetching universes list:", error);
         openError(`An error occurred while fetching the universes list`);
       });
-  }, [isOpen]);
+  }, [isOpen, universeAdded]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -102,6 +106,16 @@ const UniverseModal = ({
       });
   };
 
+  const importFromZip = () => {
+    setUploadModalOpen(true);
+  };
+
+  const handleCloseUploadUniverseModal = (universe_name) => {
+    setUploadModalOpen(false);
+  };
+
+  const handleFormSubmit = (data) => {};
+
   return (
     <Modal
       id="universes-modal"
@@ -109,6 +123,14 @@ const UniverseModal = ({
       isOpen={isOpen}
       onClose={onClose}
     >
+      <UniverseUploadModal
+        isOpen={uploadModalOpen}
+        onSubmit={handleFormSubmit}
+        onClose={handleCloseUploadUniverseModal}
+        currentProject={currentProject}
+        openError={openError}
+        setUniverseAdded={setUniverseAdded}
+      />
       <form onSubmit={onSubmit} onReset={handleCancel}>
         <div className="modal-titlebar">
           <label
@@ -152,11 +174,16 @@ const UniverseModal = ({
         </div>
         <div className="form-row">
           <div className="project-modal-creation-buttons-container">
-            <div className="project-modal-create-button" onClick={() => {}}>
-              Import Universe
+            <div
+              className="project-modal-create-button"
+              onClick={() => {
+                importFromZip();
+              }}
+            >
+              Import from zip
             </div>
             <div className="project-modal-create-button" onClick={() => {}}>
-              Use Universe from Robotics Backend
+              Import from Robotics Backend library
             </div>
             {/* <div className='project-modal-create-button'>Other</div> */}
           </div>

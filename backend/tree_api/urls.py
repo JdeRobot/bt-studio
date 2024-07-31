@@ -20,6 +20,14 @@ urlpatterns = [
         views.get_universe_configuration,
         name="get_universe_configuration",
     ),
+    path("generate_app/", views.generate_app, name="generate_app"),
+    path(
+        "generate_dockerized_app/",
+        views.generate_dockerized_app,
+        name="generate_dockerized_app",
+    ),
+    path("get_universe_zip/", views.get_universe_zip, name="generate_app"),
+    path("upload_universe/", views.upload_universe, name="upload_universe"),
     path(
         "get_project_configuration/",
         views.get_project_configuration,
@@ -29,10 +37,5 @@ urlpatterns = [
         "save_project_configuration/",
         views.save_project_configuration,
         name="save_project_configuration",
-    ),
-    path("generate_app/", views.generate_app, name="generate_app"),
-    path("get_simplified_app/", views.get_simplified_app, name="generate_app"),
-    path(
-        "get_simplified_universe/", views.get_simplified_universe, name="generate_app"
     ),
 ]
