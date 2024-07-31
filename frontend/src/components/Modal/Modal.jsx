@@ -1,7 +1,13 @@
-import React, { useRef, useEffect, useState } from 'react';
-import './Modal.css';
+import React, { useRef, useEffect, useState } from "react";
+import "./Modal.css";
 
-const Modal = ({ id="modal", isOpen, hasCloseBtn = true, onClose, children }) => {
+const Modal = ({
+  id = "modal",
+  isOpen,
+  hasCloseBtn = true,
+  onClose,
+  children,
+}) => {
   const [isModalOpen, setModalOpen] = useState(isOpen);
   const modalRef = useRef(null);
 
@@ -13,7 +19,7 @@ const Modal = ({ id="modal", isOpen, hasCloseBtn = true, onClose, children }) =>
   };
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Escape') {
+    if (event.key === "Escape") {
       handleCloseModal();
     }
   };

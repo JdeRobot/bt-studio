@@ -1,12 +1,15 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from "react";
 
-import './Checkbox.css';
+import "./Checkbox.css";
 
-const Checkbox = ({setting}) => {
-
+const Checkbox = ({ setting }) => {
   return (
     <div className="setting-checkbox-wrapper">
-      <input type="checkbox" checked={setting.value} onChange={() => setting.setter(!setting.value)}/>
+      <input
+        type="checkbox"
+        checked={setting.value}
+        onChange={() => setting.setter(!setting.value)}
+      />
     </div>
   );
 };

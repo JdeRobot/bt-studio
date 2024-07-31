@@ -4,31 +4,31 @@
 }
 
 .error-modal-buttons-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    margin-top: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
 }
 
 .error-modal-button {
-    height: 45px;
-    width: 175px;
-    padding: 15px;
-    border-radius: 10px;
-    background-color: var(--error-button);
-    color: var(--text);
-    font-weight: 600;
-    text-align: center;
-    user-select: none;
+  height: 45px;
+  width: 175px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: var(--error-button);
+  color: var(--text);
+  font-weight: 600;
+  text-align: center;
+  user-select: none;
 }
 
 .error-modal-button:hover {
-    background-color: var(--error-button-hover) !important;
+  background-color: var(--error-button-hover) !important;
 }
 
 .modal-error-label {
-    color: var(--text);
-    font-weight: 600;
-    text-align: center;
+  color: var(--text);
+  font-weight: 600;
+  text-align: center;
 }

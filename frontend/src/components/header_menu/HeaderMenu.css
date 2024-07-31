@@ -1,5 +1,5 @@
 .Header-text {
-  font-family: 'Spline Sans Mono', sans-serif;
+  font-family: "Spline Sans Mono", sans-serif;
   color: var(--text);
 }
 
@@ -57,7 +57,7 @@
 }
 
 /* Header bar */
-.css-hip9hq-MuiPaper-root-MuiAppBar-root{
+.css-hip9hq-MuiPaper-root-MuiAppBar-root {
   background-color: var(--header) !important;
   box-shadow: none !important;
 }
