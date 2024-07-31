@@ -1,4 +1,5 @@
-frontend/node_modules/.cache/*
+frontend/node_modules/.cache/
 *.pyc
-backend/backend/__pycache__/*
-backend/tree_api/__pycache__/*
+backend/backend/__pycache__/
+backend/tree_api/__pycache__/
+.vscode/
