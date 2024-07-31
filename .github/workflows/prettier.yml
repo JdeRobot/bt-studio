@@ -17,7 +17,8 @@ jobs:
         with:
           # Make sure the actual branch is checked out when running on pull requests
           fetch-depth: 0
-          ref: ${{ github.head_ref || github.ref }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
