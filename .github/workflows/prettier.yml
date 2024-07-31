@@ -23,4 +23,4 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           dry: True
-          prettier_options: --check frontend/src/**/*.{js,jsx,css,tsx,html}
+          prettier_options: --check "frontend/src/**/*.{js,jsx,css,tsx,html}"
