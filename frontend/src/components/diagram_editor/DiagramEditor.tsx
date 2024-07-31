@@ -594,8 +594,11 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
     }
   }
 
-  const generateApp = () => {
+  const zoomToFit = () => {
+    engine.zoomToFitNodes({margin:50});
+  }
 
+  const generateApp = () => {
     if (model.current) {
       const str = JSON.stringify(model.current.serialize());
     
@@ -727,9 +730,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
         onResetApp={resetApp}
         isAppRunning={appRunning}
         currentProjectname={currentProjectname}
+        zoomToFit={zoomToFit}
       />
       <div tabIndex={0} ref={ref} onBlur={(e) => handleLostFocus(e)} onFocus={(e) => handleGainedFocus(e)} id='diagram-view'>
-        <CanvasWidget className="canvas" engine={engine} />
+        <CanvasWidget className="canvas" engine={engine}/>
       </div>
       <button
         className="node-action-button"

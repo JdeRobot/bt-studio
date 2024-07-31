@@ -10,10 +10,11 @@ import help_img from './img/help.svg'
 import download_img from './img/download.svg'
 import run_img from './img/run.svg'
 import stop_img from './img/stop.svg'
+import zoom_to_fit_img from './img/zoom_to_fit.svg'
 import reset_img from './img/reset.svg'
 
 const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, 
-  onEditAction, onGenerateApp, onRunApp, onResetApp, isAppRunning, currentProjectname }) => {
+  onEditAction, onGenerateApp, onRunApp, isAppRunning, currentProjectname, zoomToFit }) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuLabel, setMenuLabel] = useState("");
@@ -120,6 +121,9 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode,
           </button>
           <button id='node-action-edit-button' className="node-action-button" onClick={onEditAction} title='Edit'>
             <img className="icon action-icon" src={edit_action_img}></img>
+          </button>
+          <button id='node-action-zoom-button' className="node-action-button" onClick={zoomToFit} title='Zoom To Fit'>
+            <img className="icon action-icon" src={zoom_to_fit_img}></img>
           </button>
           <button id='node-action-help-button' className="node-action-button" onClick={() => {openInNewTab('https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation')}} title='Help'>
             <img className="icon action-icon" src={help_img}></img>
