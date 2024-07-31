@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import axios from 'axios';
 
 import logo_img from './img/logo.png'
@@ -15,9 +14,7 @@ import ProjectModal from './modals/ProjectModal';
 import UniversesModal from './modals/UniverseModal';
 import SettingsModal from '../settings_popup/SettingsModal';
 
-var dropdown_shown = false;
-
-const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUniverseName, currentUniverseName, launchUniverse, terminateUniverse, changeUniverse, modelJson, projectChanges, setProjectChanges, openError} ) => {
+const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUniverseName, currentUniverseName, launchUniverse, terminateUniverse, changeUniverse, modelJson, projectChanges, setProjectChanges, openError, settingsProps} ) => {
 
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
   const [isUniversesModalOpen, setUniversesModalOpen] = useState(false);
@@ -175,8 +172,8 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
           isOpen={isSettingsModalOpen}
           onSubmit={handleFormSubmit}
           onClose={handleCloseSettingsModal}
-          currentProject={currentProjectname}
-          openError={openError}
+          currentProjectname={currentProjectname}
+          settings={settingsProps}
         />
 
         <div className='header-button-container'>

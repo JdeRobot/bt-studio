@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { Saturation, Hue, ColorPicker, useColor, TColor } from "react-color-palette";
+import { Saturation, Hue, useColor } from "react-color-palette";
 import "react-color-palette/css";
 
 import './EditActionModal.css';
