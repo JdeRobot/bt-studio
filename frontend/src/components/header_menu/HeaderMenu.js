@@ -59,7 +59,7 @@ const HeaderMenu = ({
           } else {
             // Handle other statuses or general API errors
             openError(
-              "Unable to connect with the backend server. Please check the backend status."
+              "Unable to connect with the backend server. Please check the backend status.",
             );
           }
         }
@@ -124,7 +124,10 @@ const HeaderMenu = ({
         if (response.data.success) {
           console.log("Project saved successfully.");
         } else {
-          console.error("Error saving project:", response.data.message || "Unknown error");
+          console.error(
+            "Error saving project:",
+            response.data.message || "Unknown error",
+          );
         }
       })
       .catch((error) => {
@@ -200,21 +203,39 @@ const HeaderMenu = ({
               <div className="project-name">
                 {currentProjectname +
                   " ~ " +
-                  (currentUniverseName ? currentUniverseName : "No Universe selected")}
+                  (currentUniverseName
+                    ? currentUniverseName
+                    : "No Universe selected")}
               </div>
               {projectChanges && <div className="small-text">Unsaved</div>}
             </span>
           )}
-          <button className="header-button" onClick={openProjectView} title="Change project">
+          <button
+            className="header-button"
+            onClick={openProjectView}
+            title="Change project"
+          >
             <ProjectsIcon className="header-icon" fill={"var(--icon)"} />
           </button>
-          <button className="header-button" onClick={openUniversesView} title="Universe menu">
+          <button
+            className="header-button"
+            onClick={openUniversesView}
+            title="Universe menu"
+          >
             <UniversesIcon className="header-icon" fill={"var(--icon)"} />
           </button>
-          <button className="header-button" onClick={openSettingsView} title="Settings">
+          <button
+            className="header-button"
+            onClick={openSettingsView}
+            title="Settings"
+          >
             <SettingsIcon className="header-icon" fill={"var(--icon)"} />
           </button>
-          <button className="header-button" onClick={saveProject} title="Save project">
+          <button
+            className="header-button"
+            onClick={saveProject}
+            title="Save project"
+          >
             <SaveIcon className="header-icon" fill={"var(--icon)"} />
           </button>
         </div>

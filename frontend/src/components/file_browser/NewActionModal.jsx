@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './NewActionModal.css';
-import Modal from '../Modal/Modal';
+import React, { useState, useEffect, useRef } from "react";
+import "./NewActionModal.css";
+import Modal from "../Modal/Modal";
 
-import { ReactComponent as EmptyTeplateIcon } from './img/empty_template.svg'
-import { ReactComponent as ActionTeplateIcon } from './img/action_template.svg'
-import { ReactComponent as IOTeplateIcon } from './img/io_template.svg'
-import { ReactComponent as CloseIcon } from '../Modal/img/close.svg'
+import { ReactComponent as EmptyTeplateIcon } from "./img/empty_template.svg";
+import { ReactComponent as ActionTeplateIcon } from "./img/action_template.svg";
+import { ReactComponent as IOTeplateIcon } from "./img/io_template.svg";
+import { ReactComponent as CloseIcon } from "../Modal/img/close.svg";
 
 const initialNewActionModalData = {
   actionName: "",
@@ -89,7 +89,13 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
           >
             Create new action
           </label>
-          <CloseIcon className="modal-titlebar-close icon" onClick={() => { handleCancel(); } } fill={"var(--icon)"}/>
+          <CloseIcon
+            className="modal-titlebar-close icon"
+            onClick={() => {
+              handleCancel();
+            }}
+            fill={"var(--icon)"}
+          />
         </div>
         <div className="modal-complex-input-row-container">
           <div className="modal-complex-input-container">
@@ -125,7 +131,7 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
                   onChange={onOptionChange}
                 />
                 <div htmlFor="emptyTemplate">
-                  <EmptyTeplateIcon className="icon" stroke={"var(--icon)"}/>
+                  <EmptyTeplateIcon className="icon" stroke={"var(--icon)"} />
                   <p> Empty </p>
                 </div>
               </label>
@@ -141,7 +147,7 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
                   onChange={onOptionChange}
                 />
                 <div htmlFor="actionTemplate">
-                  <ActionTeplateIcon className="icon" fill={"var(--icon)"}/>
+                  <ActionTeplateIcon className="icon" fill={"var(--icon)"} />
                   <p> Action </p>
                 </div>
               </label>
@@ -157,7 +163,7 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
                   onChange={onOptionChange}
                 />
                 <div htmlFor="ioTemplate">
-                  <IOTeplateIcon className="icon" fill={"var(--icon)"}/>
+                  <IOTeplateIcon className="icon" fill={"var(--icon)"} />
                   <p> I/O </p>
                 </div>
               </label>

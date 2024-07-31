@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./ProjectModal.css";
 import Modal from "../../Modal/Modal";
-import { ReactComponent as BackIcon } from '../../Modal/img/back.svg'
-import { ReactComponent as CloseIcon } from '../../Modal/img/close.svg'
-import { ReactComponent as DeleteIcon } from '../../diagram_editor/img/delete.svg'
+import { ReactComponent as BackIcon } from "../../Modal/img/back.svg";
+import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
+import { ReactComponent as DeleteIcon } from "../../diagram_editor/img/delete.svg";
 import axios from "axios";
 
 const initialProjectData = {
@@ -128,7 +128,13 @@ const ProjectModal = ({
               >
                 Open a Project
               </label>
-              <CloseIcon className="modal-titlebar-close icon" onClick={() => { handleCancel(); } } fill={"var(--icon)"}/>
+              <CloseIcon
+                className="modal-titlebar-close icon"
+                onClick={() => {
+                  handleCancel();
+                }}
+                fill={"var(--icon)"}
+              />
             </div>
             <div className="form-row">
               <ul className="project-entry-list">
@@ -139,11 +145,15 @@ const ProjectModal = ({
                       onClick={() => onClose(project[1])}
                     >
                       <label className="project-entry-name">{project[1]}</label>
-                      <DeleteIcon 
-                        className="project-entry-delete icon" 
-                        title='Delete'
-                        onClick={(e) => { deleteProject(project[1]); e.stopPropagation(); } }
-                        fill={"var(--icon)"}/>
+                      <DeleteIcon
+                        className="project-entry-delete icon"
+                        title="Delete"
+                        onClick={(e) => {
+                          deleteProject(project[1]);
+                          e.stopPropagation();
+                        }}
+                        fill={"var(--icon)"}
+                      />
                     </div>
                   );
                 })}
@@ -167,7 +177,13 @@ const ProjectModal = ({
         ) : (
           <>
             <div className="modal-titlebar">
-              <BackIcon className="modal-titlebar-back icon" onClick={() => { setCreateProjectOpen(false); } } fill={"var(--icon)"}/>
+              <BackIcon
+                className="modal-titlebar-back icon"
+                onClick={() => {
+                  setCreateProjectOpen(false);
+                }}
+                fill={"var(--icon)"}
+              />
               <label
                 className="modal-titlebar-title"
                 htmlFor="actionName"
@@ -175,7 +191,13 @@ const ProjectModal = ({
               >
                 Create New Project
               </label>
-              <CloseIcon className="modal-titlebar-close icon" onClick={() => { handleCancel(); } } fill={"var(--icon)"}/>
+              <CloseIcon
+                className="modal-titlebar-close icon"
+                onClick={() => {
+                  handleCancel();
+                }}
+                fill={"var(--icon)"}
+              />
             </div>
             <div className="modal-complex-input-row-container">
               <div className="project-create-name modal-complex-input-container">
