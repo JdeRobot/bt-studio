@@ -4,13 +4,13 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
 
-import { ReactComponent as LogoIcon } from '../file_editor/img/logo_jderobot_monocolor.svg'
+import { ReactComponent as LogoIcon } from "../file_editor/img/logo_jderobot_monocolor.svg";
 
 import "./HeaderMenu.css";
-import { ReactComponent as ProjectsIcon } from './img/change_project.svg'
-import { ReactComponent as SaveIcon } from './img/save_project.svg'
-import { ReactComponent as UniversesIcon } from './img/universes.svg'
-import { ReactComponent as SettingsIcon } from './img/settings.svg'
+import { ReactComponent as ProjectsIcon } from "./img/change_project.svg";
+import { ReactComponent as SaveIcon } from "./img/save_project.svg";
+import { ReactComponent as UniversesIcon } from "./img/universes.svg";
+import { ReactComponent as SettingsIcon } from "./img/settings.svg";
 import ProjectModal from "./modals/ProjectModal";
 import UniversesModal from "./modals/UniverseModal";
 import SettingsModal from "../settings_popup/SettingsModal";
@@ -40,9 +40,7 @@ const HeaderMenu = ({
       return;
     }
 
-    const apiUrl = `/tree_api/create_project?project_name=${encodeURIComponent(
-      projectName,
-    )}`;
+    const apiUrl = `/tree_api/create_project?project_name=${encodeURIComponent(projectName)}`;
     axios
       .get(apiUrl)
       .then((response) => {
@@ -61,7 +59,7 @@ const HeaderMenu = ({
           } else {
             // Handle other statuses or general API errors
             openError(
-              "Unable to connect with the backend server. Please check the backend status.",
+              "Unable to connect with the backend server. Please check the backend status."
             );
           }
         }
@@ -78,7 +76,13 @@ const HeaderMenu = ({
       // Project exists, proceed to change
       setCurrentProjectname(projectName);
       // Close the universe
-      terminateUniverse();
+      if (currentUniverseName) {
+        console.log(currentUniverseName);
+        terminateUniverse();
+      }
+      setCurrentUniverseName(null);
+      console.log("Universe terminated!");
+
       console.log(`Switched to project ${projectName}`);
     } else {
       // Project doesn't exist
@@ -120,10 +124,7 @@ const HeaderMenu = ({
         if (response.data.success) {
           console.log("Project saved successfully.");
         } else {
-          console.error(
-            "Error saving project:",
-            response.data.message || "Unknown error",
-          );
+          console.error("Error saving project:", response.data.message || "Unknown error");
         }
       })
       .catch((error) => {
@@ -165,7 +166,7 @@ const HeaderMenu = ({
   return (
     <AppBar position="static">
       <Toolbar>
-        <LogoIcon className='jde-icon' fill='var(--icon)'/>
+        <LogoIcon className="jde-icon" fill="var(--icon)" />
         <h1 className="Header-text">BT Studio IDE</h1>
         <ProjectModal
           isOpen={isProjectModalOpen}
@@ -199,40 +200,22 @@ const HeaderMenu = ({
               <div className="project-name">
                 {currentProjectname +
                   " ~ " +
-                  (currentUniverseName
-                    ? currentUniverseName
-                    : "No Universe selected")}
+                  (currentUniverseName ? currentUniverseName : "No Universe selected")}
               </div>
               {projectChanges && <div className="small-text">Unsaved</div>}
             </span>
           )}
-          <button
-            className="header-button"
-            onClick={openProjectView}
-            title="Change project"
-          >
-            <ProjectsIcon className="header-icon" fill={"var(--icon)"}/>
+          <button className="header-button" onClick={openProjectView} title="Change project">
+            <ProjectsIcon className="header-icon" fill={"var(--icon)"} />
           </button>
-          <button
-            className="header-button"
-            onClick={openUniversesView}
-            title="Universe menu"
-          >
-            <UniversesIcon className="header-icon" fill={"var(--icon)"}/>
+          <button className="header-button" onClick={openUniversesView} title="Universe menu">
+            <UniversesIcon className="header-icon" fill={"var(--icon)"} />
           </button>
-          <button
-            className="header-button"
-            onClick={openSettingsView}
-            title="Settings"
-          >
-            <SettingsIcon className="header-icon" fill={"var(--icon)"}/>
+          <button className="header-button" onClick={openSettingsView} title="Settings">
+            <SettingsIcon className="header-icon" fill={"var(--icon)"} />
           </button>
-          <button
-            className="header-button"
-            onClick={saveProject}
-            title="Save project"
-          >
-            <SaveIcon className="header-icon" fill={"var(--icon)"}/>
+          <button className="header-button" onClick={saveProject} title="Save project">
+            <SaveIcon className="header-icon" fill={"var(--icon)"} />
           </button>
         </div>
       </Toolbar>
