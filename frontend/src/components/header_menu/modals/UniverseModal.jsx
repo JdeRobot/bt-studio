@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './UniverseModal.css';
-import Modal from '../../Modal/Modal';
-import back_modal_img from '../../Modal/img/back.svg';
-import close_modal_img from '../../Modal/img/close.svg';
-import delete_icon from '../../diagram_editor/img/delete.svg';
-import axios from 'axios';
-import UniverseUploadModal from './UniverseUploadModal';
+import React, { useState, useEffect, useRef } from "react";
+import "./UniverseModal.css";
+import Modal from "../../Modal/Modal";
+import back_modal_img from "../../Modal/img/back.svg";
+import close_modal_img from "../../Modal/img/close.svg";
+import delete_icon from "../../diagram_editor/img/delete.svg";
+import axios from "axios";
+import UniverseUploadModal from "./UniverseUploadModal";
 
 const initialProjectData = {
   projectName: "",
@@ -25,7 +25,6 @@ const UniverseModal = ({
   const [universeAdded, setUniverseAdded] = useState(false);
 
   useEffect(() => {
-
     if (!isOpen) {
       return;
     }
@@ -38,8 +37,9 @@ const UniverseModal = ({
 
     const listApiUrl = `/tree_api/get_universes_list?project_name=${currentProject}`;
 
-    axios.get(listApiUrl)
-      .then(response => {
+    axios
+      .get(listApiUrl)
+      .then((response) => {
         setUniversesProjects(response.data.universes_list);
         setUniverseAdded(false);
       })
@@ -108,25 +108,29 @@ const UniverseModal = ({
 
   const importFromZip = () => {
     setUploadModalOpen(true);
-  }
+  };
 
   const handleCloseUploadUniverseModal = (universe_name) => {
     setUploadModalOpen(false);
   };
 
-  const handleFormSubmit = (data) => {
-  }
+  const handleFormSubmit = (data) => {};
 
   return (
-    <Modal id="universes-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
-        <UniverseUploadModal
-          isOpen={uploadModalOpen}
-          onSubmit={handleFormSubmit}
-          onClose={handleCloseUploadUniverseModal}
-          currentProject={currentProject}
-          openError={openError}
-          setUniverseAdded={setUniverseAdded}
-        />
+    <Modal
+      id="universes-modal"
+      hasCloseBtn={true}
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <UniverseUploadModal
+        isOpen={uploadModalOpen}
+        onSubmit={handleFormSubmit}
+        onClose={handleCloseUploadUniverseModal}
+        currentProject={currentProject}
+        openError={openError}
+        setUniverseAdded={setUniverseAdded}
+      />
       <form onSubmit={onSubmit} onReset={handleCancel}>
         <div className="modal-titlebar">
           <label
@@ -170,8 +174,17 @@ const UniverseModal = ({
         </div>
         <div className="form-row">
           <div className="project-modal-creation-buttons-container">
-            <div className='project-modal-create-button' onClick={() => { importFromZip(); } }>Import from zip</div>
-            <div className='project-modal-create-button' onClick={() => {} }>Import from Robotics Backend library</div>
+            <div
+              className="project-modal-create-button"
+              onClick={() => {
+                importFromZip();
+              }}
+            >
+              Import from zip
+            </div>
+            <div className="project-modal-create-button" onClick={() => {}}>
+              Import from Robotics Backend library
+            </div>
             {/* <div className='project-modal-create-button'>Other</div> */}
           </div>
         </div>

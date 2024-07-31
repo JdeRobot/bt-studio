@@ -41,7 +41,7 @@ const HeaderMenu = ({
     }
 
     const apiUrl = `/tree_api/create_project?project_name=${encodeURIComponent(
-      projectName
+      projectName,
     )}`;
     axios
       .get(apiUrl)
@@ -61,7 +61,7 @@ const HeaderMenu = ({
           } else {
             // Handle other statuses or general API errors
             openError(
-              "Unable to connect with the backend server. Please check the backend status."
+              "Unable to connect with the backend server. Please check the backend status.",
             );
           }
         }
@@ -122,7 +122,7 @@ const HeaderMenu = ({
         } else {
           console.error(
             "Error saving project:",
-            response.data.message || "Unknown error"
+            response.data.message || "Unknown error",
           );
         }
       })

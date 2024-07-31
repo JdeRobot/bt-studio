@@ -78,11 +78,12 @@ def get_data_ports(node_models, link_models, node_id):
 
     return data_ports
 
+
 def build_xml(node_models, link_models, tree_structure, node_id, xml_parent, order):
 
     node_name = node_models[node_id]["name"]
     data_ports = get_data_ports(node_models, link_models, node_id)
-    
+
     # Add data_ports as attributes to current_element
     attributes = {"name": node_name}
     attributes.update(data_ports)
@@ -123,7 +124,7 @@ def get_start_node_id(node_models, link_models):
 
     return start_node_id
 
-  
+
 def translate(content, tree_path, raw_order):
 
     # Parse the JSON data

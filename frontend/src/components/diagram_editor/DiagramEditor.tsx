@@ -722,54 +722,12 @@ const DiagramEditor = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          app_name: currentProjectname, 
+        body: JSON.stringify({
+          app_name: currentProjectname,
           tree_graph: tree_graph,
           bt_order: btOrder,
         }),
       })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((data) => {
-            throw new Error(data.message || "An error occurred.");
-          });
-        }
-        return response.blob();
-      })
-      .then((blob) => {
-        // Get the application
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = `${currentProjectname}.zip`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-    }
-  };  
-
-  const runApp = () => {
-    if(gazeboEnabled) 
-    {
-      if(!appRunning) 
-      {
-        const tree_graph = JSON.stringify(model.current.serialize());
-        fetch("/tree_api/generate_dockerized_app/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ 
-            app_name: currentProjectname, 
-            tree_graph: tree_graph,
-            bt_order: btOrder,
-          }),
-        })
         .then((response) => {
           if (!response.ok) {
             return response.json().then((data) => {
@@ -779,26 +737,67 @@ const DiagramEditor = ({
           return response.blob();
         })
         .then((blob) => {
-          var reader = new FileReader();
-          reader.readAsDataURL(blob); 
-          reader.onloadend = function() {
-            var base64data = reader.result;                
-            // console.log(base64data);
-            
-            // Send the zip
-            manager
-            .run({type: "bt-studio", code: base64data})
-            .then(() => {
-              console.log("App resumed!");
-              setAppRunning(true);
-            })
-            .catch((response: any) => {
-              let linterMessage = JSON.stringify(response.data.message).split(
-                "\\n",
-              );
-              alert(`Received linter message: ${linterMessage}`);
-            });
-        }
+          // Get the application
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.style.display = "none";
+          a.href = url;
+          a.download = `${currentProjectname}.zip`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  };
+
+  const runApp = () => {
+    if (gazeboEnabled) {
+      if (!appRunning) {
+        const tree_graph = JSON.stringify(model.current.serialize());
+        fetch("/tree_api/generate_dockerized_app/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            app_name: currentProjectname,
+            tree_graph: tree_graph,
+            bt_order: btOrder,
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.json().then((data) => {
+                throw new Error(data.message || "An error occurred.");
+              });
+            }
+            return response.blob();
+          })
+          .then((blob) => {
+            var reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+              var base64data = reader.result;
+              // console.log(base64data);
+
+              // Send the zip
+              manager
+                .run({ type: "bt-studio", code: base64data })
+                .then(() => {
+                  console.log("App resumed!");
+                  setAppRunning(true);
+                })
+                .catch((response: any) => {
+                  let linterMessage = JSON.stringify(
+                    response.data.message,
+                  ).split("\\n");
+                  alert(`Received linter message: ${linterMessage}`);
+                });
+            };
+          });
       } else {
         manager.pause().then(() => {
           console.log("App paused!");

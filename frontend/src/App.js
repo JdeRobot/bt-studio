@@ -75,7 +75,7 @@ const App = () => {
 
   const launchUniverse = (universe_name) => {
     const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
-      currentProjectname
+      currentProjectname,
     )}&universe_name=${encodeURIComponent(universe_name)}`;
 
     axios.get(apiUrl).then((response) => {

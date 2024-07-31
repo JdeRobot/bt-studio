@@ -71,7 +71,7 @@ def delete_universe(request):
             {"success": False, "message": "Project does not exist"}, status=400
         )
 
-     
+
 @api_view(["GET"])
 def get_project_list(request):
 
@@ -197,7 +197,7 @@ def get_universe_configuration(request):
     else:
         return Response({"error": "Universe parameter is missing"}, status=400)
 
-  
+
 @api_view(["GET"])
 def import_universe_from_zip(request):
 
@@ -208,7 +208,7 @@ def import_universe_from_zip(request):
     project_path = os.path.join(folder_path, project_name)
     universes_path = os.path.join(project_path, "universes/")
 
- 
+
 @api_view(["GET"])
 def get_file_list(request):
 
@@ -382,6 +382,7 @@ def save_project_configuration(request):
     except Exception as e:
         return Response({"success": False, "message": str(e)}, status=400)
 
+
 @api_view(["POST"])
 def translate_json(request):
 
@@ -406,7 +407,11 @@ def translate_json(request):
 @api_view(["POST"])
 def generate_app(request):
 
-    if "app_name" not in request.data or "tree_graph" not in request.data:
+    if (
+        "app_name" not in request.data
+        or "tree_graph" not in request.data
+        or "bt_order" not in request.data
+    ):
         return Response(
             {"error": "Incorrect request parameters"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -426,44 +431,40 @@ def generate_app(request):
     template_path = os.path.join(settings.BASE_DIR, "ros_template")
     tree_gardener_src = os.path.join(settings.BASE_DIR, "tree_gardener")
 
-    if app_name and tree_graph:
+    try:
+        # Generate a basic tree from the JSON definition
+        json_translator.translate(tree_graph, tree_path, bt_order)
 
-        try:
-            # Generate a basic tree from the JSON definition
-            json_translator.translate(content, tree_path, bt_order)
+        # Generate a self-contained tree
+        tree_generator.generate(tree_path, action_path, self_contained_tree_path)
 
-            # Generate a self-contained tree
-            tree_generator.generate(tree_path, action_path, self_contained_tree_path)
+        # Using the self-contained tree, package the ROS 2 app
+        zip_file_path = app_generator.generate(
+            self_contained_tree_path,
+            app_name,
+            template_path,
+            action_path,
+            tree_gardener_src,
+        )
 
-            # Using the self-contained tree, package the ROS 2 app
-            zip_file_path = app_generator.generate(
-                self_contained_tree_path,
-                app_name,
-                template_path,
-                action_path,
-                tree_gardener_src,
+        # Confirm ZIP file exists
+        if not os.path.exists(zip_file_path):
+            return Response(
+                {"success": False, "message": "ZIP file not found"}, status=400
             )
 
-            # Confirm ZIP file exists
-            if not os.path.exists(zip_file_path):
-                return Response(
-                    {"success": False, "message": "ZIP file not found"}, status=400
-                )
+        # Prepare file response
+        zip_file = open(zip_file_path, "rb")
+        mime_type, _ = mimetypes.guess_type(zip_file_path)
+        response = HttpResponse(zip_file, content_type=mime_type)
+        response["Content-Disposition"] = (
+            f"attachment; filename={os.path.basename(zip_file_path)}"
+        )
 
-            # Prepare file response
-            zip_file = open(zip_file_path, "rb")
-            mime_type, _ = mimetypes.guess_type(zip_file_path)
-            response = HttpResponse(zip_file, content_type=mime_type)
-            response["Content-Disposition"] = (
-                f"attachment; filename={os.path.basename(zip_file_path)}"
-            )
+        return response
 
-            return response
-
-        except Exception as e:
-            return Response({"success": False, "message": str(e)}, status=400)
-    else:
-        return Response({"error": "app_name parameter is missing"}, status=500)
+    except Exception as e:
+        return Response({"success": False, "message": str(e)}, status=400)
 
 
 @api_view(["POST"])
@@ -479,6 +480,7 @@ def generate_dockerized_app(request):
     # Get the request parameters
     app_name = request.data.get("app_name")
     tree_graph = request.data.get("tree_graph")
+    bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
