@@ -2,11 +2,10 @@ import py_trees
 import geometry_msgs
 import tree_tools
 
+
 class Forward(py_trees.behaviour.Behaviour):
-
-    def __init__(self, name, ports = None):
-
-        """ Constructor, executed when the class is instantiated"""
+    def __init__(self, name, ports=None):
+        """Constructor, executed when the class is instantiated"""
 
         # Configure the name of the behaviour
         super().__init__(name)
@@ -16,44 +15,38 @@ class Forward(py_trees.behaviour.Behaviour):
         self.ports = ports
 
     def setup(self, **kwargs) -> None:
-
-        """ Executed when the setup function is called upon the tree """
+        """Executed when the setup function is called upon the tree"""
 
         # Get the node passed from the tree (needed for interaction with ROS)
         try:
-            self.node = kwargs['node']
+            self.node = kwargs["node"]
         except KeyError as e:
             error_message = "Couldn't find the tree node"
             raise KeyError(error_message) from e
 
         # Setup the publisher for the robot speed
         self.publisher = self.node.create_publisher(
-            msg_type=geometry_msgs.msg.Twist,
-            topic="/cmd_vel",
-            qos_profile=10
+            msg_type=geometry_msgs.msg.Twist, topic="/cmd_vel", qos_profile=10
         )
 
     def initialise(self) -> None:
-
-        """ Executed when coming from an idle state """
+        """Executed when coming from an idle state"""
 
         # Debugging
         self.logger.debug("%s.initialise()" % (self.__class__.__name__))
 
     def update(self) -> py_trees.common.Status:
-
-        """ Executed when the action is ticked. Do not block! """
+        """Executed when the action is ticked. Do not block!"""
 
         # Publish the speed msg
         msg = geometry_msgs.msg.Twist()
         msg.linear.x = float(tree_tools.get_port_content(self.ports["speed"]))
         self.publisher.publish(msg)
 
-        return py_trees.common.Status.RUNNING 
+        return py_trees.common.Status.RUNNING
 
     def terminate(self, new_status: py_trees.common.Status) -> None:
-
-        """ Called whenever the behaviour switches to a non-running state """
+        """Called whenever the behaviour switches to a non-running state"""
 
         # Stop the robot
         msg = geometry_msgs.msg.Twist()
@@ -61,4 +54,7 @@ class Forward(py_trees.behaviour.Behaviour):
         self.publisher.publish(msg)
 
         # Debugging
-        self.logger.debug("%s.terminate()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
+        self.logger.debug(
+            "%s.terminate()[%s->%s]"
+            % (self.__class__.__name__, self.status, new_status)
+        )

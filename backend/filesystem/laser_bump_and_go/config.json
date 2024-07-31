@@ -1,8 +1,8 @@
 {
-    "name": "laser_bump_and_go",
-    "config": {
-        "editorShowAccentColors": true,
-        "theme": "dark",
-        "btOrder": "bottom-to-top"
-    }
+  "name": "laser_bump_and_go",
+  "config": {
+    "editorShowAccentColors": true,
+    "theme": "dark",
+    "btOrder": "bottom-to-top"
+  }
 }
