@@ -596,14 +596,17 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
   const generateApp = () => {
 
     if (model.current) {
-      const str = JSON.stringify(model.current.serialize());
+      const tree_graph = JSON.stringify(model.current.serialize());
     
       fetch("/tree_api/generate_app/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ app_name: currentProjectname, content: str }),
+        body: JSON.stringify({ 
+          app_name: currentProjectname, 
+          tree_graph: tree_graph 
+        }),
       })
       .then((response) => {
         if (!response.ok) {
@@ -641,7 +644,10 @@ const DiagramEditor = ({currentProjectname, setModelJson, setProjectChanges, gaz
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ app_name: currentProjectname, content: tree_graph }),
+          body: JSON.stringify({ 
+            app_name: currentProjectname, 
+            tree_graph: tree_graph 
+          }),
         })
         .then((response) => {
           if (!response.ok) {

@@ -360,9 +360,15 @@ def translate_json(request):
 @api_view(["POST"])
 def generate_app(request):
 
-    # Get the app name
+    if "app_name" not in request.data or "tree_graph" not in request.data:
+        return Response(
+            {"error": "Incorrect request parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the parameters
     app_name = request.data.get("app_name")
-    content = request.data.get("content")
+    tree_graph = request.data.get("tree_graph")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -373,11 +379,11 @@ def generate_app(request):
     template_path = os.path.join(settings.BASE_DIR, "ros_template")
     tree_gardener_src = os.path.join(settings.BASE_DIR, "tree_gardener")
 
-    if app_name and content:
+    if app_name and tree_graph:
 
         try:
             # Generate a basic tree from the JSON definition
-            json_translator.translate(content, tree_path)
+            json_translator.translate(tree_graph, tree_path)
 
             # Generate a self-contained tree
             tree_generator.generate(tree_path, action_path, self_contained_tree_path)
@@ -425,7 +431,7 @@ def generate_dockerized_app(request):
 
     # Get the request parameters
     app_name = request.data.get("app_name")
-    tree_graph = request.data.get("content")
+    tree_graph = request.data.get("tree_graph")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
