@@ -1,0 +1,96 @@
+#settings-modal {
+  width:50%;
+  height:75%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1
+}
+
+.settings-entry-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px;
+    overflow-y: auto;
+    max-height: 65vh;
+    flex: 1;
+
+    /* --g:radial-gradient(50% 20px, var(--background-500), var(--background));  
+    background: 
+      linear-gradient(var(--background) 10px, #0000 40px calc(100% - 40px),var(--background) calc(100% - 10px)) local, 
+      var(--g) top   /100% 200%,    
+      var(--g) bottom/100% 200%; */
+}
+
+/* width */
+.settings-entry-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+.settings-entry-list::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--scrollbar);
+  border-radius: 10px;
+}
+
+/* Handle */
+.settings-entry-list::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 10px;
+}
+
+.setting-section {
+  display: inline-table;
+  width: 75%;
+  min-height: 3rem;
+  background-color: var(--background);
+  padding: 5px;
+  align-content: center;
+  color: var(--text);
+}
+
+.setting-section-title {
+  margin-top: 10px;
+  background-color: transparent !important;
+  margin-bottom: 0px !important;
+  font-size: larger;
+}
+
+.setting-subsection {
+  width: 100%;
+  min-height: 3rem;
+  margin-top: 5px;
+  margin-left: 10px;
+  padding: 5px;
+  align-content: center;
+  color: var(--text);
+}
+
+.setting-subsection-title {
+  margin-bottom: 0px !important;
+  font-size: large;
+}
+
+.setting-setting {
+  width: auto;
+  min-height: 3rem;
+  margin-left: 10px;
+  margin-top: 5px;
+  padding: 5px;
+  align-content: center;
+  justify-content: left;
+  color: var(--text);
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+}
+
+.setting-setting-title {
+  margin-bottom: 0px !important;
+  font-size: medium;
+}
+
+#setting-project-accent-color {
+  width: 100%;
+}
