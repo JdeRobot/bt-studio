@@ -10,10 +10,10 @@ import "./HeaderMenu.css";
 import change_project_img from "./img/change_project.svg";
 import save_project_img from "./img/save_project.svg";
 import universes_img from "./img/universes.svg";
+import settings_img from "./img/settings.svg";
 import ProjectModal from "./modals/ProjectModal";
 import UniversesModal from "./modals/UniverseModal";
-
-var dropdown_shown = false;
+import SettingsModal from "../settings_popup/SettingsModal";
 
 const HeaderMenu = ({
   setCurrentProjectname,
@@ -27,9 +27,11 @@ const HeaderMenu = ({
   projectChanges,
   setProjectChanges,
   openError,
+  settingsProps,
 }) => {
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
   const [isUniversesModalOpen, setUniversesModalOpen] = useState(false);
+  const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
   const [existingProjects, setExistingProjects] = useState("");
 
   const createProject = (projectName) => {
@@ -94,6 +96,11 @@ const HeaderMenu = ({
     saveProject();
   };
 
+  const openSettingsView = (e) => {
+    setSettingsModalOpen(true);
+    saveProject();
+  };
+
   const saveProject = () => {
     // Assuming modelJson and currentProjectname are correctly populated
     if (!modelJson || !currentProjectname) {
@@ -149,6 +156,10 @@ const HeaderMenu = ({
     }
   };
 
+  const handleCloseSettingsModal = () => {
+    setSettingsModalOpen(false);
+  };
+
   const handleFormSubmit = (data) => {};
 
   return (
@@ -172,6 +183,14 @@ const HeaderMenu = ({
           onClose={handleCloseUniversesModal}
           currentProject={currentProjectname}
           openError={openError}
+        />
+
+        <SettingsModal
+          isOpen={isSettingsModalOpen}
+          onSubmit={handleFormSubmit}
+          onClose={handleCloseSettingsModal}
+          currentProjectname={currentProjectname}
+          settings={settingsProps}
         />
 
         <div className="header-button-container">
@@ -201,6 +220,13 @@ const HeaderMenu = ({
             title="Universe menu"
           >
             <img className="header-icon" src={universes_img}></img>
+          </button>
+          <button
+            className="header-button"
+            onClick={openSettingsView}
+            title="Settings"
+          >
+            <img className="header-icon" src={settings_img}></img>
           </button>
           <button
             className="header-button"

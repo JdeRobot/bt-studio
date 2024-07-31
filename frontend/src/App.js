@@ -11,7 +11,6 @@ import DiagramEditor from "./components/diagram_editor/DiagramEditor";
 import VncViewer from "./components/vnc_viewer/VncViewer";
 import CommsManager from "./components/comms_manager/CommsManager";
 import ErrorModal from "./components/error_popup/ErrorModal";
-
 import axios from "axios";
 
 const App = () => {
@@ -28,6 +27,28 @@ const App = () => {
 
   // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
+  ////////////////////// SETTINGS //////////////////////
+
+  // TODO: try to not repeat the default values
+  const [editorShowAccentColors, setEditorShowAccentColors] = useState(true);
+  const [theme, setTheme] = useState("dark");
+  const [btOrder, setBtOrder] = useState("bottom-to-top");
+
+  // Setting => name: {setter: function, value: name, default_value: default_value}
+  const settings = {
+    editorShowAccentColors: {
+      setter: setEditorShowAccentColors,
+      value: editorShowAccentColors,
+      default_value: true,
+    },
+    theme: { setter: setTheme, value: theme, default_value: "dark" },
+    btOrder: {
+      setter: setBtOrder,
+      value: btOrder,
+      default_value: "bottom-to-top",
+    },
+  };
+  //////////////////////////////////////////////////////
 
   useEffect(() => {
     const newManager = CommsManager("ws://127.0.0.1:7163");
@@ -166,6 +187,44 @@ const App = () => {
     }
   }, [manager]); // Re-run if the manager instance changes
 
+  useEffect(() => {
+    if (currentProjectname !== "") {
+      const apiUrl = `/tree_api/get_project_configuration?project_name=${currentProjectname}`;
+      axios
+        .get(apiUrl)
+        .then((response) => {
+          let raw_config = JSON.parse(response.data);
+          let project_settings = raw_config.config;
+
+          // Load all the settings
+          Object.entries(settings).map(([key, value]) => {
+            value.setter(
+              project_settings[key]
+                ? project_settings[key]
+                : value.default_value,
+            );
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response) {
+            if (error.response.status === 404) {
+              openError(
+                `The project ${currentProjectname} has no configuration available`,
+              );
+            } else {
+              openError("Failed to load configuration");
+            }
+          }
+
+          console.log("Loading default settings");
+          Object.entries(settings).map(([key, value]) => {
+            value.setter(value.default_value);
+          });
+        });
+    }
+  }, [currentProjectname]); // Reload project configuration
+
   const onResize = (key, size) => {
     switch (key) {
       case "editorWidth":
@@ -186,7 +245,7 @@ const App = () => {
   };
 
   return (
-    <div className="App" data-theme={"dark"}>
+    <div className="App" data-theme={theme}>
       <ErrorModal isOpen={isErrorModalOpen} onClose={closeError} />
 
       <HeaderMenu
@@ -201,6 +260,7 @@ const App = () => {
         projectChanges={projectChanges}
         setProjectChanges={setProjectChanges}
         openError={openError}
+        settingsProps={settings}
       />
 
       <div className="App-main" style={{ display: "flex" }}>
@@ -211,6 +271,7 @@ const App = () => {
             currentProjectname={currentProjectname}
             setProjectChanges={setProjectChanges}
             actionNodesData={actionNodesData}
+            showAccentColor={editorShowAccentColors}
           />
         </div>
 
@@ -238,6 +299,7 @@ const App = () => {
             gazeboEnabled={gazeboEnabled}
             manager={manager}
             actionNodesData={actionNodesData}
+            btOrder={btOrder}
             openError={openError}
           />
           <VncViewer gazeboEnabled={gazeboEnabled} />

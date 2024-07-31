@@ -71,7 +71,7 @@ def delete_universe(request):
             {"success": False, "message": "Project does not exist"}, status=400
         )
 
-
+     
 @api_view(["GET"])
 def get_project_list(request):
 
@@ -197,7 +197,7 @@ def get_universe_configuration(request):
     else:
         return Response({"error": "Universe parameter is missing"}, status=400)
 
-
+  
 @api_view(["GET"])
 def import_universe_from_zip(request):
 
@@ -208,7 +208,7 @@ def import_universe_from_zip(request):
     project_path = os.path.join(folder_path, project_name)
     universes_path = os.path.join(project_path, "universes/")
 
-
+ 
 @api_view(["GET"])
 def get_file_list(request):
 
@@ -337,10 +337,56 @@ def save_file(request):
         return Response({"success": False, "message": str(e)}, status=400)
 
 
+@api_view(["GET"])
+def get_project_configuration(request):
+
+    project_name = request.GET.get("project_name")
+
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+
+    if project_name:
+        project_path = os.path.join(folder_path, project_name)
+        config_path = os.path.join(project_path, "config.json")
+        if os.path.exists(config_path):
+            with open(config_path, "r") as f:
+                content = f.read()
+            return Response(content)
+        else:
+            return Response({"error": "File not found"}, status=404)
+    else:
+        return Response({"error": "Project parameter is missing"}, status=400)
+
+
+@api_view(["POST"])
+def save_project_configuration(request):
+
+    project_name = request.data.get("project_name")
+
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    config_path = os.path.join(project_path, "config.json")
+
+    try:
+        content = request.data.get("settings")
+        if content is None:
+            return Response(
+                {"success": False, "message": "Settings are missing"}, status=400
+            )
+
+        d = json.loads(content)
+
+        with open(config_path, "w") as f:
+            json.dump(d, f, indent=4)
+
+        return Response({"success": True})
+    except Exception as e:
+        return Response({"success": False, "message": str(e)}, status=400)
+
 @api_view(["POST"])
 def translate_json(request):
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    bt_order = request.data.get("bt_order")
 
     try:
         content = request.data.get("content")
@@ -350,7 +396,7 @@ def translate_json(request):
             )
 
         # Pass the JSON content to the translate function
-        json_translator.translate(content, folder_path + "/tree.xml")
+        json_translator.translate(content, folder_path + "/tree.xml", bt_order)
 
         return Response({"success": True})
     except Exception as e:
@@ -369,6 +415,7 @@ def generate_app(request):
     # Get the parameters
     app_name = request.data.get("app_name")
     tree_graph = request.data.get("tree_graph")
+    bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -383,7 +430,7 @@ def generate_app(request):
 
         try:
             # Generate a basic tree from the JSON definition
-            json_translator.translate(tree_graph, tree_path)
+            json_translator.translate(content, tree_path, bt_order)
 
             # Generate a self-contained tree
             tree_generator.generate(tree_path, action_path, self_contained_tree_path)
@@ -452,10 +499,10 @@ def generate_dockerized_app(request):
                 shutil.rmtree(working_folder)
             os.mkdir(working_folder)
 
-            # 2. Generate a basic xml tree from the JSON definition
-            json_translator.translate(tree_graph, tree_path)
+            # 2. Generate a basic tree from the JSON definition
+            json_translator.translate(tree_graph, tree_path, bt_order)
 
-            # 3. Generate a self-contained xml tree
+            # 3. Generate a self-contained tree
             tree_generator.generate(tree_path, action_path, self_contained_tree_path)
 
             # 4. Copy necessary files to execute the app in the RB

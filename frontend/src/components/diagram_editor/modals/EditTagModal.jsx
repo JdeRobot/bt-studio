@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
-import Modal from '../../Modal/Modal';
+import Modal from "../../Modal/Modal";
 
-import close_modal_img from '../../Modal/img/close.svg'
+import close_modal_img from "../../Modal/img/close.svg";
 
 const initialEditTagModalData = {
-  tagName: '',
+  tagName: "",
 };
 
-const EditTagModal = ({ isOpen, onClose, currentActionNode}) => {
+const EditTagModal = ({ isOpen, onClose, currentActionNode }) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialEditTagModalData);
 
@@ -23,27 +23,44 @@ const EditTagModal = ({ isOpen, onClose, currentActionNode}) => {
 
   useEffect(() => {
     setFormState(initialEditTagModalData);
-    document.getElementById('node-editor-modal').focus();
+    document.getElementById("node-editor-modal").focus();
     if (currentActionNode) {
-      document.getElementById('tagName').value  = currentActionNode.getName();
+      document.getElementById("tagName").value = currentActionNode.getName();
     }
   }, [isOpen]);
 
   const horizontalScrolling = (e) => {
-    e.preventDefault()
-    var containerScrollPosition = e.target.scrollLeft
+    e.preventDefault();
+    var containerScrollPosition = e.target.scrollLeft;
     e.target.scrollBy({
-        top: 0,
-        left: e.deltaY,
-        behaviour: 'smooth'
-    })
-  }
+      top: 0,
+      left: e.deltaY,
+      behaviour: "smooth",
+    });
+  };
 
   return (
-    <Modal id="tag-editor-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose} >
+    <Modal
+      id="tag-editor-modal"
+      hasCloseBtn={true}
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <div className="modal-titlebar">
-        <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Edit port value</label>
-        <img className="modal-titlebar-close" onClick={() => { onClose(); } } src={close_modal_img}></img>
+        <label
+          className="modal-titlebar-title"
+          htmlFor="actionName"
+          style={{ textAlign: "center" }}
+        >
+          Edit port value
+        </label>
+        <img
+          className="modal-titlebar-close"
+          onClick={() => {
+            onClose();
+          }}
+          src={close_modal_img}
+        ></img>
       </div>
       <div className="modal-complex-input-row-container">
         <div className="modal-complex-input-container">
@@ -52,13 +69,15 @@ const EditTagModal = ({ isOpen, onClose, currentActionNode}) => {
             type="text"
             id="tagName"
             name="tagName"
-            className='modal-complex-input'
+            className="modal-complex-input"
             onChange={handleInputChange}
-            autoComplete='off'
+            autoComplete="off"
             placeholder="Tag Name"
             required
           />
-          <label for="tagName" class="modal-complex-input-label">Tag Name</label>
+          <label for="tagName" class="modal-complex-input-label">
+            Tag Name
+          </label>
         </div>
       </div>
     </Modal>

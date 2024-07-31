@@ -1,0 +1,8 @@
+{
+  "name": "visual_follow_person",
+  "config": {
+    "editorShowAccentColors": true,
+    "theme": "dark",
+    "btOrder": "bottom-to-top"
+  }
+}

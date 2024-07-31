@@ -8,10 +8,16 @@ import axios from 'axios';
 import UniverseUploadModal from './UniverseUploadModal';
 
 const initialProjectData = {
-  projectName: '',
+  projectName: "",
 };
 
-const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) => {
+const UniverseModal = ({
+  onSubmit,
+  isOpen,
+  onClose,
+  currentProject,
+  openError,
+}) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialProjectData);
   const [existingUniverses, setUniversesProjects] = useState([]);
@@ -21,7 +27,7 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
   useEffect(() => {
 
     if (!isOpen) {
-      return
+      return;
     }
 
     if (focusInputRef.current) {
@@ -37,8 +43,8 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
         setUniversesProjects(response.data.universes_list);
         setUniverseAdded(false);
       })
-      .catch(error => {
-        console.error('Error while fetching universes list:', error);
+      .catch((error) => {
+        console.error("Error while fetching universes list:", error);
         openError(`An error occurred while fetching the universes list`);
       });
   }, [isOpen, universeAdded]);
@@ -52,37 +58,39 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
   };
 
   const handleCancel = () => {
-    if (currentProject !== '') {
-      onClose()
+    if (currentProject !== "") {
+      onClose();
     }
   };
 
   const handleCreate = () => {
-    if (formState.projectName === '') {
+    if (formState.projectName === "") {
       return;
     }
-    onClose()
+    onClose();
   };
 
   const deleteUniverse = (universe_name) => {
     const apiUrl = `/tree_api/delete_universe?project_name=${currentProject}&universe_name=${universe_name}`;
-    axios.get(apiUrl)
-      .then(response => {
+    axios
+      .get(apiUrl)
+      .then((response) => {
         if (response.data.success) {
-        const listApiUrl = `/tree_api/get_universes_list?project_name=${currentProject}`;
+          const listApiUrl = `/tree_api/get_universes_list?project_name=${currentProject}`;
 
-        axios.get(listApiUrl)
-          .then(response => {
-            setUniversesProjects(response.data.universes_list)
-          })
-          .catch(error => {
-            console.error('Error while fetching universes list:', error);
-            openError(`An error occurred while fetching the universes list`);
-          });
-          console.log('Universe deleted successfully');
-        } 
+          axios
+            .get(listApiUrl)
+            .then((response) => {
+              setUniversesProjects(response.data.universes_list);
+            })
+            .catch((error) => {
+              console.error("Error while fetching universes list:", error);
+              openError(`An error occurred while fetching the universes list`);
+            });
+          console.log("Universe deleted successfully");
+        }
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -90,11 +98,13 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
             openError(`The universe ${universe_name} does not exist`);
           } else {
             // Handle other statuses or general API errors
-            openError('Unable to connect with the backend server. Please check the backend status.');
+            openError(
+              "Unable to connect with the backend server. Please check the backend status.",
+            );
           }
         }
       });
-  }
+  };
 
   const importFromZip = () => {
     setUploadModalOpen(true);
@@ -119,27 +129,45 @@ const UniverseModal = ({ onSubmit, isOpen, onClose, currentProject, openError}) 
         />
       <form onSubmit={onSubmit} onReset={handleCancel}>
         <div className="modal-titlebar">
-          <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Manage your Universes</label>
-          <img className="modal-titlebar-close" onClick={() => { handleCancel(); } } src={close_modal_img}></img>
+          <label
+            className="modal-titlebar-title"
+            htmlFor="actionName"
+            style={{ textAlign: "center" }}
+          >
+            Manage your Universes
+          </label>
+          <img
+            className="modal-titlebar-close"
+            onClick={() => {
+              handleCancel();
+            }}
+            src={close_modal_img}
+          ></img>
         </div>
         <div className="form-row">
-              <ul className='project-entry-list'>
-                {Object.entries(existingUniverses).map((project) => {
-                  return (
-                    <div className='project-entry' onClick={() => onClose(project[1])}>
-                      <label className='project-entry-name'>{project[1]}</label>
-                      <img
-                        className="project-entry-delete icon"
-                        style={{ color: 'white' }}
-                        title='Delete'
-                        onClick={(e) => { deleteUniverse(project[1]); e.stopPropagation(); } }
-                        src={delete_icon}>
-                      </img>
-                    </div>
-                  );
-                })}
-              </ul>
-            </div>
+          <ul className="project-entry-list">
+            {Object.entries(existingUniverses).map((project) => {
+              return (
+                <div
+                  className="project-entry"
+                  onClick={() => onClose(project[1])}
+                >
+                  <label className="project-entry-name">{project[1]}</label>
+                  <img
+                    className="project-entry-delete icon"
+                    style={{ color: "white" }}
+                    title="Delete"
+                    onClick={(e) => {
+                      deleteUniverse(project[1]);
+                      e.stopPropagation();
+                    }}
+                    src={delete_icon}
+                  ></img>
+                </div>
+              );
+            })}
+          </ul>
+        </div>
         <div className="form-row">
           <div className="project-modal-creation-buttons-container">
             <div className='project-modal-create-button' onClick={() => { importFromZip(); } }>Import from zip</div>

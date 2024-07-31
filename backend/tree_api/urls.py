@@ -28,4 +28,14 @@ urlpatterns = [
     ),
     path("get_universe_zip/", views.get_universe_zip, name="generate_app"),
     path("upload_universe/", views.upload_universe, name="upload_universe"),
+    path(
+        "get_project_configuration/",
+        views.get_project_configuration,
+        name="get_project_configuration",
+    ),
+    path(
+        "save_project_configuration/",
+        views.save_project_configuration,
+        name="save_project_configuration",
+    ),
 ]

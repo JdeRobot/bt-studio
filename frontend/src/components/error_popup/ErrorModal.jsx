@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './ErrorModal.css';
-import Modal from '../Modal/Modal';
+import React, { useState, useEffect, useRef } from "react";
+import "./ErrorModal.css";
+import Modal from "../Modal/Modal";
 
 const ErrorModal = ({ onSubmit, isOpen, onClose }) => {
   const focusInputRef = useRef(null);
@@ -11,7 +11,6 @@ const ErrorModal = ({ onSubmit, isOpen, onClose }) => {
         focusInputRef.current.focus();
       }, 0);
     }
-
   }, [isOpen]);
 
   const handleCancel = (event) => {
@@ -22,18 +21,31 @@ const ErrorModal = ({ onSubmit, isOpen, onClose }) => {
   };
 
   return (
-    <Modal id="error-modal" hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      id="error-modal"
+      hasCloseBtn={true}
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <div className="modal-titlebar">
-        <label className='modal-titlebar-title' htmlFor="actionName" style={{ textAlign: "center" }}>Warning</label>
+        <label
+          className="modal-titlebar-title"
+          htmlFor="actionName"
+          style={{ textAlign: "center" }}
+        >
+          Warning
+        </label>
       </div>
       <div className="form-row">
         <div className="error-modal-buttons-container">
-          <label className='modal-error-label' id='errorMsg'></label>
+          <label className="modal-error-label" id="errorMsg"></label>
         </div>
       </div>
       <div className="form-row">
         <div className="error-modal-buttons-container">
-          <div className='error-modal-button' onClick={() => onClose() }>Close</div>
+          <div className="error-modal-button" onClick={() => onClose()}>
+            Close
+          </div>
         </div>
       </div>
     </Modal>

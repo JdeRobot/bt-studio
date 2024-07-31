@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
 const CommsManager = (address) => {
-
   //region Observer pattern methods
   // TODO: Maybe move to it's own class?
   const observers = {};
@@ -72,7 +71,7 @@ const CommsManager = (address) => {
         //unsuscribeAll();
         if (e.wasClean) {
           console.log(
-            `Connection with ${address} closed, all suscribers cleared`
+            `Connection with ${address} closed, all suscribers cleared`,
           );
         } else {
           console.log(`Connection with ${address} interrupted`);
@@ -92,7 +91,6 @@ const CommsManager = (address) => {
   };
 
   const send = (message, data) => {
-
     // Sending messages to remote manager
     return new Promise((resolve, reject) => {
       const id = uuidv4();
@@ -139,7 +137,8 @@ const CommsManager = (address) => {
   const commands = {
     connect: connect,
     launchWorld: (configuration) => send("launch_world", configuration),
-    prepareVisualization: (visualization) => send("prepare_visualization", visualization),
+    prepareVisualization: (visualization) =>
+      send("prepare_visualization", visualization),
     run: (code) => send("run_application", code),
     stop: () => send("stop"),
     pause: () => send("pause"),
