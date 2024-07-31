@@ -46,23 +46,27 @@
 }
 
 .menu-button {
-  display: flex;
-  justify-content: center;
-  width: 25px;
-  height: 25px;
-  background-color: var(--buttons-invisible);
-  border: 0;
-  margin-left: 3px;
-  margin-right: 3px;
+    display: flex;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    background-color: var(--buttons-invisible);
+    border: 0;
+    margin-left: 3px;
+    margin-right: 3px;
+    padding: 0 0 0 0;
+    align-content: center;
+    flex-wrap: wrap;
 }
 
 .menu-button:hover {
-  background-color: var(--buttons-hover);
-  border-radius: 100%;
+    background-color: var(--buttons-hover);
+    border-radius: 5px;
 }
 
 .icon {
-  width: 20px;
+    width: 20px;
+    height: 20px;
 }
 
 .accent-color {

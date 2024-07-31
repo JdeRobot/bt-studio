@@ -4,8 +4,8 @@
 }
 
 .jde-icon {
-  width: 50px;
-  height: 50px;
+  width: 75px;
+  height: 75px;
   margin-right: 10px;
 }
 
@@ -43,6 +43,9 @@
   border: 0;
   margin-left: 6px;
   margin-right: 6px;
+  padding: 0 0 0 0;
+  align-content: center;
+  flex-wrap: wrap;
 }
 
 .header-button:hover {

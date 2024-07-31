@@ -204,6 +204,8 @@ h2 {
   --buttons-invisible: var(--background);
   --buttons-hover: var(--background-500);
 
+  --icon: var(--text);
+
   --scrollbar: var(--background-500);
 
   --input-background: var(--background-300);

@@ -44,19 +44,22 @@
 }
 
 .save-button {
-  display: flex;
-  justify-content: center;
-  width: 25px;
-  height: 25px;
-  background-color: var(--buttons-invisible);
-  border: 0;
-  margin-left: 3px;
-  margin-right: 3px;
+    display: flex;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    background-color: var(--buttons-invisible);
+    border: 0;
+    margin-left: 3px;
+    margin-right: 3px;
+    padding: 0 0 0 0;
+    align-content: center;
+    flex-wrap: wrap;
 }
 
 .save-button:hover {
-  background-color: var(--buttons-hover);
-  border-radius: 50%; /* Circular highlight */
+    background-color: var(--buttons-hover);
+    border-radius: 5px; /* Circular highlight */
 }
 
 .unsaved-dot {

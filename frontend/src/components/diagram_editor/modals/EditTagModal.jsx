@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 import Modal from "../../Modal/Modal";
 
-import close_modal_img from "../../Modal/img/close.svg";
+import { ReactComponent as CloseIcon } from '../../Modal/img/close.svg'
 
 const initialEditTagModalData = {
   tagName: "",
@@ -54,13 +54,7 @@ const EditTagModal = ({ isOpen, onClose, currentActionNode }) => {
         >
           Edit port value
         </label>
-        <img
-          className="modal-titlebar-close"
-          onClick={() => {
-            onClose();
-          }}
-          src={close_modal_img}
-        ></img>
+        <CloseIcon className="modal-titlebar-close icon" onClick={() => { onClose(); } } fill={"var(--icon)"}/>
       </div>
       <div className="modal-complex-input-row-container">
         <div className="modal-complex-input-container">

@@ -4,13 +4,13 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
 
-import logo_img from "./img/logo.png";
+import { ReactComponent as LogoIcon } from '../file_editor/img/logo_jderobot_monocolor.svg'
 
 import "./HeaderMenu.css";
-import change_project_img from "./img/change_project.svg";
-import save_project_img from "./img/save_project.svg";
-import universes_img from "./img/universes.svg";
-import settings_img from "./img/settings.svg";
+import { ReactComponent as ProjectsIcon } from './img/change_project.svg'
+import { ReactComponent as SaveIcon } from './img/save_project.svg'
+import { ReactComponent as UniversesIcon } from './img/universes.svg'
+import { ReactComponent as SettingsIcon } from './img/settings.svg'
 import ProjectModal from "./modals/ProjectModal";
 import UniversesModal from "./modals/UniverseModal";
 import SettingsModal from "../settings_popup/SettingsModal";
@@ -165,7 +165,7 @@ const HeaderMenu = ({
   return (
     <AppBar position="static">
       <Toolbar>
-        <img src={logo_img} className="jde-icon" alt="JdeRobot logo"></img>
+        <LogoIcon className='jde-icon' fill='var(--icon)'/>
         <h1 className="Header-text">BT Studio IDE</h1>
         <ProjectModal
           isOpen={isProjectModalOpen}
@@ -206,34 +206,33 @@ const HeaderMenu = ({
               {projectChanges && <div className="small-text">Unsaved</div>}
             </span>
           )}
-
           <button
             className="header-button"
             onClick={openProjectView}
             title="Change project"
           >
-            <img className="header-icon" src={change_project_img}></img>
+            <ProjectsIcon className="header-icon" fill={"var(--icon)"}/>
           </button>
           <button
             className="header-button"
             onClick={openUniversesView}
             title="Universe menu"
           >
-            <img className="header-icon" src={universes_img}></img>
+            <UniversesIcon className="header-icon" fill={"var(--icon)"}/>
           </button>
           <button
             className="header-button"
             onClick={openSettingsView}
             title="Settings"
           >
-            <img className="header-icon" src={settings_img}></img>
+            <SettingsIcon className="header-icon" fill={"var(--icon)"}/>
           </button>
           <button
             className="header-button"
             onClick={saveProject}
             title="Save project"
           >
-            <img className="header-icon" src={save_project_img}></img>
+            <SaveIcon className="header-icon" fill={"var(--icon)"}/>
           </button>
         </div>
       </Toolbar>

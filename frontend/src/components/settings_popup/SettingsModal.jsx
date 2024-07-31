@@ -3,7 +3,7 @@ import { Saturation, Hue, useColor } from "react-color-palette";
 import "react-color-palette/css";
 import "./SettingsModal.css";
 import Modal from "../Modal/Modal";
-import close_modal_img from "../Modal/img/close.svg";
+import { ReactComponent as CloseIcon } from '../Modal/img/close.svg'
 
 import Section from "./sections/Section";
 import SubSection from "./sections/SubSection";
@@ -80,13 +80,7 @@ const SettingsModal = ({
             >
               Settings
             </label>
-            <img
-              className="modal-titlebar-close"
-              onClick={() => {
-                handleCancel();
-              }}
-              src={close_modal_img}
-            ></img>
+            <CloseIcon className="modal-titlebar-close icon" onClick={() => { handleCancel(); } } fill={"var(--icon)"}/>
           </div>
           <div
             className="form-row"
