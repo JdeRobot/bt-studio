@@ -4,14 +4,14 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import "./NodeHeader.css";
 
-import { ReactComponent as DeleteIcon } from './img/del_node.svg'
-import { ReactComponent as EditActionIcon } from './img/edit_action.svg'
-import { ReactComponent as HelpIcon } from './img/help.svg'
-import { ReactComponent as DownloadIcon } from './img/download.svg'
-import { ReactComponent as RunIcon } from './img/run.svg'
-import { ReactComponent as StopIcon } from './img/stop.svg'
-import { ReactComponent as ZoomToFitIcon } from './img/zoom_to_fit.svg'
-import { ReactComponent as ResetIcon } from './img/reset.svg'
+import { ReactComponent as DeleteIcon } from "./img/del_node.svg";
+import { ReactComponent as EditActionIcon } from "./img/edit_action.svg";
+import { ReactComponent as HelpIcon } from "./img/help.svg";
+import { ReactComponent as DownloadIcon } from "./img/download.svg";
+import { ReactComponent as RunIcon } from "./img/run.svg";
+import { ReactComponent as StopIcon } from "./img/stop.svg";
+import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
+import { ReactComponent as ResetIcon } from "./img/reset.svg";
 
 const NodeHeader = ({
   onNodeTypeSelected,
@@ -101,34 +101,19 @@ const NodeHeader = ({
       <h2>Tree Editor</h2>
 
       <div className="button-container">
-        <button
-          className="node-button"
-          onClick={(e) => handleClick(e, "Sequences")}
-        >
+        <button className="node-button" onClick={(e) => handleClick(e, "Sequences")}>
           Sequences
         </button>
-        <button
-          className="node-button"
-          onClick={(e) => handleClick(e, "Fallbacks")}
-        >
+        <button className="node-button" onClick={(e) => handleClick(e, "Fallbacks")}>
           Fallbacks
         </button>
-        <button
-          className="node-button"
-          onClick={(e) => handleClick(e, "Decorators")}
-        >
+        <button className="node-button" onClick={(e) => handleClick(e, "Decorators")}>
           Decorators
         </button>
-        <button
-          className="node-button"
-          onClick={(e) => handleClick(e, "Actions")}
-        >
+        <button className="node-button" onClick={(e) => handleClick(e, "Actions")}>
           Actions
         </button>
-        <button
-          className="node-button"
-          onClick={(e) => handleClick(e, "Port values")}
-        >
+        <button className="node-button" onClick={(e) => handleClick(e, "Port values")}>
           Port value
         </button>
       </div>
@@ -148,7 +133,7 @@ const NodeHeader = ({
           onClick={onDeleteNode}
           title="Delete"
         >
-          <DeleteIcon className="icon action-icon" fill={"var(--icon)"}/>
+          <DeleteIcon className="icon action-icon" fill={"var(--icon)"} />
         </button>
         <button
           id="node-action-edit-button"
@@ -156,7 +141,7 @@ const NodeHeader = ({
           onClick={onEditAction}
           title="Edit"
         >
-          <EditActionIcon className="icon action-icon" stroke={"var(--icon)"}/>
+          <EditActionIcon className="icon action-icon" stroke={"var(--icon)"} />
         </button>
         <button
           id="node-action-zoom-button"
@@ -164,7 +149,7 @@ const NodeHeader = ({
           onClick={zoomToFit}
           title="Zoom To Fit"
         >
-          <ZoomToFitIcon className="icon action-icon" fill={"var(--icon)"}/>
+          <ZoomToFitIcon className="icon action-icon" fill={"var(--icon)"} />
         </button>
         <button
           id="node-action-help-button"
@@ -176,32 +161,20 @@ const NodeHeader = ({
           }}
           title="Help"
         >
-          <HelpIcon className="icon action-icon" fill={"var(--icon)"}/>
+          <HelpIcon className="icon action-icon" fill={"var(--icon)"} />
         </button>
-        <button
-          className="node-action-button"
-          onClick={onGenerateApp}
-          title="Download app"
-        >
-          <DownloadIcon className="icon action-icon" stroke={"var(--icon)"}/>
+        <button className="node-action-button" onClick={onGenerateApp} title="Download app">
+          <DownloadIcon className="icon action-icon" stroke={"var(--icon)"} />
         </button>
-        <button
-          className="node-action-button"
-          onClick={onRunApp}
-          title="Run app"
-        >
+        <button className="node-action-button" onClick={onRunApp} title="Run app">
           {isAppRunning ? (
-          <StopIcon className="icon action-icon" fill={"var(--icon)"}/>
+            <StopIcon className="icon action-icon" fill={"var(--icon)"} />
           ) : (
-          <RunIcon className="icon action-icon" fill={"var(--icon)"}/>
+            <RunIcon className="icon action-icon" fill={"var(--icon)"} />
           )}
         </button>
-        <button
-          className="node-action-button"
-          onClick={onResetApp}
-          title="Reset app"
-        >
-           <ResetIcon className="icon action-icon" stroke={"var(--icon)"}/>
+        <button className="node-action-button" onClick={onResetApp} title="Reset app">
+          <ResetIcon className="icon action-icon" stroke={"var(--icon)"} />
         </button>
       </div>
     </div>
