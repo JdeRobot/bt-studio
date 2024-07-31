@@ -11,10 +11,10 @@ import { ReactComponent as DownloadIcon } from './img/download.svg'
 import { ReactComponent as RunIcon } from './img/run.svg'
 import { ReactComponent as StopIcon } from './img/stop.svg'
 import { ReactComponent as ZoomToFitIcon } from './img/zoom_to_fit.svg'
-import { ReactComponent as ResetIcon } from './img/reset_img.svg'
+import { ReactComponent as ResetIcon } from './img/reset.svg'
 
 const NodeHeader = ({ onNodeTypeSelected, onDeleteNode, 
-  onEditAction, onGenerateApp, onRunApp, isAppRunning, currentProjectname, zoomToFit }) => {
+  onEditAction, onGenerateApp, onRunApp, onResetApp, isAppRunning, currentProjectname, zoomToFit }) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuLabel, setMenuLabel] = useState("");
@@ -139,7 +139,7 @@ const NodeHeader = ({ onNodeTypeSelected, onDeleteNode,
             )}
           </button>
           <button className="node-action-button" onClick={onResetApp} title='Reset app'>
-            <ResetIcon className="icon action-icon" fill={"var(--icon)"}/>
+            <ResetIcon className="icon action-icon" stroke={"var(--icon)"}/>
           </button>
         </div>
 
