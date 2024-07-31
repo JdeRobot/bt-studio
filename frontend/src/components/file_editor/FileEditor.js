@@ -5,7 +5,7 @@ import "ace-builds/src-noconflict/mode-python";
 import "ace-builds/src-noconflict/theme-monokai";
 import "./FileEditor.css";
 
-import { ReactComponent as SaveIcon } from './img/save.svg' ;
+import { ReactComponent as SaveIcon } from "./img/save.svg";
 import { ReactComponent as SplashIcon } from "./img/logo_jderobot_monocolor.svg";
 
 const FileEditor = ({
@@ -109,7 +109,7 @@ const FileEditor = ({
         <div className="editor-buttons">
           {hasUnsavedChanges && <div className="unsaved-dot"></div>}
           <button className="save-button" onClick={handleSaveFile}>
-            <SaveIcon className="icon" fill={"var(--icon)"}/>
+            <SaveIcon className="icon" fill={"var(--icon)"} />
           </button>
         </div>
       </div>

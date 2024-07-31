@@ -100,19 +100,34 @@ const NodeHeader = ({
       <h2>Tree Editor</h2>
 
       <div className="button-container">
-        <button className="node-button" onClick={(e) => handleClick(e, "Sequences")}>
+        <button
+          className="node-button"
+          onClick={(e) => handleClick(e, "Sequences")}
+        >
           Sequences
         </button>
-        <button className="node-button" onClick={(e) => handleClick(e, "Fallbacks")}>
+        <button
+          className="node-button"
+          onClick={(e) => handleClick(e, "Fallbacks")}
+        >
           Fallbacks
         </button>
-        <button className="node-button" onClick={(e) => handleClick(e, "Decorators")}>
+        <button
+          className="node-button"
+          onClick={(e) => handleClick(e, "Decorators")}
+        >
           Decorators
         </button>
-        <button className="node-button" onClick={(e) => handleClick(e, "Actions")}>
+        <button
+          className="node-button"
+          onClick={(e) => handleClick(e, "Actions")}
+        >
           Actions
         </button>
-        <button className="node-button" onClick={(e) => handleClick(e, "Port values")}>
+        <button
+          className="node-button"
+          onClick={(e) => handleClick(e, "Port values")}
+        >
           Port value
         </button>
       </div>
@@ -155,24 +170,36 @@ const NodeHeader = ({
           className="node-action-button"
           onClick={() => {
             openInNewTab(
-              "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
+              "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
             );
           }}
           title="Help"
         >
           <HelpIcon className="icon action-icon" fill={"var(--icon)"} />
         </button>
-        <button className="node-action-button" onClick={onGenerateApp} title="Download app">
+        <button
+          className="node-action-button"
+          onClick={onGenerateApp}
+          title="Download app"
+        >
           <DownloadIcon className="icon action-icon" stroke={"var(--icon)"} />
         </button>
-        <button className="node-action-button" onClick={onRunApp} title="Run app">
+        <button
+          className="node-action-button"
+          onClick={onRunApp}
+          title="Run app"
+        >
           {isAppRunning ? (
             <StopIcon className="icon action-icon" fill={"var(--icon)"} />
           ) : (
             <RunIcon className="icon action-icon" fill={"var(--icon)"} />
           )}
         </button>
-        <button className="node-action-button" onClick={onResetApp} title="Reset app">
+        <button
+          className="node-action-button"
+          onClick={onResetApp}
+          title="Reset app"
+        >
           <ResetIcon className="icon action-icon" stroke={"var(--icon)"} />
         </button>
       </div>
