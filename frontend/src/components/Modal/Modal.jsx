@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './Modal.css';
 
-const Modal = ({ id="", isOpen, hasCloseBtn = true, onClose, children }) => {
+const Modal = ({ id="modal", isOpen, hasCloseBtn = true, onClose, children }) => {
   const [isModalOpen, setModalOpen] = useState(isOpen);
   const modalRef = useRef(null);
 

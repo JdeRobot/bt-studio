@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import axios from 'axios';
 
 import logo_img from './img/logo.png'
@@ -10,15 +9,16 @@ import './HeaderMenu.css'
 import change_project_img from './img/change_project.svg'
 import save_project_img from './img/save_project.svg'
 import universes_img from './img/universes.svg'
+import settings_img from './img/settings.svg'
 import ProjectModal from './modals/ProjectModal';
 import UniversesModal from './modals/UniverseModal';
+import SettingsModal from '../settings_popup/SettingsModal';
 
-var dropdown_shown = false;
-
-const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUniverseName, currentUniverseName, launchUniverse, terminateUniverse, changeUniverse, modelJson, projectChanges, setProjectChanges, openError} ) => {
+const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUniverseName, currentUniverseName, launchUniverse, terminateUniverse, changeUniverse, modelJson, projectChanges, setProjectChanges, openError, settingsProps} ) => {
 
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
   const [isUniversesModalOpen, setUniversesModalOpen] = useState(false);
+  const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
   const [existingProjects, setExistingProjects] = useState("");
 
   const createProject = (projectName) => {
@@ -80,6 +80,11 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
     saveProject();
   };
 
+  const openSettingsView = (e) => {
+    setSettingsModalOpen(true)
+    saveProject();
+  };
+
   const saveProject = () => {
   
     // Assuming modelJson and currentProjectname are correctly populated
@@ -133,6 +138,10 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
     }
   };
 
+  const handleCloseSettingsModal = () => {
+    setSettingsModalOpen(false);
+  };
+
   const handleFormSubmit = (data) => {
   }
   
@@ -159,6 +168,14 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
           openError={openError}
         />
 
+        <SettingsModal
+          isOpen={isSettingsModalOpen}
+          onSubmit={handleFormSubmit}
+          onClose={handleCloseSettingsModal}
+          currentProjectname={currentProjectname}
+          settings={settingsProps}
+        />
+
         <div className='header-button-container'>
           {currentProjectname && (
               <span className="project-name-box">
@@ -172,6 +189,9 @@ const HeaderMenu = ( {setCurrentProjectname, currentProjectname, setCurrentUnive
           </button>
           <button className="header-button" onClick={openUniversesView} title="Universe menu">
             <img className="header-icon" src={universes_img}></img>
+          </button>
+          <button className="header-button" onClick={openSettingsView} title="Settings">
+            <img className="header-icon" src={settings_img}></img>
           </button>
           <button className="header-button" onClick={saveProject} title="Save project">
             <img className="header-icon" src={save_project_img}></img>
