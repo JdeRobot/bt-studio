@@ -11,11 +11,16 @@ export const TagNodeWidget = ({ engine, node }: { engine: any; node: any }) => {
   let tagStyle: React.CSSProperties = {
     display: "flex",
     justifyContent: "space-between",
-    border: node.getBorderRadius() + "px solid " + node.getBorderColor(),
-    background: node.isFromBlackboard() ? "black" : "gray",
+    border: " 2px solid black",
+    borderRadius: "10px",
+    background: node.getColor(),
     paddingTop: "5px",
     paddingBottom: "5px",
     flexDirection: "column",
+    cursor: "pointer",
+    ...(node.isSelected() && {
+      boxShadow: "0 0 12px rgba(0, 0, 0)", // Add a shadow to highlight the selection
+    }),
   };
 
   // Ports list
