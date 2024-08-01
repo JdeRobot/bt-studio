@@ -13,10 +13,12 @@ const FileBrowser = ({
   setProjectChanges,
   actionNodesData,
   showAccentColor,
+  diagramEditorReady,
 }) => {
   const [fileList, setFileList] = useState(null);
   const [isNewActionModalOpen, setNewActionModalOpen] = useState(false);
   const [newsletterFormData, setNewsletterFormData] = useState(null);
+  const [actionsBackgrounds, setActionsBackgrounds] = useState([]);
 
   useEffect(() => {
     fetchFileList();
@@ -139,7 +141,7 @@ const FileBrowser = ({
               onClick={() => handleFileClick(file)}
             >
               <label>{file}</label>
-              {showAccentColor && (
+              {showAccentColor && diagramEditorReady && (
                 <div
                   className="accent-color"
                   style={{
