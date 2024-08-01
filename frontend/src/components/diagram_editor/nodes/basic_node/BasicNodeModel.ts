@@ -22,12 +22,6 @@ export class BasicNodeModel extends NodeModel<
   private color: string;
   private is_selected: boolean;
 
-  private static select_border_color: string = "rgb(18,109,114)";
-  private static base_border_color: string = "rgb(0,0,0)";
-
-  private static select_border_radius: string = "5";
-  private static base_border_radius: string = "1";
-
   constructor(name: string = "Basic Node", color: string = "rgb(0,192,255)") {
     super({
       type: "basic",
@@ -49,20 +43,8 @@ export class BasicNodeModel extends NodeModel<
     return this.color;
   }
 
-  getBorderColor(): string {
-    if (this.is_selected) {
-      return BasicNodeModel.select_border_color;
-    } else {
-      return BasicNodeModel.base_border_color;
-    }
-  }
-
-  getBorderRadius(): string {
-    if (this.is_selected) {
-      return BasicNodeModel.select_border_radius;
-    } else {
-      return BasicNodeModel.base_border_radius;
-    }
+  isSelected(): boolean {
+    return this.is_selected;
   }
 
   selectNode() {

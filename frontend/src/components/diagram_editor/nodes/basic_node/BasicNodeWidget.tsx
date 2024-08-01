@@ -19,12 +19,16 @@ export const BasicNodeWidget = ({
   let nodeStyle: React.CSSProperties = {
     display: "flex",
     justifyContent: "space-between",
-    border: node.getBorderRadius() + "px solid " + node.getBorderColor(),
-    borderRadius: "5px",
+    border: "2px solid black",
+    borderRadius: "10px",
     background: node.getColor() || "red",
     padding: "10px",
     flexDirection: "column",
     color: "white",
+    cursor: "pointer",
+    ...(node.isSelected() && {
+      boxShadow: "0 0 12px rgba(0, 0, 0)", // Add a shadow to highlight the selection
+    }),
   };
 
   // Ports list
