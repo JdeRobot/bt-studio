@@ -24,6 +24,7 @@ const App = () => {
   const [projectChanges, setProjectChanges] = useState(false);
   const [gazeboEnabled, setGazeboEnabled] = useState(false);
   const [manager, setManager] = useState(null);
+  const [diagramEditorReady, setDiagramEditorReady] = useState(false);
 
   // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
@@ -271,6 +272,7 @@ const App = () => {
             setProjectChanges={setProjectChanges}
             actionNodesData={actionNodesData}
             showAccentColor={editorShowAccentColors}
+            diagramEditorReady={diagramEditorReady}
           />
         </div>
 
@@ -300,6 +302,7 @@ const App = () => {
             actionNodesData={actionNodesData}
             btOrder={btOrder}
             openError={openError}
+            setDiagramEditorReady={setDiagramEditorReady}
           />
           <VncViewer gazeboEnabled={gazeboEnabled} />
         </div>
