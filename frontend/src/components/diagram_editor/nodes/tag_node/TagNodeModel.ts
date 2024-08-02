@@ -21,11 +21,8 @@ export class TagNodeModel extends NodeModel<
   private is_blackboard: boolean;
   private is_selected: boolean;
 
-  private static select_border_color: string = "rgb(18,109,114)";
-  private static base_border_color: string = "rgb(0,0,0)";
-
-  private static select_border_radius: string = "5";
-  private static base_border_radius: string = "1";
+  private static blackboard_color: string = "#5BA498";
+  private static value_color: string = "#A45B67";
 
   constructor(name: string = "Tag Node", color: string = "rgb(128,128,128)") {
     super({
@@ -56,23 +53,13 @@ export class TagNodeModel extends NodeModel<
   }
 
   getColor(): string {
-    return this.is_blackboard ? TagNodeModel.base_border_color : this.color;
+    return this.is_blackboard
+      ? TagNodeModel.blackboard_color
+      : TagNodeModel.value_color;
   }
 
-  getBorderColor(): string {
-    if (this.is_selected) {
-      return TagNodeModel.select_border_color;
-    } else {
-      return TagNodeModel.base_border_color;
-    }
-  }
-
-  getBorderRadius(): string {
-    if (this.is_selected) {
-      return TagNodeModel.select_border_radius;
-    } else {
-      return TagNodeModel.base_border_radius;
-    }
+  isSelected(): boolean {
+    return this.is_selected;
   }
 
   selectNode() {
@@ -100,7 +87,7 @@ export class TagNodeModel extends NodeModel<
     return {
       ...super.serialize(),
       name: this.name,
-      color: this.is_blackboard ? TagNodeModel.base_border_color : this.color,
+      color: this.getColor(),
       is_selected: this.is_selected,
       is_blackboard: this.is_blackboard,
     };
