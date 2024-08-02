@@ -43,6 +43,7 @@ const DiagramEditor = ({
   actionNodesData,
   btOrder,
   openError,
+  setDiagramEditorReady,
 }: {
   currentProjectname: any;
   setModelJson: any;
@@ -52,6 +53,7 @@ const DiagramEditor = ({
   actionNodesData: { [id: string]: ActionData };
   btOrder: string;
   openError: any;
+  setDiagramEditorReady: any;
 }) => {
   const ref = useRef<any>(null);
   const [graphJson, setGraphJson] = useState(null);
@@ -248,6 +250,7 @@ const DiagramEditor = ({
   useEffect(() => {
     // Deselect the current node
     setCurrentActionNode(null);
+    setDiagramEditorReady(false);
     if (lastClickedNodeId.current !== "") {
       let node: any = model.current.getNode(lastClickedNodeId.current);
       node.deselectNode();
@@ -299,6 +302,7 @@ const DiagramEditor = ({
         saveActionNodeData(node);
       }
     });
+    setDiagramEditorReady(true);
   }, [graphJson]);
 
   // Set the model in the engine ONLY on project change
