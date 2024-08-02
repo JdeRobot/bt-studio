@@ -1,4 +1,6 @@
+import functools
 import rclpy
+import py_trees
 from rclpy.node import Node
 import tree_factory
 import os
@@ -15,7 +17,24 @@ class TreeExecutor(Node):
 
         factory = tree_factory.TreeFactory()
         self.tree = factory.create_tree_from_file(tree_path)
+        snapshot_visitor = py_trees.visitors.SnapshotVisitor()
+        self.tree.add_post_tick_handler(
+            functools.partial(self.post_tick_handler, snapshot_visitor)
+        )
+        self.tree.visitors.append(snapshot_visitor)
         self.tree.tick_tock(period_ms=50)
+
+    def post_tick_handler(self, snapshot_visitor, behaviour_tree):
+        with open("/tmp/tree_state", "w") as f:
+            f.write(
+                py_trees.display.unicode_tree(
+                    behaviour_tree.root,
+                    visited=snapshot_visitor.visited,
+                    previously_visited=snapshot_visitor.visited,
+                )
+            )
+            f.write(py_trees.display.unicode_blackboard())
+            f.close()
 
     def spin_tree(self):
 

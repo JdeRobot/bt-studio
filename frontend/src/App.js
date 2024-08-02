@@ -75,7 +75,7 @@ const App = () => {
 
   const launchUniverse = (universe_name) => {
     const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
-      currentProjectname,
+      currentProjectname
     )}&universe_name=${encodeURIComponent(universe_name)}`;
 
     axios.get(apiUrl).then((response) => {
@@ -95,7 +95,7 @@ const App = () => {
       name: stored_cfg.name,
       launch_file_path: stored_cfg.config.launch_file_path,
       ros_version: "ROS2",
-      visualization: "gazebo_rae",
+      visualization: "bt_studio",
       world: "gazebo",
       exercise_id: stored_cfg.config.id,
     };
@@ -197,20 +197,14 @@ const App = () => {
 
           // Load all the settings
           Object.entries(settings).map(([key, value]) => {
-            value.setter(
-              project_settings[key]
-                ? project_settings[key]
-                : value.default_value,
-            );
+            value.setter(project_settings[key] ? project_settings[key] : value.default_value);
           });
         })
         .catch((error) => {
           console.log(error);
           if (error.response) {
             if (error.response.status === 404) {
-              openError(
-                `The project ${currentProjectname} has no configuration available`,
-              );
+              openError(`The project ${currentProjectname} has no configuration available`);
             } else {
               openError("Failed to load configuration");
             }

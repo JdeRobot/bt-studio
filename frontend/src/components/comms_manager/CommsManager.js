@@ -70,9 +70,7 @@ const CommsManager = (address) => {
         //  maybe try to reconnect and not clear the suscribers?
         //unsuscribeAll();
         if (e.wasClean) {
-          console.log(
-            `Connection with ${address} closed, all suscribers cleared`,
-          );
+          console.log(`Connection with ${address} closed, all suscribers cleared`);
         } else {
           console.log(`Connection with ${address} interrupted`);
         }
@@ -85,6 +83,7 @@ const CommsManager = (address) => {
 
       websocket.onmessage = (e) => {
         const message = JSON.parse(e.data);
+        console.log(message);
         dispatch(message);
       };
     });
@@ -137,8 +136,7 @@ const CommsManager = (address) => {
   const commands = {
     connect: connect,
     launchWorld: (configuration) => send("launch_world", configuration),
-    prepareVisualization: (visualization) =>
-      send("prepare_visualization", visualization),
+    prepareVisualization: (visualization) => send("prepare_visualization", visualization),
     run: (code) => send("run_application", code),
     stop: () => send("stop"),
     pause: () => send("pause"),
