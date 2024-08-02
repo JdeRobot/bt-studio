@@ -197,14 +197,20 @@ const App = () => {
 
           // Load all the settings
           Object.entries(settings).map(([key, value]) => {
-            value.setter(project_settings[key] ? project_settings[key] : value.default_value);
+            value.setter(
+              project_settings[key]
+                ? project_settings[key]
+                : value.default_value
+            );
           });
         })
         .catch((error) => {
           console.log(error);
           if (error.response) {
             if (error.response.status === 404) {
-              openError(`The project ${currentProjectname} has no configuration available`);
+              openError(
+                `The project ${currentProjectname} has no configuration available`
+              );
             } else {
               openError("Failed to load configuration");
             }
