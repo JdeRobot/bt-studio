@@ -17,7 +17,7 @@ const NodeHeader = ({
   onNodeTypeSelected,
   onDeleteNode,
   onEditAction,
-  onGenerateApp,
+  onDownloadApp,
   onRunApp,
   onResetApp,
   isAppRunning,
@@ -50,21 +50,21 @@ const NodeHeader = ({
   const [actionList, setActionList] = useState([]);
 
   // Fetch the file list and update actionList
-  const fetchActionList = () => {
-    axios
-      .get(`/tree_api/get_file_list?project_name=${currentProjectname}`)
-      .then((response) => {
-        const files = response.data.file_list;
-        if (Array.isArray(files)) {
-          const actions = files.map((file) => file.replace(".py", ""));
-          setActionList(actions);
-        } else {
-          console.error("API response is not an array:", files);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching files:", error);
-      });
+  const fetchActionList = async () => {
+    try {
+      const response = await axios.get(
+        `/tree_api/get_file_list?project_name=${currentProjectname}`,
+      );
+      const files = response.data.file_list;
+      if (Array.isArray(files)) {
+        const actions = files.map((file) => file.replace(".py", ""));
+        setActionList(actions);
+      } else {
+        console.error("API response is not an array:", files);
+      }
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
   };
 
   const getMenuItems = () => {
@@ -179,7 +179,7 @@ const NodeHeader = ({
         </button>
         <button
           className="node-action-button"
-          onClick={onGenerateApp}
+          onClick={onDownloadApp}
           title="Download app"
         >
           <DownloadIcon className="icon action-icon" stroke={"var(--icon)"} />
