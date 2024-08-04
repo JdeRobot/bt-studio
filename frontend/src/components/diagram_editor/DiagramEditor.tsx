@@ -55,6 +55,7 @@ const DiagramEditor = ({
   openError: any;
   setDiagramEditorReady: any;
 }) => {
+  // STATES, REFS and GLOBALS
   const ref = useRef<any>(null);
   const [graphJson, setGraphJson] = useState(null);
   const [appRunning, setAppRunning] = useState(false);
@@ -73,6 +74,7 @@ const DiagramEditor = ({
   // Create the model
   const model = useRef(new DiagramModel());
 
+  // FOCUS MANAGEMENT
   const handleLostFocus = (e: any) => {
     forceNotReset.current = true;
     if (
@@ -103,7 +105,7 @@ const DiagramEditor = ({
     setFocused(true);
   };
 
-  // Listeners
+  // LISTENERS
   const attachPositionListener = (node: any) => {
     node.registerListener({
       positionChanged: (event: any) => {
@@ -157,6 +159,7 @@ const DiagramEditor = ({
     });
   };
 
+  // MODAL MANAGEMENT
   const handleOpenEditActionModal = () => {
     if (lastClickedNodeId.current !== "") {
       const genericNode = model.current.getNode(lastClickedNodeId.current);
@@ -194,7 +197,7 @@ const DiagramEditor = ({
     setModelJson(JSON.stringify(model.current.serialize()));
   };
 
-  // Create the engine
+  // ENGINE
   const engine = useMemo(() => {
     const newEngine = createEngine({
       registerDefaultZoomCanvasAction: false,
@@ -246,6 +249,71 @@ const DiagramEditor = ({
     return newEngine;
   }, []);
 
+  // HELPERS
+  const initGraph = async (project_name: any) => {
+    try {
+      const response = await axios.get("/tree_api/get_project_graph/", {
+        params: {
+          project_name: project_name,
+        },
+      });
+      if (response.data.success) {
+        for (var member in actionNodesData) delete actionNodesData[member];
+        // Set the model as the received json
+        setGraphJson(response.data.graph_json);
+        setModelJson(response.data.graph_json);
+        // Create the new model
+        model.current = new DiagramModel();
+        // Reset the force reset state
+        forceNotReset.current = false;
+      } else {
+        console.error(response.data.message);
+      }
+    } catch (error) {
+      setGraphJson(null);
+      forceNotReset.current = false;
+      model.current = new DiagramModel();
+    }
+  };
+
+  const terminateApp = async () => {
+    await manager.terminate_application();
+    console.log("App terminated!");
+    setAppRunning(false);
+  };
+
+  const checkIfAction = (node: any) => {
+    var name = node.name;
+
+    if (node.getOptions().type === "tag") {
+      return false;
+    }
+
+    // Check if the node is a user written action
+    return ![
+      "Sequence",
+      "ReactiveSequence",
+      "SequenceWithMemory",
+      "Fallback",
+      "ReactiveFallback",
+      "RetryUntilSuccessful",
+      "Inverter",
+      "ForceSuccess",
+      "ForceFailure",
+      "KeepRunningUntilFailure",
+      "Repeat",
+      "RunOnce",
+      "Delay",
+      "Input port value",
+      "Output port value",
+      "Tree Root",
+    ].includes(name);
+  };
+
+  const checkIfTag = (node: any) => {
+    return node.getOptions().type === "tag";
+  };
+
   // Update the graphJson when the project name changes
   useEffect(() => {
     // Deselect the current node
@@ -256,39 +324,13 @@ const DiagramEditor = ({
       node.deselectNode();
       lastClickedNodeId.current = "";
     }
+
+    // Only execute the API call if currentProjectname is set
     if (currentProjectname) {
-      // Only execute the API call if currentProjectname is set
-      axios
-        .get("/tree_api/get_project_graph/", {
-          params: {
-            project_name: currentProjectname,
-          },
-        })
-        .then((response) => {
-          if (response.data.success) {
-            for (var member in actionNodesData) delete actionNodesData[member];
-            // Set the model as the received json
-            setGraphJson(response.data.graph_json);
-            setModelJson(response.data.graph_json);
-            // Create the new model
-            model.current = new DiagramModel();
-            // Reset the force reset state
-            forceNotReset.current = false;
-          } else {
-            console.error(response.data.message);
-          }
-        })
-        .catch((error) => {
-          setGraphJson(null);
-          forceNotReset.current = false;
-          model.current = new DiagramModel();
-        });
+      initGraph(currentProjectname);
     }
-    if (gazeboEnabled) {
-      manager.terminate_application().then(() => {
-        console.log("App terminated!");
-        setAppRunning(false);
-      });
+    if (appRunning && gazeboEnabled) {
+      terminateApp();
     }
   }, [currentProjectname]);
 
@@ -391,7 +433,7 @@ const DiagramEditor = ({
     else addBasicNode(nodeName);
   };
 
-  // Function to add a new node
+  // Function to add a new basic node
   const addBasicNode = (nodeName: any) => {
     // Control parameters
     let nodeColor = "rgb(128,128,128)"; // Default color
@@ -465,6 +507,7 @@ const DiagramEditor = ({
     forceNotReset.current = true;
   };
 
+  // Function to add a new tag node
   const addTagNode = (nodeName: any) => {
     const newNode = new TagNodeModel("value", "rgb(128,128,128)");
 
@@ -509,38 +552,6 @@ const DiagramEditor = ({
       }
       lastClickedNodeId.current = "";
     }
-  };
-
-  const checkIfAction = (node: any) => {
-    var name = node.name;
-
-    if (node.getOptions().type === "tag") {
-      return false;
-    }
-
-    // Check if the node is a user written action
-    return ![
-      "Sequence",
-      "ReactiveSequence",
-      "SequenceWithMemory",
-      "Fallback",
-      "ReactiveFallback",
-      "RetryUntilSuccessful",
-      "Inverter",
-      "ForceSuccess",
-      "ForceFailure",
-      "KeepRunningUntilFailure",
-      "Repeat",
-      "RunOnce",
-      "Delay",
-      "Input port value",
-      "Output port value",
-      "Tree Root",
-    ].includes(name);
-  };
-
-  const checkIfTag = (node: any) => {
-    return node.getOptions().type === "tag";
   };
 
   const setColorActionNode = (r: number, g: number, b: number) => {
@@ -718,108 +729,86 @@ const DiagramEditor = ({
     engine.zoomToFitNodes({ margin: 50 });
   };
 
-  const generateApp = () => {
+  const fetchApp = async (tree_graph: any) => {
+    const api_response = await fetch("/tree_api/generate_app/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        app_name: currentProjectname,
+        tree_graph: tree_graph,
+        bt_order: btOrder,
+      }),
+    });
+
+    if (!api_response.ok) {
+      var json_response = await api_response.json();
+      throw new Error(json_response.message || "An error occurred.");
+    }
+
+    return api_response.blob();
+  };
+
+  const downloadApp = async () => {
     if (model.current) {
+      // Get the app as a base64 blob object
       const tree_graph = JSON.stringify(model.current.serialize());
-      fetch("/tree_api/generate_app/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          app_name: currentProjectname,
-          tree_graph: tree_graph,
-          bt_order: btOrder,
-        }),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            return response.json().then((data) => {
-              throw new Error(data.message || "An error occurred.");
-            });
-          }
-          return response.blob();
-        })
-        .then((blob) => {
-          // Get the application
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.style.display = "none";
-          a.href = url;
-          a.download = `${currentProjectname}.zip`;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      const app_blob = await fetchApp(tree_graph);
+
+      try {
+        const url = window.URL.createObjectURL(app_blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = `${currentProjectname}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
   };
 
-  const runApp = () => {
+  const runApp = async () => {
     if (gazeboEnabled) {
       if (!appRunning) {
+        // Get the app as a base64 blob object
         const tree_graph = JSON.stringify(model.current.serialize());
-        fetch("/tree_api/generate_dockerized_app/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            app_name: currentProjectname,
-            tree_graph: tree_graph,
-            bt_order: btOrder,
-          }),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              return response.json().then((data) => {
-                throw new Error(data.message || "An error occurred.");
-              });
-            }
-            return response.blob();
-          })
-          .then((blob) => {
-            var reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = function () {
-              var base64data = reader.result;
-              // console.log(base64data);
+        const app_blob = await fetchApp(tree_graph);
+        const base64data = await app_blob.text();
 
-              // Send the zip
-              manager
-                .run({ type: "bt-studio", code: base64data })
-                .then(() => {
-                  console.log("App resumed!");
-                  setAppRunning(true);
-                })
-                .catch((response: any) => {
-                  let linterMessage = JSON.stringify(
-                    response.data.message,
-                  ).split("\\n");
-                  alert(`Received linter message: ${linterMessage}`);
-                });
-            };
-          });
-      } else {
-        manager.pause().then(() => {
-          console.log("App paused!");
-          setAppRunning(false);
+        // Send the zip
+        var api_response = await manager.run({
+          type: "bt-studio",
+          code: base64data,
         });
+        if (api_response.ok) {
+          console.log("App resumed!");
+          setAppRunning(true);
+        } else {
+          let linterMessage = JSON.stringify(api_response.data.message).split(
+            "\\n",
+          );
+          alert(`Received linter message: ${linterMessage}`);
+        }
+      } else {
+        await manager.pause();
+        console.log("App paused!");
+        setAppRunning(false);
       }
     } else {
       console.log("Gazebo is not up!");
     }
   };
 
-  const resetApp = () => {
+  const resetApp = async () => {
     if (gazeboEnabled) {
-      manager.terminate_application().then(() => {
-        console.log("App reseted!");
-        setAppRunning(false);
-        setAppLoaded(false);
-      });
+      await manager.terminate_application();
+      console.log("App reseted!");
+      setAppRunning(false);
+      setAppLoaded(false);
     } else {
       console.log("Gazebo is not up!");
     }
@@ -831,7 +820,7 @@ const DiagramEditor = ({
         onNodeTypeSelected={nodeTypeSelector}
         onDeleteNode={deleteLastClickedNode}
         onEditAction={handleOpenEditActionModal}
-        onGenerateApp={generateApp}
+        onDownloadApp={downloadApp}
         onRunApp={runApp}
         onResetApp={resetApp}
         isAppRunning={appRunning}
