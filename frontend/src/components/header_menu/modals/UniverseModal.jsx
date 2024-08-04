@@ -24,6 +24,18 @@ const UniverseModal = ({
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [universeAdded, setUniverseAdded] = useState(false);
 
+  const loadUniverseList = async () => {
+    try {
+      const listApiUrl = `/tree_api/get_universes_list?project_name=${currentProject}`;
+      const response = await axios.get(listApiUrl);
+      setUniversesProjects(response.data.universes_list);
+      setUniverseAdded(false);
+    } catch (error) {
+      console.error("Error while fetching universes list:", error);
+      openError(`An error occurred while fetching the universes list`);
+    }
+  };
+
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -35,18 +47,7 @@ const UniverseModal = ({
       }, 0);
     }
 
-    const listApiUrl = `/tree_api/get_universes_list?project_name=${currentProject}`;
-
-    axios
-      .get(listApiUrl)
-      .then((response) => {
-        setUniversesProjects(response.data.universes_list);
-        setUniverseAdded(false);
-      })
-      .catch((error) => {
-        console.error("Error while fetching universes list:", error);
-        openError(`An error occurred while fetching the universes list`);
-      });
+    loadUniverseList();
   }, [isOpen, universeAdded]);
 
   const handleInputChange = (event) => {
@@ -70,40 +71,28 @@ const UniverseModal = ({
     onClose();
   };
 
-  const deleteUniverse = (universe_name) => {
-    const apiUrl = `/tree_api/delete_universe?project_name=${currentProject}&universe_name=${universe_name}`;
-    axios
-      .get(apiUrl)
-      .then((response) => {
-        if (response.data.success) {
-          const listApiUrl = `/tree_api/get_universes_list?project_name=${currentProject}`;
-
-          axios
-            .get(listApiUrl)
-            .then((response) => {
-              setUniversesProjects(response.data.universes_list);
-            })
-            .catch((error) => {
-              console.error("Error while fetching universes list:", error);
-              openError(`An error occurred while fetching the universes list`);
-            });
-          console.log("Universe deleted successfully");
+  const deleteUniverse = async (universe_name) => {
+    try {
+      const apiUrl = `/tree_api/delete_universe?project_name=${currentProject}&universe_name=${universe_name}`;
+      const response = await axios.get(apiUrl);
+      if (response.data.success) {
+        loadUniverseList();
+        console.log("Universe deleted successfully");
+      }
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (error.response.status === 409) {
+          openError(`The universe ${universe_name} does not exist`);
+        } else {
+          // Handle other statuses or general API errors
+          openError(
+            "Unable to connect with the backend server. Please check the backend status.",
+          );
         }
-      })
-      .catch((error) => {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          if (error.response.status === 409) {
-            openError(`The universe ${universe_name} does not exist`);
-          } else {
-            // Handle other statuses or general API errors
-            openError(
-              "Unable to connect with the backend server. Please check the backend status.",
-            );
-          }
-        }
-      });
+      }
+    }
   };
 
   const importFromZip = () => {
