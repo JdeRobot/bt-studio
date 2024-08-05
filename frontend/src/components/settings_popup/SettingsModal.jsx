@@ -31,7 +31,7 @@ const SettingsModal = ({
   //   document.documentElement.style.setProperty("--header", "rgb("+Math.round(color.rgb.r)+","+Math.round(color.rgb.g)+","+Math.round(color.rgb.b)+")");
   // }, [color]);
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
     // Save settings
     let json_settings = { name: currentProjectname, config: {} };
 
@@ -43,19 +43,20 @@ const SettingsModal = ({
 
     console.log(str);
 
-    fetch("/tree_api/save_project_configuration/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ project_name: currentProjectname, settings: str }),
-    }).then((response) => {
-      if (!response.ok) {
-        return response.json().then((data) => {
-          throw new Error(data.message || "An error occurred.");
-        });
-      }
-    });
+    try {
+      const response = await fetch("/tree_api/save_project_configuration/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          project_name: currentProjectname,
+          settings: str,
+        }),
+      });
+    } catch (error) {
+      console.error("Error saving config:", error);
+    }
     onClose();
   };
 
