@@ -70,7 +70,7 @@
 }
 
 .modal-complex-input {
-  border: 2px solid #000000;
+  border: 2px solid var(--border-color);
   background-color: var(--input-background) !important;
   border-radius: 10px;
   padding-left: 1em;

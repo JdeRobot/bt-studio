@@ -5,6 +5,8 @@ import { ParentPortWidget } from "./ports/parent_port/ParentPortWidget";
 import { InputPortWidget } from "./ports/input_port/InputPortWidget";
 import { OutputPortWidget } from "./ports/output_port/OutputPortWidget";
 
+import { strRGBToLuminance } from "../../../helper/colorHelper";
+
 import "./BasicNode.css";
 
 // The node widget controls the visualization of the custom node
@@ -15,19 +17,16 @@ export const BasicNodeWidget = ({
   engine: any;
   node: any;
 }) => {
+
+  // Choose the font color
+  let showLightText = strRGBToLuminance(node.getColor()) <= 0.5;
+
   // Node style
   let nodeStyle: React.CSSProperties = {
-    display: "flex",
-    justifyContent: "space-between",
-    border: "2px solid black",
-    borderRadius: "10px",
-    background: node.getColor() || "red",
-    padding: "10px",
-    flexDirection: "column",
-    color: "white",
-    cursor: "pointer",
+    background: node.getColor() || "var(--bt-action-default-color)",
+    color: showLightText ? "var(--bt-light-text)" : "var(--bt-dark-text)",
     ...(node.isSelected() && {
-      boxShadow: "0 0 12px rgba(0, 0, 0)", // Add a shadow to highlight the selection
+      boxShadow: "0 0 12px var(--bt-selected-shadow-color)", // Add a shadow to highlight the selection
     }),
   };
 
