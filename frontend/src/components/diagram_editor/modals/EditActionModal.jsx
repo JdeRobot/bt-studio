@@ -14,6 +14,8 @@ import { ReactComponent as CancelIcon } from "../img/cancel.svg";
 import { ReactComponent as AcceptIcon } from "../img/accept.svg";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 
+import { rgbToLuminance } from "../../helper/colorHelper";
+
 const initialEditActionModalData = {
   newInputName: "",
   newOutputName: "",
@@ -83,7 +85,7 @@ const EditActionModal = ({
     }));
     setAllowCreation(
       (name === "newInputName" && isInputNameValid(value)) ||
-        (name === "newOutputName" && isOutputNameValid(value)),
+        (name === "newOutputName" && isOutputNameValid(value))
     );
   };
 
@@ -117,7 +119,9 @@ const EditActionModal = ({
   }, [color]);
 
   const isBackgroundDark = () => {
-    return color.hsv["v"] < 60 || color.hsv["s"] > 55;
+    return (
+      rgbToLuminance(color.rgb["r"], color.rgb["g"], color.rgb["b"]) <= 0.5
+    );
   };
 
   const reRender = () => {
@@ -151,7 +155,7 @@ const EditActionModal = ({
 
   const isInputNameValid = (name) => {
     var inputPorts = Object.entries(currentActionNode.getPorts()).filter(
-      (item) => item[1] instanceof InputPortModel,
+      (item) => item[1] instanceof InputPortModel
     );
     var merged = [].concat.apply([], inputPorts);
     return name !== "" && !name.includes(" ") && !merged.includes(name);
@@ -159,7 +163,7 @@ const EditActionModal = ({
 
   const isOutputNameValid = (name) => {
     var outputPorts = Object.entries(currentActionNode.getPorts()).filter(
-      (item) => item[1] instanceof OutputPortModel,
+      (item) => item[1] instanceof OutputPortModel
     );
     var merged = [].concat.apply([], outputPorts);
     return name !== "" && !name.includes(" ") && !merged.includes(name);
@@ -220,7 +224,11 @@ const EditActionModal = ({
           >
             <label
               className="node-editor-name"
-              style={{ color: isBackgroundDark() ? "white" : "black" }}
+              style={{
+                color: isBackgroundDark()
+                  ? "var(--bt-light-text)"
+                  : "var(--bt-dark-text)",
+              }}
             >
               {currentActionNode.getName()}
             </label>
@@ -239,7 +247,9 @@ const EditActionModal = ({
                             className="node-editor-io-name"
                             onWheel={horizontalScrolling}
                             style={{
-                              color: isBackgroundDark() ? "white" : "black",
+                              color: isBackgroundDark()
+                                ? "var(--bt-light-text)"
+                                : "var(--bt-dark-text)",
                             }}
                           >
                             {port[0]}
@@ -249,7 +259,9 @@ const EditActionModal = ({
                               "node-editor-io-delete node-editor-hidden"
                             }
                             style={{
-                              color: isBackgroundDark() ? "white" : "black",
+                              color: isBackgroundDark()
+                                ? "var(--bt-light-text)"
+                                : "var(--bt-dark-text)",
                             }}
                             title="Delete"
                             onClick={() => {
@@ -270,7 +282,7 @@ const EditActionModal = ({
                         </div>
                       );
                     }
-                  },
+                  }
                 )}
                 {inputName ? (
                   <div className="node-editor-io-name-entry-container">
@@ -283,11 +295,19 @@ const EditActionModal = ({
                       autoComplete="off"
                       onChange={handleInputChange}
                       required
-                      style={{ color: isBackgroundDark() ? "white" : "black" }}
+                      style={{
+                        color: isBackgroundDark()
+                          ? "var(--bt-light-text)"
+                          : "var(--bt-dark-text)",
+                      }}
                     />
                     <button
                       className={"node-editor-io-delete"}
-                      style={{ color: isBackgroundDark() ? "white" : "black" }}
+                      style={{
+                        color: isBackgroundDark()
+                          ? "var(--bt-light-text)"
+                          : "var(--bt-dark-text)",
+                      }}
                       title="Cancel"
                       onClick={() => cancelCreation()}
                     >
@@ -305,7 +325,9 @@ const EditActionModal = ({
                       <button
                         className={"node-editor-io-accept"}
                         style={{
-                          color: isBackgroundDark() ? "white" : "black",
+                          color: isBackgroundDark()
+                            ? "var(--bt-light-text)"
+                            : "var(--bt-dark-text)",
                         }}
                         title="Create"
                         onClick={() => addInput()}
@@ -325,7 +347,11 @@ const EditActionModal = ({
                 ) : (
                   <button
                     className="node-editor-button"
-                    style={{ color: isBackgroundDark() ? "white" : "black" }}
+                    style={{
+                      color: isBackgroundDark()
+                        ? "var(--bt-light-text)"
+                        : "var(--bt-dark-text)",
+                    }}
                     onClick={() => {
                       openInputCreation();
                     }}
@@ -355,7 +381,9 @@ const EditActionModal = ({
                               "node-editor-io-delete node-editor-hidden"
                             }
                             style={{
-                              color: isBackgroundDark() ? "white" : "black",
+                              color: isBackgroundDark()
+                                ? "var(--bt-light-text)"
+                                : "var(--bt-dark-text)",
                             }}
                             title="Delete"
                             onClick={() => {
@@ -377,7 +405,9 @@ const EditActionModal = ({
                             className="node-editor-io-name"
                             onWheel={horizontalScrolling}
                             style={{
-                              color: isBackgroundDark() ? "white" : "black",
+                              color: isBackgroundDark()
+                                ? "var(--bt-light-text)"
+                                : "var(--bt-dark-text)",
                             }}
                           >
                             {port[0]}
@@ -385,7 +415,7 @@ const EditActionModal = ({
                         </div>
                       );
                     }
-                  },
+                  }
                 )}
                 {outputName ? (
                   <div className="node-editor-io-name-entry-container">
@@ -398,11 +428,19 @@ const EditActionModal = ({
                       autoComplete="off"
                       onChange={handleInputChange}
                       required
-                      style={{ color: isBackgroundDark() ? "white" : "black" }}
+                      style={{
+                        color: isBackgroundDark()
+                          ? "var(--bt-light-text)"
+                          : "var(--bt-dark-text)",
+                      }}
                     />
                     <button
                       className={"node-editor-io-delete"}
-                      style={{ color: isBackgroundDark() ? "white" : "black" }}
+                      style={{
+                        color: isBackgroundDark()
+                          ? "var(--bt-light-text)"
+                          : "var(--bt-dark-text)",
+                      }}
                       title="Cancel"
                       onClick={() => cancelCreation()}
                     >
@@ -420,7 +458,9 @@ const EditActionModal = ({
                       <button
                         className={"node-editor-io-accept"}
                         style={{
-                          color: isBackgroundDark() ? "white" : "black",
+                          color: isBackgroundDark()
+                            ? "var(--bt-light-text)"
+                            : "var(--bt-dark-text)",
                         }}
                         title="Create"
                         onClick={() => addOutput()}
@@ -440,7 +480,11 @@ const EditActionModal = ({
                 ) : (
                   <button
                     className="node-editor-button"
-                    style={{ color: isBackgroundDark() ? "white" : "black" }}
+                    style={{
+                      color: isBackgroundDark()
+                        ? "var(--bt-light-text)"
+                        : "var(--bt-dark-text)",
+                    }}
                     onClick={() => {
                       openOutputCreation();
                     }}

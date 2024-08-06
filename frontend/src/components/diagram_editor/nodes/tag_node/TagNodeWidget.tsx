@@ -7,19 +7,12 @@ import "./TagNode.css";
 
 // The node widget controls the visualization of the custom node
 export const TagNodeWidget = ({ engine, node }: { engine: any; node: any }) => {
+
   // Tag style
   let tagStyle: React.CSSProperties = {
-    display: "flex",
-    justifyContent: "space-between",
-    border: " 2px solid black",
-    borderRadius: "10px",
     background: node.getColor(),
-    paddingTop: "5px",
-    paddingBottom: "5px",
-    flexDirection: "column",
-    cursor: "pointer",
     ...(node.isSelected() && {
-      boxShadow: "0 0 12px rgba(0, 0, 0)", // Add a shadow to highlight the selection
+      boxShadow: "0 0 12px var(--bt-selected-shadow-color)", // Add a shadow to highlight the selection
     }),
   };
 

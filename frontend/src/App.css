@@ -204,6 +204,8 @@ h2 {
   --buttons-invisible: var(--background);
   --buttons-hover: var(--background-500);
 
+
+  --border-color: var(--background-50);
   --icon: var(--text);
 
   --scrollbar: var(--background-500);
@@ -216,4 +218,11 @@ h2 {
   --error-border: var(--error-300);
   --error-button: var(--error-400);
   --error-button-hover: var(--error-500);
+
+  --bt-light-text: #ffffff;
+  --bt-dark-text: #000000;
+  --bt-selected-shadow-color: var(--background-50);
+  --bt-action-default-color: red;
+  --bt-tag-blackboard-background: #5BA498;
+  --bt-tag-normal-background: #A45B67;
 }
