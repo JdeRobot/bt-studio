@@ -7,7 +7,6 @@ import "./TagNode.css";
 
 // The node widget controls the visualization of the custom node
 export const TagNodeWidget = ({ engine, node }: { engine: any; node: any }) => {
-
   // Tag style
   let tagStyle: React.CSSProperties = {
     background: node.getColor(),

@@ -85,7 +85,7 @@ const EditActionModal = ({
     }));
     setAllowCreation(
       (name === "newInputName" && isInputNameValid(value)) ||
-        (name === "newOutputName" && isOutputNameValid(value))
+        (name === "newOutputName" && isOutputNameValid(value)),
     );
   };
 
@@ -155,7 +155,7 @@ const EditActionModal = ({
 
   const isInputNameValid = (name) => {
     var inputPorts = Object.entries(currentActionNode.getPorts()).filter(
-      (item) => item[1] instanceof InputPortModel
+      (item) => item[1] instanceof InputPortModel,
     );
     var merged = [].concat.apply([], inputPorts);
     return name !== "" && !name.includes(" ") && !merged.includes(name);
@@ -163,7 +163,7 @@ const EditActionModal = ({
 
   const isOutputNameValid = (name) => {
     var outputPorts = Object.entries(currentActionNode.getPorts()).filter(
-      (item) => item[1] instanceof OutputPortModel
+      (item) => item[1] instanceof OutputPortModel,
     );
     var merged = [].concat.apply([], outputPorts);
     return name !== "" && !name.includes(" ") && !merged.includes(name);
@@ -282,7 +282,7 @@ const EditActionModal = ({
                         </div>
                       );
                     }
-                  }
+                  },
                 )}
                 {inputName ? (
                   <div className="node-editor-io-name-entry-container">
@@ -415,7 +415,7 @@ const EditActionModal = ({
                         </div>
                       );
                     }
-                  }
+                  },
                 )}
                 {outputName ? (
                   <div className="node-editor-io-name-entry-container">
