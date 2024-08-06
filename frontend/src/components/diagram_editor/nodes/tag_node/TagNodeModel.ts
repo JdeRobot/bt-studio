@@ -64,10 +64,12 @@ export class TagNodeModel extends NodeModel<
 
   selectNode() {
     this.is_selected = true;
+    this.setSelected(true);
   }
 
   deselectNode() {
     this.is_selected = false;
+    this.setSelected(false);
   }
 
   // Method to add children port (they can be default model because only the widget, the visualization changes)
