@@ -17,7 +17,6 @@ export const BasicNodeWidget = ({
   engine: any;
   node: any;
 }) => {
-
   // Choose the font color
   let showLightText = strRGBToLuminance(node.getColor()) <= 0.5;
 

@@ -204,7 +204,6 @@ h2 {
   --buttons-invisible: var(--background);
   --buttons-hover: var(--background-500);
 
-
   --border-color: var(--background-50);
   --icon: var(--text);
 
@@ -223,6 +222,6 @@ h2 {
   --bt-dark-text: #000000;
   --bt-selected-shadow-color: var(--background-50);
   --bt-action-default-color: red;
-  --bt-tag-blackboard-background: #5BA498;
-  --bt-tag-normal-background: #A45B67;
+  --bt-tag-blackboard-background: #5ba498;
+  --bt-tag-normal-background: #a45b67;
 }
