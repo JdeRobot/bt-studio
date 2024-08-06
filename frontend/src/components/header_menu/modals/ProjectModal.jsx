@@ -24,24 +24,26 @@ const ProjectModal = ({
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
   const [formState, setFormState] = useState(initialProjectData);
 
+  const getProjects = async () => {
+    const listApiUrl = `/tree_api/get_project_list`;
+    try {
+      const response = await axios.get(listApiUrl);
+      setExistingProjects(response.data.project_list);
+      setFormState(initialProjectData);
+    } catch (error) {
+      console.error("Error while fetching project list:", error);
+      openError(`An error occurred while fetching the project list`);
+    }
+  };
+
   useEffect(() => {
     if (isOpen && focusInputRef.current) {
       setTimeout(() => {
         focusInputRef.current.focus();
       }, 0);
     }
-    const listApiUrl = `/tree_api/get_project_list`;
 
-    axios
-      .get(listApiUrl)
-      .then((response) => {
-        setExistingProjects(response.data.project_list);
-      })
-      .catch((error) => {
-        console.error("Error while fetching project list:", error);
-        openError(`An error occurred while fetching the project list`);
-      });
-    setFormState(initialProjectData);
+    getProjects();
   }, [isOpen]);
 
   const handleInputChange = (event) => {
@@ -70,44 +72,25 @@ const ProjectModal = ({
     onClose();
   };
 
-  const deleteProject = (project) => {
+  const deleteProject = async (project) => {
     if (currentProject === project) {
       //TODO: change this to change project before deleting
       return;
     }
     const apiUrl = `/tree_api/delete_project?project_name=${encodeURIComponent(project)}`;
-    axios
-      .get(apiUrl)
-      .then((response) => {
-        if (response.data.success) {
-          const listApiUrl = `/tree_api/get_project_list`;
+    const listApiUrl = `/tree_api/get_project_list`;
 
-          axios
-            .get(listApiUrl)
-            .then((response) => {
-              setExistingProjects(response.data.project_list);
-            })
-            .catch((error) => {
-              console.error("Error while fetching project list:", error);
-              openError(`An error occurred while fetching the project list`);
-            });
-          console.log("Project deleted successfully");
-        }
-      })
-      .catch((error) => {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          if (error.response.status === 409) {
-            openError(`The project ${project} does not exist`);
-          } else {
-            // Handle other statuses or general API errors
-            openError(
-              "Unable to connect with the backend server. Please check the backend status.",
-            );
-          }
-        }
-      });
+    // Delete and update
+    const response = await axios.get(apiUrl);
+    try {
+      if (response.data.success) {
+        await getProjects();
+      }
+      console.log("Project deleted successfully");
+    } catch (error) {
+      console.error("Error while fetching project list:", error);
+      openError(`An error occurred while fetching the project list`);
+    }
   };
 
   return (

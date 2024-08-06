@@ -25,24 +25,24 @@ const FileBrowser = ({
     setCurrentFilename("");
   }, [currentProjectname]);
 
-  const fetchFileList = () => {
+  const fetchFileList = async () => {
     if (currentProjectname !== "") {
-      axios
-        .get(`/tree_api/get_file_list?project_name=${currentProjectname}`)
-        .then((response) => {
-          const files = response.data.file_list;
-          if (Array.isArray(files)) {
-            for (let index = 0; index < files.length; index++) {
-              files[index] = files[index].slice(0, -3);
-            }
-            setFileList(files);
-          } else {
-            console.error("API response is not an array:", files);
+      try {
+        const response = await axios.get(
+          `/tree_api/get_file_list?project_name=${currentProjectname}`,
+        );
+        const files = response.data.file_list;
+        if (Array.isArray(files)) {
+          for (let index = 0; index < files.length; index++) {
+            files[index] = files[index].slice(0, -3);
           }
-        })
-        .catch((error) => {
-          console.error("Error fetching files:", error);
-        });
+          setFileList(files);
+        } else {
+          console.error("API response is not an array:", files);
+        }
+      } catch (error) {
+        console.error("Error fetching files:", error);
+      }
     }
   };
 
@@ -54,24 +54,22 @@ const FileBrowser = ({
     setNewActionModalOpen(true);
   };
 
-  const handleDeleteFile = () => {
+  const handleDeleteFile = async () => {
     if (currentFilename) {
-      axios
-        .get(
+      try {
+        const response = await axios.get(
           `/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}`,
-        )
-        .then((response) => {
-          if (response.data.success) {
-            setProjectChanges(true);
-            fetchFileList(); // Update the file list
-            setCurrentFilename(""); // Unset the current file
-          } else {
-            alert(response.data.message);
-          }
-        })
-        .catch((error) => {
-          console.error("Error deleting file:", error);
-        });
+        );
+        if (response.data.success) {
+          setProjectChanges(true);
+          fetchFileList(); // Update the file list
+          setCurrentFilename(""); // Unset the current file
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error deleting file:", error);
+      }
     } else {
       alert("No file is currently selected.");
     }
@@ -82,26 +80,24 @@ const FileBrowser = ({
     document.getElementById("actionName").value = "";
   };
 
-  const handleFormSubmit = (data) => {
+  const handleFormSubmit = async (data) => {
     setNewsletterFormData(data);
     handleCloseNewActionModal();
 
     if (data.actionName !== "") {
-      axios
-        .get(
+      try {
+        const response = await axios.get(
           `/tree_api/create_file?project_name=${currentProjectname}&filename=${data.actionName}.py&template=${data.templateType}`,
-        )
-        .then((response) => {
-          if (response.data.success) {
-            setProjectChanges(true);
-            fetchFileList(); // Update the file list
-          } else {
-            alert(response.data.message);
-          }
-        })
-        .catch((error) => {
-          console.error("Error creating file:", error);
-        });
+        );
+        if (response.data.success) {
+          setProjectChanges(true);
+          fetchFileList(); // Update the file list
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error creating file:", error);
+      }
     }
   };
 

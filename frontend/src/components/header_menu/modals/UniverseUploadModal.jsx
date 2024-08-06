@@ -65,7 +65,7 @@ const UniverseUploadModal = ({
     };
   };
 
-  const saveZipUniverse = () => {
+  const saveZipUniverse = async () => {
     console.log("Calling the saving API");
 
     if (uploadPercentage != 100) {
@@ -73,21 +73,19 @@ const UniverseUploadModal = ({
       return;
     }
 
-    axios
-      .post("/tree_api/upload_universe/", {
+    try {
+      const response = await axios.post("/tree_api/upload_universe/", {
         universe_name: universeName,
         zip_file: uploadedUniverse,
         app_name: currentProject,
-      })
-      .then((response) => {
-        if (response.data.success) {
-          console.log("Universe saved successfully.");
-          setUniverseAdded(true);
-        }
-      })
-      .catch((error) => {
-        console.error("Axios Error:", error);
       });
+      if (response.data.success) {
+        console.log("Universe saved successfully.");
+        setUniverseAdded(true);
+      }
+    } catch (error) {
+      console.error("Axios Error:", error);
+    }
 
     onClose();
   };

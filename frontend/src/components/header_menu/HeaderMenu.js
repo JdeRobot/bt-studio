@@ -34,36 +34,34 @@ const HeaderMenu = ({
   const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
   const [existingProjects, setExistingProjects] = useState("");
 
-  const createProject = (projectName) => {
+  const createProject = async (projectName) => {
     if (projectName === null || projectName === "") {
       // User pressed cancel or entered an empty string
       return;
     }
 
-    const apiUrl = `/tree_api/create_project?project_name=${encodeURIComponent(projectName)}`;
-    axios
-      .get(apiUrl)
-      .then((response) => {
-        if (response.data.success) {
-          // Successfully created the project
-          setCurrentProjectname(projectName);
-          console.log("Project created successfully");
+    try {
+      const apiUrl = `/tree_api/create_project?project_name=${encodeURIComponent(projectName)}`;
+      const response = await axios.get(apiUrl);
+      if (response.data.success) {
+        // Successfully created the project
+        setCurrentProjectname(projectName);
+        console.log("Project created successfully");
+      }
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (error.response.status === 409) {
+          openError(`The project ${projectName} already exists`);
+        } else {
+          // Handle other statuses or general API errors
+          openError(
+            "Unable to connect with the backend server. Please check the backend status.",
+          );
         }
-      })
-      .catch((error) => {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          if (error.response.status === 409) {
-            openError(`The project ${projectName} already exists`);
-          } else {
-            // Handle other statuses or general API errors
-            openError(
-              "Unable to connect with the backend server. Please check the backend status.",
-            );
-          }
-        }
-      });
+      }
+    }
   };
 
   const changeProject = function (projectName) {
@@ -105,7 +103,7 @@ const HeaderMenu = ({
     saveProject();
   };
 
-  const saveProject = () => {
+  const saveProject = async () => {
     // Assuming modelJson and currentProjectname are correctly populated
     if (!modelJson || !currentProjectname) {
       console.error("Either modelJson or currentProjectname is not set.");
@@ -115,24 +113,22 @@ const HeaderMenu = ({
 
     setProjectChanges(false);
 
-    axios
-      .post("/tree_api/save_project/", {
+    try {
+      const response = await axios.post("/tree_api/save_project/", {
         project_name: currentProjectname,
         graph_json: modelJson,
-      })
-      .then((response) => {
-        if (response.data.success) {
-          console.log("Project saved successfully.");
-        } else {
-          console.error(
-            "Error saving project:",
-            response.data.message || "Unknown error",
-          );
-        }
-      })
-      .catch((error) => {
-        console.error("Axios Error:", error);
       });
+      if (response.data.success) {
+        console.log("Project saved successfully.");
+      } else {
+        console.error(
+          "Error saving project:",
+          response.data.message || "Unknown error",
+        );
+      }
+    } catch (error) {
+      console.error("Axios Error:", error);
+    }
   };
 
   const handleCloseProjectModal = (project) => {

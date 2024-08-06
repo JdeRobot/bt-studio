@@ -60,38 +60,37 @@ const App = () => {
     manager.disconnect();
   });
 
-  const connectWithRetry = () => {
-    console.log("The manager is up!");
-    manager
-      .connect()
-      .then(() => {
-        console.log("Connected!");
-      })
-      .catch((e) => {
-        // Connection failed, try again after a delay
-        console.log("Connection failed, trying again!");
-        setTimeout(connectWithRetry, 1000);
-      });
+  const connectWithRetry = async () => {
+    try {
+      await manager.connect();
+      console.log("Connected!");
+    } catch (error) {
+      // Connection failed, try again after a delay
+      console.log("Connection failed, trying again!");
+      setTimeout(connectWithRetry, 1000);
+    }
   };
 
-  const launchUniverse = (universe_name) => {
+  const launchUniverse = async (universe_name) => {
     const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
       currentProjectname,
     )}&universe_name=${encodeURIComponent(universe_name)}`;
 
-    axios.get(apiUrl).then((response) => {
+    try {
+      const response = await axios.get(apiUrl);
       console.log("Stored universe config: " + response.data);
       const stored_cfg = JSON.parse(response.data);
-
       if (stored_cfg.type === "robotics_backend") {
-        launchBackendUniverse(stored_cfg);
+        await launchBackendUniverse(stored_cfg);
       } else {
         launchCustomUniverse(stored_cfg);
       }
-    });
+    } catch (error) {
+      console.error("Error launching universe:", error);
+    }
   };
 
-  const launchBackendUniverse = (stored_cfg) => {
+  const launchBackendUniverse = async (stored_cfg) => {
     const universe_config = {
       name: stored_cfg.name,
       launch_file_path: stored_cfg.config.launch_file_path,
@@ -101,62 +100,60 @@ const App = () => {
       exercise_id: stored_cfg.config.id,
     };
 
-    manager.launchWorld(universe_config).then(() => {
-      console.log("Universe launched!");
-      manager.prepareVisualization(universe_config.visualization).then(() => {
-        console.log("Viz ready!");
-        setGazeboEnabled(true);
-      });
-    });
+    try {
+      await manager.launchWorld(universe_config);
+      console.log("RB universe launched!");
+      await manager.prepareVisualization(universe_config.visualization);
+      console.log("Viz ready!");
+      setGazeboEnabled(true);
+    } catch (error) {
+      console.error("Error launching RB universe:", error);
+    }
   };
 
-  const launchCustomUniverse = (stored_cfg) => {
+  const sendOnLoad = async (reader, stored_cfg) => {
+    // Get the zip in base64
+    var base64data = reader.result;
+
+    // Prepare the config
+    const universe_cfg = {
+      name: stored_cfg.name,
+      launch_file_path: stored_cfg.ram_config.launch_file_path,
+      ros_version: stored_cfg.ram_config.ros_version,
+      world: stored_cfg.ram_config.world,
+      zip: base64data,
+    };
+
+    // Launch the world
+    await manager.launchWorld(universe_cfg);
+    console.log("Universe launched!");
+    await manager.prepareVisualization("bt_studio");
+    console.log("Viz ready!");
+    setGazeboEnabled(true);
+  };
+
+  const launchCustomUniverse = async (stored_cfg) => {
     console.log("Launching a zip universe: " + stored_cfg.name);
 
-    fetch("/tree_api/get_universe_zip/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        app_name: currentProjectname,
-        universe_name: stored_cfg.name,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((data) => {
-            throw new Error(data.message || "An error occurred.");
-          });
-        }
-        return response.blob();
-      })
-      .then((blob) => {
-        var reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = function () {
-          // Get the zip in base64
-          var base64data = reader.result;
-
-          // Prepare the config
-          const universe_cfg = {
-            name: stored_cfg.name,
-            launch_file_path: stored_cfg.ram_config.launch_file_path,
-            ros_version: stored_cfg.ram_config.ros_version,
-            world: stored_cfg.ram_config.world,
-            zip: base64data,
-          };
-
-          // Launch the world
-          manager.launchWorld(universe_cfg).then(() => {
-            console.log("Universe launched!");
-            manager.prepareVisualization("bt_studio").then(() => {
-              console.log("Viz ready!");
-              setGazeboEnabled(true);
-            });
-          });
-        };
+    try {
+      const response = await fetch("/tree_api/get_universe_zip/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          app_name: currentProjectname,
+          universe_name: stored_cfg.name,
+        }),
       });
+      const blob = await response.blob();
+      const reader = new FileReader();
+
+      reader.onloadend = () => sendOnLoad(reader, stored_cfg); // Fix: pass the function reference
+      reader.readAsDataURL(blob);
+    } catch (error) {
+      console.error("Error launching RB universe:", error);
+    }
   };
 
   const terminateUniverse = async () => {
@@ -183,45 +180,46 @@ const App = () => {
 
   useEffect(() => {
     if (manager) {
+      console.log("The manager is up!");
       connectWithRetry();
     }
   }, [manager]); // Re-run if the manager instance changes
 
+  const loadProjectConfig = async () => {
+    try {
+      const apiUrl = `/tree_api/get_project_configuration?project_name=${currentProjectname}`;
+      const response = await axios.get(apiUrl);
+      let raw_config = JSON.parse(response.data);
+      let project_settings = raw_config.config;
+
+      // Load all the settings
+      Object.entries(settings).map(([key, value]) => {
+        value.setter(
+          project_settings[key] ? project_settings[key] : value.default_value,
+        );
+      });
+    } catch (error) {
+      console.log(error);
+      if (error.response) {
+        if (error.response.status === 404) {
+          openError(
+            `The project ${currentProjectname} has no configuration available`,
+          );
+        } else {
+          openError("Failed to load configuration");
+        }
+      }
+
+      console.log("Loading default settings");
+      Object.entries(settings).map(([key, value]) => {
+        value.setter(value.default_value);
+      });
+    }
+  };
+
   useEffect(() => {
     if (currentProjectname !== "") {
-      const apiUrl = `/tree_api/get_project_configuration?project_name=${currentProjectname}`;
-      axios
-        .get(apiUrl)
-        .then((response) => {
-          let raw_config = JSON.parse(response.data);
-          let project_settings = raw_config.config;
-
-          // Load all the settings
-          Object.entries(settings).map(([key, value]) => {
-            value.setter(
-              project_settings[key]
-                ? project_settings[key]
-                : value.default_value,
-            );
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-          if (error.response) {
-            if (error.response.status === 404) {
-              openError(
-                `The project ${currentProjectname} has no configuration available`,
-              );
-            } else {
-              openError("Failed to load configuration");
-            }
-          }
-
-          console.log("Loading default settings");
-          Object.entries(settings).map(([key, value]) => {
-            value.setter(value.default_value);
-          });
-        });
+      loadProjectConfig();
     }
   }, [currentProjectname]); // Reload project configuration
 

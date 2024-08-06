@@ -19,46 +19,48 @@ const FileEditor = ({
   const [filenameToSave, setFilenameToSave] = useState("");
   const [projectToSave, setProjectToSave] = useState(currentProjectname);
 
+  const initFile = async () => {
+    try {
+      const response = await axios.get(
+        `/tree_api/get_file?project_name=${currentProjectname}&filename=${currentFilename}`,
+      );
+      const content = response.data.content;
+      setFileContent(content);
+      setHasUnsavedChanges(false); // Reset the unsaved changes flag when a new file is loaded
+    } catch (error) {
+      console.error("Error fetching file content:", error);
+    }
+  };
+
+  const autoSave = async () => {
+    try {
+      const response = await axios.post("/tree_api/save_file/", {
+        project_name: currentProjectname,
+        filename: filenameToSave,
+        content: fileContent,
+      });
+      if (response.data.success) {
+        setHasUnsavedChanges(false); // Reset the unsaved changes flag
+        setProjectChanges(false);
+      } else {
+        alert(`Failed to save file: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.error("Error saving file:", error);
+    }
+  };
+
   useEffect(() => {
     if (currentFilename != "") {
-      axios
-        .get(
-          `/tree_api/get_file?project_name=${currentProjectname}&filename=${currentFilename}`,
-        )
-        .then((response) => {
-          const content = response.data.content;
-          setFileContent(content);
-          setHasUnsavedChanges(false); // Reset the unsaved changes flag when a new file is loaded
-        })
-        .catch((error) => {
-          console.error("Error fetching file content:", error);
-        });
+      initFile();
+      if (filenameToSave) {
+        autoSave();
+      }
+      setFilenameToSave(currentFilename);
     } else {
       setFileContent(null);
       setHasUnsavedChanges(false);
     }
-
-    // Autosave
-    if (filenameToSave) {
-      axios
-        .post("/tree_api/save_file/", {
-          project_name: currentProjectname,
-          filename: filenameToSave,
-          content: fileContent,
-        })
-        .then((response) => {
-          if (response.data.success) {
-            setHasUnsavedChanges(false); // Reset the unsaved changes flag
-            setProjectChanges(false);
-          } else {
-            alert(`Failed to save file: ${response.data.message}`);
-          }
-        })
-        .catch((error) => {
-          console.error("Error saving file:", error);
-        });
-    }
-    setFilenameToSave(currentFilename);
   }, [currentFilename]);
 
   useEffect(() => {
@@ -70,25 +72,23 @@ const FileEditor = ({
     setFileContent(null);
   }, [currentProjectname]);
 
-  const handleSaveFile = () => {
+  const handleSaveFile = async () => {
     if (currentFilename !== "") {
-      axios
-        .post("/tree_api/save_file/", {
+      try {
+        const response = await axios.post("/tree_api/save_file/", {
           project_name: projectToSave,
           filename: currentFilename,
           content: fileContent,
-        })
-        .then((response) => {
-          if (response.data.success) {
-            setHasUnsavedChanges(false); // Reset the unsaved changes flag
-            setProjectChanges(false);
-          } else {
-            alert(`Failed to save file: ${response.data.message}`);
-          }
-        })
-        .catch((error) => {
-          console.error("Error saving file:", error);
         });
+        if (response.data.success) {
+          setHasUnsavedChanges(false); // Reset the unsaved changes flag
+          setProjectChanges(false);
+        } else {
+          alert(`Failed to save file: ${response.data.message}`);
+        }
+      } catch (error) {
+        console.error("Error saving file:", error);
+      }
     } else {
       alert("No file is currently selected.");
     }
