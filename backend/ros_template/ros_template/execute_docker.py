@@ -27,13 +27,13 @@ class TreeExecutor(Node):
     def post_tick_handler(self, snapshot_visitor, behaviour_tree):
         with open("/tmp/tree_state", "w") as f:
             f.write(
-                py_trees.display.unicode_tree(
+                py_trees.display.ascii_tree(
                     behaviour_tree.root,
                     visited=snapshot_visitor.visited,
                     previously_visited=snapshot_visitor.visited,
                 )
             )
-            f.write(py_trees.display.unicode_blackboard())
+            f.write(py_trees.display.ascii_blackboard())
             f.close()
 
     def spin_tree(self):
