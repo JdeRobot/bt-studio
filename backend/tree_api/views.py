@@ -8,6 +8,7 @@ from . import app_generator
 from . import tree_generator
 from . import json_translator
 from . import templates
+from .project_view import list_dir, EntryEncoder
 from django.http import HttpResponse
 from django.http import JsonResponse
 import mimetypes
@@ -225,8 +226,10 @@ def get_file_list(request):
             for f in glob.glob(action_path + "/**", recursive=True)
         ]
 
+        file_list = list_dir(action_path)
+
         # Return the list of files
-        return Response({"file_list": file_list})
+        return Response({"file_list": EntryEncoder().encode(file_list)})
 
     except Exception as e:
         return Response({"error": f"An error occurred: {str(e)}"}, status=500)

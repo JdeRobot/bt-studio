@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import "./FileExplorer.css";
+import TreeNode from "./TreeNode.jsx";
 
 const FileExplorer = ({
   setCurrentFilename,
@@ -24,12 +25,12 @@ const FileExplorer = ({
         const response = await axios.get(
           `/tree_api/get_file_list?project_name=${currentProjectname}`
         );
-        const files = response.data.file_list;
-        if (Array.isArray(files)) {
-          setFileList(files);
-        } else {
-          console.error("API response is not an array:", files);
-        }
+        const files = JSON.parse(response.data.file_list);
+        setFileList(files);
+        // if (Array.isArray(files)) {
+        // } else {
+        //   console.error("API response is not an array:", files);
+        // }
       } catch (error) {
         console.error("Error fetching files:", error);
       }
@@ -63,24 +64,16 @@ const FileExplorer = ({
   if (Array.isArray(fileList)) {
     return (
       <div>
-        {fileList.map((file, index) => (
-          <div
-            key={index}
-            className={`file-item ${currentFilename === file ? "file-item-selected" : ""}`}
-            onClick={() => handleFileClick(file)}
-          >
-            <label>{file}</label>
-            {showAccentColor && diagramEditorReady && (
-              <div
-                className="accent-color"
-                style={{
-                  backgroundColor: actionNodesData[file]
-                    ? actionNodesData[file]["color"]
-                    : "none",
-                }}
-              />
-            )}
-          </div>
+        {fileList.map((file) => (
+          <TreeNode
+            node={file}
+            depth={0}
+            currentFilename={currentFilename}
+            showAccentColor={showAccentColor}
+            diagramEditorReady={diagramEditorReady}
+            actionNodesData={actionNodesData}
+            handleFileClick={handleFileClick}
+          />
         ))}
       </div>
     );

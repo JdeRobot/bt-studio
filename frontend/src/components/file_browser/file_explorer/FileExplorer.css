@@ -1,38 +1,51 @@
 /* FileBrowser.css */
 
+.file-item-container {
+  padding-left: 0.5vw;
+}
+
+.file-item-container:hover {
+  background-color: var(--buttons-hover);
+}
+
+.file-item-selected-container {
+  background-color: var(--buttons);
+}
+
+.file-item-selected-container:hover {
+  background-color: var(--buttons-hover);
+}
+
 .file-item {
   list-style-type: none;
   padding: 0px;
   cursor: pointer;
-  display: grid;
-  grid-template-columns: auto 5px;
-  grid-gap: 5px;
-  padding-right: 0px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .file-item label {
   cursor: pointer;
   list-style-type: none;
-  padding: 4px;
+  padding: 3px;
+  font-size: 0.9em;
   color: var(--text);
-}
-
-.file-item:hover {
-  background-color: var(--buttons-hover);
-}
-
-.file-item-selected {
-  background-color: var(--buttons);
-}
-
-.file-item-selected:hover {
-  background-color: var(--buttons-hover);
 }
 
 .accent-color {
   position: relative;
-  right: 0px;
+  margin-left: auto;
   z-index: 10;
   width: 5px;
   height: 100%;
+}
+
+.arrow-icon {
+  height: 16px;
+  width: 16px;
 }

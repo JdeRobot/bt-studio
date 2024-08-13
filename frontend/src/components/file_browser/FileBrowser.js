@@ -20,11 +20,6 @@ const FileBrowser = ({
   const [isNewActionModalOpen, setNewActionModalOpen] = useState(false);
   const [newsletterFormData, setNewsletterFormData] = useState(null);
 
-  useEffect(() => {
-    fetchFileList();
-    setCurrentFilename("");
-  }, [currentProjectname]);
-
   const fetchFileList = async () => {
     if (currentProjectname !== "") {
       try {
@@ -32,10 +27,8 @@ const FileBrowser = ({
           `/tree_api/get_file_list?project_name=${currentProjectname}`
         );
         const files = response.data.file_list;
+        console.log(files);
         if (Array.isArray(files)) {
-          for (let index = 0; index < files.length; index++) {
-            files[index] = files[index].slice(0, -3);
-          }
           setFileList(files);
         } else {
           console.error("API response is not an array:", files);
@@ -44,10 +37,6 @@ const FileBrowser = ({
         console.error("Error fetching files:", error);
       }
     }
-  };
-
-  const handleFileClick = (filename) => {
-    setCurrentFilename(filename + ".py");
   };
 
   const handleCreateFile = () => {
