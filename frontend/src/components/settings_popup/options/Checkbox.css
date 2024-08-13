@@ -29,6 +29,6 @@
 }
 
 .setting-checkbox-wrapper input[type="checkbox"]:disabled {
-  border-color: #c0c0c0;
-  background-color: #c0c0c0;
+  border-color: var(--text);
+  background-color: var(--text);
 }

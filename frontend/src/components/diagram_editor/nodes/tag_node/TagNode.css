@@ -7,10 +7,12 @@
 .tag-node {
   display: flex;
   justify-content: space-between;
-  border: 1px solid black;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
   padding-top: 5px;
   padding-bottom: 5px;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .tag-output {
