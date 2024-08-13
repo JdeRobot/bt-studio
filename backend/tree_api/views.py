@@ -1,3 +1,4 @@
+import glob
 import os
 from django.conf import settings
 from rest_framework.decorators import api_view
@@ -215,14 +216,13 @@ def get_file_list(request):
     project_name = request.GET.get("project_name")
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, "code/actions")
+    action_path = os.path.join(project_path, "code")
 
     try:
         # List all files in the directory
         file_list = [
-            f
-            for f in os.listdir(action_path)
-            if os.path.isfile(os.path.join(action_path, f))
+            os.path.relpath(f, action_path)
+            for f in glob.glob(action_path + "/**", recursive=True)
         ]
 
         # Return the list of files
@@ -241,7 +241,7 @@ def get_file(request):
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, "code/actions")
+    action_path = os.path.join(project_path, "code")
 
     if filename:
         file_path = os.path.join(action_path, filename)

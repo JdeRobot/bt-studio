@@ -26,9 +26,6 @@ const FileExplorer = ({
         );
         const files = response.data.file_list;
         if (Array.isArray(files)) {
-          for (let index = 0; index < files.length; index++) {
-            files[index] = files[index].slice(0, -3);
-          }
           setFileList(files);
         } else {
           console.error("API response is not an array:", files);
@@ -40,7 +37,7 @@ const FileExplorer = ({
   };
 
   const handleFileClick = (filename) => {
-    setCurrentFilename(filename + ".py");
+    setCurrentFilename(filename);
   };
 
   const handleDeleteFile = async () => {
@@ -69,7 +66,7 @@ const FileExplorer = ({
         {fileList.map((file, index) => (
           <div
             key={index}
-            className={`file-item ${currentFilename === file + ".py" ? "file-item-selected" : ""}`}
+            className={`file-item ${currentFilename === file ? "file-item-selected" : ""}`}
             onClick={() => handleFileClick(file)}
           >
             <label>{file}</label>
