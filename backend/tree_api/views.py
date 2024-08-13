@@ -29,7 +29,7 @@ def create_project(request):
 
     if not os.path.exists(project_path):
         os.mkdir(project_path)
-        os.mkdir(action_path)
+        os.makedirs(action_path)
         os.mkdir(universes_path)
         return Response({"success": True})
     else:
