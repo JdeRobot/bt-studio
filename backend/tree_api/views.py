@@ -26,11 +26,29 @@ def create_project(request):
     project_path = os.path.join(folder_path, project_name)
     action_path = os.path.join(project_path, "code/actions")
     universes_path = os.path.join(project_path, "universes")
+    config_path = os.path.join(project_path, "config.json")
+
+    # Default cfg values
+    default_cfg = {
+        "name": project_name,
+        "config": {
+            "editorShowAccentColors": True,
+            "theme": "dark",
+            "btOrder": "bottom-to-top",
+        },
+    }
 
     if not os.path.exists(project_path):
+
+        # Create folders
         os.mkdir(project_path)
-        os.mkdir(action_path)
+        os.makedirs(action_path)
         os.mkdir(universes_path)
+
+        # Create default config
+        with open(config_path, "w") as cfg:
+            json.dump(default_cfg, cfg)
+
         return Response({"success": True})
     else:
         return Response(

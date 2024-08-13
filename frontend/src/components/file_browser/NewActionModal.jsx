@@ -52,7 +52,9 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
     }));
     if (name === "actionName") {
       setcreateButton(
-        value !== "" && !fileList.includes(value) && !value.includes("."),
+        value !== "" &&
+          (fileList == null || !fileList.includes(value)) &&
+          !value.includes("."),
       );
     }
   };
