@@ -54,7 +54,7 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
       setcreateButton(
         value !== "" &&
           (fileList == null || !fileList.includes(value)) &&
-          !value.includes(".")
+          !value.includes("."),
       );
     }
   };
