@@ -1,0 +1,38 @@
+/* FileBrowser.css */
+
+.file-item {
+  list-style-type: none;
+  padding: 0px;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: auto 5px;
+  grid-gap: 5px;
+  padding-right: 0px;
+}
+
+.file-item label {
+  cursor: pointer;
+  list-style-type: none;
+  padding: 4px;
+  color: var(--text);
+}
+
+.file-item:hover {
+  background-color: var(--buttons-hover);
+}
+
+.file-item-selected {
+  background-color: var(--buttons);
+}
+
+.file-item-selected:hover {
+  background-color: var(--buttons-hover);
+}
+
+.accent-color {
+  position: relative;
+  right: 0px;
+  z-index: 10;
+  width: 5px;
+  height: 100%;
+}

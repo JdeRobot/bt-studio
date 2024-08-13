@@ -46,6 +46,10 @@ h2 {
   font-size: 18px;
 }
 
+h3 {
+  font-size: 12px;
+}
+
 :root,
 .App[data-theme="light"] {
   --text: #0d0d12;
