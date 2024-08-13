@@ -73,7 +73,7 @@ const App = () => {
 
   const launchUniverse = async (universe_name) => {
     const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
-      currentProjectname
+      currentProjectname,
     )}&universe_name=${encodeURIComponent(universe_name)}`;
 
     try {
@@ -195,7 +195,7 @@ const App = () => {
       // Load all the settings
       Object.entries(settings).map(([key, value]) => {
         value.setter(
-          project_settings[key] ? project_settings[key] : value.default_value
+          project_settings[key] ? project_settings[key] : value.default_value,
         );
       });
     } catch (error) {
@@ -203,7 +203,7 @@ const App = () => {
       if (error.response) {
         if (error.response.status === 404) {
           openError(
-            `The project ${currentProjectname} has no configuration available`
+            `The project ${currentProjectname} has no configuration available`,
           );
         } else {
           openError("Failed to load configuration");

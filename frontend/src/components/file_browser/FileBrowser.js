@@ -24,7 +24,7 @@ const FileBrowser = ({
     if (currentProjectname !== "") {
       try {
         const response = await axios.get(
-          `/tree_api/get_file_list?project_name=${currentProjectname}`
+          `/tree_api/get_file_list?project_name=${currentProjectname}`,
         );
         const files = response.data.file_list;
         console.log(files);
@@ -47,7 +47,7 @@ const FileBrowser = ({
     if (currentFilename) {
       try {
         const response = await axios.get(
-          `/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}`
+          `/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}`,
         );
         if (response.data.success) {
           setProjectChanges(true);
@@ -76,7 +76,7 @@ const FileBrowser = ({
     if (data.actionName !== "") {
       try {
         const response = await axios.get(
-          `/tree_api/create_file?project_name=${currentProjectname}&filename=${data.actionName}.py&template=${data.templateType}`
+          `/tree_api/create_file?project_name=${currentProjectname}&filename=${data.actionName}.py&template=${data.templateType}`,
         );
         if (response.data.success) {
           setProjectChanges(true);

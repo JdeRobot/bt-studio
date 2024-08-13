@@ -23,7 +23,7 @@ const FileExplorer = ({
     if (currentProjectname !== "") {
       try {
         const response = await axios.get(
-          `/tree_api/get_file_list?project_name=${currentProjectname}`
+          `/tree_api/get_file_list?project_name=${currentProjectname}`,
         );
         const files = JSON.parse(response.data.file_list);
         setFileList(files);
@@ -45,7 +45,7 @@ const FileExplorer = ({
     if (currentFilename) {
       try {
         const response = await axios.get(
-          `/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}`
+          `/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}`,
         );
         if (response.data.success) {
           fetchFileList(); // Update the file list
