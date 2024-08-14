@@ -126,6 +126,8 @@ const DiagramEditor = ({
               const { sourcePort, targetPort } = link.entity;
               if (Object.keys(targetPort.getLinks()).length > 1) {
                 model.removeLink(link.entity);
+                sourcePort.removeLink(link.entity);
+                targetPort.removeLink(link.entity);
               } else if (
                 sourcePort instanceof ChildrenPortModel &&
                 !(targetPort instanceof ParentPortModel)
