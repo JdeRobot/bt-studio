@@ -53,7 +53,7 @@ const NodeHeader = ({
   const fetchActionList = async () => {
     try {
       const response = await axios.get(
-        `/tree_api/get_file_list?project_name=${currentProjectname}`,
+        `/tree_api/get_file_list?project_name=${currentProjectname}`
       );
       const files = response.data.file_list;
       if (Array.isArray(files)) {
@@ -87,6 +87,8 @@ const NodeHeader = ({
       return actionList; // Use the action names fetched from the API
     } else if (menuLabel === "Port values") {
       return ["Input port value", "Output port value"];
+    } else if (menuLabel === "Sub Tree") {
+      return ["Sub Tree"];
     }
     return [];
   };
@@ -130,6 +132,12 @@ const NodeHeader = ({
         >
           Port value
         </button>
+        <button
+          className="node-button"
+          onClick={(e) => handleClick(e, "Sub Tree")}
+        >
+          Sub Tree
+        </button>
       </div>
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
@@ -170,7 +178,7 @@ const NodeHeader = ({
           className="node-action-button"
           onClick={() => {
             openInNewTab(
-              "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
+              "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
             );
           }}
           title="Help"
