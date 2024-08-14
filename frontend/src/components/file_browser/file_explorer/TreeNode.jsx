@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 
 import { ReactComponent as ClosedArrowIcon } from "./img/arrowSide.svg";
 import { ReactComponent as OpenArrowIcon } from "./img/arrowDown.svg";
+import { ReactComponent as ClosedFolderIcon } from "./img/closedFolder.svg";
+import { ReactComponent as OpenFolderIcon } from "./img/openFolder.svg";
+import FileIcon from "./FileIcon.jsx";
 
 function TreeNode({
   node,
@@ -31,18 +34,12 @@ function TreeNode({
         onClick={() => handleClick()}
       >
         <div className={"file-item"} style={{ paddingLeft: depth * 16 + "px" }}>
-          {node.is_dir && (
-            <>
-              {isCollapsed ? (
-                <OpenArrowIcon className="arrow-icon" stroke={"var(--icon)"} />
-              ) : (
-                <ClosedArrowIcon
-                  className="arrow-icon"
-                  stroke={"var(--icon)"}
-                />
-              )}
-            </>
-          )}
+          <FileIcon
+            is_dir={node.is_dir}
+            is_collapsed={isCollapsed}
+            name={node.name}
+            group={""}
+          />
           <label>{node.name}</label>
           {showAccentColor && diagramEditorReady && (
             <div
