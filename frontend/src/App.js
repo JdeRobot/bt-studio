@@ -8,10 +8,12 @@ import FileBrowser from "./components/file_browser/FileBrowser";
 import FileEditor from "./components/file_editor/FileEditor";
 import "./App.css";
 import DiagramEditor from "./components/diagram_editor/DiagramEditor";
+import MinimalDiagramEditor from "./components/diagram_editor/MinimalDiagramEditor";
 import VncViewer from "./components/vnc_viewer/VncViewer";
 import CommsManager from "./components/comms_manager/CommsManager";
 import ErrorModal from "./components/error_popup/ErrorModal";
 import axios from "axios";
+import EditorContainer from "./components/diagram_editor/EditorContainer";
 
 const App = () => {
   const [editorWidth, setEditorWidth] = useState(807);
@@ -73,7 +75,7 @@ const App = () => {
 
   const launchUniverse = async (universe_name) => {
     const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
-      currentProjectname,
+      currentProjectname
     )}&universe_name=${encodeURIComponent(universe_name)}`;
 
     try {
@@ -195,7 +197,7 @@ const App = () => {
       // Load all the settings
       Object.entries(settings).map(([key, value]) => {
         value.setter(
-          project_settings[key] ? project_settings[key] : value.default_value,
+          project_settings[key] ? project_settings[key] : value.default_value
         );
       });
     } catch (error) {
@@ -203,7 +205,7 @@ const App = () => {
       if (error.response) {
         if (error.response.status === 404) {
           openError(
-            `The project ${currentProjectname} has no configuration available`,
+            `The project ${currentProjectname} has no configuration available`
           );
         } else {
           openError("Failed to load configuration");
@@ -261,8 +263,8 @@ const App = () => {
         settingsProps={settings}
       />
 
-      <div className="App-main" style={{ display: "flex", flexGrow: 1 }}>
-        <div className="sidebar">
+      <div className="App-main" style={{ display: "flex" }}>
+        <div style={{ width: "200px", paddingLeft: "1vw" }}>
           <FileBrowser
             setCurrentFilename={setCurrentFilename}
             currentFilename={currentFilename}
@@ -290,8 +292,8 @@ const App = () => {
           </div>
         </Resizable>
 
-        <div style={{ flexGrow: 1 }}>
-          <DiagramEditor
+        <div style={{ width: "100%" }}>
+          {/* <DiagramEditor
             currentProjectname={currentProjectname}
             setModelJson={setModelJson}
             setProjectChanges={setProjectChanges}
@@ -301,7 +303,8 @@ const App = () => {
             btOrder={btOrder}
             openError={openError}
             setDiagramEditorReady={setDiagramEditorReady}
-          />
+          /> */}
+          <EditorContainer />
           <VncViewer gazeboEnabled={gazeboEnabled} />
         </div>
       </div>
