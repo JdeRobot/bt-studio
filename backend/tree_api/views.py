@@ -236,6 +236,29 @@ def get_file_list(request):
 
 
 @api_view(["GET"])
+def get_actions_list(request):
+
+    project_name = request.GET.get("project_name")
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, "code/actions")
+
+    try:
+        # List all actions in the directory
+        actions_list = [
+            f
+            for f in os.listdir(action_path)
+            if os.path.isfile(os.path.join(action_path, f))
+        ]
+
+        # Return the list of files
+        return Response({"actions_list": actions_list})
+
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
+
+
+@api_view(["GET"])
 def get_file(request):
 
     project_name = request.GET.get("project_name", None)

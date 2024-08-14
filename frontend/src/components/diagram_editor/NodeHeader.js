@@ -50,12 +50,13 @@ const NodeHeader = ({
   const [actionList, setActionList] = useState([]);
 
   // Fetch the file list and update actionList
+  // TODO: only ask for actions
   const fetchActionList = async () => {
     try {
       const response = await axios.get(
-        `/tree_api/get_file_list?project_name=${currentProjectname}`,
+        `/tree_api/get_actions_list?project_name=${currentProjectname}`
       );
-      const files = response.data.file_list;
+      const files = response.data.actions_list;
       if (Array.isArray(files)) {
         const actions = files.map((file) => file.replace(".py", ""));
         setActionList(actions);
@@ -170,7 +171,7 @@ const NodeHeader = ({
           className="node-action-button"
           onClick={() => {
             openInNewTab(
-              "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
+              "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
             );
           }}
           title="Help"
