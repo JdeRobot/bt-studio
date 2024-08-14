@@ -124,7 +124,10 @@ const DiagramEditor = ({
           targetPortChanged: (link: any) => {
             if (isCreated) {
               const { sourcePort, targetPort } = link.entity;
-              if (Object.keys(targetPort.getLinks()).length > 1) {
+              if (
+                targetPort.options.alignment === "left" &&
+                Object.keys(targetPort.getLinks()).length > 1
+              ) {
                 model.removeLink(link.entity);
                 sourcePort.removeLink(link.entity);
                 targetPort.removeLink(link.entity);
