@@ -1,47 +1,61 @@
-import React from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import "./NodeHeader.css";
+import axios from "axios";
+
+var NODE_MENU_ITEMS: Record<string, string[]> = {
+  Sequences: ["Sequence", "ReactiveSequence", "SequenceWithMemory"],
+  Fallbacks: ["Fallback", "ReactiveFallback"],
+  Decorators: [
+    "RetryUntilSuccessful",
+    "Inverter",
+    "ForceSuccess",
+    "ForceFailure",
+    "KeepRunningUntilFailure",
+    "Repeat",
+    "RunOnce",
+    "Delay",
+  ],
+  Actions: [],
+  "Port values": ["Input port value", "Output port value"],
+  "Sub Tree": ["Sub Tree"],
+};
+
+const fetchActionList = async (project_name: string) => {
+  try {
+    const response = await axios.get(
+      `/tree_api/get_file_list?project_name=${project_name}`
+    );
+    const files = response.data.file_list;
+    if (Array.isArray(files)) {
+      const actions = files.map((file) => file.replace(".py", ""));
+      NODE_MENU_ITEMS["Actions"] = actions;
+    } else {
+      console.error("API response is not an array:", files);
+    }
+  } catch (error) {
+    console.error("Error fetching files:", error);
+  }
+};
 
 const NodeMenu = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [menuLabel, setMenuLabel] = useState("");
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [menuLabel, setMenuLabel] = useState<string>("");
 
-  const handleClick = (event: any, label: string) => {
+  useEffect(() => {
+    fetchActionList("recepcionist_demo");
+  }, []);
+
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    label: string
+  ) => {
     setAnchorEl(event.currentTarget);
     setMenuLabel(label);
   };
 
-  const getMenuItems = () => {
-    if (menuLabel === "Sequences") {
-      return ["Sequence", "ReactiveSequence", "SequenceWithMemory"];
-    } else if (menuLabel === "Fallbacks") {
-      return ["Fallback", "ReactiveFallback"];
-    } else if (menuLabel === "Decorators") {
-      return [
-        "RetryUntilSuccessful",
-        "Inverter",
-        "ForceSuccess",
-        "ForceFailure",
-        "KeepRunningUntilFailure",
-        "Repeat",
-        "RunOnce",
-        "Delay",
-      ];
-    } else if (menuLabel === "Actions") {
-      return ["Patata"]; // Use the action names fetched from the API
-    } else if (menuLabel === "Port values") {
-      return ["Input port value", "Output port value"];
-    } else if (menuLabel === "Sub Tree") {
-      return ["Sub Tree"];
-    }
-    return [];
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const handleClose = () => setAnchorEl(null);
 
   const handleSelect = (nodeType: string) => {
     console.log("Selected: " + nodeType);
@@ -53,46 +67,19 @@ const NodeMenu = () => {
       <h2>Tree Editor</h2>
 
       <div className="button-container">
-        <button
-          className="node-button"
-          onClick={(e) => handleClick(e, "Sequences")}
-        >
-          Sequences
-        </button>
-        <button
-          className="node-button"
-          onClick={(e) => handleClick(e, "Fallbacks")}
-        >
-          Fallbacks
-        </button>
-        <button
-          className="node-button"
-          onClick={(e) => handleClick(e, "Decorators")}
-        >
-          Decorators
-        </button>
-        <button
-          className="node-button"
-          onClick={(e) => handleClick(e, "Actions")}
-        >
-          Actions
-        </button>
-        <button
-          className="node-button"
-          onClick={(e) => handleClick(e, "Port values")}
-        >
-          Port value
-        </button>
-        <button
-          className="node-button"
-          onClick={(e) => handleClick(e, "Sub Tree")}
-        >
-          Sub Tree
-        </button>
+        {Object.keys(NODE_MENU_ITEMS).map((label) => (
+          <button
+            key={label}
+            className="node-button"
+            onClick={(e) => handleClick(e, label)}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        {getMenuItems().map((item: string) => (
+        {NODE_MENU_ITEMS[menuLabel]?.map((item) => (
           <MenuItem key={item} onClick={() => handleSelect(item)}>
             {item}
           </MenuItem>
