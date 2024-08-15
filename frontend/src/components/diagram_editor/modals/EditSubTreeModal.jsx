@@ -1,27 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
-
+import React, { useEffect, useState } from "react";
 import Modal from "../../Modal/Modal";
-import DiagramEditor from "../DiagramEditor";
-
+import MinimalDiagramEditor from "../MinimalDiagramEditor";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 
-const EditSubTreeModal = ({
-  isOpen,
-  onClose,
-  currentProjectname,
-  setModelJson,
-  setProjectChanges,
-  gazeboEnabled,
-  manager,
-  actionNodesData,
-  btOrder,
-  openError,
-  setDiagramEditorReady,
-}) => {
-  const focusInputRef = useRef(null);
+const EditSubTreeModal = ({ isOpen, onClose, ...otherProps }) => {
+  const [editorReady, setEditorReady] = useState(false);
 
+  // Effect to set the editor ready when the modal is opened
   useEffect(() => {
-    console.log("EditSubTree modal open");
+    if (isOpen) {
+      setEditorReady(true);
+    } else {
+      setEditorReady(false); // Reset editorReady when the modal is closed
+    }
   }, [isOpen]);
 
   return (
@@ -41,13 +32,15 @@ const EditSubTreeModal = ({
         </label>
         <CloseIcon
           className="modal-titlebar-close icon"
-          onClick={() => {
-            onClose();
-          }}
+          onClick={onClose}
           fill={"var(--icon)"}
         />
       </div>
-      <div>Hello there</div>
+
+      {/* Ensure sufficient space for the diagram */}
+      <div style={{ width: "90vw", height: "90vh", overflow: "hidden" }}>
+        <MinimalDiagramEditor />
+      </div>
     </Modal>
   );
 };

@@ -917,7 +917,7 @@ const DiagramEditor = ({
         onClose={handleCloseEditTagModal}
         currentActionNode={currentActionNode}
       />
-      <EditSubtreeModal
+      {/* <EditSubtreeModal
         isOpen={isEditSubtreeModalOpen}
         onClose={handleCloseEditSubtreeModal}
         currentProjectname={currentProjectname}
@@ -929,7 +929,7 @@ const DiagramEditor = ({
         btOrder={btOrder}
         openError={openError}
         setDiagramEditorReady={setDiagramEditorReady}
-      />
+      /> */}
     </div>
   );
 };
