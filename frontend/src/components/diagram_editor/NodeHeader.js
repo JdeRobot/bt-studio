@@ -12,6 +12,7 @@ import { ReactComponent as RunIcon } from "./img/run.svg";
 import { ReactComponent as StopIcon } from "./img/stop.svg";
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
 import { ReactComponent as ResetIcon } from "./img/reset.svg";
+import NodeMenu from "./NodeMenu";
 
 const NodeHeader = ({
   onNodeTypeSelected,

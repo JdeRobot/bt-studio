@@ -25,7 +25,6 @@ import { TagInputPortModel } from "./nodes/tag_node/ports/input_port/TagInputPor
 import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutputPortModel";
 import EditActionModal from "./modals/EditActionModal.jsx";
 import EditTagModal from "./modals/EditTagModal.jsx";
-import EditSubtreeModal from "./modals/EditSubTreeModal.jsx";
 
 // Store action nodes and their inputs and outputs
 interface ActionData {
@@ -64,7 +63,6 @@ const DiagramEditor = ({
   const [, setFocused] = useState(false);
   const [isEditActionModalOpen, setEditActionModalOpen] = useState(false);
   const [isEditTagModalOpen, setEditTagModalOpen] = useState(false);
-  const [isEditSubtreeModalOpen, setEditSubtreeModalOpen] = useState(false);
   const [currentActionNode, setCurrentActionNode] = useState<any>(null);
 
   // Initial node position
@@ -171,12 +169,7 @@ const DiagramEditor = ({
     if (lastClickedNodeId.current !== "") {
       const genericNode = model.current.getNode(lastClickedNodeId.current);
       const node = genericNode as BasicNodeModel;
-
-      if (node.getIsSubtree()) {
-        forceNotReset.current = true;
-        node.setSelected(false);
-        setEditSubtreeModalOpen(true);
-      } else if (node && checkIfAction(node)) {
+      if (node && checkIfAction(node)) {
         forceNotReset.current = true;
         setCurrentActionNode(node);
         node.setSelected(false);
@@ -203,16 +196,6 @@ const DiagramEditor = ({
     setEditActionModalOpen(false);
     setEditTagModalOpen(false);
     setCurrentActionNode(null);
-    lastClickedNodeId.current = "";
-    setFocused(true);
-    ref.current.focus();
-    setModelJson(JSON.stringify(model.current.serialize()));
-  };
-
-  const handleCloseEditSubtreeModal = () => {
-    setEditActionModalOpen(false);
-    setEditTagModalOpen(false);
-    setEditSubtreeModalOpen(false);
     lastClickedNodeId.current = "";
     setFocused(true);
     ref.current.focus();
@@ -462,7 +445,6 @@ const DiagramEditor = ({
     let hasInputPort = true;
     let hasOutputPort = true;
     let isAction = false;
-    let isSubTree = false;
 
     // Sequences
     if (
@@ -489,12 +471,6 @@ const DiagramEditor = ({
     ) {
       nodeColor = "rgb(255,153,51)";
     }
-    // Sub Trees
-    else if (["Sub Tree"].includes(nodeName)) {
-      nodeColor = "rgb(148,87,55)";
-      isSubTree = true;
-      hasOutputPort = false;
-    }
     // Actions
     else {
       nodeColor = "rgb(128,0,128)";
@@ -503,7 +479,7 @@ const DiagramEditor = ({
     }
 
     // Create node
-    const newNode = new BasicNodeModel(nodeName, nodeColor, isSubTree);
+    const newNode = new BasicNodeModel(nodeName, nodeColor);
 
     if (isAction) {
       saveActionNodeData(newNode);
@@ -917,19 +893,6 @@ const DiagramEditor = ({
         onClose={handleCloseEditTagModal}
         currentActionNode={currentActionNode}
       />
-      {/* <EditSubtreeModal
-        isOpen={isEditSubtreeModalOpen}
-        onClose={handleCloseEditSubtreeModal}
-        currentProjectname={currentProjectname}
-        setModelJson={setModelJson}
-        setProjectChanges={setProjectChanges}
-        gazeboEnabled={gazeboEnabled}
-        manager={manager}
-        actionNodesData={actionNodesData}
-        btOrder={btOrder}
-        openError={openError}
-        setDiagramEditorReady={setDiagramEditorReady}
-      /> */}
     </div>
   );
 };

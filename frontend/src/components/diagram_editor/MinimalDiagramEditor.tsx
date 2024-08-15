@@ -19,16 +19,16 @@ import { InputPortModel } from "./nodes/basic_node/ports/input_port/InputPortMod
 import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutputPortModel";
 import { TagInputPortModel } from "./nodes/tag_node/ports/input_port/TagInputPortModel";
 
+import NodeMenu from "./NodeMenu";
+
+// Manages modals
 const testFunction = () => {
   console.log("Hello!");
 };
 
-const MinimalDiagramEditor = ({ modelJson }: { modelJson: any }) => {
-  // Initialize the model and the engine
-  const model = useRef(new DiagramModel());
-
-  // Initialize the engine with its factories
-  const engine = useRef(createEngine());
+// Configures an engine with all the factories
+const configureEngine = (engine: any) => {
+  // Register factories
   engine.current
     .getNodeFactories()
     .registerFactory(new BasicNodeFactory(testFunction));
@@ -66,11 +66,60 @@ const MinimalDiagramEditor = ({ modelJson }: { modelJson: any }) => {
       new SimplePortFactory("tag input", (config) => new TagInputPortModel())
     );
 
+  // Disable loose links
+  const state: any = engine.current.getStateMachine().getCurrentState();
+  state.dragNewLink.config.allowLooseLinks = false;
+};
+
+// Position listener
+const attachPositionListener = (node: any) => {
+  node.registerListener({
+    positionChanged: (event: any) => {
+      // lastMovedNodePosition = event.entity.getPosition();
+      // setProjectChanges(true);
+      // setModelJson(JSON.stringify(model.current.serialize())); // Serialize and update model JSON
+    },
+  });
+};
+
+// Click listener
+const attachClickListener = (node: any) => {
+  node.registerListener({
+    selectionChanged: (event: any) => {
+      if (event.isSelected) {
+        // lastClickedNodeId.current = node.getID();
+        node.selectNode();
+      } else {
+        node.deselectNode();
+      }
+    },
+  });
+};
+
+const MinimalDiagramEditor = ({ modelJson }: { modelJson: any }) => {
+  // Initialize the model and the engine
+  const model = useRef(new DiagramModel());
+  const engine = useRef(createEngine());
+  configureEngine(engine);
+
+  // Deserialize and load the model
   model.current.deserializeModel(modelJson, engine.current);
   engine.current.setModel(model.current);
-  console.log(model.current);
 
-  return <CanvasWidget className="canvas" engine={engine.current} />;
+  // After deserialization, attach listeners to each node
+  const nodes = model.current.getNodes(); // Assuming getNodes() method exists to retrieve all nodes
+  nodes.forEach((node) => {
+    attachPositionListener(node);
+    attachClickListener(node);
+    node.setSelected(false);
+  });
+
+  return (
+    <div>
+      <NodeMenu />
+      <CanvasWidget className="canvas" engine={engine.current} />
+    </div>
+  );
 };
 
 export default MinimalDiagramEditor;
