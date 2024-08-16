@@ -39,13 +39,19 @@ const fetchActionList = async (project_name: string) => {
   }
 };
 
-const NodeMenu = () => {
+const NodeMenu = ({
+  projectName,
+  onAddNode,
+}: {
+  projectName: string;
+  onAddNode: Function;
+}) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>("");
 
   useEffect(() => {
-    fetchActionList("recepcionist_demo");
-  }, []);
+    fetchActionList(projectName);
+  }, [projectName]);
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -57,8 +63,9 @@ const NodeMenu = () => {
 
   const handleClose = () => setAnchorEl(null);
 
-  const handleSelect = (nodeType: string) => {
-    console.log("Selected: " + nodeType);
+  const handleSelect = (nodeName: string) => {
+    console.log("Selected: " + nodeName);
+    onAddNode(nodeName);
     handleClose();
   };
 

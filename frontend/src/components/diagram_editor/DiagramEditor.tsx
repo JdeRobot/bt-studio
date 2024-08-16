@@ -216,35 +216,35 @@ const DiagramEditor = ({
     newEngine
       .getPortFactories()
       .registerFactory(
-        new SimplePortFactory("children", (config) => new ChildrenPortModel())
+        new SimplePortFactory("children", (config) => new ChildrenPortModel()),
       );
     newEngine
       .getPortFactories()
       .registerFactory(
-        new SimplePortFactory("parent", (config) => new ParentPortModel())
+        new SimplePortFactory("parent", (config) => new ParentPortModel()),
       );
     newEngine
       .getPortFactories()
       .registerFactory(
-        new SimplePortFactory("output", (config) => new OutputPortModel(""))
+        new SimplePortFactory("output", (config) => new OutputPortModel("")),
       );
     newEngine
       .getPortFactories()
       .registerFactory(
-        new SimplePortFactory("input", (config) => new InputPortModel(""))
+        new SimplePortFactory("input", (config) => new InputPortModel("")),
       );
     newEngine
       .getPortFactories()
       .registerFactory(
         new SimplePortFactory(
           "tag output",
-          (config) => new TagOutputPortModel()
-        )
+          (config) => new TagOutputPortModel(),
+        ),
       );
     newEngine
       .getPortFactories()
       .registerFactory(
-        new SimplePortFactory("tag input", (config) => new TagInputPortModel())
+        new SimplePortFactory("tag input", (config) => new TagInputPortModel()),
       );
     const state: any = newEngine.getStateMachine().getCurrentState();
     state.dragNewLink.config.allowLooseLinks = false;
@@ -561,7 +561,7 @@ const DiagramEditor = ({
 
   const setColorActionNode = (r: number, g: number, b: number) => {
     currentActionNode.setColor(
-      "rgb(" + Math.round(r) + "," + Math.round(g) + "," + Math.round(b) + ")"
+      "rgb(" + Math.round(r) + "," + Math.round(g) + "," + Math.round(b) + ")",
     );
     actionNodesData[currentActionNode.getName()]["color"] =
       currentActionNode.getColor();
@@ -573,7 +573,7 @@ const DiagramEditor = ({
         actionNode.setColor(actionNodesData[name]["color"]);
       } else {
         actionNodesData[name]["ids"] = actionNodesData[name]["ids"].filter(
-          (obj) => obj !== nodesId
+          (obj) => obj !== nodesId,
         );
       }
     }
@@ -793,7 +793,7 @@ const DiagramEditor = ({
           setAppRunning(true);
         } else {
           let linterMessage = JSON.stringify(api_response.data.message).split(
-            "\\n"
+            "\\n",
           );
           alert(`Received linter message: ${linterMessage}`);
         }

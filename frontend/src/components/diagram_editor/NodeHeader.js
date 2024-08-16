@@ -89,6 +89,8 @@ const NodeHeader = ({
       return actionList; // Use the action names fetched from the API
     } else if (menuLabel === "Port values") {
       return ["Input port value", "Output port value"];
+    } else if (menuLabel === "Sub Tree") {
+      return ["Sub Tree"];
     }
     return [];
   };
@@ -131,6 +133,12 @@ const NodeHeader = ({
           onClick={(e) => handleClick(e, "Port values")}
         >
           Port value
+        </button>
+        <button
+          className="node-button"
+          onClick={(e) => handleClick(e, "Sub Tree")}
+        >
+          Sub Tree
         </button>
       </div>
 

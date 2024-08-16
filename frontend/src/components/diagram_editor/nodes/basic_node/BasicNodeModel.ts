@@ -26,7 +26,7 @@ export class BasicNodeModel extends NodeModel<
   constructor(
     name: string = "Basic Node",
     color: string = "rgb(0,192,255)",
-    is_subtree: boolean = false
+    is_subtree: boolean = false,
   ) {
     super({
       type: "basic",
