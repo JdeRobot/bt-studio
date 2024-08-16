@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRef, memo } from "react";
 
 import createEngine, {
@@ -32,6 +32,7 @@ const testFunction = () => {
 
 // Configures an engine with all the factories
 const configureEngine = (engine: any) => {
+  console.log("Configuring engine!");
   // Register factories
   engine.current
     .getNodeFactories()
@@ -87,31 +88,6 @@ const addDefaultPorts = (node: any) => {
 
 // LISTENERS
 
-// Position listener
-const attachPositionListener = (node: any) => {
-  node.registerListener({
-    positionChanged: (event: any) => {
-      // lastMovedNodePosition = event.entity.getPosition();
-      // setProjectChanges(true);
-      // setModelJson(JSON.stringify(model.current.serialize())); // Serialize and update model JSON
-    },
-  });
-};
-
-// Click listener
-const attachClickListener = (node: any) => {
-  node.registerListener({
-    selectionChanged: (event: any) => {
-      if (event.isSelected) {
-        // lastClickedNodeId.current = node.getID();
-        node.selectNode();
-      } else {
-        node.deselectNode();
-      }
-    },
-  });
-};
-
 // Link listener
 const attachLinkListener = (model: any) => {
   model.registerListener({
@@ -150,6 +126,46 @@ const attachLinkListener = (model: any) => {
 
 const MinimalDiagramEditor = memo(
   ({ modelJson, projectName }: { modelJson: any; projectName: string }) => {
+    // VARS
+
+    // Initialize position and the last clicked node
+    var lastMovedNodePosition = { x: 100, y: 100 };
+    var lastClickedNodeId = "";
+
+    // REFS
+
+    // Initialize the model and the engine
+    const model = useRef(new DiagramModel());
+    const engine = useRef(createEngine());
+
+    // LISTENERS
+
+    // Position listener
+    const attachPositionListener = (node: any) => {
+      node.registerListener({
+        positionChanged: (event: any) => {
+          console.log(event.entity.getPosition());
+          lastMovedNodePosition = event.entity.getPosition();
+          // setProjectChanges(true);
+          // setModelJson(JSON.stringify(model.current.serialize())); // Serialize and update model JSON
+        },
+      });
+    };
+
+    // Click listener
+    const attachClickListener = (node: any) => {
+      node.registerListener({
+        selectionChanged: (event: any) => {
+          if (event.isSelected) {
+            lastClickedNodeId = node.getID();
+            node.selectNode();
+          } else {
+            node.deselectNode();
+          }
+        },
+      });
+    };
+
     // Function to add a new basic node
     const addBasicNode = (nodeName: string) => {
       // Control parameters
@@ -208,6 +224,11 @@ const MinimalDiagramEditor = memo(
       attachPositionListener(newNode);
       attachClickListener(newNode);
 
+      // Setup the node position
+      var new_y = lastMovedNodePosition.y + 100;
+      newNode.setPosition(lastMovedNodePosition.x, new_y);
+      lastMovedNodePosition.y = new_y;
+
       // Add ports
       newNode.addParentPort("Parent Port");
       if (!isAction) newNode.addChildrenPort("Children Port");
@@ -226,14 +247,19 @@ const MinimalDiagramEditor = memo(
     const addTagNode = (nodeName: string) => {
       const newNode = new TagNodeModel("value", "rgb(128,128,128)");
 
-      // Add appropriate port based on nodeName
-      nodeName === "Input port value"
-        ? newNode.addOutputPort()
-        : newNode.addInputPort();
-
       // Attach listeners
       attachPositionListener(newNode);
       attachClickListener(newNode);
+
+      // Setup the node position
+      var new_y = lastMovedNodePosition.y + 100;
+      newNode.setPosition(lastMovedNodePosition.x, new_y);
+      lastMovedNodePosition.y = new_y;
+
+      // Add ports
+      nodeName === "Input port value"
+        ? newNode.addOutputPort()
+        : newNode.addInputPort();
 
       // Add the node to the model and update the canvas
       if (model.current) {
@@ -247,14 +273,15 @@ const MinimalDiagramEditor = memo(
 
     // Select which node to add depending on the name
     const nodeTypeSelector = (nodeName: any) => {
+      // Unselect the previous node
+      const node = model.current.getNode(lastClickedNodeId);
+      node.setSelected(false);
       if (["Input port value", "Output port value"].includes(nodeName))
         addTagNode(nodeName);
       else addBasicNode(nodeName);
     };
 
-    // Initialize the model and the engine
-    const model = useRef(new DiagramModel());
-    const engine = useRef(createEngine());
+    // Configure the engine
     configureEngine(engine);
 
     // Deserialize and load the model
