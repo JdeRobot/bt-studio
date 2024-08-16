@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRef, memo } from "react";
 
 import createEngine, {
@@ -32,6 +32,7 @@ const testFunction = () => {
 
 // Configures an engine with all the factories
 const configureEngine = (engine: any) => {
+  console.log("Configuring engine!");
   // Register factories
   engine.current
     .getNodeFactories()
@@ -85,71 +86,100 @@ const addDefaultPorts = (node: any) => {
   else if (nodeName === "Delay") node.addInputPort("delay_ms");
 };
 
-// LISTENERS
+const MinimalDiagramEditor = memo(
+  ({
+    modelJson,
+    setResultJson,
+    projectName,
+    setDiagramEdited,
+  }: {
+    modelJson: any;
+    setResultJson: Function;
+    projectName: string;
+    setDiagramEdited: Function;
+  }) => {
+    // HELPERS
+    const updateJsonState = () => {
+      setResultJson(JSON.stringify(model.current.serialize()));
+    };
 
-// Position listener
-const attachPositionListener = (node: any) => {
-  node.registerListener({
-    positionChanged: (event: any) => {
-      // lastMovedNodePosition = event.entity.getPosition();
-      // setProjectChanges(true);
-      // setModelJson(JSON.stringify(model.current.serialize())); // Serialize and update model JSON
-    },
-  });
-};
+    // VARS
 
-// Click listener
-const attachClickListener = (node: any) => {
-  node.registerListener({
-    selectionChanged: (event: any) => {
-      if (event.isSelected) {
-        // lastClickedNodeId.current = node.getID();
-        node.selectNode();
-      } else {
-        node.deselectNode();
-      }
-    },
-  });
-};
+    // Initialize position and the last clicked node
+    var lastMovedNodePosition = { x: 100, y: 100 };
+    var lastClickedNodeId = "";
 
-// Link listener
-const attachLinkListener = (model: any) => {
-  model.registerListener({
-    linksUpdated: (event: any) => {
-      const { link, isCreated } = event;
-      link.registerListener({
-        targetPortChanged: (link: any) => {
-          if (isCreated) {
-            const { sourcePort, targetPort } = link.entity;
-            if (
-              targetPort.options.alignment === "left" &&
-              Object.keys(targetPort.getLinks()).length > 1
-            ) {
-              model.removeLink(link.entity);
-              sourcePort.removeLink(link.entity);
-              targetPort.removeLink(link.entity);
-            } else if (
-              sourcePort instanceof ChildrenPortModel &&
-              !(targetPort instanceof ParentPortModel)
-            ) {
-              model.removeLink(link.entity);
-            } else if (
-              sourcePort instanceof TagOutputPortModel &&
-              !(targetPort instanceof InputPortModel)
-            ) {
-              model.removeLink(link.entity);
-            } else {
-              model.clearSelection();
-            }
+    // REFS
+
+    // Initialize the model and the engine
+    const model = useRef(new DiagramModel());
+    const engine = useRef(createEngine());
+
+    // LISTENERS
+
+    // Position listener
+    const attachPositionListener = (node: any) => {
+      node.registerListener({
+        positionChanged: (event: any) => {
+          lastMovedNodePosition = event.entity.getPosition();
+          setDiagramEdited(true);
+          setResultJson(JSON.stringify(model.current.serialize()));
+        },
+      });
+    };
+
+    // Click listener
+    const attachClickListener = (node: any) => {
+      node.registerListener({
+        selectionChanged: (event: any) => {
+          if (event.isSelected) {
+            lastClickedNodeId = node.getID();
+            node.selectNode();
+          } else {
+            node.deselectNode();
           }
         },
       });
-    },
-  });
-};
+    };
 
-const MinimalDiagramEditor = memo(
-  ({ modelJson, projectName }: { modelJson: any; projectName: string }) => {
+    // Link listener
+    const attachLinkListener = (model: any) => {
+      model.registerListener({
+        linksUpdated: (event: any) => {
+          const { link, isCreated } = event;
+          link.registerListener({
+            targetPortChanged: (link: any) => {
+              if (isCreated) {
+                const { sourcePort, targetPort } = link.entity;
+                if (
+                  targetPort.options.alignment === "left" &&
+                  Object.keys(targetPort.getLinks()).length > 1
+                ) {
+                  model.removeLink(link.entity);
+                  sourcePort.removeLink(link.entity);
+                  targetPort.removeLink(link.entity);
+                } else if (
+                  sourcePort instanceof ChildrenPortModel &&
+                  !(targetPort instanceof ParentPortModel)
+                ) {
+                  model.removeLink(link.entity);
+                } else if (
+                  sourcePort instanceof TagOutputPortModel &&
+                  !(targetPort instanceof InputPortModel)
+                ) {
+                  model.removeLink(link.entity);
+                } else {
+                  model.clearSelection();
+                }
+              }
+            },
+          });
+          updateJsonState();
+          setDiagramEdited(true);
+        },
+      });
+    };
+
     // Function to add a new basic node
     const addBasicNode = (nodeName: string) => {
       // Control parameters
@@ -208,6 +238,11 @@ const MinimalDiagramEditor = memo(
       attachPositionListener(newNode);
       attachClickListener(newNode);
 
+      // Setup the node position
+      var new_y = lastMovedNodePosition.y + 100;
+      newNode.setPosition(lastMovedNodePosition.x, new_y);
+      lastMovedNodePosition.y = new_y;
+
       // Add ports
       newNode.addParentPort("Parent Port");
       if (!isAction) newNode.addChildrenPort("Children Port");
@@ -218,7 +253,6 @@ const MinimalDiagramEditor = memo(
         model.current.addNode(newNode);
         newNode.selectNode();
         engine.current.repaintCanvas();
-        // setModelJson(JSON.stringify(model.current.serialize()));
       }
     };
 
@@ -226,14 +260,19 @@ const MinimalDiagramEditor = memo(
     const addTagNode = (nodeName: string) => {
       const newNode = new TagNodeModel("value", "rgb(128,128,128)");
 
-      // Add appropriate port based on nodeName
-      nodeName === "Input port value"
-        ? newNode.addOutputPort()
-        : newNode.addInputPort();
-
       // Attach listeners
       attachPositionListener(newNode);
       attachClickListener(newNode);
+
+      // Setup the node position
+      var new_y = lastMovedNodePosition.y + 100;
+      newNode.setPosition(lastMovedNodePosition.x, new_y);
+      lastMovedNodePosition.y = new_y;
+
+      // Add ports
+      nodeName === "Input port value"
+        ? newNode.addOutputPort()
+        : newNode.addInputPort();
 
       // Add the node to the model and update the canvas
       if (model.current) {
@@ -241,20 +280,27 @@ const MinimalDiagramEditor = memo(
         newNode.selectNode();
         // setProjectChanges(true);
         engine.current.repaintCanvas();
-        // setModelJson(JSON.stringify(model.current.serialize()));
       }
     };
 
     // Select which node to add depending on the name
     const nodeTypeSelector = (nodeName: any) => {
+      // Unselect the previous node
+      const node = model.current.getNode(lastClickedNodeId);
+      if (node) node.setSelected(false);
+
+      // Set the project edited flag and update the state so it can be properly saved
+      setDiagramEdited(true);
+      updateJsonState();
+
+      // Select depending on the name
       if (["Input port value", "Output port value"].includes(nodeName))
         addTagNode(nodeName);
       else addBasicNode(nodeName);
     };
 
-    // Initialize the model and the engine
-    const model = useRef(new DiagramModel());
-    const engine = useRef(createEngine());
+    // There is no need to use an effect as the editor will re render when the model json changes
+    // Configure the engine
     configureEngine(engine);
 
     // Deserialize and load the model

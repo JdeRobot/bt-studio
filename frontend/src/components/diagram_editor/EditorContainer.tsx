@@ -3,8 +3,16 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import MinimalDiagramEditor from "./MinimalDiagramEditor";
 
-const EditorContainer = ({ projectName }: { projectName: string }) => {
-  const [graphJson, setGraphJson] = useState(null);
+const EditorContainer = ({
+  projectName,
+  setProjectEdited,
+  setGlobalJson,
+}: {
+  projectName: string;
+  setProjectEdited: Function;
+  setGlobalJson: Function;
+}) => {
+  const [initialJson, setInitialJson] = useState("");
 
   const getGraph = async (project_name: any) => {
     try {
@@ -14,7 +22,7 @@ const EditorContainer = ({ projectName }: { projectName: string }) => {
         },
       });
       if (response.data.success) {
-        setGraphJson(response.data.graph_json);
+        setInitialJson(response.data.graph_json);
       }
     } catch (error) {
       console.error("Error fetching graph:", error);
@@ -29,8 +37,13 @@ const EditorContainer = ({ projectName }: { projectName: string }) => {
 
   return (
     <div id="editor-container">
-      {graphJson ? (
-        <MinimalDiagramEditor modelJson={graphJson} projectName={projectName} />
+      {initialJson ? (
+        <MinimalDiagramEditor
+          modelJson={initialJson}
+          setResultJson={setGlobalJson}
+          projectName={projectName}
+          setDiagramEdited={setProjectEdited}
+        />
       ) : (
         <p>Loading...</p> // Display a loading message until the graph is fetched
       )}
