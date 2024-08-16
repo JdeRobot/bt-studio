@@ -54,7 +54,7 @@ const NodeHeader = ({
   const fetchActionList = async () => {
     try {
       const response = await axios.get(
-        `/tree_api/get_file_list?project_name=${currentProjectname}`
+        `/tree_api/get_file_list?project_name=${currentProjectname}`,
       );
       const files = response.data.file_list;
       if (Array.isArray(files)) {
@@ -179,7 +179,7 @@ const NodeHeader = ({
           className="node-action-button"
           onClick={() => {
             openInNewTab(
-              "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
+              "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
             );
           }}
           title="Help"
