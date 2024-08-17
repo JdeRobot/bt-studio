@@ -89,13 +89,20 @@ const addDefaultPorts = (node: any) => {
 const MinimalDiagramEditor = memo(
   ({
     modelJson,
+    setResultJson,
     projectName,
-    setProjectEdited,
+    setDiagramEdited,
   }: {
     modelJson: any;
+    setResultJson: Function;
     projectName: string;
-    setProjectEdited: Function;
+    setDiagramEdited: Function;
   }) => {
+    // HELPERS
+    const updateJsonState = () => {
+      setResultJson(JSON.stringify(model.current.serialize()));
+    };
+
     // VARS
 
     // Initialize position and the last clicked node
@@ -115,8 +122,8 @@ const MinimalDiagramEditor = memo(
       node.registerListener({
         positionChanged: (event: any) => {
           lastMovedNodePosition = event.entity.getPosition();
-          setProjectEdited(true);
-          // setModelJson(JSON.stringify(model.current.serialize())); // Serialize and update model JSON
+          setDiagramEdited(true);
+          setResultJson(JSON.stringify(model.current.serialize()));
         },
       });
     };
@@ -167,6 +174,8 @@ const MinimalDiagramEditor = memo(
               }
             },
           });
+          updateJsonState();
+          setDiagramEdited(true);
         },
       });
     };
@@ -244,7 +253,6 @@ const MinimalDiagramEditor = memo(
         model.current.addNode(newNode);
         newNode.selectNode();
         engine.current.repaintCanvas();
-        // setModelJson(JSON.stringify(model.current.serialize()));
       }
     };
 
@@ -272,7 +280,6 @@ const MinimalDiagramEditor = memo(
         newNode.selectNode();
         // setProjectChanges(true);
         engine.current.repaintCanvas();
-        // setModelJson(JSON.stringify(model.current.serialize()));
       }
     };
 
@@ -280,10 +287,11 @@ const MinimalDiagramEditor = memo(
     const nodeTypeSelector = (nodeName: any) => {
       // Unselect the previous node
       const node = model.current.getNode(lastClickedNodeId);
-      node.setSelected(false);
+      if (node) node.setSelected(false);
 
-      // Set the project edited flag
-      setProjectEdited(true);
+      // Set the project edited flag and update the state so it can be properly saved
+      setDiagramEdited(true);
+      updateJsonState();
 
       // Select depending on the name
       if (["Input port value", "Output port value"].includes(nodeName))
@@ -291,6 +299,7 @@ const MinimalDiagramEditor = memo(
       else addBasicNode(nodeName);
     };
 
+    // There is no need to use an effect as the editor will re render when the model json changes
     // Configure the engine
     configureEngine(engine);
 

@@ -6,11 +6,13 @@ import MinimalDiagramEditor from "./MinimalDiagramEditor";
 const EditorContainer = ({
   projectName,
   setProjectEdited,
+  setGlobalJson,
 }: {
   projectName: string;
   setProjectEdited: Function;
+  setGlobalJson: Function;
 }) => {
-  const [graphJson, setGraphJson] = useState(null);
+  const [initialJson, setInitialJson] = useState("");
 
   const getGraph = async (project_name: any) => {
     try {
@@ -20,7 +22,7 @@ const EditorContainer = ({
         },
       });
       if (response.data.success) {
-        setGraphJson(response.data.graph_json);
+        setInitialJson(response.data.graph_json);
       }
     } catch (error) {
       console.error("Error fetching graph:", error);
@@ -35,11 +37,12 @@ const EditorContainer = ({
 
   return (
     <div id="editor-container">
-      {graphJson ? (
+      {initialJson ? (
         <MinimalDiagramEditor
-          modelJson={graphJson}
+          modelJson={initialJson}
+          setResultJson={setGlobalJson}
           projectName={projectName}
-          setProjectEdited={setProjectEdited}
+          setDiagramEdited={setProjectEdited}
         />
       ) : (
         <p>Loading...</p> // Display a loading message until the graph is fetched

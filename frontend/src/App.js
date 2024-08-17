@@ -308,6 +308,7 @@ const App = () => {
             <EditorContainer
               projectName={currentProjectname}
               setProjectEdited={setProjectChanges}
+              setGlobalJson={setModelJson}
             />
           ) : (
             <p>Loading...</p>
