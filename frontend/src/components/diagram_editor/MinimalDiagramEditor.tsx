@@ -86,46 +86,16 @@ const addDefaultPorts = (node: any) => {
   else if (nodeName === "Delay") node.addInputPort("delay_ms");
 };
 
-// LISTENERS
-
-// Link listener
-const attachLinkListener = (model: any) => {
-  model.registerListener({
-    linksUpdated: (event: any) => {
-      const { link, isCreated } = event;
-      link.registerListener({
-        targetPortChanged: (link: any) => {
-          if (isCreated) {
-            const { sourcePort, targetPort } = link.entity;
-            if (
-              targetPort.options.alignment === "left" &&
-              Object.keys(targetPort.getLinks()).length > 1
-            ) {
-              model.removeLink(link.entity);
-              sourcePort.removeLink(link.entity);
-              targetPort.removeLink(link.entity);
-            } else if (
-              sourcePort instanceof ChildrenPortModel &&
-              !(targetPort instanceof ParentPortModel)
-            ) {
-              model.removeLink(link.entity);
-            } else if (
-              sourcePort instanceof TagOutputPortModel &&
-              !(targetPort instanceof InputPortModel)
-            ) {
-              model.removeLink(link.entity);
-            } else {
-              model.clearSelection();
-            }
-          }
-        },
-      });
-    },
-  });
-};
-
 const MinimalDiagramEditor = memo(
-  ({ modelJson, projectName }: { modelJson: any; projectName: string }) => {
+  ({
+    modelJson,
+    projectName,
+    setProjectEdited,
+  }: {
+    modelJson: any;
+    projectName: string;
+    setProjectEdited: Function;
+  }) => {
     // VARS
 
     // Initialize position and the last clicked node
@@ -144,9 +114,8 @@ const MinimalDiagramEditor = memo(
     const attachPositionListener = (node: any) => {
       node.registerListener({
         positionChanged: (event: any) => {
-          console.log(event.entity.getPosition());
           lastMovedNodePosition = event.entity.getPosition();
-          // setProjectChanges(true);
+          setProjectEdited(true);
           // setModelJson(JSON.stringify(model.current.serialize())); // Serialize and update model JSON
         },
       });
@@ -162,6 +131,42 @@ const MinimalDiagramEditor = memo(
           } else {
             node.deselectNode();
           }
+        },
+      });
+    };
+
+    // Link listener
+    const attachLinkListener = (model: any) => {
+      model.registerListener({
+        linksUpdated: (event: any) => {
+          const { link, isCreated } = event;
+          link.registerListener({
+            targetPortChanged: (link: any) => {
+              if (isCreated) {
+                const { sourcePort, targetPort } = link.entity;
+                if (
+                  targetPort.options.alignment === "left" &&
+                  Object.keys(targetPort.getLinks()).length > 1
+                ) {
+                  model.removeLink(link.entity);
+                  sourcePort.removeLink(link.entity);
+                  targetPort.removeLink(link.entity);
+                } else if (
+                  sourcePort instanceof ChildrenPortModel &&
+                  !(targetPort instanceof ParentPortModel)
+                ) {
+                  model.removeLink(link.entity);
+                } else if (
+                  sourcePort instanceof TagOutputPortModel &&
+                  !(targetPort instanceof InputPortModel)
+                ) {
+                  model.removeLink(link.entity);
+                } else {
+                  model.clearSelection();
+                }
+              }
+            },
+          });
         },
       });
     };
@@ -276,6 +281,11 @@ const MinimalDiagramEditor = memo(
       // Unselect the previous node
       const node = model.current.getNode(lastClickedNodeId);
       node.setSelected(false);
+
+      // Set the project edited flag
+      setProjectEdited(true);
+
+      // Select depending on the name
       if (["Input port value", "Output port value"].includes(nodeName))
         addTagNode(nodeName);
       else addBasicNode(nodeName);

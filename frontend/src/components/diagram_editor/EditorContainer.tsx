@@ -3,7 +3,13 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import MinimalDiagramEditor from "./MinimalDiagramEditor";
 
-const EditorContainer = ({ projectName }: { projectName: string }) => {
+const EditorContainer = ({
+  projectName,
+  setProjectEdited,
+}: {
+  projectName: string;
+  setProjectEdited: Function;
+}) => {
   const [graphJson, setGraphJson] = useState(null);
 
   const getGraph = async (project_name: any) => {
@@ -30,7 +36,11 @@ const EditorContainer = ({ projectName }: { projectName: string }) => {
   return (
     <div id="editor-container">
       {graphJson ? (
-        <MinimalDiagramEditor modelJson={graphJson} projectName={projectName} />
+        <MinimalDiagramEditor
+          modelJson={graphJson}
+          projectName={projectName}
+          setProjectEdited={setProjectEdited}
+        />
       ) : (
         <p>Loading...</p> // Display a loading message until the graph is fetched
       )}
