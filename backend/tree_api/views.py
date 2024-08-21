@@ -359,7 +359,10 @@ def delete_file(request):
 
     if os.path.exists(file_path):
         try:
-            os.remove(file_path)
+            if os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+            else:
+                os.remove(file_path)
             return JsonResponse({"success": True})
         except Exception as e:
             return JsonResponse(

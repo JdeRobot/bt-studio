@@ -98,7 +98,6 @@ function MoreActionsMenu({
         <div
           className="more-actions-menu-entry"
           onClick={() => {
-            // TODO Create folder
             onCreateFolder(menuProps.file);
             closeMenu();
           }}
