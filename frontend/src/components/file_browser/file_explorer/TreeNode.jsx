@@ -12,6 +12,7 @@ function TreeNode({
   diagramEditorReady,
   actionNodesData,
   handleFileClick,
+  handleFolderClick,
   menuProps,
 }) {
   const [isCollapsed, setCollapsed] = useState(false);
@@ -28,6 +29,7 @@ function TreeNode({
   const handleClick = () => {
     if (node.is_dir) {
       setCollapsed(!isCollapsed);
+      handleFolderClick(node.path);
     } else {
       handleFileClick(node.path);
       console.log(actionNodesData[node.name.replace(".py", "")]);
@@ -85,6 +87,7 @@ function TreeNode({
             diagramEditorReady={diagramEditorReady}
             actionNodesData={actionNodesData}
             handleFileClick={handleFileClick}
+            handleFolderClick={handleFolderClick}
             menuProps={menuProps}
           />
         ))}

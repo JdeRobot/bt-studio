@@ -2,7 +2,13 @@ import React, { useEffect, useState, useRef } from "react";
 
 import "./MoreActionsMenu.css";
 
-function MoreActionsMenu({ menuProps, actionNodesData, onDelete }) {
+function MoreActionsMenu({
+  menuProps,
+  actionNodesData,
+  onDelete,
+  onCreateFile,
+  onCreateFolder,
+}) {
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -33,11 +39,25 @@ function MoreActionsMenu({ menuProps, actionNodesData, onDelete }) {
         className="more-actions-menu"
         style={{ top: menuProps.position.y, left: menuProps.position.x }}
       >
-        <div className="more-actions-menu-entry">
+        <div
+          className="more-actions-menu-entry"
+          onClick={() => {
+            // TODO Rename
+            console.log("Rename");
+            closeMenu();
+          }}
+        >
           <label>Rename</label>
         </div>
         {!menuProps.file.is_dir && (
-          <div className="more-actions-menu-entry">
+          <div
+            className="more-actions-menu-entry"
+            onClick={() => {
+              // TODO download
+              console.log("Download");
+              closeMenu();
+            }}
+          >
             <label>Download</label>
           </div>
         )}
@@ -53,19 +73,46 @@ function MoreActionsMenu({ menuProps, actionNodesData, onDelete }) {
         {!menuProps.file.is_dir && menuProps.fileGroup === "Action" && (
           <>
             <div className="more-actions-menu-divider" />
-            <div className="more-actions-menu-entry">
+            <div
+              className="more-actions-menu-entry"
+              onClick={() => {
+                // TODO open the same menu that in the diagram
+                console.log("Edit Action");
+                closeMenu();
+              }}
+            >
               <label>Edit Action</label>
             </div>
           </>
         )}
         <div className="more-actions-menu-divider" />
-        <div className="more-actions-menu-entry">
+        <div
+          className="more-actions-menu-entry"
+          onClick={() => {
+            onCreateFile();
+            closeMenu();
+          }}
+        >
           <label>New File</label>
         </div>
-        <div className="more-actions-menu-entry">
-          <label>New Action</label>
+        <div
+          className="more-actions-menu-entry"
+          onClick={() => {
+            // TODO Create folder
+            onCreateFolder(menuProps.file);
+            closeMenu();
+          }}
+        >
+          <label>New Folder</label>
         </div>
-        <div className="more-actions-menu-entry">
+        <div
+          className="more-actions-menu-entry"
+          onClick={() => {
+            // TODO Upload modal
+            console.log("upload");
+            closeMenu();
+          }}
+        >
           <label>Upload</label>
         </div>
       </div>

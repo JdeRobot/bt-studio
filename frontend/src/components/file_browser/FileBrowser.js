@@ -19,6 +19,7 @@ const FileBrowser = ({
   const [fileList, setFileList] = useState(null);
   const [isNewActionModalOpen, setNewActionModalOpen] = useState(false);
   const [newsletterFormData, setNewsletterFormData] = useState(null);
+  const [selectedEntry, setSelectedEntry] = useState("");
 
   const fetchFileList = async () => {
     if (currentProjectname !== "") {
@@ -39,7 +40,44 @@ const FileBrowser = ({
   };
 
   const handleCreateFile = () => {
+    // TODO: something similar to the folder one to handle location selected
     setNewActionModalOpen(true);
+  };
+
+  const handleCreateFolder = (file) => {
+    let path;
+
+    if (file) {
+      path = file.path;
+      // Check if is a directory and if not get the parent directory of the file
+      if (!file.is_dir) {
+        var split_path = file.path.split("/"); // TODO: add for windows
+        path = split_path.slice(0, split_path.length - 1).join("/");
+      }
+    } else {
+      path = selectedEntry;
+    }
+
+    // TODO: Open modal to ask for the name
+    handleCreateFolderCall(path, "");
+  };
+
+  const handleCreateFolderCall = async (location, folder_name) => {
+    if (folder_name !== "") {
+      try {
+        const response = await axios.get(
+          `/tree_api/create_folder?project_name=${currentProjectname}&location=${location}&folder_name=${folder_name}`,
+        );
+        if (response.data.success) {
+          setProjectChanges(true);
+          fetchFileList(); // Update the file list
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error creating folder:", error);
+      }
+    }
   };
 
   const handleDeleteFile = async (file_path) => {
@@ -133,12 +171,15 @@ const FileBrowser = ({
         setCurrentFilename={setCurrentFilename}
         currentFilename={currentFilename}
         currentProjectname={currentProjectname}
+        setSelectedEntry={setSelectedEntry}
         actionNodesData={actionNodesData}
         showAccentColor={showAccentColor}
         diagramEditorReady={diagramEditorReady}
         fileList={fileList}
         fetchFileList={fetchFileList}
         onDelete={handleDeleteFile}
+        onCreateFile={handleCreateFile}
+        onCreateFolder={handleCreateFolder}
       />
     </div>
   );

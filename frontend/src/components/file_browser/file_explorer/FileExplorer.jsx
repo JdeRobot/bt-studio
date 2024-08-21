@@ -9,12 +9,15 @@ const FileExplorer = ({
   setCurrentFilename,
   currentFilename,
   currentProjectname,
+  setSelectedEntry,
   actionNodesData,
   showAccentColor,
   diagramEditorReady,
   fileList,
   fetchFileList,
   onDelete,
+  onCreateFile,
+  onCreateFolder,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [menuFile, setMenuFile] = useState(null);
@@ -35,10 +38,16 @@ const FileExplorer = ({
   useEffect(() => {
     fetchFileList();
     setCurrentFilename("");
+    setSelectedEntry("");
   }, [currentProjectname]);
 
   const handleFileClick = (filename) => {
     setCurrentFilename(filename);
+    setSelectedEntry(filename);
+  };
+
+  const handleFolderClick = (filename) => {
+    setSelectedEntry(filename);
   };
 
   if (Array.isArray(fileList)) {
@@ -54,6 +63,7 @@ const FileExplorer = ({
             diagramEditorReady={diagramEditorReady}
             actionNodesData={actionNodesData}
             handleFileClick={handleFileClick}
+            handleFolderClick={handleFolderClick}
             menuProps={MenuProps}
           />
         ))}
@@ -62,6 +72,8 @@ const FileExplorer = ({
             menuProps={MenuProps}
             actionNodesData={actionNodesData}
             onDelete={onDelete}
+            onCreateFile={onCreateFile}
+            onCreateFolder={onCreateFolder}
           />
         )}
       </div>

@@ -13,6 +13,7 @@ urlpatterns = [
     path("get_universes_list/", views.get_universes_list, name="get_universes_list"),
     path("get_file/", views.get_file, name="get_file"),
     path("create_file/", views.create_file, name="create_file"),
+    path("create_folder/", views.create_folder, name="create_folder"),
     path("delete_file/", views.delete_file, name="delete_file"),
     path("save_file/", views.save_file, name="save_file"),
     path("translate_json/", views.translate_json, name="translate_json"),

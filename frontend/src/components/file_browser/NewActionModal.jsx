@@ -24,6 +24,7 @@ function CreateButton({ hasToDisplay }) {
   return null;
 }
 
+// TODO add a way to select if plain text file
 const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialNewActionModalData);
