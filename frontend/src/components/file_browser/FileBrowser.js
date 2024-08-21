@@ -26,13 +26,12 @@ const FileBrowser = ({
         const response = await axios.get(
           `/tree_api/get_file_list?project_name=${currentProjectname}`,
         );
-        const files = response.data.file_list;
-        console.log(files);
-        if (Array.isArray(files)) {
-          setFileList(files);
-        } else {
-          console.error("API response is not an array:", files);
-        }
+        const files = JSON.parse(response.data.file_list);
+        setFileList(files);
+        // if (Array.isArray(files)) {
+        // } else {
+        //   console.error("API response is not an array:", files);
+        // }
       } catch (error) {
         console.error("Error fetching files:", error);
       }
@@ -43,22 +42,34 @@ const FileBrowser = ({
     setNewActionModalOpen(true);
   };
 
-  const handleDeleteFile = async () => {
-    if (currentFilename) {
+  const handleDeleteFile = async (file_path) => {
+    //currentFilename === Absolute File path
+    if (file_path) {
       try {
         const response = await axios.get(
-          `/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}`,
+          `/tree_api/delete_file?project_name=${currentProjectname}&path=${file_path}`,
         );
         if (response.data.success) {
           setProjectChanges(true);
           fetchFileList(); // Update the file list
-          setCurrentFilename(""); // Unset the current file
+          if (currentFilename === file_path) {
+            setCurrentFilename(""); // Unset the current file
+          }
         } else {
           alert(response.data.message);
         }
       } catch (error) {
         console.error("Error deleting file:", error);
       }
+    } else {
+      alert("No file is currently selected.");
+    }
+  };
+
+  const handleDeleteCurrentFile = async () => {
+    //currentFilename === Absolute File path
+    if (currentFilename) {
+      await handleDeleteFile(currentFilename);
     } else {
       alert("No file is currently selected.");
     }
@@ -105,7 +116,7 @@ const FileBrowser = ({
           </button>
           <button
             className="menu-button"
-            onClick={handleDeleteFile}
+            onClick={handleDeleteCurrentFile}
             title="Delete file"
           >
             <DeleteIcon className="icon" fill={"var(--icon)"} />
@@ -125,6 +136,9 @@ const FileBrowser = ({
         actionNodesData={actionNodesData}
         showAccentColor={showAccentColor}
         diagramEditorReady={diagramEditorReady}
+        fileList={fileList}
+        fetchFileList={fetchFileList}
+        onDelete={handleDeleteFile}
       />
     </div>
   );

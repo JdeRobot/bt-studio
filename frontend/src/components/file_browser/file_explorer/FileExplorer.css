@@ -27,6 +27,8 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  position: relative;
+  z-index: 1;
 }
 
 .file-item label {
@@ -39,13 +41,23 @@
 
 .accent-color {
   position: relative;
-  margin-left: auto;
   z-index: 10;
   width: 5px;
   height: 100%;
 }
 
+.more-action-icon {
+  margin-left: auto;
+  visibility: hidden;
+}
+
+.file-item-container:hover .more-action-icon {
+  visibility: visible;
+}
+
 .arrow-icon {
   height: 16px;
   width: 16px;
+  min-width: 16px;
+  min-height: 16px;
 }

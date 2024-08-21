@@ -11,7 +11,7 @@
   overflow-y: auto;
   max-height: 60vh;
 
-  --g: radial-gradient(50% 20px, var(--background-500), var(--background));
+  --g: radial-gradient(var(--background-500) at 50% 20px, var(--background));
   background:
     linear-gradient(
         var(--background) 10px,

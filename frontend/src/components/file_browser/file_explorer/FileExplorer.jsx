@@ -3,6 +3,7 @@ import axios from "axios";
 
 import "./FileExplorer.css";
 import TreeNode from "./TreeNode.jsx";
+import MoreActionsMenu, { ContextMenuProps } from "./MoreActionsMenu.jsx";
 
 const FileExplorer = ({
   setCurrentFilename,
@@ -11,54 +12,33 @@ const FileExplorer = ({
   actionNodesData,
   showAccentColor,
   diagramEditorReady,
+  fileList,
+  fetchFileList,
+  onDelete,
 }) => {
-  const [fileList, setFileList] = useState(null);
+  const [showMenu, setShowMenu] = useState(false);
+  const [menuFile, setMenuFile] = useState(null);
+  const [menuGroupFile, setMenuGroupFile] = useState("");
+  const [menuPosistion, setMenuPosistion] = React.useState({ x: 0, y: 0 });
+
+  const MenuProps = new ContextMenuProps(
+    showMenu,
+    setShowMenu,
+    menuPosistion,
+    setMenuPosistion,
+    menuFile,
+    setMenuFile,
+    menuGroupFile,
+    setMenuGroupFile,
+  );
 
   useEffect(() => {
     fetchFileList();
     setCurrentFilename("");
   }, [currentProjectname]);
 
-  const fetchFileList = async () => {
-    if (currentProjectname !== "") {
-      try {
-        const response = await axios.get(
-          `/tree_api/get_file_list?project_name=${currentProjectname}`,
-        );
-        const files = JSON.parse(response.data.file_list);
-        setFileList(files);
-        // if (Array.isArray(files)) {
-        // } else {
-        //   console.error("API response is not an array:", files);
-        // }
-      } catch (error) {
-        console.error("Error fetching files:", error);
-      }
-    }
-  };
-
   const handleFileClick = (filename) => {
     setCurrentFilename(filename);
-  };
-
-  const handleDeleteFile = async () => {
-    if (currentFilename) {
-      try {
-        const response = await axios.get(
-          `/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}`,
-        );
-        if (response.data.success) {
-          fetchFileList(); // Update the file list
-          setCurrentFilename(""); // Unset the current file
-        } else {
-          alert(response.data.message);
-        }
-      } catch (error) {
-        console.error("Error deleting file:", error);
-      }
-    } else {
-      alert("No file is currently selected.");
-    }
   };
 
   if (Array.isArray(fileList)) {
@@ -68,13 +48,22 @@ const FileExplorer = ({
           <TreeNode
             node={file}
             depth={0}
+            parentGroup=""
             currentFilename={currentFilename}
             showAccentColor={showAccentColor}
             diagramEditorReady={diagramEditorReady}
             actionNodesData={actionNodesData}
             handleFileClick={handleFileClick}
+            menuProps={MenuProps}
           />
         ))}
+        {showMenu && (
+          <MoreActionsMenu
+            menuProps={MenuProps}
+            actionNodesData={actionNodesData}
+            onDelete={onDelete}
+          />
+        )}
       </div>
     );
   } else {
