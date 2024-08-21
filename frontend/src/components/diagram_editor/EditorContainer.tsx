@@ -30,7 +30,7 @@ const EditorContainer = ({
   };
 
   useEffect(() => {
-    // Fetch graph when component mounts
+    // Fetch graph when component mounts<
     getGraph(projectName);
     console.log("Getting graph!");
   }, [projectName]);

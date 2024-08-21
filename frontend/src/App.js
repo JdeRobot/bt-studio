@@ -27,6 +27,8 @@ const App = () => {
   const [gazeboEnabled, setGazeboEnabled] = useState(false);
   const [manager, setManager] = useState(null);
   const [diagramEditorReady, setDiagramEditorReady] = useState(false);
+  const [appRunning, setAppRunning] = useState(false);
+  const [appLoaded, setAppLoaded] = useState(false);
 
   // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
@@ -70,6 +72,89 @@ const App = () => {
       // Connection failed, try again after a delay
       console.log("Connection failed, trying again!");
       setTimeout(connectWithRetry, 1000);
+    }
+  };
+
+  const fetchApp = async (tree_graph) => {
+    const api_response = await fetch("/tree_api/generate_app/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        app_name: currentProjectname,
+        tree_graph: tree_graph,
+        bt_order: btOrder,
+      }),
+    });
+
+    if (!api_response.ok) {
+      var json_response = await api_response.json();
+      throw new Error(json_response.message || "An error occurred.");
+    }
+
+    return api_response.blob();
+  };
+
+  const onRunApp = async () => {
+    if (gazeboEnabled) {
+      if (!appRunning) {
+        // Get the app as a base64 blob object
+        const app_blob = await fetchApp(modelJson);
+        const base64data = await app_blob.text();
+
+        // Send the zip
+        var api_response = await manager.run({
+          type: "bt-studio",
+          code: base64data,
+        });
+        if (api_response.ok) {
+          console.log("App resumed!");
+          setAppRunning(true);
+        } else {
+          let linterMessage = JSON.stringify(api_response.data.message).split(
+            "\\n"
+          );
+          alert(`Received linter message: ${linterMessage}`);
+        }
+      } else {
+        await manager.pause();
+        console.log("App paused!");
+        setAppRunning(false);
+      }
+    } else {
+      console.log("Gazebo is not up!");
+    }
+  };
+
+  const onResetApp = async () => {
+    if (gazeboEnabled) {
+      await manager.terminate_application();
+      console.log("App reseted!");
+      setAppRunning(false);
+      setAppLoaded(false);
+    } else {
+      console.log("Gazebo is not up!");
+    }
+  };
+
+  const onDownloadApp = async () => {
+    if (modelJson) {
+      // Get the app as a base64 blob object
+      const app_blob = await fetchApp(modelJson);
+
+      try {
+        const url = window.URL.createObjectURL(app_blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = `${currentProjectname}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
   };
 
@@ -261,6 +346,10 @@ const App = () => {
         setProjectChanges={setProjectChanges}
         openError={openError}
         settingsProps={settings}
+        onDownloadApp={onDownloadApp}
+        onRunApp={onRunApp}
+        isAppRunning={appRunning}
+        onResetApp={onResetApp}
       />
 
       <div className="App-main" style={{ display: "flex" }}>
@@ -293,17 +382,6 @@ const App = () => {
         </Resizable>
 
         <div style={{ width: "100%" }}>
-          {/* <DiagramEditor
-            currentProjectname={currentProjectname}
-            setModelJson={setModelJson}
-            setProjectChanges={setProjectChanges}
-            gazeboEnabled={gazeboEnabled}
-            manager={manager}
-            actionNodesData={actionNodesData}
-            btOrder={btOrder}
-            openError={openError}
-            setDiagramEditorReady={setDiagramEditorReady}
-          /> */}
           {currentProjectname ? (
             <EditorContainer
               projectName={currentProjectname}

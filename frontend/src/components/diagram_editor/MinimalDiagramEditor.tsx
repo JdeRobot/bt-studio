@@ -98,11 +98,6 @@ const MinimalDiagramEditor = memo(
     projectName: string;
     setDiagramEdited: Function;
   }) => {
-    // HELPERS
-    const updateJsonState = () => {
-      setResultJson(JSON.stringify(model.current.serialize()));
-    };
-
     // VARS
 
     // Initialize position and the last clicked node
@@ -114,6 +109,34 @@ const MinimalDiagramEditor = memo(
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
     const engine = useRef(createEngine());
+
+    // HELPERS
+    const updateJsonState = () => {
+      setResultJson(JSON.stringify(model.current.serialize()));
+    };
+
+    // Deletes the last clicked node
+    const deleteLastClickedNode = () => {
+      if (model.current && lastClickedNodeId) {
+        const node: any = model.current.getNode(lastClickedNodeId);
+        if (node) {
+          node.remove();
+          setDiagramEdited(true);
+          engine.current.repaintCanvas();
+          updateJsonState();
+        }
+        lastClickedNodeId = "";
+      }
+    };
+
+    // Zooms to fit the nodes
+    const zoomToFit = () => {
+      engine.current.zoomToFitNodes({ margin: 50 });
+    };
+
+    const actionEditor = () => {
+      console.log("Editing the action!");
+    };
 
     // LISTENERS
 
@@ -318,7 +341,13 @@ const MinimalDiagramEditor = memo(
 
     return (
       <div>
-        <NodeMenu projectName={projectName} onAddNode={nodeTypeSelector} />
+        <NodeMenu
+          projectName={projectName}
+          onAddNode={nodeTypeSelector}
+          onDeleteNode={deleteLastClickedNode}
+          onZoomToFit={zoomToFit}
+          onEditAction={actionEditor}
+        />
         <CanvasWidget className="canvas" engine={engine.current} />
       </div>
     );

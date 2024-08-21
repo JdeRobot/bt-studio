@@ -11,6 +11,10 @@ import { ReactComponent as ProjectsIcon } from "./img/change_project.svg";
 import { ReactComponent as SaveIcon } from "./img/save_project.svg";
 import { ReactComponent as UniversesIcon } from "./img/universes.svg";
 import { ReactComponent as SettingsIcon } from "./img/settings.svg";
+import { ReactComponent as DownloadIcon } from "./img/download.svg";
+import { ReactComponent as RunIcon } from "./img/run.svg";
+import { ReactComponent as StopIcon } from "./img/stop.svg";
+import { ReactComponent as ResetIcon } from "./img/reset.svg";
 import ProjectModal from "./modals/ProjectModal";
 import UniversesModal from "./modals/UniverseModal";
 import SettingsModal from "../settings_popup/SettingsModal";
@@ -28,6 +32,10 @@ const HeaderMenu = ({
   setProjectChanges,
   openError,
   settingsProps,
+  onDownloadApp,
+  onRunApp,
+  isAppRunning,
+  onResetApp,
 }) => {
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
   const [isUniversesModalOpen, setUniversesModalOpen] = useState(false);
@@ -57,7 +65,7 @@ const HeaderMenu = ({
         } else {
           // Handle other statuses or general API errors
           openError(
-            "Unable to connect with the backend server. Please check the backend status.",
+            "Unable to connect with the backend server. Please check the backend status."
           );
         }
       }
@@ -123,7 +131,7 @@ const HeaderMenu = ({
       } else {
         console.error(
           "Error saving project:",
-          response.data.message || "Unknown error",
+          response.data.message || "Unknown error"
         );
       }
     } catch (error) {
@@ -233,6 +241,27 @@ const HeaderMenu = ({
             title="Save project"
           >
             <SaveIcon className="header-icon" fill={"var(--icon)"} />
+          </button>
+          <button
+            className="header-button"
+            onClick={onDownloadApp}
+            title="Download app"
+          >
+            <DownloadIcon className="header-icon" stroke={"var(--icon)"} />
+          </button>
+          <button className="header-button" onClick={onRunApp} title="Run app">
+            {isAppRunning ? (
+              <StopIcon className="header-icon" fill={"var(--icon)"} />
+            ) : (
+              <RunIcon className="header-icon" fill={"var(--icon)"} />
+            )}
+          </button>
+          <button
+            className="node-action-button"
+            onClick={onResetApp}
+            title="Reset app"
+          >
+            <ResetIcon className="icon action-icon" stroke={"var(--icon)"} />
           </button>
         </div>
       </Toolbar>
