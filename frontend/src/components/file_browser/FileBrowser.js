@@ -4,6 +4,7 @@ import "./FileBrowser.css";
 import NewActionModal from "./modals/NewActionModal.jsx";
 import NewFolderModal from "./modals/NewFolderModal.jsx";
 import UploadModal from "./modals/UploadModal.jsx";
+import DeleteModal from "./modals/DeleteModal.jsx";
 import FileExplorer from "./file_explorer/FileExplorer.jsx";
 
 import { ReactComponent as AddIcon } from "./img/add.svg";
@@ -32,9 +33,11 @@ const FileBrowser = ({
   const [fileList, setFileList] = useState(null);
   const [isNewActionModalOpen, setNewActionModalOpen] = useState(false);
   const [isNewFolderModalOpen, setNewFolderModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
   const [newsletterFormData, setNewsletterFormData] = useState(null);
   const [selectedEntry, setSelectedEntry] = useState(null);
+  const [deleteEntry, setDeleteEntry] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState("");
 
   useEffect(() => {
@@ -49,7 +52,7 @@ const FileBrowser = ({
     if (currentProjectname !== "") {
       try {
         const response = await axios.get(
-          `/tree_api/get_file_list?project_name=${currentProjectname}`
+          `/tree_api/get_file_list?project_name=${currentProjectname}`,
         );
         const files = JSON.parse(response.data.file_list);
         setFileList(files);
@@ -82,7 +85,7 @@ const FileBrowser = ({
     if (data.actionName !== "") {
       try {
         const response = await axios.get(
-          `/tree_api/create_file?project_name=${currentProjectname}&filename=${data.actionName}.py&template=${data.templateType}`
+          `/tree_api/create_file?project_name=${currentProjectname}&filename=${data.actionName}.py&template=${data.templateType}`,
         );
         if (response.data.success) {
           setProjectChanges(true);
@@ -98,17 +101,31 @@ const FileBrowser = ({
 
   ///////////////// DELETE FILES AND FOLDERS ///////////////////////////////////
 
-  const handleDeleteFile = async (file_path) => {
-    //currentFilename === Absolute File path
+  const handleDeleteModal = (file_path) => {
     if (file_path) {
+      setDeleteEntry(file_path);
+      setDeleteModalOpen(true);
+    } else {
+      alert("No file is currently selected.");
+    }
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setDeleteEntry("");
+  };
+
+  const handleSubmitDeleteModal = async () => {
+    //currentFilename === Absolute File path
+    if (deleteEntry) {
       try {
         const response = await axios.get(
-          `/tree_api/delete_file?project_name=${currentProjectname}&path=${file_path}`
+          `/tree_api/delete_file?project_name=${currentProjectname}&path=${deleteEntry}`,
         );
         if (response.data.success) {
           setProjectChanges(true);
           fetchFileList(); // Update the file list
-          if (currentFilename === file_path) {
+          if (currentFilename === deleteEntry) {
             setCurrentFilename(""); // Unset the current file
           }
         } else {
@@ -120,12 +137,13 @@ const FileBrowser = ({
     } else {
       alert("No file is currently selected.");
     }
+    handleCloseDeleteModal();
   };
 
-  const handleDeleteCurrentFile = async () => {
+  const handleDeleteCurrentFile = () => {
     //currentFilename === Absolute File path
     if (currentFilename) {
-      await handleDeleteFile(currentFilename);
+      handleDeleteModal(currentFilename);
     } else {
       alert("No file is currently selected.");
     }
@@ -157,7 +175,7 @@ const FileBrowser = ({
     if (folder_name !== "") {
       try {
         const response = await axios.get(
-          `/tree_api/create_folder?project_name=${currentProjectname}&location=${location}&folder_name=${folder_name}`
+          `/tree_api/create_folder?project_name=${currentProjectname}&location=${location}&folder_name=${folder_name}`,
         );
         if (response.data.success) {
           setProjectChanges(true);
@@ -230,6 +248,13 @@ const FileBrowser = ({
         onClose={handleCloseUploadModal}
         selectedEntry={selectedEntry}
       />
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onSubmit={handleSubmitDeleteModal}
+        onClose={handleCloseDeleteModal}
+        selectedEntry={deleteEntry}
+        currentProjectname={currentProjectname}
+      />
       <FileExplorer
         setCurrentFilename={setCurrentFilename}
         currentFilename={currentFilename}
@@ -240,7 +265,7 @@ const FileBrowser = ({
         diagramEditorReady={diagramEditorReady}
         fileList={fileList}
         fetchFileList={fetchFileList}
-        onDelete={handleDeleteFile}
+        onDelete={handleDeleteModal}
         onCreateFile={handleCreateFile}
         onCreateFolder={handleCreateFolder}
         onUpload={handleUpload}

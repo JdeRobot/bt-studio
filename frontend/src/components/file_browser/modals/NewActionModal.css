@@ -2,6 +2,10 @@
   margin-top: 1rem;
 }
 
+.form-row {
+  margin-top: 10px;
+}
+
 .form-row select,
 .form-row button {
   width: 100%;
@@ -13,21 +17,14 @@
 
 .form-row button {
   background-color: var(--buttons);
-}
-
-.form-row {
-  margin-top: 10px;
-}
-
-#templates-list {
-  height: 170px;
-}
-
-.form-row button {
   margin-bottom: 10px;
   border-radius: 10px;
   height: 2em;
   font-size: medium;
+}
+
+#templates-list {
+  height: 170px;
 }
 
 #create-new-action:hover {

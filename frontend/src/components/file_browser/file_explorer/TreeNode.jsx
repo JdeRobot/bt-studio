@@ -58,7 +58,7 @@ function TreeNode({
               menuProps.showMoreActionsMenu(
                 e,
                 node,
-                parentGroup === "" ? group : parentGroup
+                parentGroup === "" ? group : parentGroup,
               );
             }}
           />

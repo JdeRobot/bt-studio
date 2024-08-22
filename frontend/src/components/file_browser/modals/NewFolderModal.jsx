@@ -42,7 +42,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
     if (name === "folderName") {
       // TODO: check if this still works
       setcreateButton(
-        value !== "" && !fileList.includes(value) && !value.includes(".")
+        value !== "" && !fileList.includes(value) && !value.includes("."),
       );
     }
   };
