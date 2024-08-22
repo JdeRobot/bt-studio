@@ -8,6 +8,7 @@ function MoreActionsMenu({
   onDelete,
   onCreateFile,
   onCreateFolder,
+  onUpload,
 }) {
   const menuRef = useRef(null);
 
@@ -108,7 +109,7 @@ function MoreActionsMenu({
           className="more-actions-menu-entry"
           onClick={() => {
             // TODO Upload modal
-            console.log("upload");
+            onUpload();
             closeMenu();
           }}
         >

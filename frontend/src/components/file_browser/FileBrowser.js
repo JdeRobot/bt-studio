@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./FileBrowser.css";
 import NewActionModal from "./NewActionModal.jsx";
+import UploadModal from "./UploadModal.jsx";
 import FileExplorer from "./file_explorer/FileExplorer.jsx";
 
 import { ReactComponent as AddIcon } from "./img/add.svg";
@@ -18,6 +19,7 @@ const FileBrowser = ({
 }) => {
   const [fileList, setFileList] = useState(null);
   const [isNewActionModalOpen, setNewActionModalOpen] = useState(false);
+  const [isUploadModalOpen, setUploadModalOpen] = useState(false);
   const [newsletterFormData, setNewsletterFormData] = useState(null);
   const [selectedEntry, setSelectedEntry] = useState("");
 
@@ -139,6 +141,15 @@ const FileBrowser = ({
     }
   };
 
+  const handleUpload = () => {
+    // TODO: something similar to the folder one to handle location selected
+    setUploadModalOpen(true);
+  };
+
+  const handleCloseUploadModal = () => {
+    setUploadModalOpen(false);
+  };
+
   return (
     <div style={{ flex: "2" }}>
       <div className="browser-menu">
@@ -167,6 +178,12 @@ const FileBrowser = ({
         onClose={handleCloseNewActionModal}
         fileList={fileList}
       />
+      <UploadModal
+        isOpen={isUploadModalOpen}
+        onSubmit={handleCloseUploadModal}
+        onClose={handleCloseUploadModal}
+        selectedEntry={selectedEntry}
+      />
       <FileExplorer
         setCurrentFilename={setCurrentFilename}
         currentFilename={currentFilename}
@@ -180,6 +197,7 @@ const FileBrowser = ({
         onDelete={handleDeleteFile}
         onCreateFile={handleCreateFile}
         onCreateFolder={handleCreateFolder}
+        onUpload={handleUpload}
       />
     </div>
   );

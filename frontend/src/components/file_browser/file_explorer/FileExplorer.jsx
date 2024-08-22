@@ -18,6 +18,7 @@ const FileExplorer = ({
   onDelete,
   onCreateFile,
   onCreateFolder,
+  onUpload,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [menuFile, setMenuFile] = useState(null);
@@ -74,6 +75,7 @@ const FileExplorer = ({
             onDelete={onDelete}
             onCreateFile={onCreateFile}
             onCreateFolder={onCreateFolder}
+            onUpload={onUpload}
           />
         )}
       </div>
