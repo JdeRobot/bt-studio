@@ -7,6 +7,7 @@ import UploadModal from "./modals/UploadModal.jsx";
 import FileExplorer from "./file_explorer/FileExplorer.jsx";
 
 import { ReactComponent as AddIcon } from "./img/add.svg";
+import { ReactComponent as AddFolderIcon } from "./img/add_folder.svg";
 import { ReactComponent as DeleteIcon } from "./img/delete.svg";
 
 function getParentDir(file) {
@@ -184,7 +185,7 @@ const FileBrowser = ({
   return (
     <div style={{ flex: "2" }}>
       <div className="browser-menu">
-        <h2>File Explorer</h2>
+        {/* <h2>File Explorer</h2> */}
         {/* Add them in a row below or smaller */}
         <div className="buttons">
           <button
@@ -193,6 +194,13 @@ const FileBrowser = ({
             title="Create a new action file"
           >
             <AddIcon className="icon" fill={"var(--icon)"} />
+          </button>
+          <button
+            className="menu-button"
+            onClick={() => handleCreateFolder(null)}
+            title="Create a new folder"
+          >
+            <AddFolderIcon className="icon" fill={"var(--icon)"} />
           </button>
           <button
             className="menu-button"
