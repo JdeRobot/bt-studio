@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./NewActionModal.css";
-import Modal from "../Modal/Modal";
+import Modal from "../../Modal/Modal";
 
-import { ReactComponent as EmptyTeplateIcon } from "./img/empty_template.svg";
-import { ReactComponent as ActionTeplateIcon } from "./img/action_template.svg";
-import { ReactComponent as IOTeplateIcon } from "./img/io_template.svg";
-import { ReactComponent as CloseIcon } from "../Modal/img/close.svg";
+import { ReactComponent as EmptyTeplateIcon } from "../img/empty_template.svg";
+import { ReactComponent as ActionTeplateIcon } from "../img/action_template.svg";
+import { ReactComponent as IOTeplateIcon } from "../img/io_template.svg";
+import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 
 const initialNewActionModalData = {
   actionName: "",
@@ -53,7 +53,7 @@ const NewActionModal = ({ onSubmit, isOpen, onClose, fileList }) => {
     }));
     if (name === "actionName") {
       setcreateButton(
-        value !== "" && !fileList.includes(value) && !value.includes("."),
+        value !== "" && !fileList.includes(value) && !value.includes(".")
       );
     }
   };

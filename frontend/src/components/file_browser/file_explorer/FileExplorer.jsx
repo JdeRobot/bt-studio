@@ -33,7 +33,7 @@ const FileExplorer = ({
     menuFile,
     setMenuFile,
     menuGroupFile,
-    setMenuGroupFile,
+    setMenuGroupFile
   );
 
   useEffect(() => {
@@ -42,13 +42,13 @@ const FileExplorer = ({
     setSelectedEntry("");
   }, [currentProjectname]);
 
-  const handleFileClick = (filename) => {
-    setCurrentFilename(filename);
-    setSelectedEntry(filename);
+  const handleFileClick = (file) => {
+    setCurrentFilename(file.path);
+    setSelectedEntry(file);
   };
 
-  const handleFolderClick = (filename) => {
-    setSelectedEntry(filename);
+  const handleFolderClick = (file) => {
+    setSelectedEntry(file);
   };
 
   if (Array.isArray(fileList)) {

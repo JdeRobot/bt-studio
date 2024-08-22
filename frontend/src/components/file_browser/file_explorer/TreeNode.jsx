@@ -29,11 +29,9 @@ function TreeNode({
   const handleClick = () => {
     if (node.is_dir) {
       setCollapsed(!isCollapsed);
-      handleFolderClick(node.path);
+      handleFolderClick(node);
     } else {
-      handleFileClick(node.path);
-      console.log(actionNodesData[node.name.replace(".py", "")]);
-      console.log(diagramEditorReady);
+      handleFileClick(node);
     }
   };
 
@@ -60,7 +58,7 @@ function TreeNode({
               menuProps.showMoreActionsMenu(
                 e,
                 node,
-                parentGroup === "" ? group : parentGroup,
+                parentGroup === "" ? group : parentGroup
               );
             }}
           />
