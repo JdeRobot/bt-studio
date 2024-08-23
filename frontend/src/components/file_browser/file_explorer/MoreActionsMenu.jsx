@@ -130,7 +130,7 @@ export class ContextMenuProps {
     file,
     setFile,
     fileGroup,
-    setFileGroup
+    setFileGroup,
   ) {
     this.isShown = isShown;
     this.showCallback = showCallback;

@@ -1,4 +1,4 @@
-.modal-button{
+.modal-button {
   width: 350px;
   border: 2px solid var(--buttons);
   color: var(--text);
@@ -9,7 +9,7 @@
   font-size: medium;
   outline: none;
 
-  &::file-selector-button{
+  &::file-selector-button {
     margin-right: 20px;
     border: none;
     background: var(--buttons);
@@ -17,8 +17,7 @@
     border-radius: 10px;
     color: var(--text);
     cursor: pointer;
-    transition: background .2s ease-in-out;
-
+    transition: background 0.2s ease-in-out;
   }
 
   &::file-selector-button:hover {
@@ -40,16 +39,18 @@
   border: 2px dashed var(--buttons);
   color: var(--text);
   cursor: pointer;
-  transition: background .2s ease-in-out, border .2s ease-in-out;
-  &:hover{
+  transition:
+    background 0.2s ease-in-out,
+    border 0.2s ease-in-out;
+  &:hover {
     background: var(--buttons);
     border-color: var(--background);
   }
 }
 
 .modal-drop-container.drag-active {
-    background: var(--buttons);
-    border-color: var(--background);
+  background: var(--buttons);
+  border-color: var(--background);
 }
 
 .modal-drop-title {
@@ -57,5 +58,5 @@
   font-size: 20px;
   font-weight: bold;
   text-align: center;
-  transition: color .2s ease-in-out;
+  transition: color 0.2s ease-in-out;
 }
