@@ -108,7 +108,7 @@ function MoreActionsMenu({
         <div
           className="more-actions-menu-entry"
           onClick={() => {
-            onUpload();
+            onUpload(menuProps.file);
             closeMenu();
           }}
         >
@@ -130,7 +130,7 @@ export class ContextMenuProps {
     file,
     setFile,
     fileGroup,
-    setFileGroup,
+    setFileGroup
   ) {
     this.isShown = isShown;
     this.showCallback = showCallback;

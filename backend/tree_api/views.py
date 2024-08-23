@@ -735,3 +735,60 @@ def upload_universe(request):
         {"success": True, "message": "Universe uploaded successfully"},
         status=status.HTTP_200_OK,
     )
+
+
+@api_view(["POST"])
+def upload_code(request):
+
+    # Check if 'name' and 'zipfile' are in the request data
+    if (
+        "project_name" not in request.data
+        or "location" not in request.data
+        or "zip_file" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the name and the zip file from the request
+    project_name = request.data["project_name"]
+    location = request.data["location"]
+    zip_file = request.data["zip_file"]
+
+    # Make folder path relative to Django app
+    base_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(base_path, project_name)
+    code_path = os.path.join(project_path, "code")
+    if location != "":
+        rel_location = os.path.relpath(
+            location, code_path
+        )  # NOTE This could be removed
+    else:
+        rel_location = ""
+    create_path = os.path.join(code_path, rel_location)
+
+    try:
+        zip_file_data = base64.b64decode(zip_file)
+    except (TypeError, ValueError):
+        return Response(
+            {"error": "Invalid zip file data."}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Save the zip file temporarily
+    temp_zip_path = os.path.join(create_path, "temp.zip")
+    with open(temp_zip_path, "wb") as temp_zip_file:
+        temp_zip_file.write(zip_file_data)
+
+    # Unzip the file
+    try:
+        with zipfile.ZipFile(temp_zip_path, "r") as zip_ref:
+            zip_ref.extractall(create_path)
+    except zipfile.BadZipFile:
+        return Response(
+            {"error": "Invalid zip file."}, status=status.HTTP_400_BAD_REQUEST
+        )
+    finally:
+        # Clean up the temporary zip file
+        if os.path.exists(temp_zip_path):
+            os.remove(temp_zip_path)

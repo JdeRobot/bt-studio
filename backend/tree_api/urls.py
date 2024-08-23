@@ -30,6 +30,7 @@ urlpatterns = [
     ),
     path("get_universe_zip/", views.get_universe_zip, name="generate_app"),
     path("upload_universe/", views.upload_universe, name="upload_universe"),
+    path("upload_code/", views.upload_code, name="upload_code"),
     path(
         "get_project_configuration/",
         views.get_project_configuration,

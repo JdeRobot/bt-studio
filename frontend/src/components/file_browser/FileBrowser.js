@@ -191,13 +191,22 @@ const FileBrowser = ({
 
   ///////////////// UPLOAD /////////////////////////////////////////////////////
 
-  const handleUpload = () => {
-    // TODO: something similar to the folder one to handle location selected
+  const handleUpload = (file) => {
+    if (file) {
+      setSelectedLocation(getParentDir(file));
+    } else {
+      if (selectedEntry) {
+        setSelectedLocation(getParentDir(selectedEntry));
+      } else {
+        setSelectedLocation("");
+      }
+    }
     setUploadModalOpen(true);
   };
 
   const handleCloseUploadModal = () => {
     setUploadModalOpen(false);
+    fetchFileList();
   };
 
   return (
@@ -248,7 +257,8 @@ const FileBrowser = ({
         isOpen={isUploadModalOpen}
         onSubmit={handleCloseUploadModal}
         onClose={handleCloseUploadModal}
-        selectedEntry={selectedEntry}
+        location={selectedLocation}
+        currentProject={currentProjectname}
       />
       <DeleteModal
         isOpen={isDeleteModalOpen}
