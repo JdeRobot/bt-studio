@@ -144,7 +144,7 @@ const UploadModal = ({
               id="uploadDropInput"
               onChange={(e) => handleAcceptedFiles(e.target.files)}
               type="file"
-              title="Upload file or folder"
+              title="Upload folder contents"
               webkitdirectory="true"
               multiple
               required
