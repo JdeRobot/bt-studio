@@ -15,7 +15,6 @@ const UploadModal = ({
   location,
   currentProject,
 }) => {
-  // const [uploadedData, setUploadedData] = useState("");
   const [uploadStatus, setUploadStatus] = useState("");
   const [uploadPercentage, setUploadPercentage] = useState(0);
 
@@ -24,7 +23,6 @@ const UploadModal = ({
 
   useEffect(() => {
     setUploadStatus("");
-    // setUploadedData("");
     setUploadPercentage(0);
     uploadInputRef.current.value = "";
   }, [isOpen]);
@@ -32,59 +30,43 @@ const UploadModal = ({
   const handleDrop = (event) => {
     event.preventDefault();
     uploadAreaRef.current.classList.remove("drag-active");
-    uploadInputRef.current.files = event.dataTransfer.files;
-    handleFileReader(uploadInputRef.current.files);
+
+    if (event.dataTransfer.files.length > 0) {
+      uploadInputRef.current.files = event.dataTransfer.files;
+      handleAcceptedFiles(uploadInputRef.current.files);
+    }
   };
 
-  const handleFileReader = (fileList) => {
-    var zip = new JSZip();
-    setUploadStatus("Uploading");
-    let reader = new FileReader();
-    console.log(fileList);
-    // TODO: Redo for directory and multiple files
-    let file = fileList[0];
-    let fileName = file.name.toString().split(".")[0];
+  const onZipUpdate = (metadata) => {
+    setUploadPercentage(metadata.percent);
+  };
 
-    reader.readAsDataURL(file);
+  const handleAcceptedFiles = async (files) => {
+    // TODO: Redo for directory
+    handleZipFiles(Array.from(files));
+  };
 
-    reader.onloadstart = () => {
-      setUploadPercentage(0);
-    };
+  const handleZipFiles = async (file_array) => {
+    const zip = new JSZip();
 
-    reader.onprogress = (data) => {
-      console.log(data);
-      if (data.lengthComputable) {
-        const progress = Math.round((data.loaded / data.total) * 100);
-        setUploadPercentage(progress);
-      }
-    };
+    file_array.forEach((file, index) => {
+      zip.file(file.name, file);
+    });
 
-    reader.onload = (e) => {
-      console.log("Loaded!");
-      const base64String = e.target.result.split(",")[1]; // Remove the data URL prefix
-      setUploadStatus("Uploaded");
-      setUploadPercentage(100);
-      console.log(atob(base64String));
-      zip.file(fileName, atob(base64String));
-      zip.generateAsync({ type: "base64" }).then(function (blob) {
-        uploadFileToBackend(blob);
-      });
-    };
+    const zipContent = await zip.generateAsync({ type: "base64" }, onZipUpdate);
 
-    reader.onerror = () => {
-      setUploadStatus("Error");
-      setUploadPercentage(0);
-    };
+    try {
+      uploadFileToBackend(zipContent);
+      console.log("Uploading file Completed");
+    } catch (error) {
+      console.log(error);
+      console.log("Error uploading file");
+    }
   };
 
   const uploadFileToBackend = async (uploadedData) => {
     console.log("Calling the saving API");
     console.log(currentProject);
-
-    // if (uploadPercentage != 100) {
-    //   console.warn("Not yet uploaded!");
-    //   return;
-    // }
 
     try {
       const response = await axios.post("/tree_api/upload_code/", {
@@ -160,10 +142,10 @@ const UploadModal = ({
               ref={uploadInputRef}
               className="modal-button"
               id="uploadDropInput"
-              onChange={(e) => handleFileReader(e.target.files)}
+              onChange={(e) => handleAcceptedFiles(e.target.files)}
               type="file"
               title="Upload file or folder"
-              webkitdirectory
+              webkitdirectory="true"
               multiple
               required
             />
