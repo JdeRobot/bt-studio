@@ -221,6 +221,8 @@ h3 {
   --error-button: var(--error-400);
   --error-button-hover: var(--error-500);
 
+  --create-button: hsla(93, 100%, 49%, 0.5);
+
   --progress-bar-bg: var(--background-300);
   --progress-bar-progress: var(--background-500);
 }

@@ -90,7 +90,7 @@ function MoreActionsMenu({
         <div
           className="more-actions-menu-entry"
           onClick={() => {
-            onCreateFile();
+            onCreateFile(menuProps.file);
             closeMenu();
           }}
         >

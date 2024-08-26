@@ -283,7 +283,7 @@ def get_file(request):
 
 
 @api_view(["GET"])
-def create_file(request):
+def create_action(request):
 
     # Get the file info
     project_name = request.GET.get("project_name", None)
@@ -297,7 +297,41 @@ def create_file(request):
     file_path = os.path.join(action_path, filename)
 
     if not os.path.exists(file_path):
-        if templates.create_file_from_template(file_path, filename, template):
+        if templates.create_action_from_template(file_path, filename, template):
+            return Response({"success": True})
+        else:
+            return Response(
+                {"success": False, "message": "Template does not exist"}, status=400
+            )
+    else:
+        return Response(
+            {"success": False, "message": "File already exists"}, status=400
+        )
+
+
+@api_view(["GET"])
+def create_file(request):
+
+    # Get the file info
+    project_name = request.GET.get("project_name", None)
+    location = request.GET.get("location", None)
+    filename = request.GET.get("folder_name", None)
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, "code")
+    if location != "":
+        rel_location = os.path.relpath(
+            location, action_path
+        )  # NOTE This could be removed
+    else:
+        rel_location = ""
+    create_path = os.path.join(action_path, rel_location)
+    file_path = os.path.join(create_path, filename)
+
+    if not os.path.exists(file_path):
+        if templates.create_action_from_template(file_path, filename, "empty"):
             return Response({"success": True})
         else:
             return Response(

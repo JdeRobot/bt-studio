@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./FileBrowser.css";
-import NewActionModal from "./modals/NewActionModal.jsx";
+import NewFileModal from "./modals/NewFileModal.jsx";
 import NewFolderModal from "./modals/NewFolderModal.jsx";
 import UploadModal from "./modals/UploadModal.jsx";
 import DeleteModal from "./modals/DeleteModal.jsx";
@@ -31,22 +31,29 @@ const FileBrowser = ({
   diagramEditorReady,
 }) => {
   const [fileList, setFileList] = useState(null);
-  const [isNewActionModalOpen, setNewActionModalOpen] = useState(false);
+  const [isNewFileModalOpen, setNewFileModalOpen] = useState(false);
   const [isNewFolderModalOpen, setNewFolderModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
-  const [newsletterFormData, setNewsletterFormData] = useState(null);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [deleteEntry, setDeleteEntry] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState("");
 
   useEffect(() => {
-    if (selectedEntry) {
-      setSelectedLocation(getParentDir(selectedEntry));
-    } else {
-      setSelectedLocation("");
-    }
+    updateSelectedLocation(null);
   }, [selectedEntry]);
+
+  const updateSelectedLocation = (file) => {
+    if (file) {
+      setSelectedLocation(getParentDir(file));
+    } else {
+      if (selectedEntry) {
+        setSelectedLocation(getParentDir(selectedEntry));
+      } else {
+        setSelectedLocation("");
+      }
+    }
+  };
 
   const fetchFileList = async () => {
     if (currentProjectname !== "") {
@@ -68,25 +75,35 @@ const FileBrowser = ({
 
   ///////////////// CREATE FILES ///////////////////////////////////////////////
 
-  const handleCreateFile = () => {
-    // TODO: something similar to the folder one to handle location selected
-    setNewActionModalOpen(true);
+  const handleCreateFile = (file) => {
+    updateSelectedLocation(file);
+    setNewFileModalOpen(true);
   };
 
-  const handleCloseNewActionModal = () => {
-    setNewActionModalOpen(false);
-    document.getElementById("actionName").value = "";
+  const handleCloseNewFileModal = () => {
+    setNewFileModalOpen(false);
+    document.getElementById("fileName").value = "";
   };
 
-  const handleNewActionSubmit = async (data) => {
-    setNewsletterFormData(data);
-    handleCloseNewActionModal();
+  const handleNewActionSubmit = async (location, data) => {
+    handleCloseNewFileModal();
 
-    if (data.actionName !== "") {
+    if (data.fileName !== "") {
       try {
-        const response = await axios.get(
-          `/tree_api/create_file?project_name=${currentProjectname}&filename=${data.actionName}.py&template=${data.templateType}`,
-        );
+        let response;
+        switch (data.fileType) {
+          case "actions":
+            response = await axios.get(
+              `/tree_api/create_action?project_name=${currentProjectname}&filename=${data.fileName}.py&template=${data.templateType}`,
+            );
+            break;
+          default:
+            // TODO:  create plain file
+            response = await axios.get(
+              `/tree_api/create_file?project_name=${currentProjectname}&location=${location}&folder_name=${data.fileName}`,
+            );
+            break;
+        }
         if (response.data.success) {
           setProjectChanges(true);
           fetchFileList(); // Update the file list
@@ -152,17 +169,7 @@ const FileBrowser = ({
   ///////////////// CREATE FOLDER //////////////////////////////////////////////
 
   const handleCreateFolder = (file) => {
-    if (file) {
-      setSelectedLocation(getParentDir(file));
-    } else {
-      if (selectedEntry) {
-        setSelectedLocation(getParentDir(selectedEntry));
-      } else {
-        setSelectedLocation("");
-      }
-    }
-
-    // TODO: Open modal to ask for the name
+    updateSelectedLocation(file);
     setNewFolderModalOpen(true);
   };
 
@@ -192,15 +199,7 @@ const FileBrowser = ({
   ///////////////// UPLOAD /////////////////////////////////////////////////////
 
   const handleUpload = (file) => {
-    if (file) {
-      setSelectedLocation(getParentDir(file));
-    } else {
-      if (selectedEntry) {
-        setSelectedLocation(getParentDir(selectedEntry));
-      } else {
-        setSelectedLocation("");
-      }
-    }
+    updateSelectedLocation(file);
     setUploadModalOpen(true);
   };
 
@@ -217,7 +216,7 @@ const FileBrowser = ({
         <div className="buttons">
           <button
             className="menu-button"
-            onClick={handleCreateFile}
+            onClick={() => handleCreateFile(null)}
             title="Create a new action file"
           >
             <AddIcon className="icon" fill={"var(--icon)"} />
@@ -240,11 +239,12 @@ const FileBrowser = ({
           )}
         </div>
       </div>
-      <NewActionModal
-        isOpen={isNewActionModalOpen}
+      <NewFileModal
+        isOpen={isNewFileModalOpen}
         onSubmit={handleNewActionSubmit}
-        onClose={handleCloseNewActionModal}
+        onClose={handleCloseNewFileModal}
         fileList={fileList}
+        location={selectedLocation}
       />
       <NewFolderModal
         isOpen={isNewFolderModalOpen}

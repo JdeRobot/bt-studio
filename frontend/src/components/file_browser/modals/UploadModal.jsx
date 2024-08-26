@@ -47,6 +47,7 @@ const UploadModal = ({
   };
 
   const handleZipFiles = async (file_array) => {
+    // TODO: check if files are valid
     const zip = new JSZip();
 
     file_array.forEach((file, index) => {

@@ -2,7 +2,7 @@ import os
 from django.conf import settings
 
 
-def create_file_from_template(file_path, filename, template):
+def create_action_from_template(file_path, filename, template):
 
     templates_folder_path = os.path.join(settings.BASE_DIR, "templates")
     template_path = os.path.join(templates_folder_path, template)

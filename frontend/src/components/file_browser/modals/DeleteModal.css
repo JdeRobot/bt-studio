@@ -27,13 +27,13 @@
   border-radius: 10px;
   height: 2em;
   font-size: medium;
+
+  &:hover:enabled {
+    opacity: 1;
+  }
 }
 
 #delete-selected-button {
   opacity: 0.6;
   background-color: var(--error);
-}
-
-.button-row button:hover {
-  opacity: 1 !important;
 }

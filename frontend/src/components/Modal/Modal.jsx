@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import "./Modal.css";
+import { ReactComponent as CloseIcon } from "./img/close.svg";
 
 const Modal = ({
   id = "modal",
@@ -43,9 +44,30 @@ const Modal = ({
 
   return (
     <dialog id={id} ref={modalRef} onKeyDown={handleKeyDown} className="modal">
-      {children}
+      <div className="modal-contents">{children}</div>
     </dialog>
   );
 };
 
 export default Modal;
+
+export const ModalTitlebar = ({ title, htmlFor, handleCancel }) => {
+  return (
+    <div className="modal-titlebar">
+      <label
+        className="modal-titlebar-title"
+        htmlFor={htmlFor}
+        style={{ textAlign: "center" }}
+      >
+        {title}
+      </label>
+      <CloseIcon
+        className="modal-titlebar-close icon"
+        onClick={() => {
+          handleCancel();
+        }}
+        fill={"var(--icon)"}
+      />
+    </div>
+  );
+};

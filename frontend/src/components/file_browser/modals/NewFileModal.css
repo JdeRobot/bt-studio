@@ -1,11 +1,3 @@
-.form-row + .form-row {
-  margin-top: 1rem;
-}
-
-.form-row {
-  margin-top: 10px;
-}
-
 .form-row select,
 .form-row button {
   width: 100%;
@@ -21,14 +13,20 @@
   border-radius: 10px;
   height: 2em;
   font-size: medium;
+  opacity: 0.6;
+
+  &:hover:enabled {
+    opacity: 1;
+  }
 }
 
 #templates-list {
   height: 170px;
 }
 
-#create-new-action:hover {
-  background-color: hsla(93, 100%, 49%, 0.5);
+#create-new-action {
+  width: 100px;
+  background-color: var(--create-button);
 }
 
 .templates-col {
@@ -75,11 +73,9 @@
 }
 
 .templates-list-container {
-  position: absolute;
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: calc(100% - 48px);
   justify-content: space-evenly;
 }
 
@@ -91,6 +87,5 @@
   font-size: large;
   font-weight: bold;
   text-align: center;
-  margin-top: 20px;
   margin-bottom: 10px;
 }

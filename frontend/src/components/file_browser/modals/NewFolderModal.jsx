@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./NewFolderModal.css";
 import Modal from "../../Modal/Modal";
 
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
@@ -8,17 +7,6 @@ const initialNewFolderModalData = {
   folderName: "",
   allowCreation: false,
 };
-
-function CreateButton({ hasToDisplay }) {
-  if (hasToDisplay) {
-    return (
-      <button type="submit" id="create-new-folder">
-        Create
-      </button>
-    );
-  }
-  return null;
-}
 
 const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
   const focusInputRef = useRef(null);
@@ -49,6 +37,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
             isValidName = false;
             return true;
           }
+          return false;
         });
       } else {
         isValidName = false;
@@ -116,13 +105,21 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
               placeholder="Folder Name"
               required
             />
-            <label for="folderName" class="modal-complex-input-label">
+            <label htmlFor="folderName" className="modal-complex-input-label">
               Folder Name
             </label>
           </div>
         </div>
         <div className="form-row">
-          <CreateButton hasToDisplay={createButton} />
+          <div className="button-row">
+            <button
+              type="submit"
+              id="create-new-action"
+              disabled={!createButton}
+            >
+              Create
+            </button>
+          </div>
         </div>
       </form>
     </Modal>
