@@ -5,13 +5,12 @@ import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 
 const initialNewFolderModalData = {
   folderName: "",
-  allowCreation: false,
 };
 
 const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialNewFolderModalData);
-  const [createButton, setcreateButton] = useState(false);
+  const [isCreationAllowed, allowCreation] = useState(false);
 
   useEffect(() => {
     if (isOpen && focusInputRef.current) {
@@ -43,7 +42,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
         isValidName = false;
       }
 
-      setcreateButton(isValidName);
+      allowCreation(isValidName);
     }
   };
 
@@ -51,7 +50,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
     event.preventDefault();
     onSubmit(location, formState.folderName);
     setFormState(initialNewFolderModalData);
-    setcreateButton(false);
+    allowCreation(false);
     onClose();
   };
 
@@ -61,7 +60,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
     }
     onClose();
     setFormState(initialNewFolderModalData);
-    setcreateButton(false);
+    allowCreation(false);
   };
 
   return (
@@ -96,7 +95,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
               id="folderName"
               name="folderName"
               className={
-                createButton
+                isCreationAllowed || formState.folderName === ""
                   ? "modal-complex-input"
                   : "modal-complex-input modal-complex-input-invalid"
               }
@@ -115,7 +114,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
             <button
               type="submit"
               id="create-new-action"
-              disabled={!createButton}
+              disabled={!isCreationAllowed}
             >
               Create
             </button>
