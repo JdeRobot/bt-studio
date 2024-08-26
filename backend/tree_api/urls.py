@@ -15,6 +15,7 @@ urlpatterns = [
     path("create_action/", views.create_action, name="create_action"),
     path("create_file/", views.create_file, name="create_file"),
     path("create_folder/", views.create_folder, name="create_folder"),
+    path("rename_file/", views.rename_file, name="rename_file"),
     path("delete_file/", views.delete_file, name="delete_file"),
     path("save_file/", views.save_file, name="save_file"),
     path("translate_json/", views.translate_json, name="translate_json"),

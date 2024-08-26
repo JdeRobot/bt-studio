@@ -5,13 +5,7 @@ import Modal from "../../Modal/Modal";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 
 // TODO add a way to select if plain text file
-const DeleteModal = ({
-  onSubmit,
-  isOpen,
-  onClose,
-  selectedEntry,
-  currentProjectname,
-}) => {
+const DeleteModal = ({ onSubmit, isOpen, onClose, selectedEntry }) => {
   //TODO: use relative path instead of absolute one
 
   useEffect(() => {

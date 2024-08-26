@@ -10,6 +10,7 @@ function MoreActionsMenu({
   onCreateFolder,
   onUpload,
   onDownload,
+  onRename,
 }) {
   const menuRef = useRef(null);
 
@@ -44,8 +45,7 @@ function MoreActionsMenu({
         <div
           className="more-actions-menu-entry"
           onClick={() => {
-            // TODO Rename
-            console.log("Rename");
+            onRename(menuProps.file);
             closeMenu();
           }}
         >
@@ -73,7 +73,7 @@ function MoreActionsMenu({
         </div>
         {!menuProps.file.is_dir &&
           menuProps.fileGroup === "Action" &&
-          false && (
+          false && ( // TODO: disabled
             <>
               <div className="more-actions-menu-divider" />
               <div

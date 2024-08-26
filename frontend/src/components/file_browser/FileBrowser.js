@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./FileBrowser.css";
 import NewFileModal from "./modals/NewFileModal.jsx";
+import RenameModal from "./modals/RenameModal.jsx";
 import NewFolderModal from "./modals/NewFolderModal.jsx";
 import UploadModal from "./modals/UploadModal.jsx";
 import DeleteModal from "./modals/DeleteModal.jsx";
@@ -34,10 +35,12 @@ const FileBrowser = ({
   const [fileList, setFileList] = useState(null);
   const [isNewFileModalOpen, setNewFileModalOpen] = useState(false);
   const [isNewFolderModalOpen, setNewFolderModalOpen] = useState(false);
+  const [isRenameModalOpen, setRenameModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [deleteEntry, setDeleteEntry] = useState(null);
+  const [renameEntry, setRenameEntry] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState("");
 
   useEffect(() => {
@@ -197,6 +200,56 @@ const FileBrowser = ({
     }
   };
 
+  ///////////////// RENAME /////////////////////////////////////////////////////
+
+  const handleRename = (file) => {
+    if (file) {
+      setRenameEntry(file);
+      document.getElementById("renameData").value = file.name;
+      setRenameModalOpen(true);
+    } else {
+      alert("No file is currently selected.");
+    }
+  };
+
+  const handleCloseRenameModal = () => {
+    setRenameModalOpen(false);
+  };
+
+  const handleSubmitRenameModal = async (new_path) => {
+    if (renameEntry) {
+      try {
+        const response = await axios.get(
+          `/tree_api/rename_file?project_name=${currentProjectname}&path=${renameEntry.path}&rename_to=${new_path}`,
+        );
+        if (response.data.success) {
+          setProjectChanges(true);
+          fetchFileList(); // Update the file list
+          //TODO: if is a file what was renamed may need to change the path
+          if (currentFilename === renameEntry.name) {
+            setCurrentFilename(new_path); // Unset the current file
+          }
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error deleting file:", error);
+      }
+    } else {
+      alert("No file is currently selected.");
+    }
+    handleCloseRenameModal();
+  };
+
+  const handleRenameCurrentFile = () => {
+    //TODO: need to obtain all file data to do this
+    if (currentFilename) {
+      handleDeleteModal(currentFilename);
+    } else {
+      alert("No file is currently selected.");
+    }
+  };
+
   ///////////////// UPLOAD /////////////////////////////////////////////////////
 
   const handleUpload = (file) => {
@@ -291,6 +344,7 @@ const FileBrowser = ({
           onCreateFolder={handleCreateFolder}
           onUpload={handleUpload}
           onDownload={handleDownload}
+          onRename={handleRename}
         />
       </div>
       <NewFileModal
@@ -307,6 +361,13 @@ const FileBrowser = ({
         fileList={fileList}
         location={selectedLocation}
       />
+      <RenameModal
+        isOpen={isRenameModalOpen}
+        onSubmit={handleSubmitRenameModal}
+        onClose={handleCloseRenameModal}
+        fileList={fileList}
+        selectedEntry={renameEntry}
+      />
       <UploadModal
         isOpen={isUploadModalOpen}
         onSubmit={handleCloseUploadModal}
@@ -319,7 +380,6 @@ const FileBrowser = ({
         onSubmit={handleSubmitDeleteModal}
         onClose={handleCloseDeleteModal}
         selectedEntry={deleteEntry}
-        currentProjectname={currentProjectname}
       />
     </div>
   );
