@@ -43,7 +43,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
     }));
 
     if (name === "folderName") {
-      if (value !== "") {
+      if (value !== "" && !value.includes(".")) {
         fileList.some((element) => {
           if (element.is_dir && element.name === value) {
             isValidName = false;
