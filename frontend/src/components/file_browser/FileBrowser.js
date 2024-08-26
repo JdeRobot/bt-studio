@@ -227,7 +227,7 @@ const FileBrowser = ({
             onClick={() => handleCreateFolder(null)}
             title="Create a new folder"
           >
-            <AddFolderIcon className="icon" fill={"var(--icon)"} />
+            <AddFolderIcon className="icon" stroke={"var(--icon)"} />
           </button>
           <button
             className="menu-button"
