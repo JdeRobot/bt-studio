@@ -21,8 +21,9 @@ export class TagNodeModel extends NodeModel<
   private is_blackboard: boolean;
   private is_selected: boolean;
 
-  private static blackboard_color: string = "#5BA498";
-  private static value_color: string = "#A45B67";
+  private static blackboard_color: string =
+    "var(--bt-tag-blackboard-background)";
+  private static value_color: string = "var(--bt-tag-normal-background)";
 
   constructor(name: string = "Tag Node", color: string = "rgb(128,128,128)") {
     super({
@@ -64,10 +65,12 @@ export class TagNodeModel extends NodeModel<
 
   selectNode() {
     this.is_selected = true;
+    this.setSelected(true);
   }
 
   deselectNode() {
     this.is_selected = false;
+    this.setSelected(false);
   }
 
   // Method to add children port (they can be default model because only the widget, the visualization changes)

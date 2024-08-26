@@ -57,7 +57,7 @@
 .css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
   background-color: var(--buttons) !important;
   color: var(--text) !important;
-  border: 2px solid #000000 !important;
+  border: 2px solid var(--border-color) !important;
 }
 
 .css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root:hover {

@@ -216,6 +216,7 @@ h3 {
   --buttons-invisible: var(--background);
   --buttons-hover: var(--background-500);
 
+  --border-color: var(--background-50);
   --icon: var(--text);
 
   --scrollbar: var(--background-500);
@@ -233,4 +234,11 @@ h3 {
 
   --progress-bar-bg: var(--background-300);
   --progress-bar-progress: var(--background-500);
+
+  --bt-light-text: #ffffff;
+  --bt-dark-text: #000000;
+  --bt-selected-shadow-color: var(--background-50);
+  --bt-action-default-color: red;
+  --bt-tag-blackboard-background: #5ba498;
+  --bt-tag-normal-background: #a45b67;
 }

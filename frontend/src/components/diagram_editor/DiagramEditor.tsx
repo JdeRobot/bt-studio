@@ -124,8 +124,13 @@ const DiagramEditor = ({
           targetPortChanged: (link: any) => {
             if (isCreated) {
               const { sourcePort, targetPort } = link.entity;
-              if (Object.keys(targetPort.getLinks()).length > 1) {
+              if (
+                targetPort.options.alignment === "left" &&
+                Object.keys(targetPort.getLinks()).length > 1
+              ) {
                 model.removeLink(link.entity);
+                sourcePort.removeLink(link.entity);
+                targetPort.removeLink(link.entity);
               } else if (
                 sourcePort instanceof ChildrenPortModel &&
                 !(targetPort instanceof ParentPortModel)
@@ -560,7 +565,6 @@ const DiagramEditor = ({
     );
     actionNodesData[currentActionNode.getName()]["color"] =
       currentActionNode.getColor();
-    console.log(actionNodesData);
     let name = currentActionNode.getName();
     for (const nodesId of actionNodesData[name]["ids"]) {
       let genericActionNode = model.current.getNode(nodesId);
