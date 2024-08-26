@@ -25,6 +25,7 @@
   padding-left: 10px;
   height: 50px;
   max-height: 50px;
+  background-color: var(--control-bar);
 }
 
 .action-buttons {
@@ -37,7 +38,7 @@
   justify-content: center;
   width: 30px;
   height: 30px;
-  background-color: var(--buttons-invisible);
+  background-color: var(--control-bar);
   border: 0;
 }
 

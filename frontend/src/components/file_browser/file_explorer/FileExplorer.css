@@ -1,7 +1,10 @@
 /* FileBrowser.css */
-
 .file-item-container {
-  padding-left: 0.5vw;
+  padding-left: 5px;
+
+  &:hover {
+    background-color: var(--buttons-hover);
+  }
 }
 
 .file-item-container:hover {
@@ -10,10 +13,10 @@
 
 .file-item-selected-container {
   background-color: var(--buttons);
-}
 
-.file-item-selected-container:hover {
-  background-color: var(--buttons-hover);
+  &:hover {
+    background-color: var(--buttons-hover);
+  }
 }
 
 .file-item {

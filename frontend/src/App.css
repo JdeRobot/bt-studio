@@ -38,6 +38,13 @@
   cursor: ew-resize;
 }
 
+.sidebar {
+  width: 200px;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
 h1 {
   font-size: 25px;
 }
@@ -201,7 +208,8 @@ h3 {
 
 :root,
 .App {
-  --header: var(--background-300);
+  --header: var(--primary-200);
+  --control-bar: var(--primary-100);
   --canvas-background: var(--secondary-800);
 
   --buttons: var(--background-300);

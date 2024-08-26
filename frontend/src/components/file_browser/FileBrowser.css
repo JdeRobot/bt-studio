@@ -1,10 +1,52 @@
-.editor-menu {
+.sidebar-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 1px;
+}
+
+.sidebar-entry {
+  height: fit-content;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 4px;
+}
+
+.sidebar-entry-contents {
+  overflow-y: auto;
+  flex: 1 1 1px;
+}
+
+.sidebar-entry-menu {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-left: 10px;
+  /* height: 32px;  */
   height: 50px;
   max-height: 50px;
+  padding: 0 10px 0 10px;
+  gap: 4px;
+  background-color: var(--control-bar);
+
+  & button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    background-color: var(--control-bar);
+    border: 0;
+    padding: 0 0 0 0;
+    &:hover {
+      background-color: var(--buttons-hover);
+      border-radius: 5px;
+    }
+  }
+}
+
+.force-other-side {
+  margin-left: auto;
 }
 
 .buttons {
@@ -17,8 +59,8 @@
 .menu-button {
   display: flex;
   justify-content: center;
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 28px;
   background-color: var(--buttons-invisible);
   border: 0;
   margin-left: 3px;

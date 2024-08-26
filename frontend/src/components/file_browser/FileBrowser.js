@@ -60,7 +60,7 @@ const FileBrowser = ({
     if (currentProjectname !== "") {
       try {
         const response = await axios.get(
-          `/tree_api/get_file_list?project_name=${currentProjectname}`
+          `/tree_api/get_file_list?project_name=${currentProjectname}`,
         );
         const files = JSON.parse(response.data.file_list);
         setFileList(files);
@@ -95,13 +95,13 @@ const FileBrowser = ({
         switch (data.fileType) {
           case "actions":
             response = await axios.get(
-              `/tree_api/create_action?project_name=${currentProjectname}&filename=${data.fileName}.py&template=${data.templateType}`
+              `/tree_api/create_action?project_name=${currentProjectname}&filename=${data.fileName}.py&template=${data.templateType}`,
             );
             break;
           default:
             // TODO:  create plain file
             response = await axios.get(
-              `/tree_api/create_file?project_name=${currentProjectname}&location=${location}&folder_name=${data.fileName}`
+              `/tree_api/create_file?project_name=${currentProjectname}&location=${location}&folder_name=${data.fileName}`,
             );
             break;
         }
@@ -138,7 +138,7 @@ const FileBrowser = ({
     if (deleteEntry) {
       try {
         const response = await axios.get(
-          `/tree_api/delete_file?project_name=${currentProjectname}&path=${deleteEntry}`
+          `/tree_api/delete_file?project_name=${currentProjectname}&path=${deleteEntry}`,
         );
         if (response.data.success) {
           setProjectChanges(true);
@@ -183,7 +183,7 @@ const FileBrowser = ({
     if (folder_name !== "") {
       try {
         const response = await axios.get(
-          `/tree_api/create_folder?project_name=${currentProjectname}&location=${location}&folder_name=${folder_name}`
+          `/tree_api/create_folder?project_name=${currentProjectname}&location=${location}&folder_name=${folder_name}`,
         );
         if (response.data.success) {
           setProjectChanges(true);
@@ -251,42 +251,92 @@ const FileBrowser = ({
   };
 
   return (
-    <div style={{ flex: "2" }}>
-      <div className="browser-menu">
-        {/* <h2>File Explorer</h2> */}
-        {/* Add them in a row below or smaller */}
-        <div className="buttons">
+    <div className="sidebar-content">
+      <div className="sidebar-entry">
+        <div className="sidebar-entry-menu">
+          {/* <h2>File Explorer</h2> */}
+          {/* Add them in a row below or smaller */}
           <button
-            className="menu-button"
             onClick={() => handleCreateFile(null)}
             title="Create a new file"
           >
             <AddIcon className="icon" fill={"var(--icon)"} />
           </button>
           <button
-            className="menu-button"
             onClick={() => handleCreateFolder(null)}
             title="Create a new folder"
           >
             <AddFolderIcon className="icon" stroke={"var(--icon)"} />
           </button>
-          <button
-            className="menu-button"
-            onClick={() => fetchFileList()}
-            title="Refresh View"
-          >
+          <button onClick={() => fetchFileList()} title="Refresh View">
             <RefreshIcon className="icon" stroke={"var(--icon)"} />
           </button>
+          <div style={{ marginLeft: "auto" }} />
           {currentFilename !== "" && (
-            <button
-              className="menu-button"
-              onClick={handleDeleteCurrentFile}
-              title="Delete file"
-            >
+            <button onClick={handleDeleteCurrentFile} title="Delete file">
               <DeleteIcon className="icon" fill={"var(--icon)"} />
             </button>
           )}
         </div>
+        <FileExplorer
+          setCurrentFilename={setCurrentFilename}
+          currentFilename={currentFilename}
+          currentProjectname={currentProjectname}
+          setSelectedEntry={setSelectedEntry}
+          actionNodesData={actionNodesData}
+          showAccentColor={showAccentColor}
+          diagramEditorReady={diagramEditorReady}
+          fileList={fileList}
+          fetchFileList={fetchFileList}
+          onDelete={handleDeleteModal}
+          onCreateFile={handleCreateFile}
+          onCreateFolder={handleCreateFolder}
+          onUpload={handleUpload}
+          onDownload={handleDownload}
+        />
+      </div>
+      <div className="sidebar-entry">
+        <div className="sidebar-entry-menu">
+          {/* <h2>File Explorer</h2> */}
+          {/* Add them in a row below or smaller */}
+          <button
+            onClick={() => handleCreateFile(null)}
+            title="Create a new file"
+          >
+            <AddIcon className="icon" fill={"var(--icon)"} />
+          </button>
+          <button
+            onClick={() => handleCreateFolder(null)}
+            title="Create a new folder"
+          >
+            <AddFolderIcon className="icon" stroke={"var(--icon)"} />
+          </button>
+          <button onClick={() => fetchFileList()} title="Refresh View">
+            <RefreshIcon className="icon" stroke={"var(--icon)"} />
+          </button>
+          <div style={{ marginLeft: "auto" }} />
+          {currentFilename !== "" && (
+            <button onClick={handleDeleteCurrentFile} title="Delete file">
+              <DeleteIcon className="icon" fill={"var(--icon)"} />
+            </button>
+          )}
+        </div>
+        <FileExplorer
+          setCurrentFilename={setCurrentFilename}
+          currentFilename={currentFilename}
+          currentProjectname={currentProjectname}
+          setSelectedEntry={setSelectedEntry}
+          actionNodesData={actionNodesData}
+          showAccentColor={showAccentColor}
+          diagramEditorReady={diagramEditorReady}
+          fileList={fileList}
+          fetchFileList={fetchFileList}
+          onDelete={handleDeleteModal}
+          onCreateFile={handleCreateFile}
+          onCreateFolder={handleCreateFolder}
+          onUpload={handleUpload}
+          onDownload={handleDownload}
+        />
       </div>
       <NewFileModal
         isOpen={isNewFileModalOpen}
@@ -315,22 +365,6 @@ const FileBrowser = ({
         onClose={handleCloseDeleteModal}
         selectedEntry={deleteEntry}
         currentProjectname={currentProjectname}
-      />
-      <FileExplorer
-        setCurrentFilename={setCurrentFilename}
-        currentFilename={currentFilename}
-        currentProjectname={currentProjectname}
-        setSelectedEntry={setSelectedEntry}
-        actionNodesData={actionNodesData}
-        showAccentColor={showAccentColor}
-        diagramEditorReady={diagramEditorReady}
-        fileList={fileList}
-        fetchFileList={fetchFileList}
-        onDelete={handleDeleteModal}
-        onCreateFile={handleCreateFile}
-        onCreateFolder={handleCreateFolder}
-        onUpload={handleUpload}
-        onDownload={handleDownload}
       />
     </div>
   );

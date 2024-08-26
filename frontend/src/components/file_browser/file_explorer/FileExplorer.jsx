@@ -34,7 +34,7 @@ const FileExplorer = ({
     menuFile,
     setMenuFile,
     menuGroupFile,
-    setMenuGroupFile
+    setMenuGroupFile,
   );
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const FileExplorer = ({
 
   if (Array.isArray(fileList)) {
     return (
-      <div>
+      <div className="sidebar-entry-contents">
         {fileList.map((file) => (
           <TreeNode
             node={file}
