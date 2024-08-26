@@ -31,5 +31,5 @@ def list_dir(directory):
             values.append(Entry(False, entry, entry_path))
         else:
             values.append(Entry(True, entry, entry_path, list_dir(entry_path)))
-    values.sort(key=lambda x: (not x.is_dir, x.name))
+    values.sort(key=lambda x: (not x.is_dir, x.name.lower()))
     return values

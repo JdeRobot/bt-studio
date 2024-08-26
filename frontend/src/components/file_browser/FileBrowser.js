@@ -10,6 +10,7 @@ import FileExplorer from "./file_explorer/FileExplorer.jsx";
 import { ReactComponent as AddIcon } from "./img/add.svg";
 import { ReactComponent as AddFolderIcon } from "./img/add_folder.svg";
 import { ReactComponent as DeleteIcon } from "./img/delete.svg";
+import { ReactComponent as RefreshIcon } from "./img/refresh.svg";
 
 function getParentDir(file) {
   // Check if is a directory and if not get the parent directory of the file
@@ -59,7 +60,7 @@ const FileBrowser = ({
     if (currentProjectname !== "") {
       try {
         const response = await axios.get(
-          `/tree_api/get_file_list?project_name=${currentProjectname}`,
+          `/tree_api/get_file_list?project_name=${currentProjectname}`
         );
         const files = JSON.parse(response.data.file_list);
         setFileList(files);
@@ -94,13 +95,13 @@ const FileBrowser = ({
         switch (data.fileType) {
           case "actions":
             response = await axios.get(
-              `/tree_api/create_action?project_name=${currentProjectname}&filename=${data.fileName}.py&template=${data.templateType}`,
+              `/tree_api/create_action?project_name=${currentProjectname}&filename=${data.fileName}.py&template=${data.templateType}`
             );
             break;
           default:
             // TODO:  create plain file
             response = await axios.get(
-              `/tree_api/create_file?project_name=${currentProjectname}&location=${location}&folder_name=${data.fileName}`,
+              `/tree_api/create_file?project_name=${currentProjectname}&location=${location}&folder_name=${data.fileName}`
             );
             break;
         }
@@ -137,7 +138,7 @@ const FileBrowser = ({
     if (deleteEntry) {
       try {
         const response = await axios.get(
-          `/tree_api/delete_file?project_name=${currentProjectname}&path=${deleteEntry}`,
+          `/tree_api/delete_file?project_name=${currentProjectname}&path=${deleteEntry}`
         );
         if (response.data.success) {
           setProjectChanges(true);
@@ -182,7 +183,7 @@ const FileBrowser = ({
     if (folder_name !== "") {
       try {
         const response = await axios.get(
-          `/tree_api/create_folder?project_name=${currentProjectname}&location=${location}&folder_name=${folder_name}`,
+          `/tree_api/create_folder?project_name=${currentProjectname}&location=${location}&folder_name=${folder_name}`
         );
         if (response.data.success) {
           setProjectChanges(true);
@@ -217,7 +218,7 @@ const FileBrowser = ({
           <button
             className="menu-button"
             onClick={() => handleCreateFile(null)}
-            title="Create a new action file"
+            title="Create a new file"
           >
             <AddIcon className="icon" fill={"var(--icon)"} />
           </button>
@@ -227,6 +228,13 @@ const FileBrowser = ({
             title="Create a new folder"
           >
             <AddFolderIcon className="icon" fill={"var(--icon)"} />
+          </button>
+          <button
+            className="menu-button"
+            onClick={() => fetchFileList()}
+            title="Refresh View"
+          >
+            <RefreshIcon className="icon" stroke={"var(--icon)"} />
           </button>
           {currentFilename !== "" && (
             <button
