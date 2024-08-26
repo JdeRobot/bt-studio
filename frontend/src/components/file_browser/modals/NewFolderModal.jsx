@@ -35,15 +35,26 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    var isValidName = true;
+
     setFormState((prevFormData) => ({
       ...prevFormData,
       [name]: value,
     }));
+
     if (name === "folderName") {
-      // TODO: check if this still works
-      setcreateButton(
-        value !== "" && !fileList.includes(value) && !value.includes("."),
-      );
+      if (value !== "") {
+        fileList.some((element) => {
+          if (element.is_dir && element.name === value) {
+            isValidName = false;
+            return true;
+          }
+        });
+      } else {
+        isValidName = false;
+      }
+
+      setcreateButton(isValidName);
     }
   };
 
@@ -95,7 +106,11 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
               type="text"
               id="folderName"
               name="folderName"
-              className="modal-complex-input"
+              className={
+                createButton
+                  ? "modal-complex-input"
+                  : "modal-complex-input modal-complex-input-invalid"
+              }
               onChange={handleInputChange}
               autoComplete="off"
               placeholder="Folder Name"

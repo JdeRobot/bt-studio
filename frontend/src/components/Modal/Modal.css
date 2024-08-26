@@ -85,7 +85,7 @@
 }
 
 .modal-complex-input:focus {
-  border-color: var(--input-focus-border) !important;
+  border-color: var(--input-focus-border);
   outline: none !important;
 }
 
@@ -134,6 +134,10 @@
   font-size: 1rem;
   color: var(--input-placeholder-text);
   user-select: none;
+}
+
+.modal-complex-input-invalid {
+  border-color: var(--error) !important;
 }
 
 .modal-complex-input-indications {
