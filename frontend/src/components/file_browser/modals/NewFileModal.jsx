@@ -47,7 +47,6 @@ const io = new CardEntryProps(
   "I/O",
 );
 
-// TODO add a way to select if plain text file
 const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialNewFileModalData);

@@ -71,21 +71,23 @@ function MoreActionsMenu({
         >
           <label>Delete</label>
         </div>
-        {!menuProps.file.is_dir && menuProps.fileGroup === "Action" && (
-          <>
-            <div className="more-actions-menu-divider" />
-            <div
-              className="more-actions-menu-entry"
-              onClick={() => {
-                // TODO open the same menu that in the diagram
-                console.log("Edit Action");
-                closeMenu();
-              }}
-            >
-              <label>Edit Action</label>
-            </div>
-          </>
-        )}
+        {!menuProps.file.is_dir &&
+          menuProps.fileGroup === "Action" &&
+          false && (
+            <>
+              <div className="more-actions-menu-divider" />
+              <div
+                className="more-actions-menu-entry"
+                onClick={() => {
+                  // TODO open the same menu that in the diagram
+                  console.log("Edit Action");
+                  closeMenu();
+                }}
+              >
+                <label>Edit Action</label>
+              </div>
+            </>
+          )}
         <div className="more-actions-menu-divider" />
         <div
           className="more-actions-menu-entry"

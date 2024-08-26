@@ -254,51 +254,6 @@ const FileBrowser = ({
     <div className="sidebar-content">
       <div className="sidebar-entry">
         <div className="sidebar-entry-menu">
-          {/* <h2>File Explorer</h2> */}
-          {/* Add them in a row below or smaller */}
-          <button
-            onClick={() => handleCreateFile(null)}
-            title="Create a new file"
-          >
-            <AddIcon className="icon" fill={"var(--icon)"} />
-          </button>
-          <button
-            onClick={() => handleCreateFolder(null)}
-            title="Create a new folder"
-          >
-            <AddFolderIcon className="icon" stroke={"var(--icon)"} />
-          </button>
-          <button onClick={() => fetchFileList()} title="Refresh View">
-            <RefreshIcon className="icon" stroke={"var(--icon)"} />
-          </button>
-          <div style={{ marginLeft: "auto" }} />
-          {currentFilename !== "" && (
-            <button onClick={handleDeleteCurrentFile} title="Delete file">
-              <DeleteIcon className="icon" fill={"var(--icon)"} />
-            </button>
-          )}
-        </div>
-        <FileExplorer
-          setCurrentFilename={setCurrentFilename}
-          currentFilename={currentFilename}
-          currentProjectname={currentProjectname}
-          setSelectedEntry={setSelectedEntry}
-          actionNodesData={actionNodesData}
-          showAccentColor={showAccentColor}
-          diagramEditorReady={diagramEditorReady}
-          fileList={fileList}
-          fetchFileList={fetchFileList}
-          onDelete={handleDeleteModal}
-          onCreateFile={handleCreateFile}
-          onCreateFolder={handleCreateFolder}
-          onUpload={handleUpload}
-          onDownload={handleDownload}
-        />
-      </div>
-      <div className="sidebar-entry">
-        <div className="sidebar-entry-menu">
-          {/* <h2>File Explorer</h2> */}
-          {/* Add them in a row below or smaller */}
           <button
             onClick={() => handleCreateFile(null)}
             title="Create a new file"
