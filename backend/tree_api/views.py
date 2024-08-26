@@ -15,6 +15,7 @@ import mimetypes
 import json
 import shutil
 import zipfile
+from distutils.dir_util import copy_tree
 from rest_framework import status
 from django.core.files.storage import default_storage
 import base64
@@ -500,6 +501,67 @@ def translate_json(request):
         return Response({"success": True})
     except Exception as e:
         return Response({"success": False, "message": str(e)}, status=400)
+
+
+@api_view(["POST"])
+def download_data(request):
+
+    # Check if 'name' and 'zipfile' are in the request data
+    if "app_name" not in request.data or "path" not in request.data:
+        return Response(
+            {"error": "Incorrect request parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the request parameters
+    app_name = request.data.get("app_name")
+    path = request.data.get("path")
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, app_name)
+    action_path = os.path.join(project_path, "code")
+    rel_path = os.path.relpath(path, action_path)
+    file_path = os.path.join(action_path, rel_path)
+
+    working_folder = "/tmp/wf"
+
+    if app_name and path:
+        try:
+            # 1. Create the working folder
+            if os.path.exists(working_folder):
+                shutil.rmtree(working_folder)
+            os.mkdir(working_folder)
+
+            # 2. Copy files to temp folder
+            if os.path.isdir(file_path):
+                copy_tree(file_path, working_folder)
+            else:
+                shutil.copy(file_path, working_folder)
+
+            # 5. Generate the zip
+            zip_path = working_folder + ".zip"
+            with zipfile.ZipFile(zip_path, "w") as zipf:
+                for root, dirs, files in os.walk(working_folder):
+                    for file in files:
+                        zipf.write(
+                            os.path.join(root, file),
+                            os.path.relpath(os.path.join(root, file), working_folder),
+                        )
+
+            # 6. Return the zip
+            zip_file = open(zip_path, "rb")
+            mime_type, _ = mimetypes.guess_type(zip_path)
+            response = HttpResponse(zip_file, content_type=mime_type)
+            response["Content-Disposition"] = (
+                f"attachment; filename={os.path.basename(zip_path)}"
+            )
+
+            return response
+        except Exception as e:
+            return Response({"success": False, "message": str(e)}, status=400)
+    else:
+        return Response({"error": "app_name parameter is missing"}, status=500)
 
 
 @api_view(["POST"])

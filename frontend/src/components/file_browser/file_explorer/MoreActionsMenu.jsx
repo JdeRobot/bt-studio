@@ -9,6 +9,7 @@ function MoreActionsMenu({
   onCreateFile,
   onCreateFolder,
   onUpload,
+  onDownload,
 }) {
   const menuRef = useRef(null);
 
@@ -50,12 +51,11 @@ function MoreActionsMenu({
         >
           <label>Rename</label>
         </div>
-        {!menuProps.file.is_dir && (
+        {true && (
           <div
             className="more-actions-menu-entry"
             onClick={() => {
-              // TODO download
-              console.log("Download");
+              onDownload(menuProps.file);
               closeMenu();
             }}
           >
@@ -130,7 +130,7 @@ export class ContextMenuProps {
     file,
     setFile,
     fileGroup,
-    setFileGroup,
+    setFileGroup
   ) {
     this.isShown = isShown;
     this.showCallback = showCallback;

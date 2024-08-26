@@ -19,6 +19,7 @@ const FileExplorer = ({
   onCreateFile,
   onCreateFolder,
   onUpload,
+  onDownload,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [menuFile, setMenuFile] = useState(null);
@@ -33,7 +34,7 @@ const FileExplorer = ({
     menuFile,
     setMenuFile,
     menuGroupFile,
-    setMenuGroupFile,
+    setMenuGroupFile
   );
 
   useEffect(() => {
@@ -76,6 +77,7 @@ const FileExplorer = ({
             onCreateFile={onCreateFile}
             onCreateFolder={onCreateFolder}
             onUpload={onUpload}
+            onDownload={onDownload}
           />
         )}
       </div>

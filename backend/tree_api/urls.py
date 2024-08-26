@@ -42,4 +42,5 @@ urlpatterns = [
         views.save_project_configuration,
         name="save_project_configuration",
     ),
+    path("download_data/", views.download_data, name="download_data"),
 ]

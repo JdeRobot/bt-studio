@@ -209,6 +209,47 @@ const FileBrowser = ({
     fetchFileList();
   };
 
+  ///////////////// DOWNLOAD ///////////////////////////////////////////////////
+  const fetchDownloadData = async (file_path) => {
+    const api_response = await fetch("/tree_api/download_data/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        app_name: currentProjectname,
+        path: file_path,
+      }),
+    });
+
+    if (!api_response.ok) {
+      var json_response = await api_response.json();
+      throw new Error(json_response.message || "An error occurred.");
+    }
+
+    return api_response.blob();
+  };
+
+  const handleDownload = async (file) => {
+    if (file) {
+      // Get the data as a base64 blob object
+      const app_blob = await fetchDownloadData(file.path);
+
+      try {
+        const url = window.URL.createObjectURL(app_blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = `${file.name}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+  };
+
   return (
     <div style={{ flex: "2" }}>
       <div className="browser-menu">
@@ -289,6 +330,7 @@ const FileBrowser = ({
         onCreateFile={handleCreateFile}
         onCreateFolder={handleCreateFolder}
         onUpload={handleUpload}
+        onDownload={handleDownload}
       />
     </div>
   );
