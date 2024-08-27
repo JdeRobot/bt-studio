@@ -22,14 +22,15 @@ class EntryEncoder(JSONEncoder):
         return o.__dict__
 
 
-def list_dir(directory):
+def list_dir(base_dir, directory):
     entries = os.listdir(directory)
     values = []
     for entry in entries:
         entry_path = os.path.join(directory, entry)
+        rel_path = os.path.relpath(entry_path, base_dir)
         if os.path.isfile(entry_path):
-            values.append(Entry(False, entry, entry_path))
+            values.append(Entry(False, entry, rel_path))
         else:
-            values.append(Entry(True, entry, entry_path, list_dir(entry_path)))
+            values.append(Entry(True, entry, rel_path, list_dir(base_dir, entry_path)))
     values.sort(key=lambda x: (not x.is_dir, x.name.lower()))
     return values

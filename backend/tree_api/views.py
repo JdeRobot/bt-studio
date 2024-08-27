@@ -245,7 +245,7 @@ def get_file_list(request):
             for f in glob.glob(action_path + "/**", recursive=True)
         ]
 
-        file_list = list_dir(action_path)
+        file_list = list_dir(action_path, action_path)
 
         # Return the list of files
         return Response({"file_list": EntryEncoder().encode(file_list)})
@@ -334,19 +334,13 @@ def create_file(request):
     # Get the file info
     project_name = request.GET.get("project_name", None)
     location = request.GET.get("location", None)
-    filename = request.GET.get("folder_name", None)
+    filename = request.GET.get("file_name", None)
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     action_path = os.path.join(project_path, "code")
-    if location != "":
-        rel_location = os.path.relpath(
-            location, action_path
-        )  # NOTE This could be removed
-    else:
-        rel_location = ""
-    create_path = os.path.join(action_path, rel_location)
+    create_path = os.path.join(action_path, location)
     file_path = os.path.join(create_path, filename)
 
     if not os.path.exists(file_path):
@@ -374,13 +368,7 @@ def create_folder(request):
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     action_path = os.path.join(project_path, "code")
-    if location != "":
-        rel_location = os.path.relpath(
-            location, action_path
-        )  # NOTE This could be removed
-    else:
-        rel_location = ""
-    create_path = os.path.join(action_path, rel_location)
+    create_path = os.path.join(action_path, location)
     folder_path = os.path.join(create_path, folder_name)
 
     if not os.path.exists(folder_path):
@@ -408,16 +396,11 @@ def rename_file(request):
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     action_path = os.path.join(project_path, "code")
-    rel_path = os.path.relpath(path, action_path)
-    file_path = os.path.join(action_path, rel_path)
-    new_rel_path = os.path.relpath(rename_path, action_path)
-    new_path = os.path.join(action_path, new_rel_path)
+    file_path = os.path.join(action_path, path)
+    new_path = os.path.join(action_path, rename_path)
 
     if os.path.exists(file_path):
         try:
-            # if os.path.isdir(file_path):
-            #     shutil.rmtree(file_path)
-            # else:
             os.rename(file_path, new_path)
             return JsonResponse({"success": True})
         except Exception as e:
@@ -442,8 +425,7 @@ def delete_file(request):
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     action_path = os.path.join(project_path, "code")
-    rel_path = os.path.relpath(path, action_path)
-    file_path = os.path.join(action_path, rel_path)
+    file_path = os.path.join(action_path, path)
 
     if os.path.exists(file_path):
         try:
@@ -472,7 +454,7 @@ def save_file(request):
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, "code/actions")
+    action_path = os.path.join(project_path, "code")
     file_path = os.path.join(action_path, filename)
 
     # If file doesn't exist simply return
@@ -574,8 +556,7 @@ def download_data(request):
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, app_name)
     action_path = os.path.join(project_path, "code")
-    rel_path = os.path.relpath(path, action_path)
-    file_path = os.path.join(action_path, rel_path)
+    file_path = os.path.join(action_path, path)
 
     working_folder = "/tmp/wf"
 
@@ -909,13 +890,7 @@ def upload_code(request):
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, project_name)
     code_path = os.path.join(project_path, "code")
-    if location != "":
-        rel_location = os.path.relpath(
-            location, code_path
-        )  # NOTE This could be removed
-    else:
-        rel_location = ""
-    create_path = os.path.join(code_path, rel_location)
+    create_path = os.path.join(code_path, location)
 
     try:
         zip_file_data = base64.b64decode(zip_file)
