@@ -18,13 +18,13 @@ const plain = new CardEntryProps(
   "plain",
   "plainType",
   <ActionTeplateIcon className="icon" fill={"var(--icon)"} />,
-  "Plain File",
+  "Plain File"
 );
 const actions = new CardEntryProps(
   "actions",
   "actionsType",
   <IOTeplateIcon className="icon" fill={"var(--icon)"} />,
-  "Action",
+  "Action"
 );
 
 ///////////////////////// ACTIONS //////////////////////////////////////////////
@@ -32,19 +32,19 @@ const empty = new CardEntryProps(
   "empty",
   "emptyTemplate",
   <EmptyTeplateIcon className="icon" stroke={"var(--icon)"} />,
-  "Empty",
+  "Empty"
 );
 const action = new CardEntryProps(
   "action",
   "actionTemplate",
   <ActionTeplateIcon className="icon" fill={"var(--icon)"} />,
-  "Action",
+  "Action"
 );
 const io = new CardEntryProps(
   "io",
   "ioTemplate",
   <IOTeplateIcon className="icon" fill={"var(--icon)"} />,
-  "I/O",
+  "I/O"
 );
 
 const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
@@ -53,6 +53,9 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
   const [template, setTemplate] = useState("empty");
   const [creationType, setCreationType] = useState("plain");
   const [isCreationAllowed, allowCreation] = useState(false);
+  // Search lists for valid names
+  const [searchActionsList, setSearchActionsList] = useState(null);
+  const [searchPlainList, setSearchPlainList] = useState(null);
 
   const typesCardEntryProps = [plain, actions];
   const actionsCardEntryProps = [empty, action, io];
@@ -75,7 +78,32 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
     }
     setCreationType("plain");
     setTemplate("empty");
+
+    if (isOpen && location) {
+      //TODO: one for actions and one for location
+      createValidNamesList(location, setSearchPlainList);
+      createValidNamesList("actions", setSearchActionsList);
+    }
   }, [isOpen]);
+
+  const createValidNamesList = (orig_path, callback) => {
+    var path = orig_path.split("/");
+    let search_list = fileList;
+
+    for (let index = 0; index < path.length; index++) {
+      search_list = search_list.find(
+        (entry) => entry.name === path[index] && entry.is_dir
+      ).files;
+    }
+
+    console.log(search_list);
+
+    if (search_list) {
+      callback(search_list);
+    } else {
+      callback([]);
+    }
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -85,15 +113,23 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
       ...prevFormData,
       [name]: value,
     }));
-    // TODO: check differently for each type
+
     if (name === "fileName") {
-      if (
-        value !== "" &&
-        !(value.includes(".") && creationType === "actions") &&
-        !value.includes("/")
-      ) {
-        fileList.some((element) => {
-          if (!element.is_dir && element.name === value) {
+      var preCheck;
+      var checkList;
+
+      if (creationType === "actions") {
+        preCheck = value !== "" && !value.includes(".") && !value.includes("/");
+        checkList = searchActionsList;
+      } else {
+        preCheck = value !== "" && !value.includes("/");
+        checkList = searchPlainList;
+      }
+
+      if (preCheck) {
+        checkList.some((element) => {
+          // TODO: if action remove .py
+          if (element.name === value) {
             isValidName = false;
             return true;
           }
