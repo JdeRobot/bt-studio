@@ -17,6 +17,7 @@ const RenameModal = ({
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialNewFolderModalData);
   const [isCreationAllowed, allowCreation] = useState(false);
+  const [searchList, setSearchList] = useState(null);
 
   useEffect(() => {
     if (isOpen && focusInputRef.current) {
@@ -33,6 +34,27 @@ const RenameModal = ({
       document.getElementById("renameData").value = selectedEntry.name;
     }
     console.log(selectedEntry);
+    if (selectedEntry) {
+      var path = selectedEntry.path.split("/");
+      console.log(path.length);
+      if (path.length == 1) {
+        return setSearchList(fileList);
+      }
+
+      let search_list = fileList;
+      console.log(fileList);
+      for (let index = 0; index < path.length - 1; index++) {
+        search_list = fileList.find(
+          (entry) => entry.name === path[index] && entry.is_dir
+        );
+      }
+      console.log(searchList);
+      if (search_list) {
+        setSearchList(search_list.files);
+      } else {
+        setSearchList(fileList);
+      }
+    }
   }, [isOpen]);
 
   const handleInputChange = (event) => {
@@ -46,9 +68,16 @@ const RenameModal = ({
 
     if (name === "renameData") {
       //TODO: improve check
-      if (value !== "") {
-        fileList.some((element) => {
-          if (element.is_dir && element.name === value) {
+      var preCheck;
+      if (selectedEntry.is_dir) {
+        preCheck = value !== "" && !value.includes(".");
+      } else {
+        preCheck = value !== "";
+      }
+
+      if (preCheck) {
+        searchList.some((element) => {
+          if (element.name === value) {
             isValidName = false;
             return true;
           }
