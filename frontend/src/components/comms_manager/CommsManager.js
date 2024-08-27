@@ -71,7 +71,7 @@ const CommsManager = (address) => {
         //unsuscribeAll();
         if (e.wasClean) {
           console.log(
-            `Connection with ${address} closed, all suscribers cleared`
+            `Connection with ${address} closed, all suscribers cleared`,
           );
         } else {
           console.log(`Connection with ${address} interrupted`);
