@@ -32,27 +32,25 @@ const RenameModal = ({
         renameData: selectedEntry.name,
       }));
       document.getElementById("renameData").value = selectedEntry.name;
-    }
-    console.log(selectedEntry);
-    if (selectedEntry) {
+
       var path = selectedEntry.path.split("/");
-      console.log(path.length);
+
       if (path.length == 1) {
         return setSearchList(fileList);
       }
 
       let search_list = fileList;
-      console.log(fileList);
+
       for (let index = 0; index < path.length - 1; index++) {
-        search_list = fileList.find(
-          (entry) => entry.name === path[index] && entry.is_dir
-        );
+        search_list = search_list.find(
+          (entry) => entry.name === path[index] && entry.is_dir,
+        ).files;
       }
-      console.log(searchList);
+
       if (search_list) {
-        setSearchList(search_list.files);
+        setSearchList(search_list);
       } else {
-        setSearchList(fileList);
+        setSearchList([]);
       }
     }
   }, [isOpen]);

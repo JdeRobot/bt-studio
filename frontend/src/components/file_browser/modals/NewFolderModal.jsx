@@ -11,12 +11,34 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialNewFolderModalData);
   const [isCreationAllowed, allowCreation] = useState(false);
+  const [searchList, setSearchList] = useState(null);
 
   useEffect(() => {
     if (isOpen && focusInputRef.current) {
       setTimeout(() => {
         focusInputRef.current.focus();
       }, 0);
+    }
+
+    console.log(location);
+
+    if (isOpen && location) {
+      var path = location.split("/");
+      console.log(path);
+
+      let search_list = fileList;
+
+      for (let index = 0; index < path.length; index++) {
+        search_list = search_list.find(
+          (entry) => entry.name === path[index] && entry.is_dir,
+        ).files;
+      }
+
+      if (search_list) {
+        setSearchList(search_list);
+      } else {
+        setSearchList([]);
+      }
     }
   }, [isOpen]);
 
@@ -31,8 +53,8 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
 
     if (name === "folderName") {
       if (value !== "" && !value.includes(".")) {
-        fileList.some((element) => {
-          if (element.is_dir && element.name === value) {
+        searchList.some((element) => {
+          if (element.name === value) {
             isValidName = false;
             return true;
           }

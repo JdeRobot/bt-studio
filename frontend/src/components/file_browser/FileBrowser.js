@@ -149,6 +149,9 @@ const FileBrowser = ({
           if (currentFilename === deleteEntry) {
             setCurrentFilename(""); // Unset the current file
           }
+          if (selectedEntry.path === deleteEntry) {
+            setSelectedEntry(null);
+          }
         } else {
           alert(response.data.message);
         }
