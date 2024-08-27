@@ -754,6 +754,27 @@ const DiagramEditor = ({
     return api_response.blob();
   };
 
+  const fetchDockerizedApp = async (tree_graph: any) => {
+    const api_response = await fetch("/tree_api/generate_dockerized_app/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        app_name: currentProjectname,
+        tree_graph: tree_graph,
+        bt_order: btOrder,
+      }),
+    });
+
+    if (!api_response.ok) {
+      var json_response = await api_response.json();
+      throw new Error(json_response.message || "An error occurred.");
+    }
+
+    return api_response.blob();
+  };
+
   const downloadApp = async () => {
     if (model.current) {
       // Get the app as a base64 blob object
@@ -780,7 +801,7 @@ const DiagramEditor = ({
       if (!appRunning) {
         // Get the app as a base64 blob object
         const tree_graph = JSON.stringify(model.current.serialize());
-        const app_blob = await fetchApp(tree_graph);
+        const app_blob = await fetchDockerizedApp(tree_graph);
         const base64data = await app_blob.text();
 
         // Send the zip

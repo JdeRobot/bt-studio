@@ -489,7 +489,11 @@ def generate_app(request):
 def generate_dockerized_app(request):
 
     # Check if 'name' and 'zipfile' are in the request data
-    if "app_name" not in request.data or "tree_graph" not in request.data:
+    if (
+        "app_name" not in request.data
+        or "tree_graph" not in request.data
+        or "bt_order" not in request.data
+    ):
         return Response(
             {"error": "Incorrect request parameters"},
             status=status.HTTP_400_BAD_REQUEST,
