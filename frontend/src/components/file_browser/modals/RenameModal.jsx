@@ -30,6 +30,7 @@ const RenameModal = ({
         ...prevFormData,
         renameData: selectedEntry.name,
       }));
+      document.getElementById("renameData").value = selectedEntry.name;
     }
     console.log(selectedEntry);
   }, [isOpen]);
