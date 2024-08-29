@@ -80,11 +80,15 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
     setTemplate("empty");
 
     if (isOpen && location) {
-      //TODO: one for actions and one for location
+      //NOTE: One for actions and one for location
       createValidNamesList(location, setSearchPlainList);
       createValidNamesList("actions", setSearchActionsList);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    updateCreation(formState["fileName"]);
+  }, [creationType]);
 
   const createValidNamesList = (orig_path, callback) => {
     var path = orig_path.split("/");
@@ -107,7 +111,6 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    var isValidName = true;
 
     setFormState((prevFormData) => ({
       ...prevFormData,
@@ -115,37 +118,43 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
     }));
 
     if (name === "fileName") {
-      var preCheck;
-      var checkList;
-
-      if (creationType === "actions") {
-        preCheck = value !== "" && !value.includes(".") && !value.includes("/");
-        checkList = searchActionsList;
-      } else {
-        preCheck = value !== "" && !value.includes("/");
-        checkList = searchPlainList;
-      }
-
-      if (preCheck) {
-        checkList.some((element) => {
-          var name = element.name;
-
-          if (creationType === "actions") {
-            name = name.replace(".py", "");
-          }
-
-          if (name === value) {
-            isValidName = false;
-            return true;
-          }
-          return false;
-        });
-      } else {
-        isValidName = false;
-      }
-
-      allowCreation(isValidName);
+      updateCreation(value);
     }
+  };
+
+  const updateCreation = (newName) => {
+    var isValidName = true;
+    var preCheck, checkList;
+
+    if (creationType === "actions") {
+      preCheck =
+        newName !== "" && !newName.includes(".") && !newName.includes("/");
+      checkList = searchActionsList;
+    } else {
+      preCheck = newName !== "" && !newName.includes("/");
+      checkList = searchPlainList;
+    }
+
+    if (preCheck) {
+      checkList.some((element) => {
+        var name = element.name;
+
+        if (creationType === "actions") {
+          name = name.replace(".py", "");
+        }
+
+        if (name === newName) {
+          isValidName = false;
+          return true;
+        }
+        return false;
+      });
+    } else {
+      isValidName = false;
+    }
+    console.log(creationType);
+
+    allowCreation(isValidName);
   };
 
   const handleSubmit = (event) => {
