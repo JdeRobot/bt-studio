@@ -27,7 +27,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
 
       for (let index = 0; index < path.length; index++) {
         search_list = search_list.find(
-          (entry) => entry.name === path[index] && entry.is_dir,
+          (entry) => entry.name === path[index] && entry.is_dir
         ).files;
       }
 
