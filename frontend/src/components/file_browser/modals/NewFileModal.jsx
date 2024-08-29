@@ -128,8 +128,13 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
 
       if (preCheck) {
         checkList.some((element) => {
-          // TODO: if action remove .py
-          if (element.name === value) {
+          var name = element.name;
+
+          if (creationType === "actions") {
+            name = name.replace(".py", "");
+          }
+
+          if (name === value) {
             isValidName = false;
             return true;
           }
