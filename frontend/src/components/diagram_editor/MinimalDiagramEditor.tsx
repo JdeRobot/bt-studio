@@ -328,6 +328,7 @@ const MinimalDiagramEditor = memo(
 
     // Deserialize and load the model
     model.current.deserializeModel(modelJson, engine.current);
+    setResultJson(modelJson);
     attachLinkListener(model.current);
     engine.current.setModel(model.current);
 

@@ -1,19 +1,17 @@
 // App.js
 import React, { useMemo, useState, useEffect } from "react";
 // import useLocalStorage from 'use-local-storage'
-import { useUnload } from "./components/comms_manager/useUnload";
+import { useUnload } from "./hooks/useUnload";
 import { Resizable } from "react-resizable";
 import HeaderMenu from "./components/header_menu/HeaderMenu";
 import FileBrowser from "./components/file_browser/FileBrowser";
 import FileEditor from "./components/file_editor/FileEditor";
 import "./App.css";
-import DiagramEditor from "./components/diagram_editor/DiagramEditor";
-import MinimalDiagramEditor from "./components/diagram_editor/MinimalDiagramEditor";
 import VncViewer from "./components/vnc_viewer/VncViewer";
-import CommsManager from "./components/comms_manager/CommsManager";
 import ErrorModal from "./components/error_popup/ErrorModal";
 import axios from "axios";
 import EditorContainer from "./components/diagram_editor/EditorContainer";
+import CommsManager from "./api_helper/CommsManager";
 
 const App = () => {
   const [editorWidth, setEditorWidth] = useState(807);
@@ -28,7 +26,6 @@ const App = () => {
   const [manager, setManager] = useState(null);
   const [diagramEditorReady, setDiagramEditorReady] = useState(false);
   const [appRunning, setAppRunning] = useState(false);
-  const [appLoaded, setAppLoaded] = useState(false);
 
   // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
@@ -55,14 +52,12 @@ const App = () => {
   };
   //////////////////////////////////////////////////////
 
-  useEffect(() => {
-    const newManager = CommsManager("ws://127.0.0.1:7163");
-    setManager(newManager);
-  }, []);
+  // RB manager setup
 
-  useUnload(() => {
-    manager.disconnect();
-  });
+  useEffect(() => {
+    const manager = CommsManager.getInstance();
+    setManager(manager);
+  }, []);
 
   const connectWithRetry = async () => {
     try {
@@ -75,202 +70,16 @@ const App = () => {
     }
   };
 
-  const fetchApp = async (tree_graph) => {
-    const api_response = await fetch("/tree_api/generate_app/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        app_name: currentProjectname,
-        tree_graph: tree_graph,
-        bt_order: btOrder,
-      }),
-    });
-
-    if (!api_response.ok) {
-      var json_response = await api_response.json();
-      throw new Error(json_response.message || "An error occurred.");
-    }
-
-    return api_response.blob();
-  };
-
-  const onRunApp = async () => {
-    if (gazeboEnabled) {
-      if (!appRunning) {
-        // Get the app as a base64 blob object
-        const app_blob = await fetchApp(modelJson);
-        const base64data = await app_blob.text();
-
-        // Send the zip
-        var api_response = await manager.run({
-          type: "bt-studio",
-          code: base64data,
-        });
-        if (api_response.ok) {
-          console.log("App resumed!");
-          setAppRunning(true);
-        } else {
-          let linterMessage = JSON.stringify(api_response.data.message).split(
-            "\\n"
-          );
-          alert(`Received linter message: ${linterMessage}`);
-        }
-      } else {
-        await manager.pause();
-        console.log("App paused!");
-        setAppRunning(false);
-      }
-    } else {
-      console.log("Gazebo is not up!");
-    }
-  };
-
-  const onResetApp = async () => {
-    if (gazeboEnabled) {
-      await manager.terminate_application();
-      console.log("App reseted!");
-      setAppRunning(false);
-      setAppLoaded(false);
-    } else {
-      console.log("Gazebo is not up!");
-    }
-  };
-
-  const onDownloadApp = async () => {
-    if (modelJson) {
-      // Get the app as a base64 blob object
-      const app_blob = await fetchApp(modelJson);
-
-      try {
-        const url = window.URL.createObjectURL(app_blob);
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-        a.download = `${currentProjectname}.zip`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    }
-  };
-
-  const launchUniverse = async (universe_name) => {
-    const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
-      currentProjectname
-    )}&universe_name=${encodeURIComponent(universe_name)}`;
-
-    try {
-      const response = await axios.get(apiUrl);
-      console.log("Stored universe config: " + response.data);
-      const stored_cfg = JSON.parse(response.data);
-      if (stored_cfg.type === "robotics_backend") {
-        await launchBackendUniverse(stored_cfg);
-      } else {
-        launchCustomUniverse(stored_cfg);
-      }
-    } catch (error) {
-      console.error("Error launching universe:", error);
-    }
-  };
-
-  const launchBackendUniverse = async (stored_cfg) => {
-    const universe_config = {
-      name: stored_cfg.name,
-      launch_file_path: stored_cfg.config.launch_file_path,
-      ros_version: "ROS2",
-      visualization: "gazebo_rae",
-      world: "gazebo",
-      exercise_id: stored_cfg.config.id,
-    };
-
-    try {
-      await manager.launchWorld(universe_config);
-      console.log("RB universe launched!");
-      await manager.prepareVisualization(universe_config.visualization);
-      console.log("Viz ready!");
-      setGazeboEnabled(true);
-    } catch (error) {
-      console.error("Error launching RB universe:", error);
-    }
-  };
-
-  const sendOnLoad = async (reader, stored_cfg) => {
-    // Get the zip in base64
-    var base64data = reader.result;
-
-    // Prepare the config
-    const universe_cfg = {
-      name: stored_cfg.name,
-      launch_file_path: stored_cfg.ram_config.launch_file_path,
-      ros_version: stored_cfg.ram_config.ros_version,
-      world: stored_cfg.ram_config.world,
-      zip: base64data,
-    };
-
-    // Launch the world
-    await manager.launchWorld(universe_cfg);
-    console.log("Universe launched!");
-    await manager.prepareVisualization("bt_studio");
-    console.log("Viz ready!");
-    setGazeboEnabled(true);
-  };
-
-  const launchCustomUniverse = async (stored_cfg) => {
-    console.log("Launching a zip universe: " + stored_cfg.name);
-
-    try {
-      const response = await fetch("/tree_api/get_universe_zip/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          app_name: currentProjectname,
-          universe_name: stored_cfg.name,
-        }),
-      });
-      const blob = await response.blob();
-      const reader = new FileReader();
-
-      reader.onloadend = () => sendOnLoad(reader, stored_cfg); // Fix: pass the function reference
-      reader.readAsDataURL(blob);
-    } catch (error) {
-      console.error("Error launching RB universe:", error);
-    }
-  };
-
-  const terminateUniverse = async () => {
-    if (gazeboEnabled) {
-      setGazeboEnabled(false); // This allows for smooth reload
-
-      await manager.terminate_application();
-      await manager.terminate_visualization();
-      await manager.terminate_universe();
-    }
-  };
-
-  const changeUniverse = async (universe_name) => {
-    if (gazeboEnabled) {
-      await manager.terminate_application();
-      await manager.terminate_visualization();
-      await manager.terminate_universe();
-
-      setGazeboEnabled(false); // This allows for smooth reload
-
-      launchUniverse(universe_name);
-    }
-  };
-
   useEffect(() => {
     if (manager) {
       console.log("The manager is up!");
       connectWithRetry();
     }
-  }, [manager]); // Re-run if the manager instance changes
+  }, [manager]);
+
+  useUnload(() => {
+    manager.disconnect();
+  });
 
   const loadProjectConfig = async () => {
     try {
@@ -334,22 +143,18 @@ const App = () => {
       <ErrorModal isOpen={isErrorModalOpen} onClose={closeError} />
 
       <HeaderMenu
-        setCurrentProjectname={setCurrentProjectname}
         currentProjectname={currentProjectname}
-        setCurrentUniverseName={setCurrentUniverseName}
+        setCurrentProjectname={setCurrentProjectname}
         currentUniverseName={currentUniverseName}
-        launchUniverse={launchUniverse}
-        terminateUniverse={terminateUniverse}
-        changeUniverse={changeUniverse}
+        setCurrentUniverseName={setCurrentUniverseName}
         modelJson={modelJson}
         projectChanges={projectChanges}
         setProjectChanges={setProjectChanges}
         openError={openError}
         settingsProps={settings}
-        onDownloadApp={onDownloadApp}
-        onRunApp={onRunApp}
-        isAppRunning={appRunning}
-        onResetApp={onResetApp}
+        gazeboEnabled={gazeboEnabled}
+        setGazeboEnabled={setGazeboEnabled}
+        manager={manager}
       />
 
       <div className="App-main" style={{ display: "flex" }}>

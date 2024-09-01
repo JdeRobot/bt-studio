@@ -198,25 +198,40 @@ def get_universes_list(request):
 
 @api_view(["GET"])
 def get_universe_configuration(request):
-
     project_name = request.GET.get("project_name")
     universe_name = request.GET.get("universe_name")
+
+    if not project_name:
+        return Response(
+            {"success": False, "message": "Project parameter is missing"}, status=400
+        )
+
+    if not universe_name:
+        return Response(
+            {"success": False, "message": "Universe parameter is missing"}, status=400
+        )
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     universes_path = os.path.join(project_path, "universes/")
 
-    if universe_name:
-        universe_path = os.path.join(universes_path, universe_name)
-        config_path = os.path.join(universe_path, "config.json")
-        if os.path.exists(config_path):
+    universe_path = os.path.join(universes_path, universe_name)
+    config_path = os.path.join(universe_path, "config.json")
+
+    if os.path.exists(config_path):
+        try:
             with open(config_path, "r") as f:
-                content = f.read()
-            return Response(content)
-        else:
-            return Response({"error": "File not found"}, status=404)
+                content = json.load(f)  # Load JSON content directly
+            return Response(
+                {"success": True, "config": content}, status=200
+            )  # Return as JSON
+        except json.JSONDecodeError:
+            return Response(
+                {"success": False, "message": "Invalid JSON format in config file"},
+                status=500,
+            )
     else:
-        return Response({"error": "Universe parameter is missing"}, status=400)
+        return Response({"success": False, "message": "File not found"}, status=404)
 
 
 @api_view(["GET"])
@@ -643,6 +658,7 @@ def generate_app(request):
 
         # Confirm ZIP file exists
         if not os.path.exists(zip_file_path):
+            print("Problems with the zip")
             return Response(
                 {"success": False, "message": "ZIP file not found"}, status=400
             )

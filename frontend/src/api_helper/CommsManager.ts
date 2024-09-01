@@ -6,7 +6,7 @@ type PromiseHandlers = {
   reject: (reason?: any) => void;
 };
 
-class CommsManager {
+export default class CommsManager {
   private static instance: CommsManager;
   private ws: WebSocket;
   private pendingPromises: Map<string, PromiseHandlers> = new Map();
@@ -49,9 +49,9 @@ class CommsManager {
   }
 
   // Singleton behavior
-  public static getInstance(address: string): CommsManager {
+  public static getInstance(): CommsManager {
     if (!CommsManager.instance) {
-      CommsManager.instance = new CommsManager(address);
+      CommsManager.instance = new CommsManager("ws://127.0.0.1:7163");
     }
     return CommsManager.instance;
   }
