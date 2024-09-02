@@ -796,6 +796,26 @@ const DiagramEditor = ({
     }
   };
 
+  const sendOnLoad = async (reader:FileReader) => {
+    // Get the zip in base64
+    var base64data = reader.result;
+
+    // Send the zip
+    var api_response = await manager.run({
+      type: "bt-studio",
+      code: base64data,
+    });
+    if (api_response.command !== "error") {
+      console.log("App resumed!");
+      setAppRunning(true);
+    } else if (api_response.data) {
+      let linterMessage = JSON.stringify(api_response.data.message).split(
+        "\\n",
+      );
+      alert(`Received linter message: ${linterMessage}`);
+    }
+  };
+
   const runApp = async () => {
     if (gazeboEnabled) {
       if (!appRunning) {
@@ -803,21 +823,10 @@ const DiagramEditor = ({
         const tree_graph = JSON.stringify(model.current.serialize());
         const app_blob = await fetchDockerizedApp(tree_graph);
         const base64data = await app_blob.text();
+        const reader = new FileReader();
 
-        // Send the zip
-        var api_response = await manager.run({
-          type: "bt-studio",
-          code: base64data,
-        });
-        if (api_response.ok) {
-          console.log("App resumed!");
-          setAppRunning(true);
-        } else {
-          let linterMessage = JSON.stringify(api_response.data.message).split(
-            "\\n",
-          );
-          alert(`Received linter message: ${linterMessage}`);
-        }
+        reader.onloadend = () => sendOnLoad(reader); // Fix: pass the function reference
+        reader.readAsDataURL(app_blob);
       } else {
         await manager.pause();
         console.log("App paused!");
