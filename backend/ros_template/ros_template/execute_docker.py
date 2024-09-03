@@ -4,6 +4,7 @@ import py_trees
 from rclpy.node import Node
 import tree_factory
 import os
+from tree_tools import ascii_bt_to_json
 
 
 class TreeExecutor(Node):
@@ -26,15 +27,15 @@ class TreeExecutor(Node):
 
     def post_tick_handler(self, snapshot_visitor, behaviour_tree):
         with open("/tmp/tree_state", "w") as f:
-            f.write(
+            ascii_bt_to_json(
                 py_trees.display.ascii_tree(
                     behaviour_tree.root,
                     visited=snapshot_visitor.visited,
                     previously_visited=snapshot_visitor.visited,
-                )
+                ),
+                py_trees.display.ascii_blackboard(),
+                f,
             )
-            f.write(py_trees.display.ascii_blackboard())
-            f.close()
 
     def spin_tree(self):
 
