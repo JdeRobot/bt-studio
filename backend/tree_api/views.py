@@ -629,9 +629,10 @@ def generate_app(request):
     # Get the parameters
     app_name = request.data.get("app_name")
     tree_graph = request.data.get("tree_graph")
+    print(tree_graph)
     bt_order = request.data.get("bt_order")
 
-    # Make folder path relative to Django app
+    # Make folder path relative  to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, app_name)
     action_path = os.path.join(project_path, "code/actions")
@@ -646,6 +647,8 @@ def generate_app(request):
 
         # Generate a self-contained tree
         tree_generator.generate(tree_path, action_path, self_contained_tree_path)
+
+        print("Self contained tree generated")
 
         # Using the self-contained tree, package the ROS 2 app
         zip_file_path = app_generator.generate(
@@ -666,7 +669,9 @@ def generate_app(request):
         # Prepare file response
         zip_file = open(zip_file_path, "rb")
         mime_type, _ = mimetypes.guess_type(zip_file_path)
-        response = HttpResponse(zip_file, content_type=mime_type)
+        response = HttpResponse(
+            zip_file, content_type=mime_type, status=status.HTTP_200_OK
+        )
         response["Content-Disposition"] = (
             f"attachment; filename={os.path.basename(zip_file_path)}"
         )
@@ -674,7 +679,9 @@ def generate_app(request):
         return response
 
     except Exception as e:
-        return Response({"success": False, "message": str(e)}, status=400)
+        return Response(
+            {"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @api_view(["POST"])

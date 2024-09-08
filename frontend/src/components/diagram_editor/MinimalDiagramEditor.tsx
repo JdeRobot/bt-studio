@@ -112,7 +112,7 @@ const MinimalDiagramEditor = memo(
 
     // HELPERS
     const updateJsonState = () => {
-      setResultJson(JSON.stringify(model.current.serialize()));
+      setResultJson(model.current.serialize());
     };
 
     // Deletes the last clicked node
@@ -146,7 +146,7 @@ const MinimalDiagramEditor = memo(
         positionChanged: (event: any) => {
           lastMovedNodePosition = event.entity.getPosition();
           setDiagramEdited(true);
-          setResultJson(JSON.stringify(model.current.serialize()));
+          updateJsonState();
         },
       });
     };

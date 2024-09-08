@@ -1,4 +1,8 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+
+const isSuccessful = (response: AxiosResponse) => {
+  return response.status >= 200 && response.status < 300;
+};
 
 // Project management
 
@@ -13,7 +17,7 @@ const createProject = async (projectName: string) => {
     const response = await axios.get(apiUrl);
 
     // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!response.data.success) {
+    if (!isSuccessful(response)) {
       throw new Error(response.data.message || "Failed to create project."); // Response error
     }
   } catch (error: unknown) {
@@ -29,11 +33,11 @@ const saveProject = async (modelJson: string, currentProjectname: string) => {
   try {
     const response = await axios.post(apiUrl, {
       project_name: currentProjectname,
-      graph_json: modelJson,
+      graph_json: JSON.stringify(modelJson),
     });
 
     // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!response.data.success) {
+    if (!isSuccessful(response)) {
       throw new Error(response.data.message || "Failed to create project."); // Response error
     }
   } catch (error: unknown) {
@@ -57,7 +61,7 @@ const getUniverseConfig = async (
     const response = await axios.get(apiUrl);
 
     // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!response.data.success) {
+    if (!isSuccessful(response)) {
       throw new Error(
         response.data.message || "Failed to retrieve universe config"
       ); // Response error
@@ -95,7 +99,7 @@ const getCustomUniverseZip = async (
     const response = await axios(config);
 
     // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!response.data.success) {
+    if (!isSuccessful(response)) {
       throw new Error(
         response.data.message || "Failed to retrieve custom universe"
       ); // Response error
@@ -125,18 +129,19 @@ const generateApp = async (
       headers: {
         "Content-Type": "application/json",
       },
-      data: JSON.stringify({
+      data: {
         app_name: currentProjectname,
-        tree_graph: modelJson,
+        tree_graph: JSON.stringify(modelJson),
         bt_order: btOrder,
-      }),
+      },
     };
 
     // Make the request
     const response = await axios(config);
+    console.log(response.status);
 
     // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!response.data.success) {
+    if (!isSuccessful(response)) {
       throw new Error(response.data.message || "Failed to create app."); // Response error
     }
     return new Blob([response.data], { type: "application/octet-stream" });

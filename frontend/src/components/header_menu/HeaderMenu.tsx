@@ -93,9 +93,7 @@ const HeaderMenu = ({
         console.warn("Custom universe rework underway");
       }
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Error launching universe: " + error.message);
-      }
+      throw error; // rethrow
     }
   };
 
@@ -259,6 +257,7 @@ const HeaderMenu = ({
         if (universeName !== currentUniverseName) {
           if (currentUniverseName) await terminateUniverse();
           await launchUniverse(universeConfig);
+          console.log("Launch universe successful");
           setGazeboEnabled(true);
           setCurrentUniverseName(universeName);
         }

@@ -60,15 +60,9 @@ export default class CommsManager {
   public async send(message: string, data?: Object): Promise<any> {
     const id = uuidv4();
 
-    // Reject the promise directly if unable to connect
+    // Reject with an Error directly if unable to connect
     if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-      return Promise.reject({
-        id: "",
-        command: "error",
-        data: {
-          message: "WebSocket not connected",
-        },
-      });
+      return Promise.reject(new Error("WebSocket not connected"));
     }
 
     // Return a new Promise that handles the message response
