@@ -1,7 +1,30 @@
 import axios, { AxiosResponse } from "axios";
 
+// Helpers
+
 const isSuccessful = (response: AxiosResponse) => {
   return response.status >= 200 && response.status < 300;
+};
+
+// File management
+
+const getFileList = async (projectName: string) => {
+  if (!projectName) throw new Error("Project name is not set");
+
+  const apiUrl = `/tree_api/get_file_list?project_name=${encodeURIComponent(projectName)}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get file list."); // Response error
+    }
+
+    return response.data.file_list;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
 };
 
 // Project management
@@ -260,6 +283,56 @@ const generateApp = async (
   return api_response.blob();
 };
 
+// Subtree management
+
+const createSubtree = async (
+  subtreeName: string,
+  currentProjectname: string
+) => {
+  if (!subtreeName.trim()) {
+    throw new Error("Subtree name cannot be empty.");
+  }
+  if (!currentProjectname) {
+    throw new Error("Current Project name is not set");
+  }
+
+  const apiUrl = `/tree_api/create_subtree/`;
+
+  try {
+    const response = await axios.post(apiUrl, {
+      project_name: currentProjectname,
+      subtree_name: subtreeName,
+    });
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to create subtree."); // Response error
+    }
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
+const getSubtreeList = async (projectName: string) => {
+  if (!projectName) throw new Error("Project name is not set");
+
+  const apiUrl = `/tree_api/get_subtree_list?project_name=${encodeURIComponent(projectName)}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+    console.log(response);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get subtree list."); // Response error
+    }
+
+    return response.data.subtree_list;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 // Named export
 export {
   createProject,
@@ -269,4 +342,7 @@ export {
   // generateDockerizedApp,
   getUniverseConfig,
   getCustomUniverseZip,
+  createSubtree,
+  getSubtreeList,
+  getFileList,
 };

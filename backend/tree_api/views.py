@@ -969,3 +969,144 @@ def upload_code(request):
         # Clean up the temporary zip file
         if os.path.exists(temp_zip_path):
             os.remove(temp_zip_path)
+
+# SUBTREE MANAGEMENT
+
+
+@api_view(["POST"])
+def create_subtree(request):
+
+    project_name = request.data.get("project_name")
+    subtree_name = request.data.get("subtree_name")
+
+    if not project_name:
+        return Response(
+            {"success": False, "message": "Project parameter is missing"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if not subtree_name:
+        return Response(
+            {"success": False, "message": "Subtree parameter is missing"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    subtree_path = os.path.join(
+        project_path, "code/trees/subtrees", f"{subtree_name}.json"
+    )
+
+    if not os.path.exists(subtree_path):
+        with open(subtree_path, "w") as f:
+            f.write("{}")
+        return Response({"success": True}, status=status.HTTP_201_CREATED)
+    else:
+        return Response(
+            {"success": False, "message": "Subtree already exists"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+@api_view(["POST"])
+def save_subtree(request):
+
+    # Check if 'project_name', 'subtree_name', and 'subtree_json' are in the request data
+    if (
+        "project_name" not in request.data
+        or "subtree_name" not in request.data
+        or "subtree_json" not in request.data
+    ):
+        return Response(
+            {"success": False, "message": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the project name, subtree name, and subtree JSON
+    project_name = request.data.get("project_name")
+    subtree_name = request.data.get("subtree_name")
+    subtree_json = request.data.get("subtree_json")
+
+    # Generate the paths
+    base_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(base_path, project_name)
+    subtree_path = os.path.join(project_path, "code", "trees", f"{subtree_name}.json")
+
+    if project_path and subtree_name and subtree_json:
+
+        try:
+            # Write the subtree JSON to the file
+            with open(subtree_path, "w") as f:
+                f.write(subtree_json)
+
+            return JsonResponse({"success": True}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return JsonResponse(
+                {"success": False, "message": f"Error saving subtree: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    else:
+        return Response(
+            {"error": "Missing required parameters"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(["GET"])
+def get_subtree(request):
+
+    project_name = request.GET.get("project_name")
+    subtree_name = request.GET.get("subtree_name")
+
+    if not project_name:
+        return Response(
+            {"error": "Project parameter is missing"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if not subtree_name:
+        return Response(
+            {"error": "Subtree parameter is missing"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    subtree_path = os.path.join(project_path, "code/trees", f"{subtree_name}.json")
+
+    if os.path.exists(subtree_path):
+        with open(subtree_path, "r") as f:
+            content = f.read()
+        return Response(content, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(["GET"])
+def get_subtree_list(request):
+
+    project_name = request.GET.get("project_name")
+    if not project_name:
+        return Response(
+            {"error": "Project parameter is missing"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    tree_path = os.path.join(project_path, "code", "trees", "subtrees")
+
+    try:
+        # List all files in the directory removing the .json extension
+        subtree_list = [
+            f.split(".")[0]
+            for f in os.listdir(tree_path)
+            if os.path.isfile(os.path.join(tree_path, f))
+        ]
+
+        # Return the list of files
+        return Response({"subtree_list": subtree_list})
+
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)

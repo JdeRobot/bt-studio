@@ -1,0 +1,6 @@
+#sub-tree-modal {
+    position: fixed;
+    width: 80%;
+    height: 60%;
+    z-index: 9999;
+}

@@ -44,5 +44,6 @@ urlpatterns = [
         views.save_project_configuration,
         name="save_project_configuration",
     ),
-    path("download_data/", views.download_data, name="download_data"),
+    path("get_subtree_list/", views.get_subtree_list, name="get_subtree_list"),
+    path("create_subtree/", views.create_subtree, name="create_subtree"),
 ]

@@ -9,6 +9,12 @@ import { ReactComponent as EditActionIcon } from "./img/edit_action.svg";
 import { ReactComponent as HelpIcon } from "./img/help.svg";
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
 
+import {
+  createSubtree,
+  getSubtreeList,
+  getFileList,
+} from "../../api_helper/TreeWrapper";
+
 var NODE_MENU_ITEMS: Record<string, string[]> = {
   Sequences: ["Sequence", "ReactiveSequence", "SequenceWithMemory"],
   Fallbacks: ["Fallback", "ReactiveFallback"],
@@ -23,16 +29,13 @@ var NODE_MENU_ITEMS: Record<string, string[]> = {
     "Delay",
   ],
   Actions: [],
+  Subtrees: [],
   "Port values": ["Input port value", "Output port value"],
-  "Sub Tree": ["Sub Tree"],
 };
 
 const fetchActionList = async (project_name: string) => {
   try {
-    const response = await axios.get(
-      `/tree_api/get_actions_list?project_name=${project_name}`,
-    );
-    const files = response.data.actions_list;
+    const files = await getFileList(project_name);
     if (Array.isArray(files)) {
       const actions = files.map((file) => file.replace(".py", ""));
       NODE_MENU_ITEMS["Actions"] = actions;
@@ -41,6 +44,23 @@ const fetchActionList = async (project_name: string) => {
     }
   } catch (error) {
     console.error("Error fetching files:", error);
+  }
+};
+
+const fetchSubtreeList = async (project_name: string) => {
+  console.log("Fetching subtrees...");
+  try {
+    const subtreeList = await getSubtreeList(project_name);
+    console.log("Subtree list:", subtreeList);
+    if (Array.isArray(subtreeList)) {
+      NODE_MENU_ITEMS["Subtrees"] = subtreeList;
+    } else {
+      console.error("API response is not an array:", subtreeList);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching subtrees:", error.message);
+    }
   }
 };
 
@@ -61,7 +81,12 @@ const NodeMenu = ({
   const [menuLabel, setMenuLabel] = useState<string>("");
 
   useEffect(() => {
-    fetchActionList(projectName);
+    const fetchData = async () => {
+      await fetchActionList(projectName);
+      await fetchSubtreeList(projectName);
+    };
+
+    fetchData();
   }, [projectName]);
 
   const handleClick = (
@@ -76,7 +101,15 @@ const NodeMenu = ({
 
   const handleSelect = (nodeName: string) => {
     console.log("Selected: " + nodeName);
-    onAddNode(nodeName);
+    const nodeType = Object.keys(NODE_MENU_ITEMS).find((key) =>
+      NODE_MENU_ITEMS[key].includes(nodeName)
+    );
+    if (nodeType) {
+      console.log("Node Type: " + nodeType);
+      onAddNode(nodeName, nodeType);
+    } else {
+      console.log("Unknown node type");
+    }
     handleClose();
   };
 
@@ -86,6 +119,20 @@ const NodeMenu = ({
       newWindow.focus();
     } else {
       console.error("Failed to open new tab/window.");
+    }
+  };
+
+  const onCreateSubtree = async () => {
+    const subtreeName = prompt("Enter a name for the subtree:");
+    if (subtreeName) {
+      try {
+        createSubtree(subtreeName, projectName);
+        fetchSubtreeList(projectName);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      }
     }
   };
 
@@ -114,6 +161,14 @@ const NodeMenu = ({
       </Menu>
 
       <div className="action-buttons">
+        <button
+          id="node-action-edit-button"
+          className="node-action-button"
+          onClick={onCreateSubtree}
+          title="Edit"
+        >
+          <EditActionIcon className="icon action-icon" stroke={"var(--icon)"} />
+        </button>
         <button
           id="node-action-delete-button"
           className="node-action-button"
