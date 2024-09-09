@@ -30,6 +30,9 @@ def create_project(request):
     action_path = os.path.join(project_path, "code/actions")
     universes_path = os.path.join(project_path, "universes")
     config_path = os.path.join(project_path, "config.json")
+    tree_path = os.path.join(project_path, "code/trees")
+    subtree_path = os.path.join(tree_path, "subtrees")
+    init_graph_path = os.path.join(settings.BASE_DIR, "templates/init_graph.json")
 
     # Default cfg values
     default_cfg = {
@@ -47,12 +50,20 @@ def create_project(request):
         os.mkdir(project_path)
         os.makedirs(action_path)
         os.mkdir(universes_path)
+        os.mkdir(tree_path)
+        os.mkdir(subtree_path)
 
         # Create default config
         with open(config_path, "w") as cfg:
             json.dump(default_cfg, cfg)
 
-        return Response({"success": True})
+        # Copy default graph from templates
+        shutil.copy(init_graph_path, os.path.join(tree_path, "main.json"))
+
+        return Response(
+            {"success": True, "message": "Project created successfully"},
+            status=status.HTTP_201_CREATED,
+        )
     else:
         return Response(
             {"success": False, "message": "Project already exists"}, status=400
@@ -174,34 +185,197 @@ def get_project_graph(request):
 
 
 @api_view(["GET"])
-def get_tree_structure(request):
+def get_project_configuration(request):
 
     project_name = request.GET.get("project_name")
+
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+
+    if project_name:
+        project_path = os.path.join(folder_path, project_name)
+        config_path = os.path.join(project_path, "config.json")
+        if os.path.exists(config_path):
+            with open(config_path, "r") as f:
+                content = f.read()
+            return Response(content)
+        else:
+            return Response({"error": "File not found"}, status=404)
+    else:
+        return Response({"error": "Project parameter is missing"}, status=400)
+
+
+@api_view(["POST"])
+def save_project_configuration(request):
+
+    project_name = request.data.get("project_name")
+
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    config_path = os.path.join(project_path, "config.json")
+
+    try:
+        content = request.data.get("settings")
+        if content is None:
+            return Response(
+                {"success": False, "message": "Settings are missing"}, status=400
+            )
+
+        d = json.loads(content)
+
+        with open(config_path, "w") as f:
+            json.dump(d, f, indent=4)
+
+        return Response({"success": True})
+    except Exception as e:
+        return Response({"success": False, "message": str(e)}, status=400)
+
+
+# SUBTREE MANAGEMENT
+
+
+@api_view(["POST"])
+def create_subtree(request):
+
+    project_name = request.data.get("project_name")
+    subtree_name = request.data.get("subtree_name")
+
+    if not project_name:
+        return Response(
+            {"success": False, "message": "Project parameter is missing"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if not subtree_name:
+        return Response(
+            {"success": False, "message": "Subtree parameter is missing"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    subtree_path = os.path.join(
+        project_path, "code/trees/subtrees", f"{subtree_name}.json"
+    )
+
+    if not os.path.exists(subtree_path):
+        with open(subtree_path, "w") as f:
+            f.write("{}")
+        return Response({"success": True}, status=status.HTTP_201_CREATED)
+    else:
+        return Response(
+            {"success": False, "message": "Subtree already exists"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+@api_view(["POST"])
+def save_subtree(request):
+
+    # Check if 'project_name', 'subtree_name', and 'subtree_json' are in the request data
+    if (
+        "project_name" not in request.data
+        or "subtree_name" not in request.data
+        or "subtree_json" not in request.data
+    ):
+        return Response(
+            {"success": False, "message": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the project name, subtree name, and subtree JSON
+    project_name = request.data.get("project_name")
+    subtree_name = request.data.get("subtree_name")
+    subtree_json = request.data.get("subtree_json")
 
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, project_name)
-    graph_path = os.path.join(project_path, "code/graph.json")
+    subtree_path = os.path.join(project_path, "code", "trees", f"{subtree_name}.json")
 
-    # Check if the project exists
-    if os.path.exists(graph_path):
+    if project_path and subtree_name and subtree_json:
+
         try:
-            with open(graph_path, "r") as f:
-                graph_data = json.load(f)
+            # Write the subtree JSON to the file
+            with open(subtree_path, "w") as f:
+                f.write(subtree_json)
 
-                # Get the tree structure
-                tree_structure = json_translator.translate_tree_structure(graph_data)
+            return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
-            return JsonResponse({"success": True, "tree_structure": tree_structure})
         except Exception as e:
             return JsonResponse(
-                {"success": False, "message": f"Error reading file: {str(e)}"},
-                status=500,
+                {"success": False, "message": f"Error saving subtree: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
     else:
         return Response(
-            {"error": "The project does not have a graph definition"}, status=404
+            {"error": "Missing required parameters"}, status=status.HTTP_400_BAD_REQUEST
         )
+
+
+@api_view(["GET"])
+def get_subtree(request):
+
+    project_name = request.GET.get("project_name")
+    subtree_name = request.GET.get("subtree_name")
+
+    if not project_name:
+        return Response(
+            {"error": "Project parameter is missing"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if not subtree_name:
+        return Response(
+            {"error": "Subtree parameter is missing"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    subtree_path = os.path.join(project_path, "code/trees", f"{subtree_name}.json")
+
+    if os.path.exists(subtree_path):
+        with open(subtree_path, "r") as f:
+            content = f.read()
+        return Response(content, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(["GET"])
+def get_subtree_list(request):
+
+    project_name = request.GET.get("project_name")
+    if not project_name:
+        return Response(
+            {"error": "Project parameter is missing"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    tree_path = os.path.join(project_path, "code", "trees", "subtrees")
+
+    try:
+        # List all files in the directory removing the .json extension
+        subtree_list = [
+            f.split(".")[0]
+            for f in os.listdir(tree_path)
+            if os.path.isfile(os.path.join(tree_path, f))
+        ]
+
+        # Return the list of files
+        return Response({"subtree_list": subtree_list})
+
+    except FileNotFoundError:
+        return Response({"subtree_list": []})
+
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
+
+
+# UNIVERSE MANAGEMENT
 
 
 @api_view(["GET"])
@@ -660,6 +834,7 @@ def generate_app(request):
     # Get the parameters
     app_name = request.data.get("app_name")
     tree_graph = request.data.get("tree_graph")
+    print(tree_graph)
     bt_order = request.data.get("bt_order")
 
     # Make folder path relative  to Django app
