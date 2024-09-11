@@ -12,7 +12,7 @@ import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
 import {
   createSubtree,
   getSubtreeList,
-  getFileList,
+  getActionsList,
 } from "../../api_helper/TreeWrapper";
 
 var NODE_MENU_ITEMS: Record<string, string[]> = {
@@ -35,7 +35,7 @@ var NODE_MENU_ITEMS: Record<string, string[]> = {
 
 const fetchActionList = async (project_name: string) => {
   try {
-    const files = await getFileList(project_name);
+    const files = await getActionsList(project_name);
     if (Array.isArray(files)) {
       const actions = files.map((file) => file.replace(".py", ""));
       NODE_MENU_ITEMS["Actions"] = actions;
