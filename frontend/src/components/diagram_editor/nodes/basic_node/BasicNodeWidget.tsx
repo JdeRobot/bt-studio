@@ -45,7 +45,7 @@ export const BasicNodeWidget = ({
     default:
       break;
   }
-  
+
   // Ports list
   const parentPorts: JSX.Element[] = [];
   const childrenPorts: JSX.Element[] = [];

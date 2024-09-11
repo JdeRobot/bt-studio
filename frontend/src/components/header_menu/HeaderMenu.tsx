@@ -190,7 +190,7 @@ const HeaderMenu = ({
     }
   };
 
-  const sendOnLoad = async (reader:FileReader) => {
+  const sendOnLoad = async (reader: FileReader) => {
     // Get the zip in base64
     var base64data = reader.result;
 
