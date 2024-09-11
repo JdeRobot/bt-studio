@@ -43,32 +43,32 @@ const configureEngine = (engine: any) => {
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("children", (config) => new ChildrenPortModel())
+      new SimplePortFactory("children", (config) => new ChildrenPortModel()),
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("parent", (config) => new ParentPortModel())
+      new SimplePortFactory("parent", (config) => new ParentPortModel()),
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("output", (config) => new OutputPortModel(""))
+      new SimplePortFactory("output", (config) => new OutputPortModel("")),
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("input", (config) => new InputPortModel(""))
+      new SimplePortFactory("input", (config) => new InputPortModel("")),
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("tag output", (config) => new TagOutputPortModel())
+      new SimplePortFactory("tag output", (config) => new TagOutputPortModel()),
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("tag input", (config) => new TagInputPortModel())
+      new SimplePortFactory("tag input", (config) => new TagInputPortModel()),
     );
 
   // Disable loose links
@@ -352,7 +352,7 @@ const DiagramEditor = memo(
         <CanvasWidget className="canvas" engine={engine.current} />
       </div>
     );
-  }
+  },
 );
 
 export default DiagramEditor;

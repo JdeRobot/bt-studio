@@ -30,7 +30,7 @@ var NODE_MENU_ITEMS: Record<string, string[]> = {
 const fetchActionList = async (project_name: string) => {
   try {
     const response = await axios.get(
-      `/tree_api/get_file_list?project_name=${project_name}`
+      `/tree_api/get_file_list?project_name=${project_name}`,
     );
     const files = response.data.file_list;
     if (Array.isArray(files)) {
@@ -66,7 +66,7 @@ const NodeMenu = ({
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
-    label: string
+    label: string,
   ) => {
     setAnchorEl(event.currentTarget);
     setMenuLabel(label);
@@ -144,8 +144,8 @@ const NodeMenu = ({
           onClick={() => {
             openInNewTab(
               new URL(
-                "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
-              )
+                "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
+              ),
             );
           }}
           title="Help"

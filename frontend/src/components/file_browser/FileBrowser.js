@@ -65,7 +65,7 @@ const FileBrowser = ({
     if (currentProjectname !== "") {
       try {
         const response = await axios.get(
-          `/tree_api/get_file_list?project_name=${currentProjectname}`
+          `/tree_api/get_file_list?project_name=${currentProjectname}`,
         );
         const files = JSON.parse(response.data.file_list);
         setFileList(files);
@@ -100,12 +100,12 @@ const FileBrowser = ({
         switch (data.fileType) {
           case "actions":
             response = await axios.get(
-              `/tree_api/create_action?project_name=${currentProjectname}&filename=${data.fileName}.py&template=${data.templateType}`
+              `/tree_api/create_action?project_name=${currentProjectname}&filename=${data.fileName}.py&template=${data.templateType}`,
             );
             break;
           default:
             response = await axios.get(
-              `/tree_api/create_file?project_name=${currentProjectname}&location=${location}&file_name=${data.fileName}`
+              `/tree_api/create_file?project_name=${currentProjectname}&location=${location}&file_name=${data.fileName}`,
             );
             break;
         }
@@ -142,7 +142,7 @@ const FileBrowser = ({
     if (deleteEntry) {
       try {
         const response = await axios.get(
-          `/tree_api/delete_file?project_name=${currentProjectname}&path=${deleteEntry}`
+          `/tree_api/delete_file?project_name=${currentProjectname}&path=${deleteEntry}`,
         );
         if (response.data.success) {
           setProjectChanges(true);
@@ -190,7 +190,7 @@ const FileBrowser = ({
     if (folder_name !== "") {
       try {
         const response = await axios.get(
-          `/tree_api/create_folder?project_name=${currentProjectname}&location=${location}&folder_name=${folder_name}`
+          `/tree_api/create_folder?project_name=${currentProjectname}&location=${location}&folder_name=${folder_name}`,
         );
         if (response.data.success) {
           setProjectChanges(true);
@@ -223,7 +223,7 @@ const FileBrowser = ({
     if (renameEntry) {
       try {
         const response = await axios.get(
-          `/tree_api/rename_file?project_name=${currentProjectname}&path=${renameEntry.path}&rename_to=${new_path}`
+          `/tree_api/rename_file?project_name=${currentProjectname}&path=${renameEntry.path}&rename_to=${new_path}`,
         );
         if (response.data.success) {
           setProjectChanges(true);

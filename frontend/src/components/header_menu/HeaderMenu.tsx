@@ -151,7 +151,7 @@ const HeaderMenu = ({
       const app_blob = await generateApp(
         modelJson,
         currentProjectname,
-        "bottom-to-top"
+        "bottom-to-top",
       );
 
       // Generate the download
@@ -182,7 +182,7 @@ const HeaderMenu = ({
         const app_blob = await generateApp(
           modelJson,
           currentProjectname,
-          "bottom-to-top"
+          "bottom-to-top",
         );
         const base64data = await app_blob.text();
 
@@ -250,7 +250,7 @@ const HeaderMenu = ({
     try {
       const universeConfig = await getUniverseConfig(
         universeName,
-        currentProjectname
+        currentProjectname,
       );
       try {
         // Launch if new universe selected

@@ -47,7 +47,7 @@ const saveProject = async (modelJson: string, currentProjectname: string) => {
 
 const loadProjectConfig = async (
   currentProjectname: string,
-  settings: Object
+  settings: Object,
 ) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
@@ -58,7 +58,7 @@ const loadProjectConfig = async (
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
       throw new Error(
-        response.data.message || "Failed to retrieve project config"
+        response.data.message || "Failed to retrieve project config",
       ); // Response error
     }
 
@@ -69,7 +69,7 @@ const loadProjectConfig = async (
     // Load all the settings
     Object.entries(settings).map(([key, value]) => {
       value.setter(
-        project_settings[key] ? project_settings[key] : value.default_value
+        project_settings[key] ? project_settings[key] : value.default_value,
       );
     });
   } catch (error) {
@@ -86,13 +86,13 @@ const loadProjectConfig = async (
 
 const getUniverseConfig = async (
   universeName: string,
-  currentProjectname: string
+  currentProjectname: string,
 ) => {
   if (!universeName) throw new Error("The universe name is not set");
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
   const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
-    currentProjectname
+    currentProjectname,
   )}&universe_name=${encodeURIComponent(universeName)}`;
   try {
     const response = await axios.get(apiUrl);
@@ -100,7 +100,7 @@ const getUniverseConfig = async (
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
       throw new Error(
-        response.data.message || "Failed to retrieve universe config"
+        response.data.message || "Failed to retrieve universe config",
       ); // Response error
     }
 
@@ -112,7 +112,7 @@ const getUniverseConfig = async (
 
 const getCustomUniverseZip = async (
   universeName: string,
-  currentProjectname: string
+  currentProjectname: string,
 ) => {
   if (!universeName) throw new Error("The universe name is not set");
   if (!currentProjectname) throw new Error("Current Project name is not set");
@@ -138,7 +138,7 @@ const getCustomUniverseZip = async (
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
       throw new Error(
-        response.data.message || "Failed to retrieve custom universe"
+        response.data.message || "Failed to retrieve custom universe",
       ); // Response error
     }
     return new Blob([response.data], { type: "application/octet-stream" });
@@ -152,7 +152,7 @@ const getCustomUniverseZip = async (
 const generateApp = async (
   modelJson: string,
   currentProjectname: string,
-  btOrder: string
+  btOrder: string,
 ) => {
   if (!modelJson) throw new Error("Tree JSON is empty!");
   if (!currentProjectname) throw new Error("Current Project name is not set");
