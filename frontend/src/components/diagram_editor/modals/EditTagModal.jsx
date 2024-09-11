@@ -75,7 +75,7 @@ const EditTagModal = ({ isOpen, onClose, currentActionNode }) => {
             placeholder="Tag Name"
             required
           />
-          <label for="tagName" class="modal-complex-input-label">
+          <label htmlFor="tagName" className="modal-complex-input-label">
             Tag Name
           </label>
         </div>

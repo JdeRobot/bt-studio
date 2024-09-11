@@ -194,12 +194,15 @@ const ProjectModal = ({
                   autoComplete="off"
                   placeholder="Project Name"
                 />
-                <label for="projectName" class="modal-complex-input-label">
+                <label
+                  htmlFor="projectName"
+                  className="modal-complex-input-label"
+                >
                   Project Name
                 </label>
                 <label
-                  for="projectName"
-                  class="modal-complex-input-indications"
+                  htmlFor="projectName"
+                  className="modal-complex-input-indications"
                 >
                   A unique name that is used for the project folder and other
                   resources. The name should be in lower case without spaces and

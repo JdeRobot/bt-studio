@@ -261,8 +261,8 @@ const App = () => {
         settingsProps={settings}
       />
 
-      <div className="App-main" style={{ display: "flex" }}>
-        <div style={{ width: "200px", paddingLeft: "1vw" }}>
+      <div className="App-main" style={{ display: "flex", flexGrow: 1 }}>
+        <div className="sidebar">
           <FileBrowser
             setCurrentFilename={setCurrentFilename}
             currentFilename={currentFilename}
@@ -290,7 +290,7 @@ const App = () => {
           </div>
         </Resizable>
 
-        <div>
+        <div style={{ flexGrow: 1 }}>
           <DiagramEditor
             currentProjectname={currentProjectname}
             setModelJson={setModelJson}

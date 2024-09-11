@@ -1,3 +1,4 @@
+import glob
 import os
 from django.conf import settings
 from rest_framework.decorators import api_view
@@ -7,12 +8,14 @@ from . import app_generator
 from . import tree_generator
 from . import json_translator
 from . import templates
+from .project_view import list_dir, EntryEncoder
 from django.http import HttpResponse
 from django.http import JsonResponse
 import mimetypes
 import json
 import shutil
 import zipfile
+from distutils.dir_util import copy_tree
 from rest_framework import status
 from django.core.files.storage import default_storage
 import base64
@@ -233,18 +236,42 @@ def get_file_list(request):
     project_name = request.GET.get("project_name")
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, "code/actions")
+    action_path = os.path.join(project_path, "code")
 
     try:
         # List all files in the directory
         file_list = [
+            os.path.relpath(f, action_path)
+            for f in glob.glob(action_path + "/**", recursive=True)
+        ]
+
+        file_list = list_dir(action_path, action_path)
+
+        # Return the list of files
+        return Response({"file_list": EntryEncoder().encode(file_list)})
+
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
+
+
+@api_view(["GET"])
+def get_actions_list(request):
+
+    project_name = request.GET.get("project_name")
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, "code/actions")
+
+    try:
+        # List all actions in the directory
+        actions_list = [
             f
             for f in os.listdir(action_path)
             if os.path.isfile(os.path.join(action_path, f))
         ]
 
         # Return the list of files
-        return Response({"file_list": file_list})
+        return Response({"actions_list": actions_list})
 
     except Exception as e:
         return Response({"error": f"An error occurred: {str(e)}"}, status=500)
@@ -259,7 +286,7 @@ def get_file(request):
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, "code/actions")
+    action_path = os.path.join(project_path, "code")
 
     if filename:
         file_path = os.path.join(action_path, filename)
@@ -275,7 +302,7 @@ def get_file(request):
 
 
 @api_view(["GET"])
-def create_file(request):
+def create_action(request):
 
     # Get the file info
     project_name = request.GET.get("project_name", None)
@@ -289,7 +316,7 @@ def create_file(request):
     file_path = os.path.join(action_path, filename)
 
     if not os.path.exists(file_path):
-        if templates.create_file_from_template(file_path, filename, template):
+        if templates.create_action_from_template(file_path, filename, template):
             return Response({"success": True})
         else:
             return Response(
@@ -302,21 +329,110 @@ def create_file(request):
 
 
 @api_view(["GET"])
-def delete_file(request):
+def create_file(request):
 
     # Get the file info
     project_name = request.GET.get("project_name", None)
-    filename = request.GET.get("filename", None)
+    location = request.GET.get("location", None)
+    filename = request.GET.get("file_name", None)
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, "code/actions")
-    file_path = os.path.join(action_path, filename)
+    action_path = os.path.join(project_path, "code")
+    create_path = os.path.join(action_path, location)
+    file_path = os.path.join(create_path, filename)
+
+    if not os.path.exists(file_path):
+        if templates.create_action_from_template(file_path, filename, "empty"):
+            return Response({"success": True})
+        else:
+            return Response(
+                {"success": False, "message": "Template does not exist"}, status=400
+            )
+    else:
+        return Response(
+            {"success": False, "message": "File already exists"}, status=400
+        )
+
+
+@api_view(["GET"])
+def create_folder(request):
+
+    # Get the file info
+    project_name = request.GET.get("project_name", None)
+    location = request.GET.get("location", None)
+    folder_name = request.GET.get("folder_name", None)
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, "code")
+    create_path = os.path.join(action_path, location)
+    folder_path = os.path.join(create_path, folder_name)
+
+    if not os.path.exists(folder_path):
+        try:
+            os.makedirs(folder_path)
+            print(folder_path)
+            return Response({"success": True})
+        except Exception as e:
+            return Response({"success": False, "message": e}, status=400)
+    else:
+        return Response(
+            {"success": False, "message": "File already exists"}, status=400
+        )
+
+
+@api_view(["GET"])
+def rename_file(request):
+
+    # Get the file info
+    project_name = request.GET.get("project_name", None)
+    path = request.GET.get("path", None)
+    rename_path = request.GET.get("rename_to", None)
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, "code")
+    file_path = os.path.join(action_path, path)
+    new_path = os.path.join(action_path, rename_path)
 
     if os.path.exists(file_path):
         try:
-            os.remove(file_path)
+            os.rename(file_path, new_path)
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse(
+                {"success": False, "message": f"Error deleting file: {str(e)}"},
+                status=500,
+            )
+    else:
+        return JsonResponse(
+            {"success": False, "message": "File does not exist"}, status=404
+        )
+
+
+@api_view(["GET"])
+def delete_file(request):
+
+    # Get the file info
+    project_name = request.GET.get("project_name", None)
+    path = request.GET.get("path", None)
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, "code")
+    file_path = os.path.join(action_path, path)
+
+    if os.path.exists(file_path):
+        try:
+            if os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+            else:
+                os.remove(file_path)
             return JsonResponse({"success": True})
         except Exception as e:
             return JsonResponse(
@@ -338,7 +454,7 @@ def save_file(request):
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
-    action_path = os.path.join(project_path, "code/actions")
+    action_path = os.path.join(project_path, "code")
     file_path = os.path.join(action_path, filename)
 
     # If file doesn't exist simply return
@@ -420,6 +536,66 @@ def translate_json(request):
         return Response({"success": True})
     except Exception as e:
         return Response({"success": False, "message": str(e)}, status=400)
+
+
+@api_view(["POST"])
+def download_data(request):
+
+    # Check if 'name' and 'zipfile' are in the request data
+    if "app_name" not in request.data or "path" not in request.data:
+        return Response(
+            {"error": "Incorrect request parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the request parameters
+    app_name = request.data.get("app_name")
+    path = request.data.get("path")
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, app_name)
+    action_path = os.path.join(project_path, "code")
+    file_path = os.path.join(action_path, path)
+
+    working_folder = "/tmp/wf"
+
+    if app_name and path:
+        try:
+            # 1. Create the working folder
+            if os.path.exists(working_folder):
+                shutil.rmtree(working_folder)
+            os.mkdir(working_folder)
+
+            # 2. Copy files to temp folder
+            if os.path.isdir(file_path):
+                copy_tree(file_path, working_folder)
+            else:
+                shutil.copy(file_path, working_folder)
+
+            # 5. Generate the zip
+            zip_path = working_folder + ".zip"
+            with zipfile.ZipFile(zip_path, "w") as zipf:
+                for root, dirs, files in os.walk(working_folder):
+                    for file in files:
+                        zipf.write(
+                            os.path.join(root, file),
+                            os.path.relpath(os.path.join(root, file), working_folder),
+                        )
+
+            # 6. Return the zip
+            zip_file = open(zip_path, "rb")
+            mime_type, _ = mimetypes.guess_type(zip_path)
+            response = HttpResponse(zip_file, content_type=mime_type)
+            response["Content-Disposition"] = (
+                f"attachment; filename={os.path.basename(zip_path)}"
+            )
+
+            return response
+        except Exception as e:
+            return Response({"success": False, "message": str(e)}, status=400)
+    else:
+        return Response({"error": "app_name parameter is missing"}, status=500)
 
 
 @api_view(["POST"])
@@ -689,3 +865,54 @@ def upload_universe(request):
         {"success": True, "message": "Universe uploaded successfully"},
         status=status.HTTP_200_OK,
     )
+
+
+@api_view(["POST"])
+def upload_code(request):
+
+    # Check if 'name' and 'zipfile' are in the request data
+    if (
+        "project_name" not in request.data
+        or "location" not in request.data
+        or "zip_file" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the name and the zip file from the request
+    project_name = request.data["project_name"]
+    location = request.data["location"]
+    zip_file = request.data["zip_file"]
+
+    # Make folder path relative to Django app
+    base_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(base_path, project_name)
+    code_path = os.path.join(project_path, "code")
+    create_path = os.path.join(code_path, location)
+
+    try:
+        zip_file_data = base64.b64decode(zip_file)
+    except (TypeError, ValueError):
+        return Response(
+            {"error": "Invalid zip file data."}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Save the zip file temporarily
+    temp_zip_path = os.path.join(create_path, "temp.zip")
+    with open(temp_zip_path, "wb") as temp_zip_file:
+        temp_zip_file.write(zip_file_data)
+
+    # Unzip the file
+    try:
+        with zipfile.ZipFile(temp_zip_path, "r") as zip_ref:
+            zip_ref.extractall(create_path)
+    except zipfile.BadZipFile:
+        return Response(
+            {"error": "Invalid zip file."}, status=status.HTTP_400_BAD_REQUEST
+        )
+    finally:
+        # Clean up the temporary zip file
+        if os.path.exists(temp_zip_path):
+            os.remove(temp_zip_path)

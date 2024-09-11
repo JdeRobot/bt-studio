@@ -1,41 +1,52 @@
-/* FileBrowser.css */
-
-.file-item {
-  list-style-type: none;
-  padding: 0px;
-  cursor: pointer;
-  display: grid;
-  grid-template-columns: auto 5px;
-  grid-gap: 5px;
-  padding-right: 0px;
+.sidebar-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 1px;
 }
 
-.file-item label {
-  cursor: pointer;
-  list-style-type: none;
-  padding: 8px;
-  color: var(--text);
+.sidebar-entry {
+  height: fit-content;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 4px;
 }
 
-.file-item:hover {
-  background-color: var(--buttons-hover);
+.sidebar-entry-contents {
+  overflow-y: auto;
+  flex: 1 1 1px;
 }
 
-.file-item-selected {
-  background-color: var(--buttons);
-}
-
-.file-item-selected:hover {
-  background-color: var(--buttons-hover);
-}
-
-.editor-menu {
+.sidebar-entry-menu {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-left: 10px;
+  /* height: 32px;  */
   height: 50px;
   max-height: 50px;
+  padding: 0 10px 0 10px;
+  gap: 4px;
+  background-color: var(--control-bar);
+
+  & button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    background-color: var(--control-bar);
+    border: 0;
+    padding: 0 0 0 0;
+    &:hover {
+      background-color: var(--buttons-hover);
+      border-radius: 5px;
+    }
+  }
+}
+
+.force-other-side {
+  margin-left: auto;
 }
 
 .buttons {
@@ -48,8 +59,8 @@
 .menu-button {
   display: flex;
   justify-content: center;
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 28px;
   background-color: var(--buttons-invisible);
   border: 0;
   margin-left: 3px;
@@ -67,12 +78,4 @@
 .icon {
   width: 20px;
   height: 20px;
-}
-
-.accent-color {
-  position: relative;
-  right: 0px;
-  z-index: 10;
-  width: 5px;
-  height: 100%;
 }

@@ -30,6 +30,7 @@
 .settings-dropdown-item {
   border-radius: 0px !important;
   margin-bottom: 0px !important;
+  opacity: 1 !important;
 }
 
 .settings-dropdown-item:hover {

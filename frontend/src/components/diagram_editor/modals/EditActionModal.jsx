@@ -505,7 +505,7 @@ const EditActionModal = ({
         )}
       </div>
       <div className="node-editor-row">
-        <label className="node-editor-title" for="favcolor">
+        <label className="node-editor-title" htmlFor="favcolor">
           Color:
         </label>
         <Saturation height={50} width={300} color={color} onChange={setColor} />

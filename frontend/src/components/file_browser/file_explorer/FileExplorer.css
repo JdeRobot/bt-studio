@@ -1,0 +1,66 @@
+/* FileBrowser.css */
+.file-item-container {
+  padding-left: 5px;
+
+  &:hover {
+    background-color: var(--buttons-hover);
+  }
+}
+
+.file-item-container:hover {
+  background-color: var(--buttons-hover);
+}
+
+.file-item-selected-container {
+  background-color: var(--buttons);
+
+  &:hover {
+    background-color: var(--buttons-hover);
+  }
+}
+
+.file-item {
+  list-style-type: none;
+  padding: 0px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.file-item label {
+  cursor: pointer;
+  list-style-type: none;
+  padding: 3px;
+  font-size: 0.9em;
+  color: var(--text);
+}
+
+.accent-color {
+  position: relative;
+  z-index: 10;
+  width: 5px;
+  height: 100%;
+}
+
+.more-action-icon {
+  margin-left: auto;
+  visibility: hidden;
+}
+
+.file-item-container:hover .more-action-icon {
+  visibility: visible;
+}
+
+.arrow-icon {
+  height: 16px;
+  width: 16px;
+  min-width: 16px;
+  min-height: 16px;
+}

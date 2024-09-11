@@ -38,12 +38,23 @@
   cursor: ew-resize;
 }
 
+.sidebar {
+  width: 200px;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
 h1 {
   font-size: 25px;
 }
 
 h2 {
   font-size: 18px;
+}
+
+h3 {
+  font-size: 12px;
 }
 
 :root,
@@ -197,7 +208,8 @@ h2 {
 
 :root,
 .App {
-  --header: var(--background-300);
+  --header: var(--primary-200);
+  --control-bar: var(--primary-100);
   --canvas-background: var(--secondary-800);
 
   --buttons: var(--background-300);
@@ -217,6 +229,11 @@ h2 {
   --error-border: var(--error-300);
   --error-button: var(--error-400);
   --error-button-hover: var(--error-500);
+
+  --create-button: hsla(93, 100%, 49%, 0.5);
+
+  --progress-bar-bg: var(--background-300);
+  --progress-bar-progress: var(--background-500);
 
   --bt-light-text: #ffffff;
   --bt-dark-text: #000000;

@@ -2,7 +2,7 @@
 
 .editor-container {
   position: relative; /* Establish a stacking context */
-  padding-right: 2px;
+  /* padding-right: 2px; */
   height: 100%;
 }
 
@@ -30,11 +30,14 @@
   background-color: var(--buttons-hover);
 }
 
-.browser-menu {
+.editor-menu {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
   height: 50px;
   max-height: 50px;
+  background-color: var(--control-bar);
 }
 
 .editor-buttons {
@@ -48,7 +51,7 @@
   justify-content: center;
   width: 25px;
   height: 25px;
-  background-color: var(--buttons-invisible);
+  background-color: var(--control-bar);
   border: 0;
   margin-left: 3px;
   margin-right: 3px;
@@ -91,7 +94,7 @@
 
 .ace_scrollbar::-webkit-scrollbar-track {
   box-shadow: inset 0 0 5px var(--scrollbar);
-  border-radius: 10px;
+  padding-right: 2px;
 }
 
 .ace_scrollbar::-webkit-scrollbar-thumb {

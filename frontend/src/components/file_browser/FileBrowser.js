@@ -1,10 +1,28 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./FileBrowser.css";
-import NewActionModal from "./NewActionModal.jsx";
+import NewFileModal from "./modals/NewFileModal.jsx";
+import RenameModal from "./modals/RenameModal.jsx";
+import NewFolderModal from "./modals/NewFolderModal.jsx";
+import UploadModal from "./modals/UploadModal.jsx";
+import DeleteModal from "./modals/DeleteModal.jsx";
+import FileExplorer from "./file_explorer/FileExplorer.jsx";
 
 import { ReactComponent as AddIcon } from "./img/add.svg";
+import { ReactComponent as AddFolderIcon } from "./img/add_folder.svg";
 import { ReactComponent as DeleteIcon } from "./img/delete.svg";
+import { ReactComponent as RefreshIcon } from "./img/refresh.svg";
+import { ReactComponent as RenameIcon } from "./img/rename.svg";
+
+function getParentDir(file) {
+  // Check if is a directory and if not get the parent directory of the file
+  if (file.is_dir) {
+    return file.path;
+  }
+
+  var split_path = file.path.split("/"); // TODO: add for windows
+  return split_path.slice(0, split_path.length - 1).join("/");
+}
 
 const FileBrowser = ({
   setCurrentFilename,
@@ -16,14 +34,31 @@ const FileBrowser = ({
   diagramEditorReady,
 }) => {
   const [fileList, setFileList] = useState(null);
-  const [isNewActionModalOpen, setNewActionModalOpen] = useState(false);
-  const [newsletterFormData, setNewsletterFormData] = useState(null);
-  const [actionsBackgrounds, setActionsBackgrounds] = useState([]);
+  const [isNewFileModalOpen, setNewFileModalOpen] = useState(false);
+  const [isNewFolderModalOpen, setNewFolderModalOpen] = useState(false);
+  const [isRenameModalOpen, setRenameModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isUploadModalOpen, setUploadModalOpen] = useState(false);
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [deleteEntry, setDeleteEntry] = useState(null);
+  const [renameEntry, setRenameEntry] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState("");
 
   useEffect(() => {
-    fetchFileList();
-    setCurrentFilename("");
-  }, [currentProjectname]);
+    updateSelectedLocation(null);
+  }, [selectedEntry]);
+
+  const updateSelectedLocation = (file) => {
+    if (file) {
+      setSelectedLocation(getParentDir(file));
+    } else {
+      if (selectedEntry) {
+        setSelectedLocation(getParentDir(selectedEntry));
+      } else {
+        setSelectedLocation("");
+      }
+    }
+  };
 
   const fetchFileList = async () => {
     if (currentProjectname !== "") {
@@ -31,64 +66,48 @@ const FileBrowser = ({
         const response = await axios.get(
           `/tree_api/get_file_list?project_name=${currentProjectname}`,
         );
-        const files = response.data.file_list;
-        if (Array.isArray(files)) {
-          for (let index = 0; index < files.length; index++) {
-            files[index] = files[index].slice(0, -3);
-          }
-          setFileList(files);
-        } else {
-          console.error("API response is not an array:", files);
-        }
+        const files = JSON.parse(response.data.file_list);
+        setFileList(files);
+        // if (Array.isArray(files)) {
+        // } else {
+        //   console.error("API response is not an array:", files);
+        // }
       } catch (error) {
         console.error("Error fetching files:", error);
       }
     }
   };
 
-  const handleFileClick = (filename) => {
-    setCurrentFilename(filename + ".py");
+  ///////////////// CREATE FILES ///////////////////////////////////////////////
+
+  const handleCreateFile = (file) => {
+    updateSelectedLocation(file);
+    setNewFileModalOpen(true);
   };
 
-  const handleCreateFile = () => {
-    setNewActionModalOpen(true);
+  const handleCloseNewFileModal = () => {
+    setNewFileModalOpen(false);
+    document.getElementById("fileName").value = "";
   };
 
-  const handleDeleteFile = async () => {
-    if (currentFilename) {
+  const handleNewActionSubmit = async (location, data) => {
+    handleCloseNewFileModal();
+
+    if (data.fileName !== "") {
       try {
-        const response = await axios.get(
-          `/tree_api/delete_file?project_name=${currentProjectname}&filename=${currentFilename}`,
-        );
-        if (response.data.success) {
-          setProjectChanges(true);
-          fetchFileList(); // Update the file list
-          setCurrentFilename(""); // Unset the current file
-        } else {
-          alert(response.data.message);
+        let response;
+        switch (data.fileType) {
+          case "actions":
+            response = await axios.get(
+              `/tree_api/create_action?project_name=${currentProjectname}&filename=${data.fileName}.py&template=${data.templateType}`,
+            );
+            break;
+          default:
+            response = await axios.get(
+              `/tree_api/create_file?project_name=${currentProjectname}&location=${location}&file_name=${data.fileName}`,
+            );
+            break;
         }
-      } catch (error) {
-        console.error("Error deleting file:", error);
-      }
-    } else {
-      alert("No file is currently selected.");
-    }
-  };
-
-  const handleCloseNewActionModal = () => {
-    setNewActionModalOpen(false);
-    document.getElementById("actionName").value = "";
-  };
-
-  const handleFormSubmit = async (data) => {
-    setNewsletterFormData(data);
-    handleCloseNewActionModal();
-
-    if (data.actionName !== "") {
-      try {
-        const response = await axios.get(
-          `/tree_api/create_file?project_name=${currentProjectname}&filename=${data.actionName}.py&template=${data.templateType}`,
-        );
         if (response.data.success) {
           setProjectChanges(true);
           fetchFileList(); // Update the file list
@@ -101,58 +120,275 @@ const FileBrowser = ({
     }
   };
 
+  ///////////////// DELETE FILES AND FOLDERS ///////////////////////////////////
+
+  const handleDeleteModal = (file_path) => {
+    if (file_path) {
+      setDeleteEntry(file_path);
+      setDeleteModalOpen(true);
+    } else {
+      alert("No file is currently selected.");
+    }
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setDeleteEntry("");
+  };
+
+  const handleSubmitDeleteModal = async () => {
+    //currentFilename === Absolute File path
+    if (deleteEntry) {
+      try {
+        const response = await axios.get(
+          `/tree_api/delete_file?project_name=${currentProjectname}&path=${deleteEntry}`,
+        );
+        if (response.data.success) {
+          setProjectChanges(true);
+          fetchFileList(); // Update the file list
+          if (currentFilename === deleteEntry) {
+            setCurrentFilename(""); // Unset the current file
+          }
+          if (selectedEntry.path === deleteEntry) {
+            setSelectedEntry(null);
+          }
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error deleting file:", error);
+      }
+    } else {
+      alert("No file is currently selected.");
+    }
+    handleCloseDeleteModal();
+  };
+
+  const handleDeleteCurrentFile = () => {
+    //currentFilename === Absolute File path
+    if (currentFilename) {
+      handleDeleteModal(currentFilename);
+    } else {
+      alert("No file is currently selected.");
+    }
+  };
+
+  ///////////////// CREATE FOLDER //////////////////////////////////////////////
+
+  const handleCreateFolder = (file) => {
+    updateSelectedLocation(file);
+    setNewFolderModalOpen(true);
+  };
+
+  const handleCloseCreateFolder = () => {
+    setNewFolderModalOpen(false);
+    document.getElementById("folderName").value = "";
+  };
+
+  const handleCreateFolderSubmit = async (location, folder_name) => {
+    if (folder_name !== "") {
+      try {
+        const response = await axios.get(
+          `/tree_api/create_folder?project_name=${currentProjectname}&location=${location}&folder_name=${folder_name}`,
+        );
+        if (response.data.success) {
+          setProjectChanges(true);
+          fetchFileList(); // Update the file list
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error creating folder:", error);
+      }
+    }
+  };
+
+  ///////////////// RENAME /////////////////////////////////////////////////////
+
+  const handleRename = (file) => {
+    if (file) {
+      setRenameEntry(file);
+      setRenameModalOpen(true);
+    } else {
+      alert("No file is currently selected.");
+    }
+  };
+
+  const handleCloseRenameModal = () => {
+    setRenameModalOpen(false);
+  };
+
+  const handleSubmitRenameModal = async (new_path) => {
+    if (renameEntry) {
+      try {
+        const response = await axios.get(
+          `/tree_api/rename_file?project_name=${currentProjectname}&path=${renameEntry.path}&rename_to=${new_path}`,
+        );
+        if (response.data.success) {
+          setProjectChanges(true);
+          fetchFileList(); // Update the file list
+          //TODO: if is a file what was renamed may need to change the path
+          if (currentFilename === renameEntry.name) {
+            setCurrentFilename(new_path); // Unset the current file
+          }
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error deleting file:", error);
+      }
+    } else {
+      alert("No file is currently selected.");
+    }
+    handleCloseRenameModal();
+  };
+
+  const handleRenameCurrentFile = () => {
+    //TODO: need to obtain all file data to do this
+    return;
+    if (currentFilename) {
+      handleRename(currentFilename);
+    } else {
+      alert("No file is currently selected.");
+    }
+  };
+
+  ///////////////// UPLOAD /////////////////////////////////////////////////////
+
+  const handleUpload = (file) => {
+    updateSelectedLocation(file);
+    setUploadModalOpen(true);
+  };
+
+  const handleCloseUploadModal = () => {
+    setUploadModalOpen(false);
+    fetchFileList();
+  };
+
+  ///////////////// DOWNLOAD ///////////////////////////////////////////////////
+  const fetchDownloadData = async (file_path) => {
+    const api_response = await fetch("/tree_api/download_data/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        app_name: currentProjectname,
+        path: file_path,
+      }),
+    });
+
+    if (!api_response.ok) {
+      var json_response = await api_response.json();
+      throw new Error(json_response.message || "An error occurred.");
+    }
+
+    return api_response.blob();
+  };
+
+  const handleDownload = async (file) => {
+    if (file) {
+      // Get the data as a base64 blob object
+      const app_blob = await fetchDownloadData(file.path);
+
+      try {
+        const url = window.URL.createObjectURL(app_blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = `${file.name}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+  };
+
   return (
-    <div style={{ flex: "2" }}>
-      <div className="browser-menu">
-        <h2>Action Browser</h2>
-        <div className="buttons">
+    <div className="sidebar-content">
+      <div className="sidebar-entry">
+        <div className="sidebar-entry-menu">
           <button
-            className="menu-button"
-            onClick={handleCreateFile}
-            title="Create a new action file"
+            onClick={() => handleCreateFile(null)}
+            title="Create a new file"
           >
             <AddIcon className="icon" fill={"var(--icon)"} />
           </button>
           <button
-            className="menu-button"
-            onClick={handleDeleteFile}
-            title="Delete file"
+            onClick={() => handleCreateFolder(null)}
+            title="Create a new folder"
           >
-            <DeleteIcon className="icon" fill={"var(--icon)"} />
+            <AddFolderIcon className="icon" stroke={"var(--icon)"} />
           </button>
+          <button onClick={() => fetchFileList()} title="Refresh View">
+            <RefreshIcon className="icon" stroke={"var(--icon)"} />
+          </button>
+          <div style={{ marginLeft: "auto" }} />
+          {currentFilename !== "" && (
+            <>
+              <button onClick={handleRenameCurrentFile} title="Rename file">
+                <RenameIcon className="icon" stroke={"var(--icon)"} />
+              </button>
+              <button onClick={handleDeleteCurrentFile} title="Delete file">
+                <DeleteIcon className="icon" fill={"var(--icon)"} />
+              </button>
+            </>
+          )}
         </div>
+        <FileExplorer
+          setCurrentFilename={setCurrentFilename}
+          currentFilename={currentFilename}
+          currentProjectname={currentProjectname}
+          setSelectedEntry={setSelectedEntry}
+          actionNodesData={actionNodesData}
+          showAccentColor={showAccentColor}
+          diagramEditorReady={diagramEditorReady}
+          fileList={fileList}
+          fetchFileList={fetchFileList}
+          onDelete={handleDeleteModal}
+          onCreateFile={handleCreateFile}
+          onCreateFolder={handleCreateFolder}
+          onUpload={handleUpload}
+          onDownload={handleDownload}
+          onRename={handleRename}
+        />
       </div>
-      <NewActionModal
-        isOpen={isNewActionModalOpen}
-        onSubmit={handleFormSubmit}
-        onClose={handleCloseNewActionModal}
+      <NewFileModal
+        isOpen={isNewFileModalOpen}
+        onSubmit={handleNewActionSubmit}
+        onClose={handleCloseNewFileModal}
         fileList={fileList}
+        location={selectedLocation}
       />
-      {Array.isArray(fileList) ? (
-        <div>
-          {fileList.map((file, index) => (
-            <div
-              key={index}
-              className={`file-item ${currentFilename === file + ".py" ? "file-item-selected" : ""}`}
-              onClick={() => handleFileClick(file)}
-            >
-              <label>{file}</label>
-              {showAccentColor && diagramEditorReady && (
-                <div
-                  className="accent-color"
-                  style={{
-                    backgroundColor: actionNodesData[file]
-                      ? actionNodesData[file]["color"]
-                      : "none",
-                  }}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p>Create or select a project to start</p>
-      )}
+      <NewFolderModal
+        isOpen={isNewFolderModalOpen}
+        onSubmit={handleCreateFolderSubmit}
+        onClose={handleCloseCreateFolder}
+        fileList={fileList}
+        location={selectedLocation}
+      />
+      <RenameModal
+        isOpen={isRenameModalOpen}
+        onSubmit={handleSubmitRenameModal}
+        onClose={handleCloseRenameModal}
+        fileList={fileList}
+        selectedEntry={renameEntry}
+      />
+      <UploadModal
+        isOpen={isUploadModalOpen}
+        onSubmit={handleCloseUploadModal}
+        onClose={handleCloseUploadModal}
+        location={selectedLocation}
+        currentProject={currentProjectname}
+      />
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onSubmit={handleSubmitDeleteModal}
+        onClose={handleCloseDeleteModal}
+        selectedEntry={deleteEntry}
+      />
     </div>
   );
 };

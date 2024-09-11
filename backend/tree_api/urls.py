@@ -9,9 +9,13 @@ urlpatterns = [
     path("get_project_graph/", views.get_project_graph, name="get_project_graph"),
     path("get_project_list/", views.get_project_list, name="get_project_list"),
     path("get_file_list/", views.get_file_list, name="get_file_list"),
+    path("get_actions_list/", views.get_actions_list, name="get_actions_list"),
     path("get_universes_list/", views.get_universes_list, name="get_universes_list"),
     path("get_file/", views.get_file, name="get_file"),
+    path("create_action/", views.create_action, name="create_action"),
     path("create_file/", views.create_file, name="create_file"),
+    path("create_folder/", views.create_folder, name="create_folder"),
+    path("rename_file/", views.rename_file, name="rename_file"),
     path("delete_file/", views.delete_file, name="delete_file"),
     path("save_file/", views.save_file, name="save_file"),
     path("translate_json/", views.translate_json, name="translate_json"),
@@ -28,6 +32,7 @@ urlpatterns = [
     ),
     path("get_universe_zip/", views.get_universe_zip, name="generate_app"),
     path("upload_universe/", views.upload_universe, name="upload_universe"),
+    path("upload_code/", views.upload_code, name="upload_code"),
     path(
         "get_project_configuration/",
         views.get_project_configuration,
@@ -38,4 +43,5 @@ urlpatterns = [
         views.save_project_configuration,
         name="save_project_configuration",
     ),
+    path("download_data/", views.download_data, name="download_data"),
 ]
