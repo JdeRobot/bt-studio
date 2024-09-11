@@ -35,7 +35,7 @@ const FileExplorer = ({
     menuFile,
     setMenuFile,
     menuGroupFile,
-    setMenuGroupFile,
+    setMenuGroupFile
   );
 
   useEffect(() => {

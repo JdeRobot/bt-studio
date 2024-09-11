@@ -91,7 +91,7 @@ const NodeMenu = ({
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
-    label: string,
+    label: string
   ) => {
     setAnchorEl(event.currentTarget);
     setMenuLabel(label);
@@ -199,8 +199,8 @@ const NodeMenu = ({
           onClick={() => {
             openInNewTab(
               new URL(
-                "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
-              ),
+                "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
+              )
             );
           }}
           title="Help"

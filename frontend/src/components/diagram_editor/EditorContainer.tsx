@@ -43,7 +43,6 @@ const EditorContainer = ({
           setResultJson={setGlobalJson}
           projectName={projectName}
           setDiagramEdited={setProjectEdited}
-          hasSubtrees={true}
         />
       ) : (
         <p>Loading...</p> // Display a loading message until the graph is fetched

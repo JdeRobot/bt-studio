@@ -20,6 +20,8 @@ from rest_framework import status
 from django.core.files.storage import default_storage
 import base64
 
+# PROJECT MANAGEMENT
+
 
 @api_view(["GET"])
 def create_project(request):
@@ -30,6 +32,7 @@ def create_project(request):
     action_path = os.path.join(project_path, "code/actions")
     universes_path = os.path.join(project_path, "universes")
     config_path = os.path.join(project_path, "config.json")
+
     tree_path = os.path.join(project_path, "code/trees")
     subtree_path = os.path.join(tree_path, "subtrees")
     init_graph_path = os.path.join(settings.BASE_DIR, "templates/init_graph.json")
@@ -78,25 +81,6 @@ def delete_project(request):
 
     if os.path.exists(project_path):
         shutil.rmtree(project_path)
-        return Response({"success": True})
-    else:
-        return Response(
-            {"success": False, "message": "Project does not exist"}, status=400
-        )
-
-
-@api_view(["GET"])
-def delete_universe(request):
-    project_name = request.GET.get("project_name")
-    universe_name = request.GET.get("universe_name")
-
-    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
-    project_path = os.path.join(folder_path, project_name)
-    universes_path = os.path.join(project_path, "universes/")
-    universe_path = os.path.join(universes_path, universe_name)
-
-    if os.path.exists(universe_path):
-        shutil.rmtree(universe_path)
         return Response({"success": True})
     else:
         return Response(
@@ -155,6 +139,33 @@ def save_project(request):
             )
     else:
         return Response({"error": "app_name parameter is missing"}, status=400)
+
+
+@api_view(["GET"])
+def get_project_graph(request):
+
+    project_name = request.GET.get("project_name")
+
+    # Generate the paths
+    base_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(base_path, project_name)
+    graph_path = os.path.join(project_path, "code/graph.json")
+
+    # Check if the project exists
+    if os.path.exists(graph_path):
+        try:
+            with open(graph_path, "r") as f:
+                graph_data = json.load(f)
+            return JsonResponse({"success": True, "graph_json": graph_data})
+        except Exception as e:
+            return JsonResponse(
+                {"success": False, "message": f"Error reading file: {str(e)}"},
+                status=500,
+            )
+    else:
+        return Response(
+            {"error": "The project does not have a graph definition"}, status=404
+        )
 
 
 @api_view(["GET"])
@@ -379,6 +390,25 @@ def get_subtree_list(request):
 
 
 @api_view(["GET"])
+def delete_universe(request):
+    project_name = request.GET.get("project_name")
+    universe_name = request.GET.get("universe_name")
+
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    universes_path = os.path.join(project_path, "universes/")
+    universe_path = os.path.join(universes_path, universe_name)
+
+    if os.path.exists(universe_path):
+        shutil.rmtree(universe_path)
+        return Response({"success": True})
+    else:
+        return Response(
+            {"success": False, "message": "Project does not exist"}, status=400
+        )
+
+
+@api_view(["GET"])
 def get_universes_list(request):
 
     project_name = request.GET.get("project_name")
@@ -448,6 +478,9 @@ def import_universe_from_zip(request):
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     universes_path = os.path.join(project_path, "universes/")
+
+
+# FILE MANAGEMENT
 
 
 @api_view(["GET"])
@@ -686,52 +719,6 @@ def save_file(request):
     try:
         with open(file_path, "w") as f:
             f.write(content)
-        return Response({"success": True})
-    except Exception as e:
-        return Response({"success": False, "message": str(e)}, status=400)
-
-
-@api_view(["GET"])
-def get_project_configuration(request):
-
-    project_name = request.GET.get("project_name")
-
-    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
-
-    if project_name:
-        project_path = os.path.join(folder_path, project_name)
-        config_path = os.path.join(project_path, "config.json")
-        if os.path.exists(config_path):
-            with open(config_path, "r") as f:
-                content = f.read()
-            return Response(content)
-        else:
-            return Response({"error": "File not found"}, status=404)
-    else:
-        return Response({"error": "Project parameter is missing"}, status=400)
-
-
-@api_view(["POST"])
-def save_project_configuration(request):
-
-    project_name = request.data.get("project_name")
-
-    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
-    project_path = os.path.join(folder_path, project_name)
-    config_path = os.path.join(project_path, "config.json")
-
-    try:
-        content = request.data.get("settings")
-        if content is None:
-            return Response(
-                {"success": False, "message": "Settings are missing"}, status=400
-            )
-
-        d = json.loads(content)
-
-        with open(config_path, "w") as f:
-            json.dump(d, f, indent=4)
-
         return Response({"success": True})
     except Exception as e:
         return Response({"success": False, "message": str(e)}, status=400)
