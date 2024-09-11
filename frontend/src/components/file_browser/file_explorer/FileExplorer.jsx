@@ -60,7 +60,6 @@ const FileExplorer = ({
   if (Array.isArray(fileList)) {
     return (
       <div className="sidebar-entry-contents">
-        <div>Come on come on turn the radio on</div>
         {fileList.map((file) => (
           <TreeNode
             node={file}

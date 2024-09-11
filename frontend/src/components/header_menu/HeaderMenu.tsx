@@ -379,11 +379,11 @@ const HeaderMenu = ({
             )}
           </button>
           <button
-            className="node-action-button"
+            className="header-button"
             onClick={onResetApp}
             title="Reset app"
           >
-            <ResetIcon className="icon action-icon" stroke={"var(--icon)"} />
+            <ResetIcon className="header-icon" stroke={"var(--icon)"} />
           </button>
         </div>
       </Toolbar>

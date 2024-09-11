@@ -132,7 +132,7 @@ const App = () => {
       />
 
       <div className="App-main" style={{ display: "flex" }}>
-        <div style={{ width: "200px", paddingLeft: "1vw" }}>
+        <div className="sideBar">
           <FileBrowser
             setCurrentFilename={setCurrentFilename}
             currentFilename={currentFilename}
