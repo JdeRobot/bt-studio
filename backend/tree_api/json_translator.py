@@ -128,7 +128,10 @@ def get_start_node_id(node_models, link_models):
 def translate(content, tree_path, raw_order):
 
     # Parse the JSON data
-    parsed_json = json.loads(content)
+    try:
+        parsed_json = json.loads(content)
+    except Exception as e:
+        print(str(e))
 
     # Extract nodes and links information
     node_models = parsed_json["layers"][1]["models"]

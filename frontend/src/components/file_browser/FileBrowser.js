@@ -61,6 +61,7 @@ const FileBrowser = ({
   };
 
   const fetchFileList = async () => {
+    console.log("Fecthing file list, the project name is:", currentProjectname);
     if (currentProjectname !== "") {
       try {
         const response = await axios.get(
