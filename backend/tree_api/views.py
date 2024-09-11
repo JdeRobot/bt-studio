@@ -149,7 +149,7 @@ def get_project_graph(request):
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, project_name)
-    graph_path = os.path.join(project_path, "code/graph.json")
+    graph_path = os.path.join(project_path, "code/trees/main.json")
 
     # Check if the project exists
     if os.path.exists(graph_path):
