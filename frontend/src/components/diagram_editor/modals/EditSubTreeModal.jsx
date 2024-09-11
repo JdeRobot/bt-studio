@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from "../../Modal/Modal";
-import MinimalDiagramEditor from "../MinimalDiagramEditor";
+import MinimalDiagramEditor from "../DiagramEditor";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 
 const EditSubTreeModal = ({ isOpen, onClose, ...otherProps }) => {

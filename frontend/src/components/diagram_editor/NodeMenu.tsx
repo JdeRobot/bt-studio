@@ -1,7 +1,7 @@
 import React, { MouseEventHandler, useEffect, useState } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import "./NodeHeader.css";
+import "./NodeMenu.css";
 import axios from "axios";
 
 import { ReactComponent as DeleteIcon } from "./img/del_node.svg";

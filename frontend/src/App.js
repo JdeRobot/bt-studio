@@ -14,7 +14,7 @@ import EditorContainer from "./components/diagram_editor/EditorContainer";
 import CommsManager from "./api_helper/CommsManager";
 
 const App = () => {
-  const [editorWidth, setEditorWidth] = useState(807);
+  const [editorWidth, setEditorWidth] = useState(600);
   const [currentFilename, setCurrentFilename] = useState("");
   const [currentProjectname, setCurrentProjectname] = useState("");
   const [currentUniverseName, setCurrentUniverseName] = useState(null);
@@ -175,7 +175,7 @@ const App = () => {
           height={0}
           onResize={(e, { size }) => onResize("editorWidth", size)}
           minConstraints={[400, 400]}
-          maxConstraints={[900, 900]}
+          maxConstraints={[800, 900]}
         >
           <div style={{ width: `${editorWidth}px` }}>
             <FileEditor
@@ -186,18 +186,26 @@ const App = () => {
           </div>
         </Resizable>
 
-        <div style={{ width: "100%" }}>
-          {currentProjectname ? (
-            <EditorContainer
-              projectName={currentProjectname}
-              setProjectEdited={setProjectChanges}
-              setGlobalJson={setModelJson}
-            />
-          ) : (
-            <p>Loading...</p>
-          )}
-          <VncViewer gazeboEnabled={gazeboEnabled} />
-        </div>
+        <Resizable
+          width={100 % -editorWidth}
+          height={0}
+          onResize={(e, { size }) => onResize("sidebarWidth", size)}
+          minConstraints={[300, 300]}
+          maxConstraints={[300, 900]}
+        >
+          <div style={{ flex: 1 }}>
+            {currentProjectname ? (
+              <EditorContainer
+                projectName={currentProjectname}
+                setProjectEdited={setProjectChanges}
+                setGlobalJson={setModelJson}
+              />
+            ) : (
+              <p>Loading...</p>
+            )}
+            <VncViewer gazeboEnabled={gazeboEnabled} />
+          </div>
+        </Resizable>
       </div>
     </div>
   );

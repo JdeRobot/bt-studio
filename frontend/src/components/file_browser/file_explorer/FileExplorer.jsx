@@ -35,13 +35,17 @@ const FileExplorer = ({
     menuFile,
     setMenuFile,
     menuGroupFile,
-    setMenuGroupFile,
+    setMenuGroupFile
   );
 
   useEffect(() => {
     fetchFileList();
     setCurrentFilename("");
     setSelectedEntry("");
+    console.log("The file list is: ", fileList);
+    if (Array.isArray(fileList)) {
+      console.log("Yes it is an array");
+    }
   }, [currentProjectname]);
 
   const handleFileClick = (file) => {
@@ -56,6 +60,7 @@ const FileExplorer = ({
   if (Array.isArray(fileList)) {
     return (
       <div className="sidebar-entry-contents">
+        <div>Come on come on turn the radio on</div>
         {fileList.map((file) => (
           <TreeNode
             node={file}

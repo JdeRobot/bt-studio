@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import MinimalDiagramEditor from "./MinimalDiagramEditor";
+import DiagramEditor from "./DiagramEditor";
 
 const EditorContainer = ({
   projectName,
@@ -38,7 +38,7 @@ const EditorContainer = ({
   return (
     <div id="editor-container">
       {initialJson ? (
-        <MinimalDiagramEditor
+        <DiagramEditor
           modelJson={initialJson}
           setResultJson={setGlobalJson}
           projectName={projectName}
