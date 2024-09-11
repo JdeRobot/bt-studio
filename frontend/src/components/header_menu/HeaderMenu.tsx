@@ -80,7 +80,7 @@ const HeaderMenu = ({
           name: configJson.name,
           launch_file_path: configJson.config.launch_file_path,
           ros_version: "ROS2",
-          visualization: "gazebo_rae",
+          visualization: "bt_studio",
           world: "gazebo",
           exercise_id: configJson.config.id,
         };
@@ -96,6 +96,25 @@ const HeaderMenu = ({
       throw error; // rethrow
     }
   };
+
+  // const launchUniverse = async (universe_name) => {
+  //   const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
+  //     currentProjectname,
+  //   )}&universe_name=${encodeURIComponent(universe_name)}`;
+
+  //   try {
+  //     const response = await axios.get(apiUrl);
+  //     console.log("Stored universe config: " + response.data);
+  //     const stored_cfg = JSON.parse(response.data);
+  //     if (stored_cfg.type === "robotics_backend") {
+  //       await launchBackendUniverse(stored_cfg);
+  //     } else {
+  //       launchCustomUniverse(stored_cfg);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error launching universe:", error);
+  //   }
+  // };
 
   // Project handling
 
@@ -171,6 +190,19 @@ const HeaderMenu = ({
     }
   };
 
+  const sendOnLoad = async (reader:FileReader) => {
+    // Get the zip in base64
+    var base64data = reader.result;
+
+    // Send the zip
+    await manager.run({
+      type: "bt-studio",
+      code: base64data,
+    });
+    setAppRunning(true);
+    console.log("App started successfully");
+  };
+
   const onAppStateChange = async () => {
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
@@ -184,15 +216,10 @@ const HeaderMenu = ({
           currentProjectname,
           "bottom-to-top",
         );
-        const base64data = await app_blob.text();
+        const reader = new FileReader();
 
-        // Send the zip
-        await manager.run({
-          type: "bt-studio",
-          code: base64data,
-        });
-        setAppRunning(true);
-        console.log("App started successfully");
+        reader.onloadend = () => sendOnLoad(reader); // Fix: pass the function reference
+        reader.readAsDataURL(app_blob);
       } catch (error: unknown) {
         if (error instanceof Error) {
           console.error("Error running app: " + error.message);

@@ -30,9 +30,9 @@ var NODE_MENU_ITEMS: Record<string, string[]> = {
 const fetchActionList = async (project_name: string) => {
   try {
     const response = await axios.get(
-      `/tree_api/get_file_list?project_name=${project_name}`,
+      `/tree_api/get_actions_list?project_name=${project_name}`,
     );
-    const files = response.data.file_list;
+    const files = response.data.actions_list;
     if (Array.isArray(files)) {
       const actions = files.map((file) => file.replace(".py", ""));
       NODE_MENU_ITEMS["Actions"] = actions;

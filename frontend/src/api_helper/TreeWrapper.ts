@@ -181,7 +181,7 @@ const generateApp = async (
     if (!isSuccessful(response)) {
       throw new Error(response.data.message || "Failed to create app."); // Response error
     }
-    return new Blob([response.data], { type: "application/octet-stream" });
+    return new Blob([response.data], { type: "application/zip" });
   } catch (error: unknown) {
     throw error; // Rethrow
   }
