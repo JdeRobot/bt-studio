@@ -15,12 +15,20 @@ export interface BasicNodeModelGenerics {
   PORT: ParentPortModel | ChildrenPortModel | InputPortModel | OutputPortModel;
 }
 
+export type BTExecutionStatus =
+  | "RUNNING"
+  | "SUCCESS"
+  | "FAILURE"
+  | "INVALID"
+  | "NONE";
+
 export class BasicNodeModel extends NodeModel<
   NodeModelGenerics & BasicNodeModelGenerics
 > {
   private name: string;
   private color: string;
   private is_selected: boolean;
+  private exec_status: BTExecutionStatus;
 
   constructor(name: string = "Basic Node", color: string = "rgb(0,192,255)") {
     super({
@@ -29,6 +37,7 @@ export class BasicNodeModel extends NodeModel<
     this.name = name;
     this.color = color;
     this.is_selected = false;
+    this.exec_status = "NONE";
   }
 
   getName(): string {
@@ -41,6 +50,14 @@ export class BasicNodeModel extends NodeModel<
 
   getColor(): string {
     return this.color;
+  }
+
+  setExecStatus(status: BTExecutionStatus): void {
+    this.exec_status = status;
+  }
+
+  getExecStatus(): BTExecutionStatus {
+    return this.exec_status;
   }
 
   isSelected(): boolean {
