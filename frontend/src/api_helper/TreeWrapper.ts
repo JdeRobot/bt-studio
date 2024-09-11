@@ -279,6 +279,26 @@ const getSubtreeList = async (projectName: string) => {
   }
 };
 
+const getSubtree = async (subtreeName: string, projectName: string) => {
+  if (!subtreeName) throw new Error("Subtree name is not set");
+  if (!projectName) throw new Error("Project name is not set");
+
+  const apiUrl = `/tree_api/get_subtree?project_name=${encodeURIComponent(projectName)}&subtree_name=${encodeURIComponent(subtreeName)}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get subtree."); // Response error
+    }
+
+    return response.data.subtree;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 // Named export
 export {
   createProject,
@@ -289,6 +309,7 @@ export {
   getCustomUniverseZip,
   createSubtree,
   getSubtreeList,
+  getSubtree,
   getFileList,
   getActionsList,
 };

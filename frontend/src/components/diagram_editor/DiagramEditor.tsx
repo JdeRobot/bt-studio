@@ -5,10 +5,6 @@ import createEngine, {
   DefaultLinkModel,
   DefaultNodeModel,
   DiagramModel,
-  DiagramModelGenerics,
-  LinkModel,
-  NodeModel,
-  ZoomCanvasAction,
 } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
@@ -25,132 +21,8 @@ import { InputPortModel } from "./nodes/basic_node/ports/input_port/InputPortMod
 import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutputPortModel";
 import { TagInputPortModel } from "./nodes/tag_node/ports/input_port/TagInputPortModel";
 
+import SubtreeModal from "./modals/SubTreeModal";
 import NodeMenu from "./NodeMenu";
-import EditActionModal from "./modals/EditActionModal";
-
-// MODAL MANAGEMENT
-const testFunction = () => {
-  console.log("Hello!");
-};
-
-// HELPERS
-
-// Configures an engine with all the factories
-const configureEngine = (engine: any) => {
-  console.log("Configuring engine!");
-  // Register factories
-  engine.current
-    .getNodeFactories()
-    .registerFactory(new BasicNodeFactory(testFunction));
-  engine.current
-    .getNodeFactories()
-    .registerFactory(new TagNodeFactory(testFunction));
-  engine.current
-    .getPortFactories()
-    .registerFactory(
-      new SimplePortFactory("children", (config) => new ChildrenPortModel()),
-    );
-  engine.current
-    .getPortFactories()
-    .registerFactory(
-      new SimplePortFactory("parent", (config) => new ParentPortModel()),
-    );
-  engine.current
-    .getPortFactories()
-    .registerFactory(
-      new SimplePortFactory("output", (config) => new OutputPortModel("")),
-    );
-  engine.current
-    .getPortFactories()
-    .registerFactory(
-      new SimplePortFactory("input", (config) => new InputPortModel("")),
-    );
-  engine.current
-    .getPortFactories()
-    .registerFactory(
-      new SimplePortFactory("tag output", (config) => new TagOutputPortModel()),
-    );
-  engine.current
-    .getPortFactories()
-    .registerFactory(
-      new SimplePortFactory("tag input", (config) => new TagInputPortModel()),
-    );
-
-  // Disable loose links
-  const state: any = engine.current.getStateMachine().getCurrentState();
-  state.dragNewLink.config.allowLooseLinks = false;
-
-  engine.current
-    .getActionEventBus()
-    .registerAction(new ZoomCanvasAction({ inverseZoom: true }));
-};
-
-// Add the nodes default ports
-const addDefaultPorts = (node: any, model: any) => {
-  console.log("Adding default ports");
-
-  var nodeName = node.getName();
-  if (nodeName === "RetryUntilSuccessful") node.addInputPort("num_attempts");
-  else if (nodeName === "Repeat") node.addInputPort("num_cycles");
-  else if (nodeName === "Delay") node.addInputPort("delay_ms");
-
-  model.current.getNodes().forEach((oldNode: NodeModel) => {
-    //TODO: for the tags, this will never be called. Maybe have a common type
-    if (oldNode instanceof BasicNodeModel) {
-      var convNode = oldNode as BasicNodeModel;
-      if (convNode.getName() === node.getName() && node !== convNode) {
-        node.setColor(convNode.getColor());
-        Object.values(convNode.getPorts()).forEach((element) => {
-          if (element instanceof InputPortModel) {
-            node.addInputPort(element.getName());
-          } else if (element instanceof OutputPortModel) {
-            node.addOutputPort(element.getName());
-          }
-        });
-      }
-    }
-  });
-};
-
-const deletePortLink = (model: any, portName: string, node: BasicNodeModel) => {
-  var link: LinkModel | undefined;
-  const nodePort = node.getPort(portName);
-
-  if (nodePort) {
-    link = Object.values(nodePort.links)[0];
-    if (link) {
-      model.current.removeLink(link);
-    }
-  }
-};
-
-const isActionNode = (node: any) => {
-  var name = node.getName();
-
-  if (node.getOptions().type === "tag") {
-    return false;
-  }
-
-  // Check if the node is a user written action
-  return ![
-    "Sequence",
-    "ReactiveSequence",
-    "SequenceWithMemory",
-    "Fallback",
-    "ReactiveFallback",
-    "RetryUntilSuccessful",
-    "Inverter",
-    "ForceSuccess",
-    "ForceFailure",
-    "KeepRunningUntilFailure",
-    "Repeat",
-    "RunOnce",
-    "Delay",
-    "Input port value",
-    "Output port value",
-    "Tree Root",
-  ].includes(name);
-};
 
 const DiagramEditor = memo(
   ({
@@ -158,121 +30,111 @@ const DiagramEditor = memo(
     setResultJson,
     projectName,
     setDiagramEdited,
+    hasSubtrees,
   }: {
     modelJson: any;
     setResultJson: Function;
     projectName: string;
     setDiagramEdited: Function;
+    hasSubtrees: boolean;
   }) => {
-    // Initialize the model and the engine
-    const model = useRef(new DiagramModel());
-    const engine = useRef(createEngine());
+    // STATE
+    const [subTreeModalOpen, setSubTreeModalOpen] = useState(false);
+    const [subTreeName, setSubTreeName] = useState("");
 
-    configureEngine(engine);
+    // MODAL MANAGEMENT
+    const modalManager = () => {
+      const node = model.current.getNode(lastClickedNodeId) as BasicNodeModel;
+      if (node && node.getIsSubtree()) {
+        setSubTreeName(node.getName());
+        setSubTreeModalOpen(true);
+      }
+    };
 
-    // Deserialize and load the model
-    console.log("Repaint");
-    model.current.deserializeModel(modelJson, engine.current);
-    setResultJson(modelJson);
-    engine.current.setModel(model.current);
+    const onSubTreeModalClose = () => {
+      setSubTreeModalOpen(false);
+    };
 
-    return (
-      <DiagramEditorModalsWrapper
-        engine={engine}
-        model={model}
-        projectName={projectName}
-        setResultJson={setResultJson}
-        setDiagramEdited={setDiagramEdited}
-      >
-        <CanvasWidget className="canvas" engine={engine.current} />
-      </DiagramEditorModalsWrapper>
-    );
-  },
-);
+    // HELPERS
 
-const DiagramEditorModalsWrapper = memo(
-  ({
-    engine,
-    model,
-    projectName,
-    setResultJson,
-    setDiagramEdited,
-    children,
-  }: {
-    engine: any;
-    model: React.MutableRefObject<DiagramModel<DiagramModelGenerics>>;
-    projectName: string;
-    setResultJson: Function;
-    setDiagramEdited: Function;
-    children: any;
-  }) => {
+    // Configures an engine with all the factories
+    const configureEngine = (engine: any) => {
+      console.log("Configuring engine!");
+      // Register factories
+      engine.current
+        .getNodeFactories()
+        .registerFactory(new BasicNodeFactory(modalManager));
+      engine.current
+        .getNodeFactories()
+        .registerFactory(new TagNodeFactory(modalManager));
+      engine.current
+        .getPortFactories()
+        .registerFactory(
+          new SimplePortFactory("children", (config) => new ChildrenPortModel())
+        );
+      engine.current
+        .getPortFactories()
+        .registerFactory(
+          new SimplePortFactory("parent", (config) => new ParentPortModel())
+        );
+      engine.current
+        .getPortFactories()
+        .registerFactory(
+          new SimplePortFactory("output", (config) => new OutputPortModel(""))
+        );
+      engine.current
+        .getPortFactories()
+        .registerFactory(
+          new SimplePortFactory("input", (config) => new InputPortModel(""))
+        );
+      engine.current
+        .getPortFactories()
+        .registerFactory(
+          new SimplePortFactory(
+            "tag output",
+            (config) => new TagOutputPortModel()
+          )
+        );
+      engine.current
+        .getPortFactories()
+        .registerFactory(
+          new SimplePortFactory(
+            "tag input",
+            (config) => new TagInputPortModel()
+          )
+        );
+
+      // Disable loose links
+      const state: any = engine.current.getStateMachine().getCurrentState();
+      state.dragNewLink.config.allowLooseLinks = false;
+    };
+
+    // Add the nodes default ports
+    const addDefaultPorts = (node: any) => {
+      console.log("Adding default ports");
+
+      var nodeName = node.getName();
+      if (nodeName === "RetryUntilSuccessful")
+        node.addInputPort("num_attempts");
+      else if (nodeName === "Repeat") node.addInputPort("num_cycles");
+      else if (nodeName === "Delay") node.addInputPort("delay_ms");
+    };
+
     // VARS
-    const [isEditActionModalOpen, setEditActionModalOpen] =
-      useState<boolean>(false);
-    const [currentNode, setCurrentNode] = useState<BasicNodeModel | null>(null);
 
     // Initialize position and the last clicked node
     var lastMovedNodePosition = { x: 100, y: 100 };
     var lastClickedNodeId = "";
 
-    // Zooms to fit the nodes
-    const zoomToFit = () => {
-      engine.current.zoomToFitNodes({ margin: 50 });
-    };
+    // REFS
 
-    const openActionEditor = () => {
-      if (lastClickedNodeId !== "") {
-        const node = model.current.getNode(lastClickedNodeId) as BasicNodeModel;
-        if (isActionNode(node)) {
-          setCurrentNode(
-            model.current.getNode(lastClickedNodeId) as BasicNodeModel,
-          );
-          setEditActionModalOpen(true);
-        }
-      }
-    };
-
-    const closeActionEditor = () => {
-      setEditActionModalOpen(false);
-      setCurrentNode(null);
-      lastClickedNodeId = "";
-    };
-
-    const setColorActionNode = (r: number, g: number, b: number) => {
-      if (currentNode === null) {
-        return;
-      }
-
-      currentNode.setColor(
-        "rgb(" +
-          Math.round(r) +
-          "," +
-          Math.round(g) +
-          "," +
-          Math.round(b) +
-          ")",
-      );
-
-      model.current.getNodes().forEach((node: NodeModel) => {
-        //TODO: for the tags, this will never be called. Maybe have a common type
-        if (currentNode instanceof BasicNodeModel) {
-          var convNode = node as BasicNodeModel;
-          if (
-            convNode.getName() === currentNode.getName() &&
-            currentNode !== convNode
-          ) {
-            convNode.setColor(currentNode.getColor());
-          }
-        }
-      });
-
-      setDiagramEdited(true);
-      updateJsonState();
-      engine.current.repaintCanvas();
-    };
+    // Initialize the model and the engine
+    const model = useRef(new DiagramModel());
+    const engine = useRef(createEngine());
 
     // HELPERS
     const updateJsonState = () => {
+      console.log("The model at update is:", model.current.serialize());
       setResultJson(model.current.serialize());
     };
 
@@ -288,6 +150,15 @@ const DiagramEditorModalsWrapper = memo(
         }
         lastClickedNodeId = "";
       }
+    };
+
+    // Zooms to fit the nodes
+    const zoomToFit = () => {
+      engine.current.zoomToFitNodes({ margin: 50 });
+    };
+
+    const actionEditor = () => {
+      console.log("Editing the action!");
     };
 
     // LISTENERS
@@ -356,72 +227,54 @@ const DiagramEditorModalsWrapper = memo(
     };
 
     // Function to add a new basic node
-    const addBasicNode = (nodeName: string) => {
+    const addBasicNode = (nodeType: string, nodeName: string) => {
       // Control parameters
       const nodeConfig = {
-        default: {
-          color: "rgb(128,0,128)",
-          isAction: true,
-        },
+        default: { color: "rgb(128,0,128)", isAction: true, isSubtree: false },
         sequences: {
           color: "rgb(0,128,255)",
           isAction: false,
+          isSubtree: false,
         },
-        fallbacks: {
-          color: "rgb(255,0,0)",
-          isAction: false,
-        },
+        fallbacks: { color: "rgb(255,0,0)", isAction: false, isSubtree: false },
         decorators: {
           color: "rgb(255,153,51)",
           isAction: false,
+          isSubtree: false,
         },
+        subtrees: { color: "rgb(179,89,0)", isAction: false, isSubtree: true },
       };
 
-      const sequenceNodes = [
-        "Sequence",
-        "ReactiveSequence",
-        "SequenceWithMemory",
-      ];
-      const fallbackNodes = ["Fallback", "ReactiveFallback"];
-      const decoratorNodes = [
-        "RetryUntilSuccessful",
-        "Inverter",
-        "ForceSuccess",
-        "ForceFailure",
-        "KeepRunningUntilFailure",
-        "Repeat",
-        "RunOnce",
-        "Delay",
-      ];
+      type NodeType =
+        | "default"
+        | "sequences"
+        | "fallbacks"
+        | "decorators"
+        | "subtrees";
 
-      let nodeColor, hasInputPort, hasOutputPort, isAction;
-
-      if (sequenceNodes.includes(nodeName)) {
-        ({ color: nodeColor, isAction } = nodeConfig.sequences);
-      } else if (fallbackNodes.includes(nodeName)) {
-        ({ color: nodeColor, isAction } = nodeConfig.fallbacks);
-      } else if (decoratorNodes.includes(nodeName)) {
-        ({ color: nodeColor, isAction } = nodeConfig.decorators);
-      } else {
-        ({ color: nodeColor, isAction } = nodeConfig.default);
-      }
+      console.log("The node type is:", nodeType.toLowerCase());
+      const {
+        color: nodeColor,
+        isAction,
+        isSubtree,
+      } = nodeConfig[nodeType.toLowerCase() as NodeType] || nodeConfig.default;
 
       // Create node
-      const newNode = new BasicNodeModel(nodeName, nodeColor);
+      const newNode = new BasicNodeModel(nodeName, nodeColor, isSubtree);
 
       // Attach listeners
       attachPositionListener(newNode);
       attachClickListener(newNode);
 
       // Setup the node position
-      var new_y = lastMovedNodePosition.y + 100;
+      const new_y = lastMovedNodePosition.y + 100;
       newNode.setPosition(lastMovedNodePosition.x, new_y);
       lastMovedNodePosition.y = new_y;
 
       // Add ports
       newNode.addParentPort("Parent Port");
-      if (!isAction) newNode.addChildrenPort("Children Port");
-      addDefaultPorts(newNode, model);
+      if (!isAction && !isSubtree) newNode.addChildrenPort("Children Port");
+      addDefaultPorts(newNode);
 
       // Add the node to the model
       if (model.current) {
@@ -459,7 +312,8 @@ const DiagramEditorModalsWrapper = memo(
     };
 
     // Select which node to add depending on the name
-    const nodeTypeSelector = (nodeName: any) => {
+    const nodeTypeSelector = (nodeType: string, nodeName: string) => {
+      console.log("Adding node:", nodeName);
       // Unselect the previous node
       const node = model.current.getNode(lastClickedNodeId);
       if (node) node.setSelected(false);
@@ -469,88 +323,19 @@ const DiagramEditorModalsWrapper = memo(
       updateJsonState();
 
       // Select depending on the name
-      if (["Input port value", "Output port value"].includes(nodeName))
-        addTagNode(nodeName);
-      else addBasicNode(nodeName);
+      if (nodeType === "Port values") addTagNode(nodeName);
+      else addBasicNode(nodeType, nodeName);
     };
 
-    const addPort = (portName: string, node: any, type: number) => {
-      //TODO: type should be an enum
-      // Check that the user didn't cancel
-      if (!node || !portName) {
-        return;
-      }
+    // There is no need to use an effect as the editor will re render when the model json changes
+    // Configure the engine
+    configureEngine(engine);
 
-      if (type === 0) {
-        node.addInputPort(portName);
-      } else {
-        node.addOutputPort(portName);
-      }
-
-      model.current.getNodes().forEach((oldNode: NodeModel) => {
-        //TODO: for the tags, this will never be called. Maybe have a common type
-        if (isActionNode(oldNode)) {
-          var convNode = oldNode as BasicNodeModel;
-          if (convNode.getName() === node.getName() && node !== convNode) {
-            if (type === 0) {
-              convNode.addInputPort(portName);
-            } else {
-              convNode.addOutputPort(portName);
-            }
-          }
-        }
-      });
-
-      setDiagramEdited(true);
-      updateJsonState();
-      engine.current.repaintCanvas();
-    };
-
-    const removePort = (port: any, node: any, type: number) => {
-      //TODO: type should be an enum
-      // Check that the user didn't cancel
-      if (!node || !port) {
-        return;
-      }
-
-      deletePortLink(model, port.options.name, node);
-
-      if (type === 0) {
-        node.removeInputPort(port);
-      } else {
-        node.removeOutputPort(port);
-      }
-
-      // FIX: this should be with some and other stuff
-      model.current.getNodes().forEach((oldNode: NodeModel) => {
-        //TODO: for the tags, this will never be called. Maybe have a common type
-        if (isActionNode(oldNode)) {
-          var convNode = oldNode as BasicNodeModel;
-          if (
-            convNode.getName() === node.getName() &&
-            node.getID() !== convNode.getID()
-          ) {
-            deletePortLink(model, port.options.name, convNode);
-
-            if (type === 0) {
-              convNode.removeInputPort(port);
-            } else {
-              convNode.removeOutputPort(port);
-            }
-          }
-        }
-      });
-
-      setDiagramEdited(true);
-      updateJsonState();
-      engine.current.repaintCanvas();
-    };
-
+    // Deserialize and load the model
+    model.current.deserializeModel(modelJson, engine.current);
+    updateJsonState();
     attachLinkListener(model.current);
-
-    engine.current
-      .getNodeFactories()
-      .registerFactory(new BasicNodeFactory(openActionEditor));
+    engine.current.setModel(model.current);
 
     // After deserialization, attach listeners to each node
     const nodes = model.current.getNodes(); // Assuming getNodes() method exists to retrieve all nodes
@@ -562,25 +347,28 @@ const DiagramEditorModalsWrapper = memo(
 
     return (
       <div>
+        {hasSubtrees && (
+          <SubtreeModal
+            isOpen={subTreeModalOpen}
+            onClose={onSubTreeModalClose}
+            projectName={projectName}
+            subtreeName={subTreeName}
+            setDiagramEdited={setDiagramEdited}
+          />
+        )}
         <NodeMenu
           projectName={projectName}
           onAddNode={nodeTypeSelector}
           onDeleteNode={deleteLastClickedNode}
           onZoomToFit={zoomToFit}
-          onEditAction={openActionEditor}
+          onEditAction={actionEditor}
         />
-        {children}
-        <EditActionModal
-          isOpen={isEditActionModalOpen}
-          onClose={closeActionEditor}
-          currentActionNode={currentNode}
-          setColorActionNode={setColorActionNode}
-          addPort={addPort}
-          removePort={removePort}
-        />
+        {engine.current && (
+          <CanvasWidget className="canvas" engine={engine.current} />
+        )}
       </div>
     );
-  },
+  }
 );
 
 export default DiagramEditor;

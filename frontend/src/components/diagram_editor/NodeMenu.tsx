@@ -1,6 +1,4 @@
 import React, { MouseEventHandler, useEffect, useState } from "react";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import "./NodeMenu.css";
 import axios from "axios";
 
@@ -77,8 +75,8 @@ const NodeMenu = ({
   onZoomToFit: MouseEventHandler;
   onEditAction: MouseEventHandler;
 }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>("");
+  const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,15 +87,12 @@ const NodeMenu = ({
     fetchData();
   }, [projectName]);
 
-  const handleClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    label: string
-  ) => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = (label: string) => {
     setMenuLabel(label);
+    setDropdownVisible(true);
   };
 
-  const handleClose = () => setAnchorEl(null);
+  const handleClose = () => setDropdownVisible(false);
 
   const handleSelect = (nodeName: string) => {
     console.log("Selected: " + nodeName);
@@ -106,7 +101,7 @@ const NodeMenu = ({
     );
     if (nodeType) {
       console.log("Node Type: " + nodeType);
-      onAddNode(nodeName, nodeType);
+      onAddNode(nodeType, nodeName);
     } else {
       console.log("Unknown node type");
     }
@@ -142,23 +137,26 @@ const NodeMenu = ({
 
       <div className="button-container">
         {Object.keys(NODE_MENU_ITEMS).map((label) => (
-          <button
-            key={label}
-            className="node-button"
-            onClick={(e) => handleClick(e, label)}
-          >
-            {label}
-          </button>
+          <div key={label} className="dropdown">
+            <button className="node-button" onClick={() => handleClick(label)}>
+              {label}
+            </button>
+            {dropdownVisible && menuLabel === label && (
+              <div className="dropdown-content">
+                {NODE_MENU_ITEMS[menuLabel]?.map((item) => (
+                  <div
+                    key={item}
+                    className="dropdown-item"
+                    onClick={() => handleSelect(item)}
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         ))}
       </div>
-
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        {NODE_MENU_ITEMS[menuLabel]?.map((item) => (
-          <MenuItem key={item} onClick={() => handleSelect(item)}>
-            {item}
-          </MenuItem>
-        ))}
-      </Menu>
 
       <div className="action-buttons">
         <button

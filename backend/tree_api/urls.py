@@ -46,4 +46,5 @@ urlpatterns = [
     ),
     path("get_subtree_list/", views.get_subtree_list, name="get_subtree_list"),
     path("create_subtree/", views.create_subtree, name="create_subtree"),
+    path("get_subtree/", views.get_subtree, name="get_subtree"),
 ]

@@ -118,7 +118,7 @@ def save_project(request):
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, project_name)
-    graph_path = os.path.join(project_path, "code/graph.json")
+    graph_path = os.path.join(project_path, "code/trees/main.json")
 
     if project_path and graph_json:
 
@@ -150,33 +150,6 @@ def get_project_graph(request):
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, project_name)
     graph_path = os.path.join(project_path, "code/trees/main.json")
-
-    # Check if the project exists
-    if os.path.exists(graph_path):
-        try:
-            with open(graph_path, "r") as f:
-                graph_data = json.load(f)
-            return JsonResponse({"success": True, "graph_json": graph_data})
-        except Exception as e:
-            return JsonResponse(
-                {"success": False, "message": f"Error reading file: {str(e)}"},
-                status=500,
-            )
-    else:
-        return Response(
-            {"error": "The project does not have a graph definition"}, status=404
-        )
-
-
-@api_view(["GET"])
-def get_project_graph(request):
-
-    project_name = request.GET.get("project_name")
-
-    # Generate the paths
-    base_path = os.path.join(settings.BASE_DIR, "filesystem")
-    project_path = os.path.join(base_path, project_name)
-    graph_path = os.path.join(project_path, "code/graph.json")
 
     # Check if the project exists
     if os.path.exists(graph_path):
@@ -264,13 +237,13 @@ def create_subtree(request):
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
+    init_graph_path = os.path.join(settings.BASE_DIR, "templates/init_graph.json")
     subtree_path = os.path.join(
         project_path, "code/trees/subtrees", f"{subtree_name}.json"
     )
 
     if not os.path.exists(subtree_path):
-        with open(subtree_path, "w") as f:
-            f.write("{}")
+        shutil.copy(init_graph_path, subtree_path)
         return Response({"success": True}, status=status.HTTP_201_CREATED)
     else:
         return Response(
@@ -344,12 +317,14 @@ def get_subtree(request):
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
-    subtree_path = os.path.join(project_path, "code/trees", f"{subtree_name}.json")
+    subtree_path = os.path.join(
+        project_path, "code/trees/subtrees/", f"{subtree_name}.json"
+    )
 
     if os.path.exists(subtree_path):
         with open(subtree_path, "r") as f:
-            content = f.read()
-        return Response(content, status=status.HTTP_200_OK)
+            subtree = f.read()
+            return Response({"subtree": subtree}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
 
