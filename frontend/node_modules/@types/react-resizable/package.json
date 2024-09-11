@@ -1,0 +1,27 @@
+{
+    "name": "@types/react-resizable",
+    "version": "3.0.8",
+    "description": "TypeScript definitions for react-resizable",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react-resizable",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Harry Brrundage",
+            "githubUsername": "airhorns",
+            "url": "https://github.com/airhorns"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/react-resizable"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/react": "*"
+    },
+    "typesPublisherContentHash": "3e1465ceb75b927f1ac41fd9a677df462523be293f247fdf0b41badfab365f69",
+    "typeScriptVersion": "4.8"
+}

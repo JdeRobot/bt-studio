@@ -12,20 +12,23 @@ import ErrorModal from "./components/error_popup/ErrorModal";
 import axios from "axios";
 import EditorContainer from "./components/diagram_editor/EditorContainer";
 import CommsManager from "./api_helper/CommsManager";
+import { loadProjectConfig } from "./api_helper/TreeWrapper";
 
 const App = () => {
-  const [editorWidth, setEditorWidth] = useState(600);
-  const [currentFilename, setCurrentFilename] = useState("");
-  const [currentProjectname, setCurrentProjectname] = useState("");
-  const [currentUniverseName, setCurrentUniverseName] = useState(null);
-  const [actionNodesData, setActionNodesData] = useState({});
-  const [modelJson, setModelJson] = useState("");
-  const [isErrorModalOpen, setErrorModalOpen] = useState(false);
-  const [projectChanges, setProjectChanges] = useState(false);
-  const [gazeboEnabled, setGazeboEnabled] = useState(false);
-  const [manager, setManager] = useState(null);
-  const [diagramEditorReady, setDiagramEditorReady] = useState(false);
-  const [appRunning, setAppRunning] = useState(false);
+  const [editorWidth, setEditorWidth] = useState<number>(600);
+  const [currentFilename, setCurrentFilename] = useState<string>("");
+  const [currentProjectname, setCurrentProjectname] = useState<string>("");
+  const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
+  const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
+    {}
+  );
+  const [modelJson, setModelJson] = useState<string>("");
+  const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
+  const [projectChanges, setProjectChanges] = useState<boolean>(false);
+  const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
+  const [manager, setManager] = useState<any>(null);
+  const [diagramEditorReady, setDiagramEditorReady] = useState<boolean>(false);
+  const [appRunning, setAppRunning] = useState<boolean>(false);
 
   // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
@@ -81,45 +84,13 @@ const App = () => {
     manager.disconnect();
   });
 
-  const loadProjectConfig = async () => {
-    try {
-      const apiUrl = `/tree_api/get_project_configuration?project_name=${currentProjectname}`;
-      const response = await axios.get(apiUrl);
-      let raw_config = JSON.parse(response.data);
-      let project_settings = raw_config.config;
-
-      // Load all the settings
-      Object.entries(settings).map(([key, value]) => {
-        value.setter(
-          project_settings[key] ? project_settings[key] : value.default_value
-        );
-      });
-    } catch (error) {
-      console.log(error);
-      if (error.response) {
-        if (error.response.status === 404) {
-          openError(
-            `The project ${currentProjectname} has no configuration available`
-          );
-        } else {
-          openError("Failed to load configuration");
-        }
-      }
-
-      console.log("Loading default settings");
-      Object.entries(settings).map(([key, value]) => {
-        value.setter(value.default_value);
-      });
-    }
-  };
-
   useEffect(() => {
     if (currentProjectname !== "") {
-      loadProjectConfig();
+      loadProjectConfig(currentProjectname, settings);
     }
   }, [currentProjectname]); // Reload project configuration
 
-  const onResize = (key, size) => {
+  const onResize = (key: string, size: { width: number; height: number }) => {
     switch (key) {
       case "editorWidth":
         setEditorWidth(size.width);
@@ -129,9 +100,13 @@ const App = () => {
     }
   };
 
-  const openError = (err) => {
-    document.getElementById("errorMsg").innerText = err;
-    setErrorModalOpen(true);
+  // Error modal
+  const openError = (err: unknown) => {
+    if (err instanceof Error) {
+      (document.getElementById("errorMsg") as HTMLElement).innerText =
+        err.message;
+      setErrorModalOpen(true);
+    }
   };
 
   const closeError = () => {
@@ -140,7 +115,7 @@ const App = () => {
 
   return (
     <div className="App" data-theme={theme}>
-      <ErrorModal isOpen={isErrorModalOpen} onClose={closeError} />
+      {/* <ErrorModal isOpen={isErrorModalOpen} onClose={closeError} /> */}
 
       <HeaderMenu
         currentProjectname={currentProjectname}
@@ -150,7 +125,6 @@ const App = () => {
         modelJson={modelJson}
         projectChanges={projectChanges}
         setProjectChanges={setProjectChanges}
-        openError={openError}
         settingsProps={settings}
         gazeboEnabled={gazeboEnabled}
         setGazeboEnabled={setGazeboEnabled}

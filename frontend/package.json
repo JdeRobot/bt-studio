@@ -11,6 +11,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "@types/react-resizable": "^3.0.8",
     "ace-builds": "^1.28.0",
     "axios": "^1.5.1",
     "beautiful-react-diagrams": "^0.5.1",

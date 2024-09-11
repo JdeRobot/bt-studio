@@ -1,0 +1,70 @@
+.button-container {
+  width: 600px;
+  padding-left: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.node-button {
+  width: 100px;
+  height: 30px;
+  background-color: var(--buttons);
+  color: var(--text);
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.node-button:hover {
+  background-color: var(--buttons-hover);
+}
+
+.node-header-container {
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  height: 50px;
+  max-height: 50px;
+  background-color: var(--control-bar);
+}
+
+.action-buttons {
+  margin-left: 10px;
+  margin-right: 10px;
+  display: flex;
+}
+
+.node-action-button {
+  display: flex;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background-color: var(--control-bar);
+  border: 0;
+}
+
+.node-action-button:hover {
+  background-color: var(--buttons-hover);
+  border-radius: 50%; /* Circular highlight */
+}
+
+.action-icon {
+  margin-top: 4px;
+}
+
+/* Dropdown menus */
+
+.css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
+  background-color: var(--buttons) !important;
+  color: var(--text) !important;
+  border: 2px solid var(--border-color) !important;
+}
+
+.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root:hover {
+  background-color: var(--buttons-hover) !important;
+}
+
+.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root {
+  border-radius: 4px !important;
+  margin: 4px !important;
+}

@@ -45,6 +45,43 @@ const saveProject = async (modelJson: string, currentProjectname: string) => {
   }
 };
 
+const loadProjectConfig = async (
+  currentProjectname: string,
+  settings: Object
+) => {
+  if (!currentProjectname) throw new Error("Current Project name is not set");
+
+  const apiUrl = `/tree_api/get_project_configuration?project_name=${currentProjectname}`;
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(
+        response.data.message || "Failed to retrieve project config"
+      ); // Response error
+    }
+
+    // Extract the project settings from the response
+    let raw_config = JSON.parse(response.data);
+    let project_settings = raw_config.config;
+
+    // Load all the settings
+    Object.entries(settings).map(([key, value]) => {
+      value.setter(
+        project_settings[key] ? project_settings[key] : value.default_value
+      );
+    });
+  } catch (error) {
+    console.log("Loading default settings");
+    Object.entries(settings).map(([key, value]) => {
+      value.setter(value.default_value);
+    });
+
+    throw error; // Rethrow
+  }
+};
+
 // Universe management
 
 const getUniverseConfig = async (
@@ -154,6 +191,7 @@ const generateApp = async (
 export {
   createProject,
   saveProject,
+  loadProjectConfig,
   generateApp,
   getUniverseConfig,
   getCustomUniverseZip,
