@@ -658,7 +658,6 @@ def generate_app(request):
     # Get the parameters
     app_name = request.data.get("app_name")
     tree_graph = request.data.get("tree_graph")
-    print(tree_graph)
     bt_order = request.data.get("bt_order")
 
     # Make folder path relative  to Django app
