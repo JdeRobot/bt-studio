@@ -21,6 +21,7 @@
 .node-header-container {
   display: flex;
   align-items: center;
+  position: relative;
   justify-content: left;
   height: 50px;
   max-height: 50px;

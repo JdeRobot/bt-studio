@@ -44,8 +44,8 @@ const DiagramEditor = memo(
 
     // MODAL MANAGEMENT
     const modalManager = () => {
-      const node = model.current.getNode(lastClickedNodeId) as BasicNodeModel;
-      if (node && node.getIsSubtree()) {
+      const node = model.current.getNode(lastClickedNodeId);
+      if (node instanceof BasicNodeModel && node.getIsSubtree()) {
         setSubTreeName(node.getName());
         setSubTreeModalOpen(true);
       }

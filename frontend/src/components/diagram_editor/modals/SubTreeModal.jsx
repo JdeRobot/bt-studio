@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
-import Modal from "../../Modal/Modal";
-import back_modal_img from "../../Modal/img/back.svg";
-import close_modal_img from "../../Modal/img/close.svg";
+import React, { useState, useEffect } from "react";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import CloseIcon from "@mui/icons-material/Close";
 import DiagramEditor from "../DiagramEditor";
-import "./SubTreeModal.css";
 import { getSubtree } from "../../../api_helper/TreeWrapper";
+import "./SubTreeModal.css";
 
 const SubtreeModal = ({
   isOpen,
@@ -37,34 +39,35 @@ const SubtreeModal = ({
   };
 
   return (
-    <Modal id="sub-tree-modal" hasCloseBtn={true} isOpen={isOpen}>
-      <div className="modal-titlebar">
-        <label
-          className="modal-titlebar-title"
-          htmlFor="actionName"
-          style={{ textAlign: "center" }}
-        >
-          Sub Tree Editor
-        </label>
-        <img
-          className="modal-titlebar-close"
-          onClick={() => {
-            handleCancel();
-          }}
-          src={close_modal_img}
-        ></img>
-      </div>
-      <div>
-        {initialJson && (
-          <DiagramEditor
-            modelJson={initialJson}
-            setResultJson={setResultJson}
-            projectName={projectName}
-            setDiagramEdited={setDiagramEdited}
-            hasSubtrees={false}
-          />
-        )}
-      </div>
+    <Modal
+      open={isOpen}
+      onClose={handleCancel}
+      aria-labelledby="sub-tree-modal-title"
+      aria-describedby="sub-tree-modal-description"
+    >
+      <Box className="modal-box">
+        <div className="modal-menu">
+          <IconButton
+            aria-label="close"
+            onClick={handleCancel}
+            className="close-button"
+            style={{ color: "white" }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </div>
+        <div>
+          {initialJson && (
+            <DiagramEditor
+              modelJson={initialJson}
+              setResultJson={setResultJson}
+              projectName={projectName}
+              setDiagramEdited={setDiagramEdited}
+              hasSubtrees={false}
+            />
+          )}
+        </div>
+      </Box>
     </Modal>
   );
 };

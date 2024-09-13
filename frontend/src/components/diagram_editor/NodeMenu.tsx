@@ -6,6 +6,7 @@ import { ReactComponent as DeleteIcon } from "./img/del_node.svg";
 import { ReactComponent as EditActionIcon } from "./img/edit_action.svg";
 import { ReactComponent as HelpIcon } from "./img/help.svg";
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
+import { Menu, MenuItem } from "@mui/material";
 
 import {
   createSubtree,
@@ -77,8 +78,8 @@ const NodeMenu = ({
   onEditAction: MouseEventHandler;
   hasSubtrees: boolean;
 }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>("");
-  const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,12 +90,15 @@ const NodeMenu = ({
     fetchData();
   }, [projectName]);
 
-  const handleClick = (label: string) => {
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    label: string
+  ) => {
+    setAnchorEl(event.currentTarget);
     setMenuLabel(label);
-    setDropdownVisible(true);
   };
 
-  const handleClose = () => setDropdownVisible(false);
+  const handleClose = () => setAnchorEl(null);
 
   const handleSelect = (nodeName: string) => {
     console.log("Selected: " + nodeName);
@@ -119,20 +123,6 @@ const NodeMenu = ({
     }
   };
 
-  const onCreateSubtree = async () => {
-    const subtreeName = prompt("Enter a name for the subtree:");
-    if (subtreeName) {
-      try {
-        createSubtree(subtreeName, projectName);
-        fetchSubtreeList(projectName);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-        }
-      }
-    }
-  };
-
   return (
     <div className="node-header-container">
       <div className="button-container">
@@ -141,40 +131,26 @@ const NodeMenu = ({
             return null;
           }
           return (
-            <div key={label} className="dropdown">
-              <button
-                className="node-button"
-                onClick={() => handleClick(label)}
-              >
-                {label}
-              </button>
-              {dropdownVisible && menuLabel === label && (
-                <div className="dropdown-content">
-                  {NODE_MENU_ITEMS[menuLabel]?.map((item) => (
-                    <div
-                      key={item}
-                      className="dropdown-item"
-                      onClick={() => handleSelect(item)}
-                    >
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <button
+              key={label}
+              className="node-button"
+              onClick={(e) => handleClick(e, label)}
+            >
+              {label}
+            </button>
           );
         })}
       </div>
 
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+        {NODE_MENU_ITEMS[menuLabel]?.map((item) => (
+          <MenuItem key={item} onClick={() => handleSelect(item)}>
+            {item}
+          </MenuItem>
+        ))}
+      </Menu>
+
       <div className="action-buttons">
-        <button
-          id="node-action-edit-button"
-          className="node-action-button"
-          onClick={onCreateSubtree}
-          title="Edit"
-        >
-          <EditActionIcon className="icon action-icon" stroke={"var(--icon)"} />
-        </button>
         <button
           id="node-action-delete-button"
           className="node-action-button"

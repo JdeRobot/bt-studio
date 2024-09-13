@@ -1,5 +1,25 @@
-#sub-tree-modal {
-    position: fixed;
+.modal-box {
+    /* max-width: 20rem; */
+    border: 2px solid var(--buttons);
+    border-radius: 0.5rem;
+    position: absolute;
+    background: var(--background);
     width: 50%;
-    height: 60%;
+    height: 50%;
+    top: 25%;
+    left: 25%;
+}
+
+.modal-menu {
+    color: var(--text);
+    font-size: large;
+    display: grid;
+    justify-items: right;
+}
+
+.close-button {
+    margin-left: auto;
+    height: 100%;
+    border-radius: 10px;
+    background-color: var(--buttons);
 }
