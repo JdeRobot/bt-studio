@@ -11,6 +11,7 @@ import VncViewer from "./components/vnc_viewer/VncViewer";
 import ErrorModal from "./components/error_popup/ErrorModal";
 import axios from "axios";
 import EditorContainer from "./components/diagram_editor/EditorContainer";
+import DiagramVisualizerContainer from "./components/bt_status_visualizer/DiagramVisualizerContainer";
 import CommsManager from "./api_helper/CommsManager";
 import { loadProjectConfig } from "./api_helper/TreeWrapper";
 
@@ -177,6 +178,10 @@ const App = () => {
             ) : (
               <p>Loading...</p>
             )}
+            <DiagramVisualizerContainer
+              projectName={currentProjectname}
+              manager={manager}
+            />
             <VncViewer gazeboEnabled={gazeboEnabled} />
           </div>
         </Resizable>
