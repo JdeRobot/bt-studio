@@ -5,7 +5,6 @@ import {
   createProject,
   saveProject,
   generateApp,
-  generateDockerizedApp,
   getUniverseConfig,
   getCustomUniverseZip,
 } from "../../api_helper/TreeWrapper";
@@ -212,10 +211,11 @@ const HeaderMenu = ({
     if (!appRunning) {
       try {
         // Get the blob from the API wrapper
-        const app_blob = await generateDockerizedApp(
+        const app_blob = await generateApp(
           modelJson,
           currentProjectname,
           "bottom-to-top",
+          true,
         );
         const reader = new FileReader();
 

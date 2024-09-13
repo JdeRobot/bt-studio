@@ -149,80 +149,116 @@ const getCustomUniverseZip = async (
 
 // App management
 
+// const generateApp = async (
+//   modelJson: string,
+//   currentProjectname: string,
+//   btOrder: string,
+// ) => {
+//   if (!modelJson) throw new Error("Tree JSON is empty!");
+//   if (!currentProjectname) throw new Error("Current Project name is not set");
+
+//   const apiUrl = "/tree_api/generate_app/";
+//   try {
+//     // Configure the request options
+//     const config = {
+//       method: "POST",
+//       url: apiUrl,
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       data: {
+//         app_name: currentProjectname,
+//         tree_graph: JSON.stringify(modelJson),
+//         bt_order: btOrder,
+//       },
+//     };
+
+//     // Make the request
+//     const response = await axios(config);
+//     console.log(response.status);
+
+//     // Handle unsuccessful response status (e.g., non-2xx status)
+//     if (!isSuccessful(response)) {
+//       throw new Error(response.data.message || "Failed to create app."); // Response error
+//     }
+//     return new Blob([response.data], { type: "application/zip" });
+//   } catch (error: unknown) {
+//     throw error; // Rethrow
+//   }
+// };
+
+// const generateDockerizedApp = async (
+//   modelJson: string,
+//   currentProjectname: string,
+//   btOrder: string,
+// ) => {
+//   if (!modelJson) throw new Error("Tree JSON is empty!");
+//   if (!currentProjectname) throw new Error("Current Project name is not set");
+
+//   const apiUrl = "/tree_api/generate_dockerized_app/";
+//   try {
+//     // Configure the request options
+//     const config = {
+//       method: "POST",
+//       url: apiUrl,
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       data: {
+//         app_name: currentProjectname,
+//         tree_graph: JSON.stringify(modelJson),
+//         bt_order: btOrder,
+//       },
+//     };
+
+//     // Make the request
+//     const response = await axios(config);
+//     console.log(response.status);
+
+//     // Handle unsuccessful response status (e.g., non-2xx status)
+//     if (!isSuccessful(response)) {
+//       throw new Error(response.data.message || "Failed to create app."); // Response error
+//     }
+//     return new Blob([response.data], { type: "application/zip" });
+//   } catch (error: unknown) {
+//     throw error; // Rethrow
+//   }
+// };
+
 const generateApp = async (
   modelJson: string,
   currentProjectname: string,
   btOrder: string,
-) => {
+  dockerized: boolean = false
+  ) => {
+
   if (!modelJson) throw new Error("Tree JSON is empty!");
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
-  const apiUrl = "/tree_api/generate_app/";
-  try {
-    // Configure the request options
-    const config = {
-      method: "POST",
-      url: apiUrl,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: {
+  var apiUrl = "/tree_api/generate_app/";
+
+  if (dockerized) {
+    apiUrl = "/tree_api/generate_dockerized_app/";
+  }
+
+  const api_response = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
         app_name: currentProjectname,
         tree_graph: JSON.stringify(modelJson),
         bt_order: btOrder,
-      },
-    };
+    }),
+  });
 
-    // Make the request
-    const response = await axios(config);
-    console.log(response.status);
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to create app."); // Response error
-    }
-    return new Blob([response.data], { type: "application/zip" });
-  } catch (error: unknown) {
-    throw error; // Rethrow
+  if (!api_response.ok) {
+    var json_response = await api_response.json();
+    throw new Error(json_response.message || "An error occurred.");
   }
-};
 
-const generateDockerizedApp = async (
-  modelJson: string,
-  currentProjectname: string,
-  btOrder: string,
-) => {
-  if (!modelJson) throw new Error("Tree JSON is empty!");
-  if (!currentProjectname) throw new Error("Current Project name is not set");
-
-  const apiUrl = "/tree_api/generate_dockerized_app/";
-  try {
-    // Configure the request options
-    const config = {
-      method: "POST",
-      url: apiUrl,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: {
-        app_name: currentProjectname,
-        tree_graph: JSON.stringify(modelJson),
-        bt_order: btOrder,
-      },
-    };
-
-    // Make the request
-    const response = await axios(config);
-    console.log(response.status);
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to create app."); // Response error
-    }
-    return new Blob([response.data], { type: "application/zip" });
-  } catch (error: unknown) {
-    throw error; // Rethrow
-  }
+  return api_response.blob();
 };
 
 // Named export
@@ -231,7 +267,7 @@ export {
   saveProject,
   loadProjectConfig,
   generateApp,
-  generateDockerizedApp,
+  // generateDockerizedApp,
   getUniverseConfig,
   getCustomUniverseZip,
 };
