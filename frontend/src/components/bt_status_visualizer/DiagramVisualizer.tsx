@@ -110,6 +110,7 @@ const DiagramVisualizer = memo(
     manager: any;
     treeStructure: any;
   }) => {
+
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
     const engine = useRef(createEngine());
@@ -136,11 +137,51 @@ const DiagramVisualizer = memo(
     manager.subscribe("update", updateExecState);
 
     return (
+      <DiagramVisualizerStatus
+        model={model}
+        engine={engine}
+        manager={manager}
+        treeStructure={treeStructure}
+      />
+    );
+  },
+);
+
+const DiagramVisualizerStatus =
+  ({
+    model,
+    engine,
+    manager,
+    treeStructure,
+  }: {
+    model: any;
+    engine: any;
+    manager: any;
+    treeStructure: any;
+  }) => {
+
+    const [s, st] = useState("")
+
+    const updateExecState = (msg: any) => {
+      if (msg && msg.command === "update" && msg.data.update) {
+        const updateStatus = JSON.parse(msg.data.update);
+        const updateTree = updateStatus.tree;
+        const updateBlackboard = updateStatus.blackboard;
+        // st(updateTree)
+
+        engine.current.repaintCanvas();
+        setTreeStatus(model, updateTree, treeStructure);
+      }
+    };
+
+    manager.subscribeOnce("update", updateExecState);
+
+    return (
       <div>
         <CanvasWidget className="canvas" engine={engine.current} />
       </div>
     );
-  },
-);
+  }
+
 
 export default DiagramVisualizer;
