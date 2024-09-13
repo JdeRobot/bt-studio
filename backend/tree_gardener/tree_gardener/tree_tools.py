@@ -1,3 +1,4 @@
+import re
 import py_trees
 
 
@@ -72,6 +73,10 @@ def ascii_tree_to_json(tree):
     last_indent_level = -1
     json_str = '"tree":{'
 
+    # Remove escape chars
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    tree = ansi_escape.sub('', tree)
+
     for line in iter(tree.splitlines()):
         entry = line.strip().split(" ")
         name = entry[1]
@@ -100,8 +105,13 @@ def ascii_tree_to_json(tree):
 def ascii_blackboard_to_json(blackboard):
     json_str = '"blackboard":{'
     do_append_coma = False
+
+    #FIX: [entry, value] = line.strip()[1:].split(":")
+
     for line in iter(blackboard.splitlines()):
-        if line == "Blackboard Data":
+        if "Blackboard Data" in line:
+            continue
+        if len(line.strip()) == 0:
             continue
         if do_append_coma:
             json_str += ","
@@ -116,6 +126,7 @@ def ascii_blackboard_to_json(blackboard):
 
 def ascii_bt_to_json(tree, blackboard, file):
     file.write("{")
-    file.write(f"{ascii_tree_to_json(tree)},{ascii_blackboard_to_json(blackboard)}")
+    # file.write(f"{ascii_tree_to_json(tree)},{ascii_blackboard_to_json(blackboard)}")
+    file.write(f"{ascii_tree_to_json(tree)}")
     file.write("}")
     file.close()
