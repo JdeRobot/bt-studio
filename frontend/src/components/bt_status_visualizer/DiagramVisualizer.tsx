@@ -17,7 +17,6 @@ import { OutputPortModel } from "../diagram_editor/nodes/basic_node/ports/output
 import { InputPortModel } from "../diagram_editor/nodes/basic_node/ports/input_port/InputPortModel";
 import { TagOutputPortModel } from "../diagram_editor/nodes/tag_node/ports/output_port/TagOutputPortModel";
 import { TagInputPortModel } from "../diagram_editor/nodes/tag_node/ports/input_port/TagInputPortModel";
-import { forEachChild } from "typescript";
 
 // MODAL MANAGEMENT
 const testFunction = () => {
