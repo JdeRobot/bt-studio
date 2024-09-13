@@ -23,7 +23,7 @@ const SubtreeModal = ({
       if (isOpen) {
         try {
           const response = await getSubtree(subtreeName, projectName);
-          setInitialJson(response);
+          setInitialJson(JSON.parse(response));
         } catch (error) {
           console.error("Failed to fetch subtree:", error);
         }

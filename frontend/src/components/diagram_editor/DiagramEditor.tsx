@@ -134,7 +134,6 @@ const DiagramEditor = memo(
 
     // HELPERS
     const updateJsonState = () => {
-      console.log("The model at update is:", model.current.serialize());
       setResultJson(model.current.serialize());
     };
 
@@ -362,6 +361,7 @@ const DiagramEditor = memo(
           onDeleteNode={deleteLastClickedNode}
           onZoomToFit={zoomToFit}
           onEditAction={actionEditor}
+          hasSubtrees={hasSubtrees}
         />
         {engine.current && (
           <CanvasWidget className="canvas" engine={engine.current} />

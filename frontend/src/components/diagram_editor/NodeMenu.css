@@ -1,13 +1,12 @@
 .button-container {
-  width: 650px;
-  padding-left: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: left;
 }
 
 .node-button {
   width: 100px;
   height: 30px;
+  margin-right: 10px;
   background-color: var(--buttons);
   color: var(--text);
   border: none;
@@ -22,14 +21,13 @@
 .node-header-container {
   display: flex;
   align-items: center;
-  padding-left: 10px;
+  justify-content: left;
   height: 50px;
   max-height: 50px;
   background-color: var(--control-bar);
 }
 
 .action-buttons {
-  margin-left: 10px;
   margin-right: 10px;
   display: flex;
 }

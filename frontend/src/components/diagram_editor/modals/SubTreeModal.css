@@ -1,6 +1,5 @@
 #sub-tree-modal {
     position: fixed;
-    width: 80%;
+    width: 50%;
     height: 60%;
-    z-index: 1000;
 }
