@@ -299,6 +299,32 @@ const getSubtree = async (subtreeName: string, projectName: string) => {
   }
 };
 
+const saveSubtree = async (
+  modelJson: string,
+  currentProjectname: string,
+  subtreeName: string
+) => {
+  if (!modelJson) throw new Error("Tree JSON is empty!");
+  if (!currentProjectname) throw new Error("Current Project name is not set");
+  if (!subtreeName) throw new Error("Subtree name is not set");
+
+  const apiUrl = "/tree_api/save_subtree/";
+  try {
+    const response = await axios.post(apiUrl, {
+      project_name: currentProjectname,
+      subtree_name: subtreeName,
+      subtree_json: JSON.stringify(modelJson),
+    });
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to save subtree."); // Response error
+    }
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 // Named export
 export {
   createProject,
@@ -312,4 +338,5 @@ export {
   getSubtree,
   getFileList,
   getActionsList,
+  saveSubtree,
 };

@@ -7,6 +7,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import DiagramEditor from "../DiagramEditor";
 import { getSubtree } from "../../../api_helper/TreeWrapper";
 import "./SubTreeModal.css";
+import { saveSubtree } from "../../../api_helper/TreeWrapper";
 
 const SubtreeModal = ({
   isOpen,
@@ -34,8 +35,13 @@ const SubtreeModal = ({
     fetchSubtree();
   }, [isOpen, projectName, subtreeName]);
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
     onClose();
+    try {
+      await saveSubtree(resultJson, projectName, subtreeName);
+    } catch (error) {
+      console.error("Failed to save subtree:", error);
+    }
   };
 
   return (
@@ -47,6 +53,7 @@ const SubtreeModal = ({
     >
       <Box className="modal-box">
         <div className="modal-menu">
+          <h2 className="modal-name">{subtreeName}</h2>
           <IconButton
             aria-label="close"
             onClick={handleCancel}

@@ -3,6 +3,7 @@ import "./NodeMenu.css";
 import axios from "axios";
 
 import { ReactComponent as DeleteIcon } from "./img/del_node.svg";
+import { ReactComponent as SubtreeIcon } from "./img/subtree.svg";
 import { ReactComponent as EditActionIcon } from "./img/edit_action.svg";
 import { ReactComponent as HelpIcon } from "./img/help.svg";
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
@@ -123,6 +124,19 @@ const NodeMenu = ({
     }
   };
 
+  const onCreateSubtree = async () => {
+    try {
+      const subtreeName = prompt("Enter subtree name:");
+      if (subtreeName) {
+        const subtreeId = await createSubtree(subtreeName, projectName);
+        console.log("Created subtree:", subtreeId);
+        fetchSubtreeList(projectName);
+      }
+    } catch (error) {
+      console.error("Failed to create subtree:", error);
+    }
+  };
+
   return (
     <div className="node-header-container">
       <div className="button-container">
@@ -151,6 +165,18 @@ const NodeMenu = ({
       </Menu>
 
       <div className="action-buttons">
+        {hasSubtrees && (
+          <button
+            id="node-action-subtree-button"
+            className="node-action-button"
+            onClick={() => {
+              onCreateSubtree();
+            }}
+            title="Create Subtree"
+          >
+            <SubtreeIcon className="icon action-icon" fill={"var(--icon)"} />
+          </button>
+        )}
         <button
           id="node-action-delete-button"
           className="node-action-button"

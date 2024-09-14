@@ -274,7 +274,9 @@ def save_subtree(request):
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, project_name)
-    subtree_path = os.path.join(project_path, "code", "trees", f"{subtree_name}.json")
+    subtree_path = os.path.join(
+        project_path, "code", "trees", "subtrees", f"{subtree_name}.json"
+    )
 
     if project_path and subtree_name and subtree_json:
 
