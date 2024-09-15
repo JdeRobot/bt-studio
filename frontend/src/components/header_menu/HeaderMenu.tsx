@@ -169,24 +169,47 @@ const HeaderMenu = ({
 
   const onDownloadApp = async () => {
     try {
-      // Get the blob from the API wrapper
-      const app_blob = await generateApp(
+      // Get the base64 string from the API wrapper
+      const response = await generateApp(
         modelJson,
         currentProjectname,
         "bottom-to-top"
       );
 
-      // Generate the download
-      const url = window.URL.createObjectURL(app_blob);
+      const app_base64 = response?.file; // Assuming the base64 string is returned in "file" key
+
+      if (!app_base64) {
+        throw new Error("Downloaded base64 string is empty");
+      }
+
+      // Log to check if base64 string is populated
+      console.log(app_base64);
+
+      // Convert base64 string to binary string
+      const binaryString = window.atob(app_base64); // Decodes base64 string to binary string
+
+      // Convert binary string to a Uint8Array (required for Blob creation)
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+
+      // Create a blob from the Uint8Array
+      const blob = new Blob([bytes], { type: "application/zip" });
+
+      // Create a download link and trigger download
+      const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.style.display = "none";
       a.href = url;
-      a.download = `${currentProjectname}.zip`;
+      a.download = `${currentProjectname}.zip`; // Set the downloaded file's name
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url); // Clean up after the download
       console.log("App downloaded successfully");
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         console.error("Error downloading app: " + error.message);
       }

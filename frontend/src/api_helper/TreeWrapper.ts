@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse, ResponseType } from "axios";
 import { stringify } from "uuid";
 
 // Helpers
@@ -209,6 +209,7 @@ const generateApp = async (
       headers: {
         "Content-Type": "application/json",
       },
+      // responseType: "blob" as ResponseType,
       data: {
         app_name: currentProjectname,
         tree_graph: JSON.stringify(modelJson),
@@ -216,18 +217,14 @@ const generateApp = async (
       },
     };
 
-    console.log(modelJson);
-    console.log(JSON.stringify(modelJson));
-
     // Make the request
     const response = await axios(config);
-    console.log(response.status);
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
       throw new Error(response.data.message || "Failed to create app."); // Response error
     }
-    return new Blob([response.data], { type: "application/octet-stream" });
+    return response.data;
   } catch (error: unknown) {
     throw error; // Rethrow
   }

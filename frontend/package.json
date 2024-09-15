@@ -15,7 +15,7 @@
     "@testing-library/user-event": "^13.2.1",
     "@types/react-resizable": "^3.0.8",
     "ace-builds": "^1.28.0",
-    "axios": "^1.5.1",
+    "axios": "^1.7.7",
     "beautiful-react-diagrams": "^0.5.1",
     "beautiful-react-ui": "^0.57.1",
     "d3-drag": "^3.0.0",

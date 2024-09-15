@@ -856,14 +856,17 @@ def generate_app(request):
             )
 
         # Prepare file response
-        zip_file = open(zip_file_path, "rb")
-        mime_type, _ = mimetypes.guess_type(zip_file_path)
-        response = HttpResponse(
-            zip_file, content_type=mime_type, status=status.HTTP_200_OK
-        )
-        response["Content-Disposition"] = (
-            f"attachment; filename={os.path.basename(zip_file_path)}"
-        )
+        with open(zip_file_path, "rb") as zip_file:
+            zip_data = zip_file.read()
+            encoded_zip_data = base64.b64encode(zip_data).decode(
+                "utf-8"
+            )  # Encode as base64 and decode to string
+
+            # Return the base64 string in the JSON response
+            return Response(
+                {"file": encoded_zip_data},
+                status=status.HTTP_200_OK,
+            )
 
         return response
 
