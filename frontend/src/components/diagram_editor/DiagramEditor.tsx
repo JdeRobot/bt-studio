@@ -134,6 +134,7 @@ const DiagramEditor = memo(
 
     // HELPERS
     const updateJsonState = () => {
+      console.log("Updating JSON state");
       setResultJson(model.current.serialize());
     };
 
@@ -332,7 +333,6 @@ const DiagramEditor = memo(
 
     // Deserialize and load the model
     model.current.deserializeModel(modelJson, engine.current);
-    updateJsonState();
     attachLinkListener(model.current);
     engine.current.setModel(model.current);
 
@@ -343,6 +343,8 @@ const DiagramEditor = memo(
       attachClickListener(node);
       node.setSelected(false);
     });
+
+    updateJsonState();
 
     return (
       <div>

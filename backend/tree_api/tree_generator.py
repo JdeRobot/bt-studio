@@ -104,32 +104,32 @@ def get_bt_structure(xml_string) -> str:
 
 
 # Get a list of properly named actions to search in the nodes directory
-def get_action_set(tree) -> set:
+def get_action_set(tree, possible_actions) -> set:
 
     actions = set()
-    structure_elements = [
-        "Sequence",
-        "ReactiveSequence",
-        "BehaviorTree",
-        "Fallback",
-        "ReactiveFallback",
-        "RetryUntilSuccessful",
-        "Inverter",
-        "ForceSuccess",
-        "ForceFailure",
-        "KeepRunningUntilFailure",
-        "Repeat",
-        "RunOnce",
-        "Delay",
-    ]
     for leaf in tree:
 
-        if leaf.tag not in actions and leaf.tag not in structure_elements:
+        if leaf.tag not in actions and leaf.tag in possible_actions:
             actions.add(leaf.tag)
-        child_actions = get_action_set(leaf)
+        child_actions = get_action_set(leaf, possible_actions)
         actions.update(a for a in child_actions if a not in actions)
 
     return actions
+
+
+# Get a list of properly named subtrees to substitute later in the tree
+def get_subtree_set(tree, possible_subtrees) -> set:
+
+    subtrees = set()
+
+    for leaf in tree:
+
+        if leaf.tag not in subtrees and leaf.tag in possible_subtrees:
+            subtrees.add(leaf.tag)
+        child_subtrees = get_subtree_set(leaf, possible_subtrees)
+        subtrees.update(a for a in child_subtrees if a not in subtrees)
+
+    return subtrees
 
 
 # Add the code of the different actions
@@ -153,21 +153,99 @@ def add_actions_code(tree, actions, action_path):
 # Read the tree and the actions and generate a formatted tree string
 def parse_tree(tree_path, action_path):
 
-    # Get the tree XML file and read its content
-    f = open(tree_path, "r")
+    # Get the main tree XML file and read its content
+    main_tree_path = os.path.join(tree_path, "main.xml")
+    with open(main_tree_path, "r") as f:
+        tree_xml = f.read()
+
+    # Parse the main tree file
+    main_tree = ET.fromstring(tree_xml)
+
+    # Obtain the defined subtrees
+    possible_trees = [file.split(".")[0] for file in os.listdir(tree_path)]
+    subtrees = get_subtree_set(main_tree, possible_trees)
+    print(subtrees)
+
+    # Call the function to replace subtrees in the main tree
+    replace_subtree_in_main(main_tree, subtrees, tree_path)
+
+    # Obtain the defined actions
+    possible_actions = [file.split(".")[0] for file in os.listdir(action_path)]
+    actions = get_action_set(main_tree, possible_actions)
+    print(actions)
+
+    # Add subsections for the action code
+    add_actions_code(main_tree, actions, action_path)
+
+    # Serialize the modified XML to a properly formatted string
+    formatted_tree = get_formatted_string(main_tree, actions)
+
+    print(formatted_tree)
+
+    return formatted_tree
+
+
+# Function to replace subtree tags with actual subtree implementation
+def replace_subtree_in_main(main_tree, subtrees, tree_path):
+
+    for subtree_name in subtrees:
+        subtree_path = os.path.join(tree_path, f"{subtree_name}.xml")
+        if os.path.exists(subtree_path):
+            with open(subtree_path, "r") as sf:
+                subtree_xml = sf.read()
+            subtree_tree = ET.fromstring(subtree_xml)
+
+            # Find the content inside the <BehaviorTree> tag in the subtree
+            subtree_behavior_tree = subtree_tree.find(".//BehaviorTree")
+            if subtree_behavior_tree is not None:
+                # Locate tags in the main tree that refer to this subtree
+                subtree_parents = main_tree.findall(".//" + subtree_name + "/..")
+                for parent in subtree_parents:
+                    subtree_tags = parent.findall(subtree_name)
+                    for subtree_tag in subtree_tags:
+                        for subtree_elem in subtree_behavior_tree:
+                            try:
+                                parent.append(subtree_elem)
+                            except Exception as e:
+                                print(str(e))
+                        parent.remove(subtree_tag)
+
+    print("Tree with appended subs: " + ET.tostring(main_tree, encoding="unicode"))
+
+
+# Read the tree and the actions and generate a formatted tree string
+def parse_tree(tree_path, action_path):
+
+    # Get the tree main XML file and read its content
+    main_tree_path = os.path.join(tree_path, "main.xml")
+    f = open(main_tree_path, "r")
     tree_xml = f.read()
 
     # Parse the tree file
     tree = get_bt_structure(tree_xml)
 
+    # Obtain the defined subtrees
+    possible_trees = [file.split(".")[0] for file in os.listdir(tree_path)]
+    subtrees = get_subtree_set(tree, possible_trees)
+
+    # Replace subtrees in the main tree
+    replace_subtree_in_main(tree, subtrees, tree_path)
+    print("Subtrees replaced")
+
     # Obtain the defined actions
-    actions = get_action_set(tree)
+    print(action_path)
+    possible_actions = [file.split(".")[0] for file in os.listdir(action_path)]
+    print("The possible actions are: " + str(possible_actions))
+    actions = get_action_set(tree, possible_actions)
+    print("The actions in the tree are: " + str(actions))
 
     # Add subsections for the action code
     add_actions_code(tree, actions, action_path)
 
     # Serialize the modified XML to a properly formatted string
     formatted_tree = get_formatted_string(tree, actions)
+
+    print(formatted_tree)
 
     return formatted_tree
 

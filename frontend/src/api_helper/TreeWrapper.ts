@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { stringify } from "uuid";
 
 // Helpers
 
@@ -192,7 +193,7 @@ const getCustomUniverseZip = async (
 // App management
 
 const generateApp = async (
-  modelJson: string,
+  modelJson: Object,
   currentProjectname: string,
   btOrder: string
 ) => {
@@ -214,6 +215,9 @@ const generateApp = async (
         bt_order: btOrder,
       },
     };
+
+    console.log(modelJson);
+    console.log(JSON.stringify(modelJson));
 
     // Make the request
     const response = await axios(config);

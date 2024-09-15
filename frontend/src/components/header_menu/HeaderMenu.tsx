@@ -51,7 +51,6 @@ const HeaderMenu = ({
   settingsProps: Object;
   gazeboEnabled: boolean;
   setGazeboEnabled: Function;
-  // onSetShowExecStatus: Function;
   manager: CommsManager;
 }) => {
   // Project state
@@ -174,7 +173,7 @@ const HeaderMenu = ({
       const app_blob = await generateApp(
         modelJson,
         currentProjectname,
-        "bottom-to-top",
+        "bottom-to-top"
       );
 
       // Generate the download
@@ -194,19 +193,6 @@ const HeaderMenu = ({
     }
   };
 
-  const sendOnLoad = async (reader: FileReader) => {
-    // Get the zip in base64
-    var base64data = reader.result;
-
-    // Send the zip
-    await manager.run({
-      type: "bt-studio",
-      code: base64data,
-    });
-    setAppRunning(true);
-    console.log("App started successfully");
-  };
-
   const onAppStateChange = async () => {
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
@@ -218,13 +204,17 @@ const HeaderMenu = ({
         const app_blob = await generateApp(
           modelJson,
           currentProjectname,
-          "bottom-to-top",
-          true,
+          "bottom-to-top"
         );
-        const reader = new FileReader();
+        const base64data = await app_blob.text();
 
-        reader.onloadend = () => sendOnLoad(reader); // Fix: pass the function reference
-        reader.readAsDataURL(app_blob);
+        // Send the zip
+        await manager.run({
+          type: "bt-studio",
+          code: base64data,
+        });
+        setAppRunning(true);
+        console.log("App started successfully");
       } catch (error: unknown) {
         if (error instanceof Error) {
           console.error("Error running app: " + error.message);
@@ -282,7 +272,7 @@ const HeaderMenu = ({
     try {
       const universeConfig = await getUniverseConfig(
         universeName,
-        currentProjectname,
+        currentProjectname
       );
       try {
         // Launch if new universe selected

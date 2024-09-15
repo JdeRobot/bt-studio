@@ -161,6 +161,7 @@ def translate(content, tree_path, raw_order):
         parsed_json = json.loads(content)
     except Exception as e:
         print(str(e))
+        return
 
     # Extract nodes and links information
     node_models = parsed_json["layers"][1]["models"]
@@ -176,7 +177,7 @@ def translate(content, tree_path, raw_order):
     root = Element("Root", name="Tree Root")
     behavior_tree = SubElement(root, "BehaviorTree")
     start_node_id = get_start_node_id(node_models, link_models)
-    print(start_node_id)
+    print("Start node: ", start_node_id)
     build_xml(
         node_models, link_models, tree_structure, start_node_id, behavior_tree, order
     )

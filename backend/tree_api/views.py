@@ -797,27 +797,47 @@ def generate_app(request):
 
     # Get the parameters
     app_name = request.data.get("app_name")
-    tree_graph = request.data.get("tree_graph")
-    print(tree_graph)
+    main_tree_graph = request.data.get("tree_graph")
     bt_order = request.data.get("bt_order")
 
     # Make folder path relative  to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, app_name)
     action_path = os.path.join(project_path, "code/actions")
-    tree_path = os.path.join("/tmp/tree.xml")
+    subtree_path = os.path.join(project_path, "code/trees/subtrees")
+    result_trees_tmp_path = os.path.join("/tmp/trees/")
     self_contained_tree_path = os.path.join("/tmp/self_contained_tree.xml")
     template_path = os.path.join(settings.BASE_DIR, "ros_template")
     tree_gardener_src = os.path.join(settings.BASE_DIR, "tree_gardener")
 
     try:
-        # Generate a basic tree from the JSON definition
-        json_translator.translate(tree_graph, tree_path, bt_order)
+        # Init the trees temp folder
+        if os.path.exists(result_trees_tmp_path):
+            shutil.rmtree(result_trees_tmp_path)
+        os.makedirs(result_trees_tmp_path)
+
+        # Translate the received JSON
+        main_tree_tmp_path = os.path.join(result_trees_tmp_path, "main.xml")
+        json_translator.translate(main_tree_graph, main_tree_tmp_path, bt_order)
+
+        # Translate subtrees
+        for subtree_file in os.listdir(subtree_path):
+            subtree_tmp_path = os.path.join(
+                result_trees_tmp_path, subtree_file.replace(".json", ".xml")
+            )
+            subtree_graph = open(os.path.join(subtree_path, subtree_file)).read()
+            json_translator.translate(
+                subtree_graph,
+                subtree_tmp_path,
+                bt_order,
+            )
 
         # Generate a self-contained tree
-        tree_generator.generate(tree_path, action_path, self_contained_tree_path)
+        tree_generator.generate(
+            result_trees_tmp_path, action_path, self_contained_tree_path
+        )
 
-        print("Self contained tree generated")
+        print("Tree generated")
 
         # Using the self-contained tree, package the ROS 2 app
         zip_file_path = app_generator.generate(
@@ -849,7 +869,8 @@ def generate_app(request):
 
     except Exception as e:
         return Response(
-            {"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST
+            {"success": False, "message": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
