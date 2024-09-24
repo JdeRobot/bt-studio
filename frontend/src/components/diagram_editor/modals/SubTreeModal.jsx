@@ -27,6 +27,7 @@ const SubtreeModal = ({
         try {
           const response = await getSubtree(subtreeName, projectName);
           setInitialJson(JSON.parse(response));
+          console.log("Initial JSON:", JSON.parse(response));
         } catch (error) {
           console.error("Failed to fetch subtree:", error);
         }
@@ -36,12 +37,13 @@ const SubtreeModal = ({
   }, [isOpen, projectName, subtreeName]);
 
   const handleCancel = async () => {
-    onClose();
     try {
+      console.log("The subtree is:", resultJson);
       await saveSubtree(resultJson, projectName, subtreeName);
     } catch (error) {
       console.error("Failed to save subtree:", error);
     }
+    onClose();
   };
 
   return (

@@ -134,7 +134,7 @@ const DiagramEditor = memo(
 
     // HELPERS
     const updateJsonState = () => {
-      console.log("Updating JSON state");
+      console.log("Updated is :", model.current.serialize());
       setResultJson(model.current.serialize());
     };
 
@@ -337,14 +337,17 @@ const DiagramEditor = memo(
     engine.current.setModel(model.current);
 
     // After deserialization, attach listeners to each node
-    const nodes = model.current.getNodes(); // Assuming getNodes() method exists to retrieve all nodes
+    const nodes = model.current.getNodes();
     nodes.forEach((node) => {
       attachPositionListener(node);
       attachClickListener(node);
       node.setSelected(false);
     });
 
-    updateJsonState();
+    // Fixes uncomplete first serialization
+    setTimeout(() => {
+      updateJsonState();
+    }, 1);
 
     return (
       <div>
