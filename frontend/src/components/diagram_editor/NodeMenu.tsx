@@ -93,7 +93,7 @@ const NodeMenu = ({
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
-    label: string
+    label: string,
   ) => {
     setAnchorEl(event.currentTarget);
     setMenuLabel(label);
@@ -104,7 +104,7 @@ const NodeMenu = ({
   const handleSelect = (nodeName: string) => {
     console.log("Selected: " + nodeName);
     const nodeType = Object.keys(NODE_MENU_ITEMS).find((key) =>
-      NODE_MENU_ITEMS[key].includes(nodeName)
+      NODE_MENU_ITEMS[key].includes(nodeName),
     );
     if (nodeType) {
       console.log("Node Type: " + nodeType);
@@ -207,8 +207,8 @@ const NodeMenu = ({
           onClick={() => {
             openInNewTab(
               new URL(
-                "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
-              )
+                "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
+              ),
             );
           }}
           title="Help"

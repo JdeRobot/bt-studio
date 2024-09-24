@@ -837,8 +837,6 @@ def generate_app(request):
             result_trees_tmp_path, action_path, self_contained_tree_path
         )
 
-        print("Tree generated")
-
         # Using the self-contained tree, package the ROS 2 app
         zip_file_path = app_generator.generate(
             self_contained_tree_path,
@@ -850,23 +848,17 @@ def generate_app(request):
 
         # Confirm ZIP file exists
         if not os.path.exists(zip_file_path):
-            print("Problems with the zip")
             return Response(
                 {"success": False, "message": "ZIP file not found"}, status=400
             )
 
-        # Prepare file response
+        # Return the zip file as a response
         with open(zip_file_path, "rb") as zip_file:
-            zip_data = zip_file.read()
-            encoded_zip_data = base64.b64encode(zip_data).decode(
-                "utf-8"
-            )  # Encode as base64 and decode to string
-
-            # Return the base64 string in the JSON response
-            return Response(
-                {"file": encoded_zip_data},
-                status=status.HTTP_200_OK,
+            response = HttpResponse(zip_file, content_type="application/zip")
+            response["Content-Disposition"] = (
+                f"attachment; filename={os.path.basename(zip_file_path)}"
             )
+            return response
 
         return response
 

@@ -1,35 +1,35 @@
 .modal-box {
-    /* max-width: 20rem; */
-    border: 1px solid var(--buttons);
-    /* border-radius: 0.5rem; */
-    position: absolute;
-    background: var(--background);
-    width: 50%;
-    height: 50%;
-    top: 25%;
-    left: 25%;
+  /* max-width: 20rem; */
+  border: 1px solid var(--buttons);
+  /* border-radius: 0.5rem; */
+  position: absolute;
+  background: var(--background);
+  width: 50%;
+  height: 50%;
+  top: 25%;
+  left: 25%;
 }
 
 .modal-menu {
-    color: var(--text);
-    font-size: large;
-    display: flex;
-    flex-direction: row;
-    align-content: space-around;
-    justify-content: space-between;
-    align-items: center;
+  color: var(--text);
+  font-size: large;
+  display: flex;
+  flex-direction: row;
+  align-content: space-around;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .close-button {
-    margin-left: auto;
-    height: 100%;
-    border-radius: 10px;
-    background-color: var(--buttons);
+  margin-left: auto;
+  height: 100%;
+  border-radius: 10px;
+  background-color: var(--buttons);
 }
 
 .modal-name {
-    font-weight: 600;
-    align-self: center;
-    grid-column-start: 2;
-    padding-left: 1em;
+  font-weight: 600;
+  align-self: center;
+  grid-column-start: 2;
+  padding-left: 1em;
 }

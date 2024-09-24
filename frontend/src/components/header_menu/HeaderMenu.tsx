@@ -169,38 +169,15 @@ const HeaderMenu = ({
 
   const onDownloadApp = async () => {
     try {
-      // Get the base64 string from the API wrapper
-      const response = await generateApp(
+      // Get the blob from the API wrapper
+      const appBlob = await generateApp(
         modelJson,
         currentProjectname,
-        "bottom-to-top"
+        "bottom-to-top",
       );
 
-      const app_base64 = response?.file; // Assuming the base64 string is returned in "file" key
-
-      if (!app_base64) {
-        throw new Error("Downloaded base64 string is empty");
-      }
-
-      // Log to check if base64 string is populated
-      console.log(app_base64);
-
-      // Convert base64 string to binary string
-      const binaryString = window.atob(app_base64); // Decodes base64 string to binary string
-
-      // Convert binary string to a Uint8Array (required for Blob creation)
-      const len = binaryString.length;
-      const bytes = new Uint8Array(len);
-
-      for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-
-      // Create a blob from the Uint8Array
-      const blob = new Blob([bytes], { type: "application/zip" });
-
       // Create a download link and trigger download
-      const url = window.URL.createObjectURL(blob);
+      const url = window.URL.createObjectURL(appBlob);
       const a = document.createElement("a");
       a.style.display = "none";
       a.href = url;
@@ -227,7 +204,7 @@ const HeaderMenu = ({
         const app_blob = await generateApp(
           modelJson,
           currentProjectname,
-          "bottom-to-top"
+          "bottom-to-top",
         );
         const base64data = await app_blob.text();
 
@@ -295,7 +272,7 @@ const HeaderMenu = ({
     try {
       const universeConfig = await getUniverseConfig(
         universeName,
-        currentProjectname
+        currentProjectname,
       );
       try {
         // Launch if new universe selected
