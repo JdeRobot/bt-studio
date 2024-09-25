@@ -43,10 +43,14 @@ class TreeExecutor(Node):
             self.tree.shutdown()
         finally:
             print("Shutdown completed")
+
+
 def main():
     # Init the components
     rclpy.init()
     executor = TreeExecutor()
     # Spin the tree
     executor.spin_tree()
+
+
 main()

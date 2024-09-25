@@ -172,6 +172,7 @@ def get_project_graph(request):
             {"error": "The project does not have a graph definition"}, status=404
         )
 
+
 @api_view(["GET"])
 def get_tree_structure(request):
 
@@ -201,6 +202,7 @@ def get_tree_structure(request):
         return Response(
             {"error": "The project does not have a graph definition"}, status=404
         )
+
 
 @api_view(["GET"])
 def get_universes_list(request):

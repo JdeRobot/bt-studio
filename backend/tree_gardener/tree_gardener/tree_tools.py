@@ -74,8 +74,8 @@ def ascii_tree_to_json(tree):
     json_str = '"tree":{'
 
     # Remove escape chars
-    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-    tree = ansi_escape.sub('', tree)
+    ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+    tree = ansi_escape.sub("", tree)
 
     for line in iter(tree.splitlines()):
         entry = line.strip().split(" ")
@@ -106,7 +106,7 @@ def ascii_blackboard_to_json(blackboard):
     json_str = '"blackboard":{'
     do_append_coma = False
 
-    #FIX: [entry, value] = line.strip()[1:].split(":")
+    # FIX: [entry, value] = line.strip()[1:].split(":")
 
     for line in iter(blackboard.splitlines()):
         if "Blackboard Data" in line:
