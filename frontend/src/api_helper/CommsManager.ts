@@ -21,7 +21,7 @@ export default class CommsManager {
     // Message callback
     this.ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
-      console.log(msg);
+      // console.log(msg);
 
       // Check if the message ID exists in the pending promises map
       const handlers = this.pendingPromises.get(msg.id);

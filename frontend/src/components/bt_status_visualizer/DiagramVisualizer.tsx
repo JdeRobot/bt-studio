@@ -91,6 +91,8 @@ const setStatusNode = (model: any, updateTree: any, baseTree: any) => {
   } catch (error) {
     nodeChilds = [];
   }
+
+  console.log(updateTree[nodeName], nodeName)
   var nodeStatus = updateTree[nodeName]["state"];
   var node = model.current.getNode(nodeId);
 
@@ -98,6 +100,7 @@ const setStatusNode = (model: any, updateTree: any, baseTree: any) => {
     setStatusNode(model, updateTree[nodeName], element);
   });
   node.setExecStatus(nodeStatus);
+  model.current.addNode(node);
 };
 
 const DiagramVisualizer = memo(
@@ -120,29 +123,29 @@ const DiagramVisualizer = memo(
     configureEngine(engine);
 
     // Deserialize and load the model
+    console.log("Diagram Visualizer")
     model.current.deserializeModel(modelJson, engine.current);
     model.current.setLocked(true);
     engine.current.setModel(model.current);
 
     const updateExecState = (msg: any) => {
-      if (msg && msg.command === "update" && msg.data.update) {
+      if (msg && msg.command === "update" && msg.data.update !== "") {
         const updateStatus = JSON.parse(msg.data.update);
+        console.log("Repaint")
         const updateTree = updateStatus.tree;
         const updateBlackboard = updateStatus.blackboard;
 
         setTreeStatus(model, updateTree, treeStructure);
+        engine.current.repaintCanvas();
       }
     };
 
     manager.subscribe("update", updateExecState);
 
     return (
-      <DiagramVisualizerStatus
-        model={model}
-        engine={engine}
-        manager={manager}
-        treeStructure={treeStructure}
-      />
+      <div>
+        <CanvasWidget className="canvas" engine={engine.current} />
+      </div>
     );
   },
 );
@@ -163,18 +166,18 @@ const DiagramVisualizerStatus =
     const [s, st] = useState("")
 
     const updateExecState = (msg: any) => {
-      if (msg && msg.command === "update" && msg.data.update) {
+      if (msg && msg.command === "update" && msg.data.update !== "") {
         const updateStatus = JSON.parse(msg.data.update);
+        console.log("Repaint")
         const updateTree = updateStatus.tree;
         const updateBlackboard = updateStatus.blackboard;
-        // st(updateTree)
 
-        engine.current.repaintCanvas();
         setTreeStatus(model, updateTree, treeStructure);
+        engine.current.repaintCanvas();
       }
     };
 
-    manager.subscribeOnce("update", updateExecState);
+    manager.subscribe("update", updateExecState);
 
     return (
       <div>

@@ -31,6 +31,12 @@ const App = () => {
   const [diagramEditorReady, setDiagramEditorReady] = useState<boolean>(false);
   const [appRunning, setAppRunning] = useState<boolean>(false);
 
+  // TODO: temporary
+  // const [showExecStatus, setShowExecStatus] = useState<boolean>(true);
+  // const onSetShowExecStatus = () => {
+  //   setShowExecStatus(!showExecStatus)
+  // }
+
   // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
   ////////////////////// SETTINGS //////////////////////
@@ -129,6 +135,7 @@ const App = () => {
         settingsProps={settings}
         gazeboEnabled={gazeboEnabled}
         setGazeboEnabled={setGazeboEnabled}
+        // onSetShowExecStatus={onSetShowExecStatus}
         manager={manager}
       />
 
@@ -170,18 +177,23 @@ const App = () => {
         >
           <div style={{ flex: 1 }}>
             {currentProjectname ? (
-              <EditorContainer
-                projectName={currentProjectname}
-                setProjectEdited={setProjectChanges}
-                setGlobalJson={setModelJson}
-              />
+              <>
+              {true ? (
+                <EditorContainer
+                  projectName={currentProjectname}
+                  setProjectEdited={setProjectChanges}
+                  setGlobalJson={setModelJson}
+                />
+              ) : (
+                <DiagramVisualizerContainer
+                  projectName={currentProjectname}
+                  manager={manager}
+                />
+              )}
+              </>
             ) : (
               <p>Loading...</p>
             )}
-            <DiagramVisualizerContainer
-              projectName={currentProjectname}
-              manager={manager}
-            />
             <VncViewer gazeboEnabled={gazeboEnabled} />
           </div>
         </Resizable>

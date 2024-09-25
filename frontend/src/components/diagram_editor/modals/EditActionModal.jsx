@@ -63,10 +63,8 @@ const EditActionModal = ({
   onClose,
   currentActionNode,
   setColorActionNode,
-  addInputPort,
-  addOutputPort,
-  deleteInputPort,
-  deleteOutputPort,
+  addPort,
+  removePort,
 }) => {
   const focusInputRef = useRef(null);
   const [color, setColor] = useColor("rgb(128 0 128)");
@@ -172,7 +170,7 @@ const EditActionModal = ({
   const addInput = () => {
     //TODO: Maybe display some error message when the name is invalid
     if (isInputNameValid(formState["newInputName"])) {
-      addInputPort(formState["newInputName"]);
+      addPort(formState["newInputName"], currentActionNode, 0);
     }
     setInputName(false);
     reRender();
@@ -181,7 +179,7 @@ const EditActionModal = ({
   const addOutput = () => {
     //TODO: Maybe display some error message when the name is invalid
     if (isOutputNameValid(formState["newOutputName"])) {
-      addOutputPort(formState["newOutputName"]);
+      addPort(formState["newOutputName"], currentActionNode, 1);
     }
     setOutputName(false);
     reRender();
@@ -265,7 +263,7 @@ const EditActionModal = ({
                             }}
                             title="Delete"
                             onClick={() => {
-                              deleteInputPort(port[1], port[0]);
+                              removePort(port[1], currentActionNode, 0);
                               reRender();
                             }}
                           >
@@ -387,7 +385,7 @@ const EditActionModal = ({
                             }}
                             title="Delete"
                             onClick={() => {
-                              deleteOutputPort(port[1], port[0]);
+                              removePort(port[1], currentActionNode, 1);
                               reRender();
                             }}
                           >
