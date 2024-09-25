@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="61.803783mm"
+   height="74.671265mm"
+   viewBox="0 0 61.803786 74.671265"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="marker7"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path7" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker7-9"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path7-7" />
+    </marker>
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-31.989002,-26.359205)">
+    <circle
+       style="fill:#ff9538;fill-opacity:0.999023;stroke:#000000;stroke-width:0.923229;stroke-linecap:round;stroke-linejoin:round"
+       id="path1-2"
+       cx="63.022938"
+       cy="44.408001"
+       r="17.587181" />
+    <text
+       xml:space="preserve"
+       style="font-size:6.41467px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000001;fill-opacity:1;stroke:#000000;stroke-width:0.313337;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       x="49.714592"
+       y="40.72485"
+       id="text1-9"><tspan
+         id="tspan1-1"
+         style="fill:#000001;fill-opacity:1;stroke-width:0.313337;stroke-dasharray:none"
+         x="49.714592"
+         y="40.72485">Frontend</tspan></text>
+    <ellipse
+       style="fill:#389fff;fill-opacity:0.999023;stroke:#000000;stroke-width:0.313336;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       id="path4"
+       cx="62.970741"
+       cy="52.691097"
+       rx="9.8885794"
+       ry="8.2334528" />
+    <text
+       xml:space="preserve"
+       style="font-size:6.3368px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.309533;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       x="62.752262"
+       y="54.420712"
+       id="text4"><tspan
+         id="tspan4"
+         style="fill:#000000;fill-opacity:1;stroke-width:0.309533"
+         x="62.752262"
+         y="54.420712">React</tspan></text>
+    <ellipse
+       style="fill:#389fff;fill-opacity:0.999023;stroke:#000000;stroke-width:0.336637;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       id="path4-7"
+       cx="42.781097"
+       cy="92.016411"
+       rx="10.623776"
+       ry="8.8455944" />
+    <text
+       xml:space="preserve"
+       style="font-size:6.3368px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.309533;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       x="42.504246"
+       y="93.939873"
+       id="text4-9"><tspan
+         id="tspan4-20"
+         style="fill:#000000;fill-opacity:1;stroke-width:0.309533"
+         x="42.504246"
+         y="93.939873">Docker</tspan></text>
+    <ellipse
+       style="fill:#9cff38;fill-opacity:0.999023;stroke:#000000;stroke-width:0.336631;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       id="path4-7-5"
+       cx="83.000694"
+       cy="92.016563"
+       rx="10.623776"
+       ry="8.8455944" />
+    <text
+       xml:space="preserve"
+       style="font-size:6.3368px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.309533;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       x="83.195015"
+       y="93.699059"
+       id="text4-9-9"><tspan
+         id="tspan4-20-2"
+         style="fill:#000000;fill-opacity:1;stroke-width:0.309533"
+         x="83.195015"
+         y="93.699059">Native</tspan></text>
+    <path
+       style="fill:#46d5f1;fill-opacity:0.956742;stroke:#000000;stroke-width:0.897799;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Triangle)"
+       d="m 62.763336,62.429426 -6.5e-4,7.17837"
+       id="path5" />
+    <text
+       xml:space="preserve"
+       style="font-size:6.41467px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.956742;stroke:#000000;stroke-width:0.313337;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       x="62.710064"
+       y="77.831535"
+       id="text5"><tspan
+         id="tspan5"
+         style="text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.956742;stroke-width:0.313337;stroke-dasharray:none"
+         x="62.710064"
+         y="77.831535">Execution</tspan></text>
+    <path
+       style="fill:#9cff38;fill-opacity:0.999023;stroke:#000000;stroke-width:0.771792;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#marker7)"
+       d="m 62.939856,79.515986 -10.41313,4.44076"
+       id="path6" />
+    <path
+       style="fill:#9cff38;fill-opacity:0.999023;stroke:#000000;stroke-width:0.781783;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#marker7-9)"
+       d="m 62.956923,79.487766 10.387664,4.56768"
+       id="path6-6" />
+  </g>
+</svg>
