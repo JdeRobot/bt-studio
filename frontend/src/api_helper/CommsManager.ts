@@ -6,12 +6,12 @@ type PromiseHandlers = {
   reject: (reason?: any) => void;
 };
 
-type Events = string|string[];
+type Events = string | string[];
 
 export default class CommsManager {
   private static instance: CommsManager;
   private ws: WebSocket;
-  private observers: { [id: string] : Function[]; } = {};
+  private observers: { [id: string]: Function[] } = {};
   private pendingPromises: Map<string, PromiseHandlers> = new Map();
 
   // Private constructor to only allow single instatiation
@@ -66,7 +66,7 @@ export default class CommsManager {
     return CommsManager.instance;
   }
 
-  public subscribe = (events:Events, callback:Function) => {
+  public subscribe = (events: Events, callback: Function) => {
     if (typeof events === "string") {
       events = [events];
     }
@@ -76,20 +76,22 @@ export default class CommsManager {
     }
   };
 
-  public subscribeOnce = (event:Events, callback:Function) => {
-    this.subscribe(event, (response:any) => {
+  public subscribeOnce = (event: Events, callback: Function) => {
+    this.subscribe(event, (response: any) => {
       callback(response);
       this.unsubscribe(event, callback);
     });
   };
 
-  public unsubscribe = (events:Events, callback:Function) => {
+  public unsubscribe = (events: Events, callback: Function) => {
     if (typeof events === "string") {
       events = [events];
     }
     for (let i = 0, length = events.length; i < length; i++) {
       this.observers[events[i]] = this.observers[events[i]] || [];
-      this.observers[events[i]].splice(this.observers[events[i]].indexOf(callback));
+      this.observers[events[i]].splice(
+        this.observers[events[i]].indexOf(callback),
+      );
     }
   };
 

@@ -92,7 +92,7 @@ const setStatusNode = (model: any, updateTree: any, baseTree: any) => {
     nodeChilds = [];
   }
 
-  console.log(updateTree[nodeName], nodeName)
+  console.log(updateTree[nodeName], nodeName);
   var nodeStatus = updateTree[nodeName]["state"];
   var node = model.current.getNode(nodeId);
 
@@ -113,7 +113,6 @@ const DiagramVisualizer = memo(
     manager: any;
     treeStructure: any;
   }) => {
-
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
     const engine = useRef(createEngine());
@@ -123,7 +122,7 @@ const DiagramVisualizer = memo(
     configureEngine(engine);
 
     // Deserialize and load the model
-    console.log("Diagram Visualizer")
+    console.log("Diagram Visualizer");
     model.current.deserializeModel(modelJson, engine.current);
     model.current.setLocked(true);
     engine.current.setModel(model.current);
@@ -131,7 +130,7 @@ const DiagramVisualizer = memo(
     const updateExecState = (msg: any) => {
       if (msg && msg.command === "update" && msg.data.update !== "") {
         const updateStatus = JSON.parse(msg.data.update);
-        console.log("Repaint")
+        console.log("Repaint");
         const updateTree = updateStatus.tree;
         const updateBlackboard = updateStatus.blackboard;
 
@@ -150,41 +149,38 @@ const DiagramVisualizer = memo(
   },
 );
 
-const DiagramVisualizerStatus =
-  ({
-    model,
-    engine,
-    manager,
-    treeStructure,
-  }: {
-    model: any;
-    engine: any;
-    manager: any;
-    treeStructure: any;
-  }) => {
+const DiagramVisualizerStatus = ({
+  model,
+  engine,
+  manager,
+  treeStructure,
+}: {
+  model: any;
+  engine: any;
+  manager: any;
+  treeStructure: any;
+}) => {
+  const [s, st] = useState("");
 
-    const [s, st] = useState("")
+  const updateExecState = (msg: any) => {
+    if (msg && msg.command === "update" && msg.data.update !== "") {
+      const updateStatus = JSON.parse(msg.data.update);
+      console.log("Repaint");
+      const updateTree = updateStatus.tree;
+      const updateBlackboard = updateStatus.blackboard;
 
-    const updateExecState = (msg: any) => {
-      if (msg && msg.command === "update" && msg.data.update !== "") {
-        const updateStatus = JSON.parse(msg.data.update);
-        console.log("Repaint")
-        const updateTree = updateStatus.tree;
-        const updateBlackboard = updateStatus.blackboard;
+      setTreeStatus(model, updateTree, treeStructure);
+      engine.current.repaintCanvas();
+    }
+  };
 
-        setTreeStatus(model, updateTree, treeStructure);
-        engine.current.repaintCanvas();
-      }
-    };
+  manager.subscribe("update", updateExecState);
 
-    manager.subscribe("update", updateExecState);
-
-    return (
-      <div>
-        <CanvasWidget className="canvas" engine={engine.current} />
-      </div>
-    );
-  }
-
+  return (
+    <div>
+      <CanvasWidget className="canvas" engine={engine.current} />
+    </div>
+  );
+};
 
 export default DiagramVisualizer;

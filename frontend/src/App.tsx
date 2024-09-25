@@ -178,18 +178,18 @@ const App = () => {
           <div style={{ flex: 1 }}>
             {currentProjectname ? (
               <>
-              {true ? (
-                <EditorContainer
-                  projectName={currentProjectname}
-                  setProjectEdited={setProjectChanges}
-                  setGlobalJson={setModelJson}
-                />
-              ) : (
-                <DiagramVisualizerContainer
-                  projectName={currentProjectname}
-                  manager={manager}
-                />
-              )}
+                {true ? (
+                  <EditorContainer
+                    projectName={currentProjectname}
+                    setProjectEdited={setProjectChanges}
+                    setGlobalJson={setModelJson}
+                  />
+                ) : (
+                  <DiagramVisualizerContainer
+                    projectName={currentProjectname}
+                    manager={manager}
+                  />
+                )}
               </>
             ) : (
               <p>Loading...</p>

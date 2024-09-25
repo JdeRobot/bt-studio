@@ -80,8 +80,8 @@ const configureEngine = (engine: any) => {
   state.dragNewLink.config.allowLooseLinks = false;
 
   engine.current
-      .getActionEventBus()
-      .registerAction(new ZoomCanvasAction({ inverseZoom: true }));
+    .getActionEventBus()
+    .registerAction(new ZoomCanvasAction({ inverseZoom: true }));
 };
 
 // Add the nodes default ports
@@ -99,11 +99,11 @@ const addDefaultPorts = (node: any, model: any) => {
       var convNode = oldNode as BasicNodeModel;
       if (convNode.getName() === node.getName()) {
         node.setColor(convNode.getColor());
-        Object.values(convNode.getPorts()).forEach(element => {
+        Object.values(convNode.getPorts()).forEach((element) => {
           if (element instanceof InputPortModel) {
-            node.addInputPort(element.getName())
+            node.addInputPort(element.getName());
           } else if (element instanceof OutputPortModel) {
-            node.addOutputPort(element.getName())
+            node.addOutputPort(element.getName());
           }
         });
       }
@@ -151,7 +151,6 @@ const DiagramEditor = memo(
     projectName: string;
     setDiagramEdited: Function;
   }) => {
-
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
     const engine = useRef(createEngine());
@@ -159,18 +158,18 @@ const DiagramEditor = memo(
     configureEngine(engine);
 
     // Deserialize and load the model
-    console.log("Repaint")
+    console.log("Repaint");
     model.current.deserializeModel(modelJson, engine.current);
     setResultJson(modelJson);
     engine.current.setModel(model.current);
 
     return (
-      <DiagramEditorModalsWrapper 
-        engine = {engine}
-        model = {model}
-        projectName = {projectName}
-        setResultJson = {setResultJson}
-        setDiagramEdited = {setDiagramEdited}
+      <DiagramEditorModalsWrapper
+        engine={engine}
+        model={model}
+        projectName={projectName}
+        setResultJson={setResultJson}
+        setDiagramEdited={setDiagramEdited}
       >
         <CanvasWidget className="canvas" engine={engine.current} />
       </DiagramEditorModalsWrapper>
@@ -192,11 +191,12 @@ const DiagramEditorModalsWrapper = memo(
     projectName: string;
     setResultJson: Function;
     setDiagramEdited: Function;
-    children:any;
+    children: any;
   }) => {
     // VARS
-    const [isEditActionModalOpen, setEditActionModalOpen] = useState<boolean>(false);
-    const [currentNode, setCurrentNode] = useState<BasicNodeModel|null>(null);
+    const [isEditActionModalOpen, setEditActionModalOpen] =
+      useState<boolean>(false);
+    const [currentNode, setCurrentNode] = useState<BasicNodeModel | null>(null);
 
     // Initialize position and the last clicked node
     var lastMovedNodePosition = { x: 100, y: 100 };
@@ -211,7 +211,9 @@ const DiagramEditorModalsWrapper = memo(
       if (lastClickedNodeId !== "") {
         const node = model.current.getNode(lastClickedNodeId) as BasicNodeModel;
         if (isActionNode(node)) {
-          setCurrentNode(model.current.getNode(lastClickedNodeId) as BasicNodeModel)
+          setCurrentNode(
+            model.current.getNode(lastClickedNodeId) as BasicNodeModel,
+          );
           setEditActionModalOpen(true);
         }
       }
@@ -219,7 +221,7 @@ const DiagramEditorModalsWrapper = memo(
 
     const closeActionEditor = () => {
       setEditActionModalOpen(false);
-      setCurrentNode(null)
+      setCurrentNode(null);
       lastClickedNodeId = "";
     };
 
@@ -229,7 +231,13 @@ const DiagramEditorModalsWrapper = memo(
       }
 
       currentNode.setColor(
-        "rgb(" + Math.round(r) + "," + Math.round(g) + "," + Math.round(b) + ")",
+        "rgb(" +
+          Math.round(r) +
+          "," +
+          Math.round(g) +
+          "," +
+          Math.round(b) +
+          ")",
       );
 
       model.current.getNodes().forEach((node: NodeModel) => {
@@ -237,7 +245,7 @@ const DiagramEditorModalsWrapper = memo(
         if (currentNode instanceof BasicNodeModel) {
           var convNode = node as BasicNodeModel;
           if (convNode.getName() === currentNode.getName()) {
-            convNode.setColor(currentNode.getColor())
+            convNode.setColor(currentNode.getColor());
           }
         }
       });
@@ -454,7 +462,7 @@ const DiagramEditorModalsWrapper = memo(
       //TODO: type should be an enum
       // Check that the user didn't cancel
       if (!node || !portName) {
-        return
+        return;
       }
 
       if (type === 0) {
@@ -486,7 +494,7 @@ const DiagramEditorModalsWrapper = memo(
       //TODO: type should be an enum
       // Check that the user didn't cancel
       if (!node || !port) {
-        return
+        return;
       }
 
       if (type === 0) {
@@ -495,7 +503,7 @@ const DiagramEditorModalsWrapper = memo(
         node.removeOutputPort(port);
       }
 
-      console.log(port)
+      console.log(port);
 
       // FIX: this should be with some and other stuff
       // model.current.getNodes().forEach((oldNode: NodeModel) => {
@@ -516,7 +524,7 @@ const DiagramEditorModalsWrapper = memo(
       updateJsonState();
       engine.current.repaintCanvas();
     };
-    
+
     attachLinkListener(model.current);
 
     engine.current
@@ -531,27 +539,27 @@ const DiagramEditorModalsWrapper = memo(
       node.setSelected(false);
     });
 
-  return (
-    <div>
-      <NodeMenu
-        projectName={projectName}
-        onAddNode={nodeTypeSelector}
-        onDeleteNode={deleteLastClickedNode}
-        onZoomToFit={zoomToFit}
-        onEditAction={openActionEditor}
-      />
-      {children}
-      <EditActionModal
-        isOpen={isEditActionModalOpen}
-        onClose={closeActionEditor}
-        currentActionNode={currentNode}
-        setColorActionNode={setColorActionNode}
-        addPort={addPort}
-        removePort={removePort}
-      />
-    </div>
-  );
+    return (
+      <div>
+        <NodeMenu
+          projectName={projectName}
+          onAddNode={nodeTypeSelector}
+          onDeleteNode={deleteLastClickedNode}
+          onZoomToFit={zoomToFit}
+          onEditAction={openActionEditor}
+        />
+        {children}
+        <EditActionModal
+          isOpen={isEditActionModalOpen}
+          onClose={closeActionEditor}
+          currentActionNode={currentNode}
+          setColorActionNode={setColorActionNode}
+          addPort={addPort}
+          removePort={removePort}
+        />
+      </div>
+    );
   },
-)
+);
 
 export default DiagramEditor;

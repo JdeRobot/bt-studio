@@ -229,9 +229,8 @@ const generateApp = async (
   modelJson: string,
   currentProjectname: string,
   btOrder: string,
-  dockerized: boolean = false
-  ) => {
-
+  dockerized: boolean = false,
+) => {
   if (!modelJson) throw new Error("Tree JSON is empty!");
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
@@ -247,9 +246,9 @@ const generateApp = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-        app_name: currentProjectname,
-        tree_graph: JSON.stringify(modelJson),
-        bt_order: btOrder,
+      app_name: currentProjectname,
+      tree_graph: JSON.stringify(modelJson),
+      bt_order: btOrder,
     }),
   });
 
