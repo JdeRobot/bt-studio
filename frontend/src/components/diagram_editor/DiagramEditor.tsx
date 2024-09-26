@@ -6,6 +6,7 @@ import createEngine, {
   DefaultNodeModel,
   DiagramModel,
   DiagramModelGenerics,
+  LinkModel,
   NodeModel,
   ZoomCanvasAction,
 } from "@projectstorm/react-diagrams";
@@ -97,7 +98,7 @@ const addDefaultPorts = (node: any, model: any) => {
     //TODO: for the tags, this will never be called. Maybe have a common type
     if (oldNode instanceof BasicNodeModel) {
       var convNode = oldNode as BasicNodeModel;
-      if (convNode.getName() === node.getName()) {
+      if (convNode.getName() === node.getName() && node !== convNode) {
         node.setColor(convNode.getColor());
         Object.values(convNode.getPorts()).forEach((element) => {
           if (element instanceof InputPortModel) {
@@ -110,6 +111,18 @@ const addDefaultPorts = (node: any, model: any) => {
     }
   });
 };
+
+const deletePortLink = (model:any, portName: string, node: BasicNodeModel) => {
+    var link: LinkModel | undefined;
+    const nodePort = node.getPort(portName);
+
+    if (nodePort) {
+      link = Object.values(nodePort.links)[0];
+      if (link) {
+        model.current.removeLink(link);
+      }
+    }
+}
 
 const isActionNode = (node: any) => {
   var name = node.getName();
@@ -244,7 +257,7 @@ const DiagramEditorModalsWrapper = memo(
         //TODO: for the tags, this will never be called. Maybe have a common type
         if (currentNode instanceof BasicNodeModel) {
           var convNode = node as BasicNodeModel;
-          if (convNode.getName() === currentNode.getName()) {
+          if (convNode.getName() === currentNode.getName() && currentNode !== convNode) {
             convNode.setColor(currentNode.getColor());
           }
         }
@@ -475,7 +488,7 @@ const DiagramEditorModalsWrapper = memo(
         //TODO: for the tags, this will never be called. Maybe have a common type
         if (isActionNode(oldNode)) {
           var convNode = oldNode as BasicNodeModel;
-          if (convNode.getName() === node.getName()) {
+          if (convNode.getName() === node.getName() && node !== convNode) {
             if (type === 0) {
               convNode.addInputPort(portName);
             } else {
@@ -497,28 +510,30 @@ const DiagramEditorModalsWrapper = memo(
         return;
       }
 
+      deletePortLink(model, port.options.name, node)
+
       if (type === 0) {
         node.removeInputPort(port);
       } else {
         node.removeOutputPort(port);
       }
 
-      console.log(port);
-
       // FIX: this should be with some and other stuff
-      // model.current.getNodes().forEach((oldNode: NodeModel) => {
-      //   //TODO: for the tags, this will never be called. Maybe have a common type
-      //   if (isActionNode(oldNode)) {
-      //     var convNode = oldNode as BasicNodeModel;
-      //     if (convNode.getName() === node.getName()) {
-      //       if (type === 0) {
-      //         convNode.removeInputPort(port);
-      //       } else {
-      //         convNode.removeOutputPort(port);
-      //       }
-      //     }
-      //   }
-      // });
+      model.current.getNodes().forEach((oldNode: NodeModel) => {
+        //TODO: for the tags, this will never be called. Maybe have a common type
+        if (isActionNode(oldNode)) {
+          var convNode = oldNode as BasicNodeModel;
+          if (convNode.getName() === node.getName() && node.getID() !== convNode.getID()) {
+            deletePortLink(model, port.options.name, convNode);
+
+            if (type === 0) {
+              convNode.removeInputPort(port);
+            } else {
+              convNode.removeOutputPort(port);
+            }
+          }
+        }
+      });
 
       setDiagramEdited(true);
       updateJsonState();
