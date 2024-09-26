@@ -112,17 +112,17 @@ const addDefaultPorts = (node: any, model: any) => {
   });
 };
 
-const deletePortLink = (model:any, portName: string, node: BasicNodeModel) => {
-    var link: LinkModel | undefined;
-    const nodePort = node.getPort(portName);
+const deletePortLink = (model: any, portName: string, node: BasicNodeModel) => {
+  var link: LinkModel | undefined;
+  const nodePort = node.getPort(portName);
 
-    if (nodePort) {
-      link = Object.values(nodePort.links)[0];
-      if (link) {
-        model.current.removeLink(link);
-      }
+  if (nodePort) {
+    link = Object.values(nodePort.links)[0];
+    if (link) {
+      model.current.removeLink(link);
     }
-}
+  }
+};
 
 const isActionNode = (node: any) => {
   var name = node.getName();
@@ -257,7 +257,10 @@ const DiagramEditorModalsWrapper = memo(
         //TODO: for the tags, this will never be called. Maybe have a common type
         if (currentNode instanceof BasicNodeModel) {
           var convNode = node as BasicNodeModel;
-          if (convNode.getName() === currentNode.getName() && currentNode !== convNode) {
+          if (
+            convNode.getName() === currentNode.getName() &&
+            currentNode !== convNode
+          ) {
             convNode.setColor(currentNode.getColor());
           }
         }
@@ -510,7 +513,7 @@ const DiagramEditorModalsWrapper = memo(
         return;
       }
 
-      deletePortLink(model, port.options.name, node)
+      deletePortLink(model, port.options.name, node);
 
       if (type === 0) {
         node.removeInputPort(port);
@@ -523,7 +526,10 @@ const DiagramEditorModalsWrapper = memo(
         //TODO: for the tags, this will never be called. Maybe have a common type
         if (isActionNode(oldNode)) {
           var convNode = oldNode as BasicNodeModel;
-          if (convNode.getName() === node.getName() && node.getID() !== convNode.getID()) {
+          if (
+            convNode.getName() === node.getName() &&
+            node.getID() !== convNode.getID()
+          ) {
             deletePortLink(model, port.options.name, convNode);
 
             if (type === 0) {
