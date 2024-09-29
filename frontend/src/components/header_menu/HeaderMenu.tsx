@@ -5,6 +5,7 @@ import {
   createProject,
   saveProject,
   generateApp,
+  generateDockerizedApp,
   getUniverseConfig,
   getCustomUniverseZip,
 } from "../../api_helper/TreeWrapper";
@@ -173,7 +174,7 @@ const HeaderMenu = ({
       const appBlob = await generateApp(
         modelJson,
         currentProjectname,
-        "bottom-to-top",
+        "bottom-to-top"
       );
 
       // Create a download link and trigger download
@@ -196,22 +197,22 @@ const HeaderMenu = ({
   const onAppStateChange = async () => {
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
+      return;
     }
 
     if (!appRunning) {
       try {
         // Get the blob from the API wrapper
-        const app_blob = await generateApp(
+        const appBlob = await generateDockerizedApp(
           modelJson,
           currentProjectname,
-          "bottom-to-top",
+          "bottom-to-top"
         );
-        const base64data = await app_blob.text();
 
-        // Send the zip
+        // Send the blob directly
         await manager.run({
           type: "bt-studio",
-          code: base64data,
+          code: appBlob,
         });
         setAppRunning(true);
         console.log("App started successfully");
@@ -272,7 +273,7 @@ const HeaderMenu = ({
     try {
       const universeConfig = await getUniverseConfig(
         universeName,
-        currentProjectname,
+        currentProjectname
       );
       try {
         // Launch if new universe selected

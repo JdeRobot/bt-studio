@@ -22,6 +22,7 @@ import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutput
 import { TagInputPortModel } from "./nodes/tag_node/ports/input_port/TagInputPortModel";
 
 import SubtreeModal from "./modals/SubTreeModal";
+import Modal from "../Modal/Modal";
 import NodeMenu from "./NodeMenu";
 
 const DiagramEditor = memo(
@@ -41,6 +42,18 @@ const DiagramEditor = memo(
     // STATE
     const [subTreeModalOpen, setSubTreeModalOpen] = useState(false);
     const [subTreeName, setSubTreeName] = useState("");
+
+    // VARS
+
+    // Initialize position and the last clicked node
+    var lastMovedNodePosition = { x: 100, y: 100 };
+    var lastClickedNodeId = "";
+
+    // REFS
+
+    // Initialize the model and the engine
+    const model = useRef(new DiagramModel());
+    const engine = useRef(createEngine());
 
     // MODAL MANAGEMENT
     const modalManager = () => {
@@ -70,41 +83,38 @@ const DiagramEditor = memo(
       engine.current
         .getPortFactories()
         .registerFactory(
-          new SimplePortFactory(
-            "children",
-            (config) => new ChildrenPortModel(),
-          ),
+          new SimplePortFactory("children", (config) => new ChildrenPortModel())
         );
       engine.current
         .getPortFactories()
         .registerFactory(
-          new SimplePortFactory("parent", (config) => new ParentPortModel()),
+          new SimplePortFactory("parent", (config) => new ParentPortModel())
         );
       engine.current
         .getPortFactories()
         .registerFactory(
-          new SimplePortFactory("output", (config) => new OutputPortModel("")),
+          new SimplePortFactory("output", (config) => new OutputPortModel(""))
         );
       engine.current
         .getPortFactories()
         .registerFactory(
-          new SimplePortFactory("input", (config) => new InputPortModel("")),
+          new SimplePortFactory("input", (config) => new InputPortModel(""))
         );
       engine.current
         .getPortFactories()
         .registerFactory(
           new SimplePortFactory(
             "tag output",
-            (config) => new TagOutputPortModel(),
-          ),
+            (config) => new TagOutputPortModel()
+          )
         );
       engine.current
         .getPortFactories()
         .registerFactory(
           new SimplePortFactory(
             "tag input",
-            (config) => new TagInputPortModel(),
-          ),
+            (config) => new TagInputPortModel()
+          )
         );
 
       // Disable loose links
@@ -123,21 +133,8 @@ const DiagramEditor = memo(
       else if (nodeName === "Delay") node.addInputPort("delay_ms");
     };
 
-    // VARS
-
-    // Initialize position and the last clicked node
-    var lastMovedNodePosition = { x: 100, y: 100 };
-    var lastClickedNodeId = "";
-
-    // REFS
-
-    // Initialize the model and the engine
-    const model = useRef(new DiagramModel());
-    const engine = useRef(createEngine());
-
     // HELPERS
     const updateJsonState = () => {
-      console.log("Updated is :", model.current.serialize());
       setResultJson(model.current.serialize());
     };
 
@@ -349,12 +346,13 @@ const DiagramEditor = memo(
 
     // Fixes uncomplete first serialization
     setTimeout(() => {
+      console.log("Rendered!");
       updateJsonState();
     }, 1);
 
     return (
       <div>
-        {hasSubtrees && (
+        {hasSubtrees && subTreeModalOpen && (
           <SubtreeModal
             isOpen={subTreeModalOpen}
             onClose={onSubTreeModalClose}
@@ -376,7 +374,7 @@ const DiagramEditor = memo(
         )}
       </div>
     );
-  },
+  }
 );
 
 export default DiagramEditor;

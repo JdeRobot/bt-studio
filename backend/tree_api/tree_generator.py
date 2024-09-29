@@ -164,7 +164,6 @@ def parse_tree(tree_path, action_path):
     # Obtain the defined subtrees
     possible_trees = [file.split(".")[0] for file in os.listdir(tree_path)]
     subtrees = get_subtree_set(main_tree, possible_trees)
-    print(subtrees)
 
     # Call the function to replace subtrees in the main tree
     replace_subtree_in_main(main_tree, subtrees, tree_path)
@@ -172,15 +171,12 @@ def parse_tree(tree_path, action_path):
     # Obtain the defined actions
     possible_actions = [file.split(".")[0] for file in os.listdir(action_path)]
     actions = get_action_set(main_tree, possible_actions)
-    print(actions)
 
     # Add subsections for the action code
     add_actions_code(main_tree, actions, action_path)
 
     # Serialize the modified XML to a properly formatted string
     formatted_tree = get_formatted_string(main_tree, actions)
-
-    print(formatted_tree)
 
     return formatted_tree
 
@@ -230,22 +226,16 @@ def parse_tree(tree_path, action_path):
 
     # Replace subtrees in the main tree
     replace_subtree_in_main(tree, subtrees, tree_path)
-    print("Subtrees replaced")
 
     # Obtain the defined actions
-    print(action_path)
     possible_actions = [file.split(".")[0] for file in os.listdir(action_path)]
-    print("The possible actions are: " + str(possible_actions))
     actions = get_action_set(tree, possible_actions)
-    print("The actions in the tree are: " + str(actions))
 
     # Add subsections for the action code
     add_actions_code(tree, actions, action_path)
 
     # Serialize the modified XML to a properly formatted string
     formatted_tree = get_formatted_string(tree, actions)
-
-    print(formatted_tree)
 
     return formatted_tree
 

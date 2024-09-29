@@ -19,6 +19,7 @@ from distutils.dir_util import copy_tree
 from rest_framework import status
 from django.core.files.storage import default_storage
 import base64
+import xml.etree.ElementTree as ET
 
 # PROJECT MANAGEMENT
 
@@ -821,16 +822,33 @@ def generate_app(request):
         json_translator.translate(main_tree_graph, main_tree_tmp_path, bt_order)
 
         # Translate subtrees
+
+        # Get the subtrees that are present in the tree
+        possible_trees = [file.split(".")[0] for file in os.listdir(subtree_path)]
+        with open(main_tree_tmp_path) as f:
+            main_tree_str = f.read()
+        main_tree = ET.fromstring(main_tree_str)
+        subtrees = tree_generator.get_subtree_set(main_tree, possible_trees)
+
+        print("Possible subtrees: ", possible_trees)
+
         for subtree_file in os.listdir(subtree_path):
+            if subtree_file.split(".")[0] not in subtrees:
+                continue
+
             subtree_tmp_path = os.path.join(
                 result_trees_tmp_path, subtree_file.replace(".json", ".xml")
             )
             subtree_graph = open(os.path.join(subtree_path, subtree_file)).read()
+            print("Processing subtree: ", subtree_file)
             json_translator.translate(
                 subtree_graph,
                 subtree_tmp_path,
                 bt_order,
             )
+            print("Subtree processed")
+
+        print("Going to generate the self-contained tree")
 
         # Generate a self-contained tree
         tree_generator.generate(
@@ -872,8 +890,11 @@ def generate_app(request):
 @api_view(["POST"])
 def generate_dockerized_app(request):
 
-    # Check if 'name' and 'zipfile' are in the request data
-    if "app_name" not in request.data or "tree_graph" not in request.data:
+    if (
+        "app_name" not in request.data
+        or "tree_graph" not in request.data
+        or "bt_order" not in request.data
+    ):
         return Response(
             {"error": "Incorrect request parameters"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -895,51 +916,49 @@ def generate_dockerized_app(request):
     tree_gardener_src = os.path.join(settings.BASE_DIR, "tree_gardener")
     template_path = os.path.join(settings.BASE_DIR, "ros_template")
 
-    if app_name and tree_graph:
+    try:
+        # 1. Create the working folder
+        if os.path.exists(working_folder):
+            shutil.rmtree(working_folder)
+        os.mkdir(working_folder)
 
-        try:
-            # 1. Create the working folder
-            if os.path.exists(working_folder):
-                shutil.rmtree(working_folder)
-            os.mkdir(working_folder)
+        # 2. Generate a basic tree from the JSON definition
+        json_translator.translate(tree_graph, tree_path, bt_order)
 
-            # 2. Generate a basic tree from the JSON definition
-            json_translator.translate(tree_graph, tree_path, bt_order)
+        # 3. Generate a self-contained tree
+        tree_generator.generate(tree_path, action_path, self_contained_tree_path)
 
-            # 3. Generate a self-contained tree
-            tree_generator.generate(tree_path, action_path, self_contained_tree_path)
+        # 4. Copy necessary files to execute the app in the RB
+        factory_location = tree_gardener_src + "/tree_gardener/tree_factory.py"
+        tools_location = tree_gardener_src + "/tree_gardener/tree_tools.py"
+        entrypoint_location = template_path + "/ros_template/execute_docker.py"
+        shutil.copy(factory_location, working_folder)
+        shutil.copy(tools_location, working_folder)
+        shutil.copy(entrypoint_location, working_folder)
 
-            # 4. Copy necessary files to execute the app in the RB
-            factory_location = tree_gardener_src + "/tree_gardener/tree_factory.py"
-            tools_location = tree_gardener_src + "/tree_gardener/tree_tools.py"
-            entrypoint_location = template_path + "/ros_template/execute_docker.py"
-            shutil.copy(factory_location, working_folder)
-            shutil.copy(tools_location, working_folder)
-            shutil.copy(entrypoint_location, working_folder)
+        # 5. Generate the zip
+        zip_path = working_folder + ".zip"
+        with zipfile.ZipFile(zip_path, "w") as zipf:
+            for root, dirs, files in os.walk(working_folder):
+                for file in files:
+                    zipf.write(
+                        os.path.join(root, file),
+                        os.path.relpath(os.path.join(root, file), working_folder),
+                    )
 
-            # 5. Generate the zip
-            zip_path = working_folder + ".zip"
-            with zipfile.ZipFile(zip_path, "w") as zipf:
-                for root, dirs, files in os.walk(working_folder):
-                    for file in files:
-                        zipf.write(
-                            os.path.join(root, file),
-                            os.path.relpath(os.path.join(root, file), working_folder),
-                        )
-
-            # 6. Return the zip
-            zip_file = open(zip_path, "rb")
-            mime_type, _ = mimetypes.guess_type(zip_path)
-            response = HttpResponse(zip_file, content_type=mime_type)
+        # 6. Return the zip file as a response
+        with open(zip_path, "rb") as zip_file:
+            response = HttpResponse(zip_file, content_type="application/zip")
             response["Content-Disposition"] = (
                 f"attachment; filename={os.path.basename(zip_path)}"
             )
-
             return response
-        except Exception as e:
-            return Response({"success": False, "message": str(e)}, status=400)
-    else:
-        return Response({"error": "app_name parameter is missing"}, status=500)
+
+    except Exception as e:
+        return Response(
+            {"success": False, "message": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @api_view(["POST"])

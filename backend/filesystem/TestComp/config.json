@@ -1,1 +1,8 @@
-{"name": "TestComp", "config": {"editorShowAccentColors": true, "theme": "dark", "btOrder": "bottom-to-top"}}
+{
+    "name": "TestComp",
+    "config": {
+        "editorShowAccentColors": true,
+        "theme": "dark",
+        "btOrder": "top-to-bottom"
+    }
+}

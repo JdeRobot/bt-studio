@@ -38,7 +38,6 @@ const SubtreeModal = ({
 
   const handleCancel = async () => {
     try {
-      console.log("The subtree is:", resultJson);
       await saveSubtree(resultJson, projectName, subtreeName);
     } catch (error) {
       console.error("Failed to save subtree:", error);
