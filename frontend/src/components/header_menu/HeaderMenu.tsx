@@ -174,7 +174,7 @@ const HeaderMenu = ({
       const appBlob = await generateApp(
         modelJson,
         currentProjectname,
-        "bottom-to-top"
+        "bottom-to-top",
       );
 
       // Create a download link and trigger download
@@ -206,7 +206,7 @@ const HeaderMenu = ({
         const appBlob = await generateDockerizedApp(
           modelJson,
           currentProjectname,
-          "bottom-to-top"
+          "bottom-to-top",
         );
 
         // Send the blob directly
@@ -273,7 +273,7 @@ const HeaderMenu = ({
     try {
       const universeConfig = await getUniverseConfig(
         universeName,
-        currentProjectname
+        currentProjectname,
       );
       try {
         // Launch if new universe selected
