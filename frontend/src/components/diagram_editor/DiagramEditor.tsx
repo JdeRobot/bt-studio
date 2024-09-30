@@ -5,6 +5,7 @@ import createEngine, {
   DefaultLinkModel,
   DefaultNodeModel,
   DiagramModel,
+  ZoomCanvasAction,
 } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
@@ -120,6 +121,10 @@ const DiagramEditor = memo(
       // Disable loose links
       const state: any = engine.current.getStateMachine().getCurrentState();
       state.dragNewLink.config.allowLooseLinks = false;
+
+      engine.current
+        .getActionEventBus()
+        .registerAction(new ZoomCanvasAction({ inverseZoom: true }));
     };
 
     // Add the nodes default ports
