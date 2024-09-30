@@ -1,9 +1,9 @@
 import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import DiagramEditor from "./DiagramEditor";
+import TreeEditor from "./TreeEditor";
 
-const EditorContainer = ({
+const MainTreeEditorContainer = ({
   projectName,
   setProjectEdited,
   setGlobalJson,
@@ -38,7 +38,7 @@ const EditorContainer = ({
   return (
     <div id="editor-container">
       {initialJson ? (
-        <DiagramEditor
+        <TreeEditor
           modelJson={initialJson}
           setResultJson={setGlobalJson}
           projectName={projectName}
@@ -52,4 +52,4 @@ const EditorContainer = ({
   );
 };
 
-export default EditorContainer;
+export default MainTreeEditorContainer;

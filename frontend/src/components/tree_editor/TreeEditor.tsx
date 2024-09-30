@@ -9,7 +9,7 @@ import createEngine, {
 } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
-import "./DiagramEditor.css";
+import "./TreeEditor.css";
 import { BasicNodeFactory } from "./nodes/basic_node/BasicNodeFactory";
 import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
 import { TagNodeFactory } from "./nodes/tag_node/TagNodeFactory";
@@ -23,10 +23,9 @@ import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutput
 import { TagInputPortModel } from "./nodes/tag_node/ports/input_port/TagInputPortModel";
 
 import SubtreeModal from "./modals/SubTreeModal";
-import Modal from "../Modal/Modal";
 import NodeMenu from "./NodeMenu";
 
-const DiagramEditor = memo(
+const TreeEditor = memo(
   ({
     modelJson,
     setResultJson,
@@ -40,10 +39,56 @@ const DiagramEditor = memo(
     setDiagramEdited: Function;
     hasSubtrees: boolean;
   }) => {
-    // STATE
-    const [subTreeModalOpen, setSubTreeModalOpen] = useState(false);
+    const [subtreeModalOpen, setSubTreeModalOpen] = useState(false);
     const [subTreeName, setSubTreeName] = useState("");
 
+    const onSubTreeModalClose = () => {
+      setSubTreeModalOpen(false);
+    };
+
+    return (
+      <div>
+        {hasSubtrees && subtreeModalOpen && (
+          <SubtreeModal
+            isOpen={subtreeModalOpen}
+            onClose={onSubTreeModalClose}
+            projectName={projectName}
+            subtreeName={subTreeName}
+            setDiagramEdited={setDiagramEdited}
+          />
+        )}
+        <DiagramEditor
+          modelJson={modelJson}
+          setResultJson={setResultJson}
+          projectName={projectName}
+          setDiagramEdited={setDiagramEdited}
+          hasSubtrees={hasSubtrees}
+          setSubTreeModalOpen={setSubTreeModalOpen}
+          setSubTreeName={setSubTreeName}
+        />
+      </div>
+    );
+  }
+);
+
+const DiagramEditor = memo(
+  ({
+    modelJson,
+    setResultJson,
+    projectName,
+    setDiagramEdited,
+    hasSubtrees,
+    setSubTreeModalOpen,
+    setSubTreeName,
+  }: {
+    modelJson: any;
+    setResultJson: Function;
+    projectName: string;
+    setDiagramEdited: Function;
+    hasSubtrees: boolean;
+    setSubTreeModalOpen: Function;
+    setSubTreeName: Function;
+  }) => {
     // VARS
 
     // Initialize position and the last clicked node
@@ -63,10 +108,6 @@ const DiagramEditor = memo(
         setSubTreeName(node.getName());
         setSubTreeModalOpen(true);
       }
-    };
-
-    const onSubTreeModalClose = () => {
-      setSubTreeModalOpen(false);
     };
 
     // HELPERS
@@ -138,7 +179,7 @@ const DiagramEditor = memo(
       else if (nodeName === "Delay") node.addInputPort("delay_ms");
     };
 
-    // HELPERS
+    // Updates the json state
     const updateJsonState = () => {
       setResultJson(model.current.serialize());
     };
@@ -230,6 +271,8 @@ const DiagramEditor = memo(
         },
       });
     };
+
+    // NODE FUNCIONS
 
     // Function to add a new basic node
     const addBasicNode = (nodeType: string, nodeName: string) => {
@@ -332,7 +375,6 @@ const DiagramEditor = memo(
       else addBasicNode(nodeType, nodeName);
     };
 
-    // There is no need to use an effect as the editor will re render when the model json changes
     // Configure the engine
     configureEngine(engine);
 
@@ -357,15 +399,6 @@ const DiagramEditor = memo(
 
     return (
       <div>
-        {hasSubtrees && subTreeModalOpen && (
-          <SubtreeModal
-            isOpen={subTreeModalOpen}
-            onClose={onSubTreeModalClose}
-            projectName={projectName}
-            subtreeName={subTreeName}
-            setDiagramEdited={setDiagramEdited}
-          />
-        )}
         <NodeMenu
           projectName={projectName}
           onAddNode={nodeTypeSelector}
@@ -382,4 +415,4 @@ const DiagramEditor = memo(
   }
 );
 
-export default DiagramEditor;
+export default TreeEditor;

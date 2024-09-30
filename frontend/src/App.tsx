@@ -10,7 +10,7 @@ import "./App.css";
 import VncViewer from "./components/vnc_viewer/VncViewer";
 import ErrorModal from "./components/error_popup/ErrorModal";
 import axios from "axios";
-import EditorContainer from "./components/diagram_editor/EditorContainer";
+import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
 import DiagramVisualizerContainer from "./components/bt_status_visualizer/DiagramVisualizerContainer";
 import CommsManager from "./api_helper/CommsManager";
 import { loadProjectConfig } from "./api_helper/TreeWrapper";
@@ -21,7 +21,7 @@ const App = () => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
-    {},
+    {}
   );
   const [modelJson, setModelJson] = useState<string>("");
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
@@ -177,20 +177,11 @@ const App = () => {
         >
           <div style={{ flex: 1 }}>
             {currentProjectname ? (
-              <>
-                {true ? (
-                  <EditorContainer
-                    projectName={currentProjectname}
-                    setProjectEdited={setProjectChanges}
-                    setGlobalJson={setModelJson}
-                  />
-                ) : (
-                  <DiagramVisualizerContainer
-                    projectName={currentProjectname}
-                    manager={manager}
-                  />
-                )}
-              </>
+              <MainTreeEditorContainer
+                projectName={currentProjectname}
+                setProjectEdited={setProjectChanges}
+                setGlobalJson={setModelJson}
+              />
             ) : (
               <p>Loading...</p>
             )}

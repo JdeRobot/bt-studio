@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
-import DiagramEditor from "../DiagramEditor";
+import TreeEditor from "../TreeEditor";
 import { getSubtree } from "../../../api_helper/TreeWrapper";
 import "./SubTreeModal.css";
 import { saveSubtree } from "../../../api_helper/TreeWrapper";
@@ -15,10 +15,16 @@ const SubtreeModal = ({
   projectName,
   subtreeName,
   setDiagramEdited,
+}: {
+  isOpen: boolean;
+  onClose: Function;
+  projectName: string;
+  subtreeName: string;
+  setDiagramEdited: Function;
 }) => {
   // STATE
-  const [initialJson, setInitialJson] = useState(null);
-  const [resultJson, setResultJson] = useState(null);
+  const [initialJson, setInitialJson] = useState("");
+  const [resultJson, setResultJson] = useState("");
 
   // EFFECTS
   useEffect(() => {
@@ -66,7 +72,7 @@ const SubtreeModal = ({
         </div>
         <div>
           {initialJson && (
-            <DiagramEditor
+            <TreeEditor
               modelJson={initialJson}
               setResultJson={setResultJson}
               projectName={projectName}

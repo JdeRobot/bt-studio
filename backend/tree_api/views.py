@@ -848,8 +848,6 @@ def generate_app(request):
             )
             print("Subtree processed")
 
-        print("Going to generate the self-contained tree")
-
         # Generate a self-contained tree
         tree_generator.generate(
             result_trees_tmp_path, action_path, self_contained_tree_path
@@ -881,6 +879,7 @@ def generate_app(request):
         return response
 
     except Exception as e:
+        print(e)
         return Response(
             {"success": False, "message": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
