@@ -15,34 +15,33 @@ export interface BasicNodeModelGenerics {
   PORT: ParentPortModel | ChildrenPortModel | InputPortModel | OutputPortModel;
 }
 
+export type BTExecutionStatus =
+  | "RUNNING"
+  | "SUCCESS"
+  | "FAILURE"
+  | "INVALID"
+  | "NONE";
+
 export class BasicNodeModel extends NodeModel<
   NodeModelGenerics & BasicNodeModelGenerics
 > {
   private name: string;
   private color: string;
   private is_selected: boolean;
-  private is_subtree: boolean;
+  private exec_status: BTExecutionStatus;
 
-  constructor(
-    name: string = "Basic Node",
-    color: string = "rgb(0,192,255)",
-    is_subtree: boolean = false,
-  ) {
+  constructor(name: string = "Basic Node", color: string = "rgb(0,192,255)") {
     super({
       type: "basic",
     });
     this.name = name;
     this.color = color;
     this.is_selected = false;
-    this.is_subtree = is_subtree;
+    this.exec_status = "NONE";
   }
 
   getName(): string {
     return this.name;
-  }
-
-  getIsSubtree(): boolean {
-    return this.is_subtree;
   }
 
   setColor(color: string): void {
@@ -51,6 +50,14 @@ export class BasicNodeModel extends NodeModel<
 
   getColor(): string {
     return this.color;
+  }
+
+  setExecStatus(status: BTExecutionStatus): void {
+    this.exec_status = status;
+  }
+
+  getExecStatus(): BTExecutionStatus {
+    return this.exec_status;
   }
 
   isSelected(): boolean {
@@ -105,7 +112,6 @@ export class BasicNodeModel extends NodeModel<
       name: this.name,
       color: this.color,
       is_selected: this.is_selected,
-      is_subtree: this.is_subtree,
     };
   }
 
@@ -114,6 +120,5 @@ export class BasicNodeModel extends NodeModel<
     this.name = event.data.name;
     this.color = event.data.color;
     this.is_selected = event.data.is_selected;
-    this.is_subtree = event.data.is_subtree;
   }
 }

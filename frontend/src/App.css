@@ -241,4 +241,9 @@ h3 {
   --bt-action-default-color: red;
   --bt-tag-blackboard-background: #5ba498;
   --bt-tag-normal-background: #a45b67;
+
+  --bt-status-running: #ee942e;
+  --bt-status-success: #29ac29;
+  --bt-status-failure: #b11111;
+  --bt-status-invalid: #494949;
 }

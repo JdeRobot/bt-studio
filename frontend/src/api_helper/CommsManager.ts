@@ -6,9 +6,12 @@ type PromiseHandlers = {
   reject: (reason?: any) => void;
 };
 
+type Events = string | string[];
+
 export default class CommsManager {
   private static instance: CommsManager;
   private ws: WebSocket;
+  private observers: { [id: string]: Function[] } = {};
   private pendingPromises: Map<string, PromiseHandlers> = new Map();
 
   // Private constructor to only allow single instatiation
@@ -18,7 +21,7 @@ export default class CommsManager {
     // Message callback
     this.ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
-      console.log(msg);
+      // console.log(msg);
 
       // Check if the message ID exists in the pending promises map
       const handlers = this.pendingPromises.get(msg.id);
@@ -33,6 +36,13 @@ export default class CommsManager {
 
         // Clean up after handling the response
         this.pendingPromises.delete(msg.id);
+      } else {
+        // Look if there are any subscribers
+        const subscriptions = this.observers[msg.command] || [];
+        let length = subscriptions.length;
+        while (length--) {
+          subscriptions[length](msg);
+        }
       }
     };
 
@@ -55,6 +65,41 @@ export default class CommsManager {
     }
     return CommsManager.instance;
   }
+
+  public subscribe = (events: Events, callback: Function) => {
+    if (typeof events === "string") {
+      events = [events];
+    }
+    for (let i = 0, length = events.length; i < length; i++) {
+      this.observers[events[i]] = this.observers[events[i]] || [];
+      this.observers[events[i]].push(callback);
+    }
+  };
+
+  public subscribeOnce = (event: Events, callback: Function) => {
+    this.subscribe(event, (response: any) => {
+      callback(response);
+      this.unsubscribe(event, callback);
+    });
+  };
+
+  public unsubscribe = (events: Events, callback: Function) => {
+    if (typeof events === "string") {
+      events = [events];
+    }
+    for (let i = 0, length = events.length; i < length; i++) {
+      this.observers[events[i]] = this.observers[events[i]] || [];
+      this.observers[events[i]].splice(
+        this.observers[events[i]].indexOf(callback),
+      );
+    }
+  };
+
+  public unsuscribeAll = () => {
+    for (const event in this.observers) {
+      this.observers[event].length = 0;
+    }
+  };
 
   // Send messages and manage promises
   public async send(message: string, data?: Object): Promise<any> {

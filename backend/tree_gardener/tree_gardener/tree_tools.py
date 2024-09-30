@@ -1,3 +1,4 @@
+import re
 import py_trees
 
 
@@ -46,3 +47,86 @@ def set_port_content(port_value, value):
 
     # Set the value for the key in the blackboard
     setattr(blackboard, key, value)
+
+
+########### ASCII BT STATUS TO JSON ############################################
+def ascii_state_to_state(state_raw):
+    letter = [x for x in state_raw]
+    state = letter[1]
+
+    match state:
+        case "*":
+            return "RUNNING"
+        case "o":
+            return "SUCCESS"
+        case "x":
+            return "FAILURE"
+        case "-":
+            return "INVALID"
+        case _:
+            return "INVALID"
+
+
+def ascii_tree_to_json(tree):
+    indent_levels = 4  # 4 spaces = 1 level deep
+    do_append_coma = False
+    last_indent_level = -1
+    json_str = '"tree":{'
+
+    # Remove escape chars
+    ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+    tree = ansi_escape.sub("", tree)
+
+    for line in iter(tree.splitlines()):
+        entry = line.strip().split(" ")
+        name = entry[1]
+        if len(entry) == 2:
+            state = "NONE"
+        else:
+            state = ascii_state_to_state(entry[2])
+
+        indent = int((len(line) - len(line.lstrip())) / indent_levels)
+        if not (indent > last_indent_level):
+            json_str += "}" * (last_indent_level - indent + 1)
+
+        last_indent_level = indent
+
+        if do_append_coma:
+            json_str += ","
+        else:
+            do_append_coma = True
+        json_str += '"' + name + '":{'
+        json_str += f'"state":"{state}"'
+
+    json_str += "}" * (last_indent_level + 1) + "}"
+    return json_str
+
+
+def ascii_blackboard_to_json(blackboard):
+    json_str = '"blackboard":{'
+    do_append_coma = False
+
+    # FIX: [entry, value] = line.strip()[1:].split(":")
+
+    for line in iter(blackboard.splitlines()):
+        if "Blackboard Data" in line:
+            continue
+        if len(line.strip()) == 0:
+            continue
+        if do_append_coma:
+            json_str += ","
+        else:
+            do_append_coma = True
+        # Remove whitespaces with strip and remove / from entry
+        [entry, value] = line.strip()[1:].split(":")
+        json_str += f'"{entry.strip()}":"{value.strip()}"'
+    json_str += "}"
+    return json_str
+
+
+def ascii_bt_to_json(tree, blackboard, file):
+    file.write("{")
+    # file.write(f"{ascii_tree_to_json(tree)},{ascii_blackboard_to_json(blackboard)}")
+    file.write(f"{ascii_tree_to_json(tree)}")
+    file.write("}")
+    file.close()

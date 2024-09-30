@@ -174,6 +174,37 @@ def get_project_graph(request):
 
 
 @api_view(["GET"])
+def get_tree_structure(request):
+
+    project_name = request.GET.get("project_name")
+
+    # Generate the paths
+    base_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(base_path, project_name)
+    graph_path = os.path.join(project_path, "code/graph.json")
+
+    # Check if the project exists
+    if os.path.exists(graph_path):
+        try:
+            with open(graph_path, "r") as f:
+                graph_data = json.load(f)
+
+                # Get the tree structure
+                tree_structure = json_translator.translate_tree_structure(graph_data)
+
+            return JsonResponse({"success": True, "tree_structure": tree_structure})
+        except Exception as e:
+            return JsonResponse(
+                {"success": False, "message": f"Error reading file: {str(e)}"},
+                status=500,
+            )
+    else:
+        return Response(
+            {"error": "The project does not have a graph definition"}, status=404
+        )
+
+
+@api_view(["GET"])
 def get_universes_list(request):
 
     project_name = request.GET.get("project_name")
@@ -629,7 +660,6 @@ def generate_app(request):
     # Get the parameters
     app_name = request.data.get("app_name")
     tree_graph = request.data.get("tree_graph")
-    print(tree_graph)
     bt_order = request.data.get("bt_order")
 
     # Make folder path relative  to Django app

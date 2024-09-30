@@ -11,6 +11,7 @@ import VncViewer from "./components/vnc_viewer/VncViewer";
 import ErrorModal from "./components/error_popup/ErrorModal";
 import axios from "axios";
 import EditorContainer from "./components/diagram_editor/EditorContainer";
+import DiagramVisualizerContainer from "./components/bt_status_visualizer/DiagramVisualizerContainer";
 import CommsManager from "./api_helper/CommsManager";
 import { loadProjectConfig } from "./api_helper/TreeWrapper";
 
@@ -29,6 +30,12 @@ const App = () => {
   const [manager, setManager] = useState<any>(null);
   const [diagramEditorReady, setDiagramEditorReady] = useState<boolean>(false);
   const [appRunning, setAppRunning] = useState<boolean>(false);
+
+  // TODO: temporary
+  // const [showExecStatus, setShowExecStatus] = useState<boolean>(true);
+  // const onSetShowExecStatus = () => {
+  //   setShowExecStatus(!showExecStatus)
+  // }
 
   // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
@@ -128,6 +135,7 @@ const App = () => {
         settingsProps={settings}
         gazeboEnabled={gazeboEnabled}
         setGazeboEnabled={setGazeboEnabled}
+        // onSetShowExecStatus={onSetShowExecStatus}
         manager={manager}
       />
 
@@ -169,11 +177,20 @@ const App = () => {
         >
           <div style={{ flex: 1 }}>
             {currentProjectname ? (
-              <EditorContainer
-                projectName={currentProjectname}
-                setProjectEdited={setProjectChanges}
-                setGlobalJson={setModelJson}
-              />
+              <>
+                {true ? (
+                  <EditorContainer
+                    projectName={currentProjectname}
+                    setProjectEdited={setProjectChanges}
+                    setGlobalJson={setModelJson}
+                  />
+                ) : (
+                  <DiagramVisualizerContainer
+                    projectName={currentProjectname}
+                    manager={manager}
+                  />
+                )}
+              </>
             ) : (
               <p>Loading...</p>
             )}

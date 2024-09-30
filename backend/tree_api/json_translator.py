@@ -107,6 +107,35 @@ def build_xml(node_models, link_models, tree_structure, node_id, xml_parent, ord
             )
 
 
+def build_tree_structure(node_models, link_models, tree_structure, node_id, order):
+
+    node_name = node_models[node_id]["name"]
+    data_ports = get_data_ports(node_models, link_models, node_id)
+
+    # Add data_ports as attributes to current_element
+    attributes = {"name": node_name, "id": node_id, "childs": []}
+
+    # Apply recursion to all its children
+    if node_id in tree_structure:
+        tree_structure[node_id] = sorted(
+            tree_structure[node_id],
+            key=lambda item: node_models[item]["y"],
+            reverse=order,
+        )  # Fixed: issue #73
+        for child_id in tree_structure[node_id]:
+            attributes["childs"].append(
+                build_tree_structure(
+                    node_models,
+                    link_models,
+                    tree_structure,
+                    child_id,
+                    order,
+                )
+            )
+
+    return attributes
+
+
 def get_start_node_id(node_models, link_models):
 
     start_node_id = ""
@@ -157,3 +186,26 @@ def translate(content, tree_path, raw_order):
     f = open(tree_path, "w")
     f.write(xml_string)
     f.close()
+
+
+def translate_tree_structure(content):
+    # Parse the JSON data
+    parsed_json = content
+
+    # Extract nodes and links information
+    node_models = parsed_json["layers"][1]["models"]
+    link_models = parsed_json["layers"][0]["models"]
+
+    # Get the tree structure
+    tree_structure = get_tree_structure(link_models, node_models)
+    # Get the order of bt: True = Ascendent; False = Descendent
+    # order = raw_order == "bottom-to-top"
+
+    # Generate XML
+    start_node_id = get_start_node_id(node_models, link_models)
+    print(start_node_id)
+    root = build_tree_structure(
+        node_models, link_models, tree_structure, start_node_id, False
+    )
+
+    return root

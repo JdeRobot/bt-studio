@@ -21,6 +21,8 @@ import { ReactComponent as DownloadIcon } from "./img/download.svg";
 import { ReactComponent as RunIcon } from "./img/run.svg";
 import { ReactComponent as StopIcon } from "./img/stop.svg";
 import { ReactComponent as ResetIcon } from "./img/reset.svg";
+import { ReactComponent as EyeOpenIcon } from "./img/eye_open.svg";
+import { ReactComponent as EyeClosedIcon } from "./img/eye_closed.svg";
 import ProjectModal from "./modals/ProjectModal";
 import UniversesModal from "./modals/UniverseModal";
 import SettingsModal from "../settings_popup/SettingsModal";
@@ -36,6 +38,7 @@ const HeaderMenu = ({
   settingsProps,
   gazeboEnabled,
   setGazeboEnabled,
+  // onSetShowExecStatus,
   manager,
 }: {
   currentProjectname: string;
@@ -48,6 +51,7 @@ const HeaderMenu = ({
   settingsProps: Object;
   gazeboEnabled: boolean;
   setGazeboEnabled: Function;
+  // onSetShowExecStatus: Function;
   manager: CommsManager;
 }) => {
   // Project state
@@ -80,7 +84,7 @@ const HeaderMenu = ({
           name: configJson.name,
           launch_file_path: configJson.config.launch_file_path,
           ros_version: "ROS2",
-          visualization: "gazebo_rae",
+          visualization: "bt_studio",
           world: "gazebo",
           exercise_id: configJson.config.id,
         };
@@ -96,6 +100,25 @@ const HeaderMenu = ({
       throw error; // rethrow
     }
   };
+
+  // const launchUniverse = async (universe_name) => {
+  //   const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
+  //     currentProjectname,
+  //   )}&universe_name=${encodeURIComponent(universe_name)}`;
+
+  //   try {
+  //     const response = await axios.get(apiUrl);
+  //     console.log("Stored universe config: " + response.data);
+  //     const stored_cfg = JSON.parse(response.data);
+  //     if (stored_cfg.type === "robotics_backend") {
+  //       await launchBackendUniverse(stored_cfg);
+  //     } else {
+  //       launchCustomUniverse(stored_cfg);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error launching universe:", error);
+  //   }
+  // };
 
   // Project handling
 
@@ -171,6 +194,19 @@ const HeaderMenu = ({
     }
   };
 
+  const sendOnLoad = async (reader: FileReader) => {
+    // Get the zip in base64
+    var base64data = reader.result;
+
+    // Send the zip
+    await manager.run({
+      type: "bt-studio",
+      code: base64data,
+    });
+    setAppRunning(true);
+    console.log("App started successfully");
+  };
+
   const onAppStateChange = async () => {
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
@@ -183,16 +219,12 @@ const HeaderMenu = ({
           modelJson,
           currentProjectname,
           "bottom-to-top",
+          true,
         );
-        const base64data = await app_blob.text();
+        const reader = new FileReader();
 
-        // Send the zip
-        await manager.run({
-          type: "bt-studio",
-          code: base64data,
-        });
-        setAppRunning(true);
-        console.log("App started successfully");
+        reader.onloadend = () => sendOnLoad(reader); // Fix: pass the function reference
+        reader.readAsDataURL(app_blob);
       } catch (error: unknown) {
         if (error instanceof Error) {
           console.error("Error running app: " + error.message);
@@ -385,6 +417,17 @@ const HeaderMenu = ({
           >
             <ResetIcon className="header-icon" stroke={"var(--icon)"} />
           </button>
+          {/* <button
+            className="header-button"
+            onClick={() => onSetShowExecStatus()}
+            title="Toggle status monitoring"
+          >
+            <EyeOpenIcon className="header-icon" stroke={"var(--icon)"} />
+            {appRunning ? (
+            ) : (
+              <EyeClosedIcon className="header-icon" stroke={"var(--icon)"} />
+            )}
+          </button> */}
         </div>
       </Toolbar>
     </AppBar>

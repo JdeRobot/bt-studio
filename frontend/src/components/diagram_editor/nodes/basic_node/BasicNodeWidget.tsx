@@ -29,6 +29,23 @@ export const BasicNodeWidget = ({
     }),
   };
 
+  switch (node.getExecStatus()) {
+    case "RUNNING":
+      nodeStyle["background"] = "var(--bt-status-running)";
+      break;
+    case "SUCCESS":
+      nodeStyle["background"] = "var(--bt-status-success)";
+      break;
+    case "FAILURE":
+      nodeStyle["background"] = "var(--bt-status-failure)";
+      break;
+    case "INVALID":
+      nodeStyle["background"] = "var(--bt-status-invalid)";
+      break;
+    default:
+      break;
+  }
+
   // Ports list
   const parentPorts: JSX.Element[] = [];
   const childrenPorts: JSX.Element[] = [];
