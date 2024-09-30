@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import TreeEditor from "./TreeEditor";
+import { getProjectGraph } from "../../api_helper/TreeWrapper";
 
 const MainTreeEditorContainer = ({
   projectName,
@@ -14,24 +15,20 @@ const MainTreeEditorContainer = ({
 }) => {
   const [initialJson, setInitialJson] = useState("");
 
-  const getGraph = async (project_name: any) => {
+  const fetchProjectGraph = async () => {
     try {
-      const response = await axios.get("/tree_api/get_project_graph/", {
-        params: {
-          project_name: project_name,
-        },
-      });
-      if (response.data.success) {
-        setInitialJson(response.data.graph_json);
+      const graph_json = await getProjectGraph(projectName);
+      setInitialJson(graph_json);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error("Error fetching graph:", error);
     }
   };
 
   useEffect(() => {
     // Fetch graph when component mounts<
-    getGraph(projectName);
+    fetchProjectGraph();
     console.log("Getting graph!");
   }, [projectName]);
 

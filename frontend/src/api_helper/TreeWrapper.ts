@@ -125,6 +125,26 @@ const loadProjectConfig = async (
   }
 };
 
+const getProjectGraph = async (currentProjectname: string) => {
+  if (!currentProjectname) throw new Error("Current Project name is not set");
+
+  const apiUrl = `/tree_api/get_project_graph?project_name=${currentProjectname}`;
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(
+        response.data.message || "Failed to retrieve project graph"
+      ); // Response error
+    }
+
+    return response.data.graph_json;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 // Universe management
 
 const getUniverseConfig = async (
@@ -361,6 +381,7 @@ export {
   createProject,
   saveProject,
   loadProjectConfig,
+  getProjectGraph,
   generateApp,
   generateDockerizedApp,
   getUniverseConfig,
