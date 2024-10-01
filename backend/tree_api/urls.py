@@ -19,7 +19,6 @@ urlpatterns = [
     path("delete_file/", views.delete_file, name="delete_file"),
     path("save_file/", views.save_file, name="save_file"),
     path("translate_json/", views.translate_json, name="translate_json"),
-    path("get_tree_structure/", views.get_tree_structure, name="get_tree_structure"),
     path(
         "get_universe_configuration/",
         views.get_universe_configuration,

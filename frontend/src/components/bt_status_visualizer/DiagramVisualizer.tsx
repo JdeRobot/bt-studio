@@ -8,15 +8,15 @@ import createEngine, {
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
 import "./DiagramEditor.css";
-import { BasicNodeFactory } from "../diagram_editor/nodes/basic_node/BasicNodeFactory";
-import { TagNodeFactory } from "../diagram_editor/nodes/tag_node/TagNodeFactory";
-import { SimplePortFactory } from "../diagram_editor/nodes/SimplePortFactory";
-import { ChildrenPortModel } from "../diagram_editor/nodes/basic_node/ports/children_port/ChildrenPortModel";
-import { ParentPortModel } from "../diagram_editor/nodes/basic_node/ports/parent_port/ParentPortModel";
-import { OutputPortModel } from "../diagram_editor/nodes/basic_node/ports/output_port/OutputPortModel";
-import { InputPortModel } from "../diagram_editor/nodes/basic_node/ports/input_port/InputPortModel";
-import { TagOutputPortModel } from "../diagram_editor/nodes/tag_node/ports/output_port/TagOutputPortModel";
-import { TagInputPortModel } from "../diagram_editor/nodes/tag_node/ports/input_port/TagInputPortModel";
+import { BasicNodeFactory } from "../tree_editor/nodes/basic_node/BasicNodeFactory";
+import { TagNodeFactory } from "../tree_editor/nodes/tag_node/TagNodeFactory";
+import { SimplePortFactory } from "../tree_editor/nodes/SimplePortFactory";
+import { ChildrenPortModel } from "../tree_editor/nodes/basic_node/ports/children_port/ChildrenPortModel";
+import { ParentPortModel } from "../tree_editor/nodes/basic_node/ports/parent_port/ParentPortModel";
+import { OutputPortModel } from "../tree_editor/nodes/basic_node/ports/output_port/OutputPortModel";
+import { InputPortModel } from "../tree_editor/nodes/basic_node/ports/input_port/InputPortModel";
+import { TagOutputPortModel } from "../tree_editor/nodes/tag_node/ports/output_port/TagOutputPortModel";
+import { TagInputPortModel } from "../tree_editor/nodes/tag_node/ports/input_port/TagInputPortModel";
 
 // MODAL MANAGEMENT
 const testFunction = () => {

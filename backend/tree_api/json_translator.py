@@ -178,7 +178,6 @@ def translate(content, tree_path, raw_order):
         root = Element("Root", name="Tree Root")
         behavior_tree = SubElement(root, "BehaviorTree")
         start_node_id = get_start_node_id(node_models, link_models)
-        print("Start node: ", start_node_id)
         build_xml(
             node_models,
             link_models,
@@ -192,7 +191,6 @@ def translate(content, tree_path, raw_order):
         raise RuntimeError(f"Failed to translate tree '{tree_name}': {e}")
 
     # Save the xml in the specified route
-    print("The root is: ", tostring(root, "utf-8").decode("utf-8"))
     xml_string = prettify_xml(root)
     f = open(tree_path, "w")
     f.write(xml_string)
@@ -214,7 +212,6 @@ def translate_tree_structure(content):
 
     # Generate XML
     start_node_id = get_start_node_id(node_models, link_models)
-    print(start_node_id)
     root = build_tree_structure(
         node_models, link_models, tree_structure, start_node_id, False
     )

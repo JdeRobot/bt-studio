@@ -210,10 +210,12 @@ const HeaderMenu = ({
         );
 
         // Send the blob directly
+        console.log(appBlob);
         await manager.run({
           type: "bt-studio",
           code: appBlob,
         });
+
         setAppRunning(true);
         console.log("App started successfully");
       } catch (error: unknown) {

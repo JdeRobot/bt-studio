@@ -221,6 +221,8 @@ const generateApp = async (
   if (!currentProjectname) throw new Error("Current Project name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
 
+  console.log("The modelJson is: ", modelJson);
+
   const apiUrl = "/tree_api/generate_app/";
   try {
     const response = await axios.post(

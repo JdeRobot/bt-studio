@@ -28,20 +28,30 @@ export class BasicNodeModel extends NodeModel<
   private name: string;
   private color: string;
   private is_selected: boolean;
+  private is_subtree: boolean;
   private exec_status: BTExecutionStatus;
 
-  constructor(name: string = "Basic Node", color: string = "rgb(0,192,255)") {
+  constructor(
+    name: string = "Basic Node",
+    color: string = "rgb(0,192,255)",
+    is_subtree: boolean = false,
+  ) {
     super({
       type: "basic",
     });
     this.name = name;
     this.color = color;
     this.is_selected = false;
+    this.is_subtree = is_subtree;
     this.exec_status = "NONE";
   }
 
   getName(): string {
     return this.name;
+  }
+
+  getIsSubtree(): boolean {
+    return this.is_subtree;
   }
 
   setColor(color: string): void {
@@ -112,6 +122,7 @@ export class BasicNodeModel extends NodeModel<
       name: this.name,
       color: this.color,
       is_selected: this.is_selected,
+      is_subtree: this.is_subtree,
     };
   }
 
@@ -120,5 +131,6 @@ export class BasicNodeModel extends NodeModel<
     this.name = event.data.name;
     this.color = event.data.color;
     this.is_selected = event.data.is_selected;
+    this.is_subtree = event.data.is_subtree;
   }
 }
