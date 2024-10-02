@@ -28,12 +28,12 @@ def fix_indentation(xml_string, actions):
 
         if "Code>" in line:
             code_section = not code_section
-            continue
 
         new_line = line
-        if code_section:
+        if code_section and "Code>" not in line:
             if all(action + ">" not in line for action in actions):
                 new_line = " " * 6 + new_line
+
         processed_lines.append(new_line)
 
     pretty_str = "\n".join(line for line in processed_lines)

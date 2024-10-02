@@ -209,12 +209,20 @@ const HeaderMenu = ({
           "bottom-to-top",
         );
 
-        // Send the blob directly
-        console.log(appBlob);
-        await manager.run({
-          type: "bt-studio",
-          code: appBlob,
-        });
+        // Convert the blob to base64 using FileReader
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const base64data = reader.result; // Get the zip in base64
+
+          // Send the base64 encoded blob
+          await manager.run({
+            type: "bt-studio",
+            code: base64data,
+          });
+
+          console.log("Dockerized app started successfully");
+        };
+        reader.readAsDataURL(appBlob);
 
         setAppRunning(true);
         console.log("App started successfully");
