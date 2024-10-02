@@ -5,6 +5,7 @@ import {
   createProject,
   saveProject,
   generateApp,
+  generateDockerizedApp,
   getUniverseConfig,
   getCustomUniverseZip,
 } from "../../api_helper/TreeWrapper";
@@ -51,7 +52,6 @@ const HeaderMenu = ({
   settingsProps: Object;
   gazeboEnabled: boolean;
   setGazeboEnabled: Function;
-  // onSetShowExecStatus: Function;
   manager: CommsManager;
 }) => {
   // Project state
@@ -171,60 +171,61 @@ const HeaderMenu = ({
   const onDownloadApp = async () => {
     try {
       // Get the blob from the API wrapper
-      const app_blob = await generateApp(
+      const appBlob = await generateApp(
         modelJson,
         currentProjectname,
         "bottom-to-top",
       );
 
-      // Generate the download
-      const url = window.URL.createObjectURL(app_blob);
+      // Create a download link and trigger download
+      const url = window.URL.createObjectURL(appBlob);
       const a = document.createElement("a");
       a.style.display = "none";
       a.href = url;
-      a.download = `${currentProjectname}.zip`;
+      a.download = `${currentProjectname}.zip`; // Set the downloaded file's name
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url); // Clean up after the download
       console.log("App downloaded successfully");
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         console.error("Error downloading app: " + error.message);
       }
     }
   };
 
-  const sendOnLoad = async (reader: FileReader) => {
-    // Get the zip in base64
-    var base64data = reader.result;
-
-    // Send the zip
-    await manager.run({
-      type: "bt-studio",
-      code: base64data,
-    });
-    setAppRunning(true);
-    console.log("App started successfully");
-  };
-
   const onAppStateChange = async () => {
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
+      return;
     }
 
     if (!appRunning) {
       try {
         // Get the blob from the API wrapper
-        const app_blob = await generateApp(
+        const appBlob = await generateDockerizedApp(
           modelJson,
           currentProjectname,
           "bottom-to-top",
-          true,
         );
-        const reader = new FileReader();
 
-        reader.onloadend = () => sendOnLoad(reader); // Fix: pass the function reference
-        reader.readAsDataURL(app_blob);
+        // Convert the blob to base64 using FileReader
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const base64data = reader.result; // Get the zip in base64
+
+          // Send the base64 encoded blob
+          await manager.run({
+            type: "bt-studio",
+            code: base64data,
+          });
+
+          console.log("Dockerized app started successfully");
+        };
+        reader.readAsDataURL(appBlob);
+
+        setAppRunning(true);
+        console.log("App started successfully");
       } catch (error: unknown) {
         if (error instanceof Error) {
           console.error("Error running app: " + error.message);

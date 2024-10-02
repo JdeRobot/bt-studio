@@ -19,7 +19,6 @@ urlpatterns = [
     path("delete_file/", views.delete_file, name="delete_file"),
     path("save_file/", views.save_file, name="save_file"),
     path("translate_json/", views.translate_json, name="translate_json"),
-    path("get_tree_structure/", views.get_tree_structure, name="get_tree_structure"),
     path(
         "get_universe_configuration/",
         views.get_universe_configuration,
@@ -44,5 +43,8 @@ urlpatterns = [
         views.save_project_configuration,
         name="save_project_configuration",
     ),
-    path("download_data/", views.download_data, name="download_data"),
+    path("get_subtree_list/", views.get_subtree_list, name="get_subtree_list"),
+    path("create_subtree/", views.create_subtree, name="create_subtree"),
+    path("get_subtree/", views.get_subtree, name="get_subtree"),
+    path("save_subtree/", views.save_subtree, name="save_subtree"),
 ]

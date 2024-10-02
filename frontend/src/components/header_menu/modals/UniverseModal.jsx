@@ -3,7 +3,7 @@ import "./UniverseModal.css";
 import Modal from "../../Modal/Modal";
 import { ReactComponent as BackIcon } from "../../Modal/img/back.svg";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
-import { ReactComponent as DeleteIcon } from "../../diagram_editor/img/delete.svg";
+import { ReactComponent as DeleteIcon } from "../../tree_editor/img/delete.svg";
 import axios from "axios";
 import UniverseUploadModal from "./UniverseUploadModal";
 
