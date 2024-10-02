@@ -941,27 +941,30 @@ def generate_dockerized_app(request):
         # 3. Translate subtrees
 
         # Get the subtrees that are present in the tree
-        possible_trees = [file.split(".")[0] for file in os.listdir(subtree_path)]
-        with open(main_tree_tmp_path) as f:
-            main_tree_str = f.read()
-        main_tree = ET.fromstring(main_tree_str)
-        subtrees = tree_generator.get_subtree_set(main_tree, possible_trees)
+        try:
+            possible_trees = [file.split(".")[0] for file in os.listdir(subtree_path)]
+            with open(main_tree_tmp_path) as f:
+                main_tree_str = f.read()
+            main_tree = ET.fromstring(main_tree_str)
+            subtrees = tree_generator.get_subtree_set(main_tree, possible_trees)
 
-        for subtree_file in os.listdir(subtree_path):
-            if subtree_file.split(".")[0] not in subtrees:
-                continue
+            for subtree_file in os.listdir(subtree_path):
+                if subtree_file.split(".")[0] not in subtrees:
+                    continue
 
-            subtree_tmp_path = os.path.join(
-                result_trees_tmp_path, subtree_file.replace(".json", ".xml")
-            )
-            subtree_graph = open(os.path.join(subtree_path, subtree_file)).read()
-            print("Processing subtree: ", subtree_file)
-            json_translator.translate(
-                subtree_graph,
-                subtree_tmp_path,
-                bt_order,
-            )
-            print("Subtree processed")
+                subtree_tmp_path = os.path.join(
+                    result_trees_tmp_path, subtree_file.replace(".json", ".xml")
+                )
+                subtree_graph = open(os.path.join(subtree_path, subtree_file)).read()
+                print("Processing subtree: ", subtree_file)
+                json_translator.translate(
+                    subtree_graph,
+                    subtree_tmp_path,
+                    bt_order,
+                )
+                print("Subtree processed")
+        except:
+            print("No subtree")
 
         # 4. Generate a self-contained tree
         tree_generator.generate(
