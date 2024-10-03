@@ -94,6 +94,10 @@ const TreeEditor = memo(
           isOpen={editTagModalOpen}
           onClose={onEditTagModalClose}
           currentActionNode={currentNode}
+          model={modalModel}
+          engine={modalEngine}
+          updateJsonState={updateJsonState}
+          setDiagramEdited={setDiagramEdited}
         />
         <DiagramEditor
           modelJson={modelJson}

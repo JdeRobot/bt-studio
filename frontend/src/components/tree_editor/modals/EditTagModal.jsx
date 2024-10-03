@@ -8,7 +8,15 @@ const initialEditTagModalData = {
   tagName: "",
 };
 
-const EditTagModal = ({ isOpen, onClose, currentActionNode }) => {
+const EditTagModal = ({
+  isOpen,
+  onClose,
+  currentActionNode,
+  model,
+  engine,
+  updateJsonState,
+  setDiagramEdited,
+}) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialEditTagModalData);
 
@@ -19,6 +27,10 @@ const EditTagModal = ({ isOpen, onClose, currentActionNode }) => {
       [name]: value,
     }));
     currentActionNode.setName(value);
+    
+    setDiagramEdited(true);
+    updateJsonState();
+    engine.repaintCanvas();
   };
 
   useEffect(() => {
