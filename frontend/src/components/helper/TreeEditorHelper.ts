@@ -17,7 +17,7 @@ export enum ActionNodePortType {
   Output = 1,
 }
 
-const isActionNode = (nodeName: string) => {
+export const isActionNode = (nodeName: string) => {
 
   // Check if the node is a user written action
   return ![

@@ -19,11 +19,12 @@ import { OutputPortModel } from "./nodes/basic_node/ports/output_port/OutputPort
 import { InputPortModel } from "./nodes/basic_node/ports/input_port/InputPortModel";
 import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutputPortModel";
 
-import { configureEngine } from "../helper/TreeEditorHelper";
+import { configureEngine, isActionNode } from "../helper/TreeEditorHelper";
 
 import SubtreeModal from "./modals/SubTreeModal";
 import NodeMenu from "./NodeMenu";
 import EditActionModal from "./modals/EditActionModal";
+import EditTagModal from "./modals/EditTagModal";
 
 const TreeEditor = memo(
   ({
@@ -43,6 +44,7 @@ const TreeEditor = memo(
     const [subTreeName, setSubTreeName] = useState("");
     const [editActionModalOpen, setEditActionModalOpen] = useState(false);
     const [currentNode, setCurrentNode] = useState<BasicNodeModel | null>(null);
+    const [editTagModalOpen, setEditTagModalOpen] = useState(false);
 
     // Model and Engine for models use
     const [modalModel, setModalModel] = useState<DiagramModel|null>(null);
@@ -60,6 +62,11 @@ const TreeEditor = memo(
 
     const onEditActionModalClose = () => {
       setEditActionModalOpen(false);
+      setCurrentNode(null)
+    };
+
+    const onEditTagModalClose = () => {
+      setEditTagModalOpen(false);
       setCurrentNode(null)
     };
 
@@ -83,6 +90,11 @@ const TreeEditor = memo(
           updateJsonState={updateJsonState}
           setDiagramEdited={setDiagramEdited}
         />
+        <EditTagModal
+          isOpen={editTagModalOpen}
+          onClose={onEditTagModalClose}
+          currentActionNode={currentNode}
+        />
         <DiagramEditor
           modelJson={modelJson}
           setResultJson={setResultJson}
@@ -94,6 +106,7 @@ const TreeEditor = memo(
           setSubTreeModalOpen={setSubTreeModalOpen}
           setSubTreeName={setSubTreeName}
           setEditActionModalOpen={setEditActionModalOpen}
+          setEditTagModalOpen={setEditTagModalOpen}
           setCurrentNode={setCurrentNode}
         />
       </div>
@@ -113,6 +126,7 @@ const DiagramEditor = memo(
     setSubTreeModalOpen,
     setSubTreeName,
     setEditActionModalOpen,
+    setEditTagModalOpen,
     setCurrentNode,
   }: {
     modelJson: any;
@@ -125,6 +139,7 @@ const DiagramEditor = memo(
     setSubTreeModalOpen: Function;
     setSubTreeName: Function;
     setEditActionModalOpen: Function;
+    setEditTagModalOpen: Function;
     setCurrentNode:Function;
   }) => {
     // VARS
@@ -151,6 +166,8 @@ const DiagramEditor = memo(
         } else {
           actionEditor(node);
         }
+      } else if (node instanceof TagNodeModel) {
+        tagEditor(node);
       }
     };
 
@@ -218,38 +235,17 @@ const DiagramEditor = memo(
     }
 
     const actionEditor = (node: BasicNodeModel) => {
-      if (isActionNode(node)){
+      if (isActionNode(node.getName())){
         setCurrentNode(node);
         setEditActionModalOpen(true);
       } 
     };
 
-    const isActionNode = (node: any) => {
-      var name = node.getName();
-
-      if (node.getOptions().type === "tag") {
-        return false;
-      }
-
-      // Check if the node is a user written action
-      return ![
-        "Sequence",
-        "ReactiveSequence",
-        "SequenceWithMemory",
-        "Fallback",
-        "ReactiveFallback",
-        "RetryUntilSuccessful",
-        "Inverter",
-        "ForceSuccess",
-        "ForceFailure",
-        "KeepRunningUntilFailure",
-        "Repeat",
-        "RunOnce",
-        "Delay",
-        "Input port value",
-        "Output port value",
-        "Tree Root",
-      ].includes(name);
+    const tagEditor = (node: TagNodeModel) => {
+      if (isActionNode(node.getName())){
+        setCurrentNode(node);
+        setEditTagModalOpen(true)
+      } 
     };
 
     // LISTENERS
