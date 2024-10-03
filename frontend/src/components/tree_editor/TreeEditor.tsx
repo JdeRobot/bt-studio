@@ -11,17 +11,15 @@ import createEngine, {
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
 import "./TreeEditor.css";
-import { BasicNodeFactory } from "./nodes/basic_node/BasicNodeFactory";
 import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
-import { TagNodeFactory } from "./nodes/tag_node/TagNodeFactory";
 import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
-import { SimplePortFactory } from "./nodes/SimplePortFactory";
 import { ChildrenPortModel } from "./nodes/basic_node/ports/children_port/ChildrenPortModel";
 import { ParentPortModel } from "./nodes/basic_node/ports/parent_port/ParentPortModel";
 import { OutputPortModel } from "./nodes/basic_node/ports/output_port/OutputPortModel";
 import { InputPortModel } from "./nodes/basic_node/ports/input_port/InputPortModel";
 import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutputPortModel";
-import { TagInputPortModel } from "./nodes/tag_node/ports/input_port/TagInputPortModel";
+
+import { configureEngine } from "../helper/TreeEditorHelper";
 
 import SubtreeModal from "./modals/SubTreeModal";
 import NodeMenu from "./NodeMenu";
@@ -157,65 +155,6 @@ const DiagramEditor = memo(
     };
 
     // HELPERS
-
-    // Configures an engine with all the factories
-    const configureEngine = (engine: any) => {
-      console.log("Configuring engine!");
-      // Register factories
-      engine.current
-        .getNodeFactories()
-        .registerFactory(new BasicNodeFactory(modalManager));
-      engine.current
-        .getNodeFactories()
-        .registerFactory(new TagNodeFactory(modalManager));
-      engine.current
-        .getPortFactories()
-        .registerFactory(
-          new SimplePortFactory(
-            "children",
-            (config) => new ChildrenPortModel(),
-          ),
-        );
-      engine.current
-        .getPortFactories()
-        .registerFactory(
-          new SimplePortFactory("parent", (config) => new ParentPortModel()),
-        );
-      engine.current
-        .getPortFactories()
-        .registerFactory(
-          new SimplePortFactory("output", (config) => new OutputPortModel("")),
-        );
-      engine.current
-        .getPortFactories()
-        .registerFactory(
-          new SimplePortFactory("input", (config) => new InputPortModel("")),
-        );
-      engine.current
-        .getPortFactories()
-        .registerFactory(
-          new SimplePortFactory(
-            "tag output",
-            (config) => new TagOutputPortModel(),
-          ),
-        );
-      engine.current
-        .getPortFactories()
-        .registerFactory(
-          new SimplePortFactory(
-            "tag input",
-            (config) => new TagInputPortModel(),
-          ),
-        );
-
-      // Disable loose links
-      const state: any = engine.current.getStateMachine().getCurrentState();
-      state.dragNewLink.config.allowLooseLinks = false;
-
-      engine.current
-        .getActionEventBus()
-        .registerAction(new ZoomCanvasAction({ inverseZoom: true }));
-    };
 
     // Add the nodes default ports
     const addDefaultPorts = (node: any) => {
@@ -482,7 +421,7 @@ const DiagramEditor = memo(
     };
 
     // Configure the engine
-    configureEngine(engine);
+    configureEngine(engine, modalManager, modalManager);
 
     // Deserialize and load the model
     model.current.deserializeModel(modelJson, engine.current);

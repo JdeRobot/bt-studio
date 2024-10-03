@@ -1,9 +1,16 @@
-import { DiagramEngine, DiagramModel, LinkModel, NodeModel } from "@projectstorm/react-diagrams";
+import { DiagramEngine, DiagramModel, LinkModel, NodeModel, ZoomCanvasAction } from "@projectstorm/react-diagrams";
 
+import { BasicNodeFactory } from "../tree_editor/nodes/basic_node/BasicNodeFactory";
 import { BasicNodeModel } from "../tree_editor/nodes/basic_node/BasicNodeModel";
+import { TagNodeFactory } from "../tree_editor/nodes/tag_node/TagNodeFactory";
 import { TagNodeModel } from "../tree_editor/nodes/tag_node/TagNodeModel";
+import { SimplePortFactory } from "../tree_editor/nodes/SimplePortFactory";
+import { ChildrenPortModel } from "../tree_editor/nodes/basic_node/ports/children_port/ChildrenPortModel";
+import { ParentPortModel } from "../tree_editor/nodes/basic_node/ports/parent_port/ParentPortModel";
 import { OutputPortModel } from "../tree_editor/nodes/basic_node/ports/output_port/OutputPortModel";
 import { InputPortModel } from "../tree_editor/nodes/basic_node/ports/input_port/InputPortModel";
+import { TagOutputPortModel } from "../tree_editor/nodes/tag_node/ports/output_port/TagOutputPortModel";
+import { TagInputPortModel } from "../tree_editor/nodes/tag_node/ports/input_port/TagInputPortModel";
 
 export enum ActionNodePortType {
   Input = 0,
@@ -162,4 +169,63 @@ export const changeColorNode = (rgb: [number, number, number], node: BasicNodeMo
   diagramEditedCallback(true);
   updateJsonState();
   engine.repaintCanvas();
+};
+
+// Configures an engine with all the factories
+export const configureEngine = (engine: React.MutableRefObject<DiagramEngine>, basicNodeCallback: Function, tagNodeCallback: Function) => {
+  console.log("Configuring engine!");
+  // Register factories
+  engine.current
+    .getNodeFactories()
+    .registerFactory(new BasicNodeFactory(basicNodeCallback));
+  engine.current
+    .getNodeFactories()
+    .registerFactory(new TagNodeFactory(tagNodeCallback));
+  engine.current
+    .getPortFactories()
+    .registerFactory(
+      new SimplePortFactory(
+        "children",
+        (config) => new ChildrenPortModel(),
+      ),
+    );
+  engine.current
+    .getPortFactories()
+    .registerFactory(
+      new SimplePortFactory("parent", (config) => new ParentPortModel()),
+    );
+  engine.current
+    .getPortFactories()
+    .registerFactory(
+      new SimplePortFactory("output", (config) => new OutputPortModel("")),
+    );
+  engine.current
+    .getPortFactories()
+    .registerFactory(
+      new SimplePortFactory("input", (config) => new InputPortModel("")),
+    );
+  engine.current
+    .getPortFactories()
+    .registerFactory(
+      new SimplePortFactory(
+        "tag output",
+        (config) => new TagOutputPortModel(),
+      ),
+    );
+  engine.current
+    .getPortFactories()
+    .registerFactory(
+      new SimplePortFactory(
+        "tag input",
+        (config) => new TagInputPortModel(),
+      ),
+    );
+
+  // Disable loose links
+  const state: any = engine.current.getStateMachine().getCurrentState();
+  state.dragNewLink.config.allowLooseLinks = false;
+
+  engine.current
+    .getActionEventBus()
+    .registerAction(new ZoomCanvasAction({ inverseZoom: true }));
 };
