@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 
-import { Saturation, Hue, useColor, ColorService, IColor } from "react-color-palette";
+import {
+  Saturation,
+  Hue,
+  useColor,
+  ColorService,
+  IColor,
+} from "react-color-palette";
 import "react-color-palette/css";
 
 import "./EditActionModal.css";
@@ -53,7 +59,7 @@ const EditActionModal = ({
   const [allowCreation, setAllowCreation] = React.useState(false);
   const [formState, setFormState] = useState(initialEditActionModalData);
 
-  const handleInputChange = (event:any) => {
+  const handleInputChange = (event: any) => {
     const { name, value } = event.target;
     setFormState((prevFormData) => ({
       ...prevFormData,
@@ -71,13 +77,13 @@ const EditActionModal = ({
     setFormState(initialEditActionModalData);
     document.getElementById("node-editor-modal")!.focus();
     if (currentActionNode) {
-      var rgb: IColor["rgb"] = ColorService.toRgb(currentActionNode.getColor())
+      var rgb: IColor["rgb"] = ColorService.toRgb(currentActionNode.getColor());
 
       const newColor: IColor = {
         hex: ColorService.rgb2hex(rgb),
         rgb: rgb,
         hsv: ColorService.rgb2hsv(rgb),
-      }
+      };
 
       setColor(newColor);
     }
@@ -85,7 +91,11 @@ const EditActionModal = ({
 
   useEffect(() => {
     if (currentActionNode) {
-      var rgb: [number, number, number] = [color.rgb["r"], color.rgb["g"], color.rgb["b"]];
+      var rgb: [number, number, number] = [
+        color.rgb["r"],
+        color.rgb["g"],
+        color.rgb["b"],
+      ];
       changeColorNode(
         rgb,
         currentActionNode,
@@ -135,16 +145,26 @@ const EditActionModal = ({
     var inputPorts = Object.entries(currentActionNode.getPorts()).filter(
       (item) => item[1] instanceof InputPortModel,
     );
-    var merged = [].concat.apply(inputPorts.map(x => x[0]), []);
-    return name !== "" && !name.includes(" ") && !merged.includes(name as never);
+    var merged = [].concat.apply(
+      inputPorts.map((x) => x[0]),
+      [],
+    );
+    return (
+      name !== "" && !name.includes(" ") && !merged.includes(name as never)
+    );
   };
 
   const isOutputNameValid = (name: string) => {
     var outputPorts = Object.entries(currentActionNode.getPorts()).filter(
       (item) => item[1] instanceof OutputPortModel,
     );
-    var merged = [].concat.apply(outputPorts.map(x => x[0]), []);
-    return name !== "" && !name.includes(" ") && !merged.includes(name as never);
+    var merged = [].concat.apply(
+      outputPorts.map((x) => x[0]),
+      [],
+    );
+    return (
+      name !== "" && !name.includes(" ") && !merged.includes(name as never)
+    );
   };
 
   const addInput = () => {
