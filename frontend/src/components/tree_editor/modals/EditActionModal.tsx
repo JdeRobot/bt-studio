@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
-
+import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
+import "react-color-palette/css";
 import {
   Saturation,
   Hue,
-  useColor,
   ColorService,
   IColor,
 } from "react-color-palette";
-import "react-color-palette/css";
 
-import "./EditActionModal.css";
-import Modal from "../../Modal/Modal";
-import { OutputPortModel } from "../nodes/basic_node/ports/output_port/OutputPortModel";
-import { InputPortModel } from "../nodes/basic_node/ports/input_port/InputPortModel";
+import {
+  addPort,
+  removePort,
+  ActionNodePortType,
+  changeColorNode,
+} from "../../helper/TreeEditorHelper";
+import { rgbToLuminance } from "../../helper/colorHelper";
 
 import { ReactComponent as AddIcon } from "../img/add.svg";
 import { ReactComponent as DeleteIcon } from "../img/delete.svg";
@@ -20,15 +22,11 @@ import { ReactComponent as CancelIcon } from "../img/cancel.svg";
 import { ReactComponent as AcceptIcon } from "../img/accept.svg";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 
-import { rgbToLuminance } from "../../helper/colorHelper";
-import {
-  addPort,
-  removePort,
-  ActionNodePortType,
-  changeColorNode,
-} from "../../helper/TreeEditorHelper";
-import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
+import "./EditActionModal.css";
+import Modal from "../../Modal/Modal";
 import { BasicNodeModel } from "../nodes/basic_node/BasicNodeModel";
+import { OutputPortModel } from "../nodes/basic_node/ports/output_port/OutputPortModel";
+import { InputPortModel } from "../nodes/basic_node/ports/input_port/InputPortModel";
 
 const initialEditActionModalData = {
   newInputName: "",
@@ -53,7 +51,7 @@ const EditActionModal = ({
   setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const focusInputRef = useRef(null);
-  const [color, setColor] = useColor("rgb(128 0 128)");
+  const [color, setColor] = useState<IColor|undefined>(undefined);
   const [inputName, setInputName] = React.useState(false);
   const [outputName, setOutputName] = React.useState(false);
   const [allowCreation, setAllowCreation] = React.useState(false);
@@ -90,7 +88,7 @@ const EditActionModal = ({
   }, [isOpen]);
 
   useEffect(() => {
-    if (currentActionNode) {
+    if (currentActionNode && color) {
       var rgb: [number, number, number] = [
         color.rgb["r"],
         color.rgb["g"],
@@ -108,6 +106,10 @@ const EditActionModal = ({
   }, [color]);
 
   const isBackgroundDark = () => {
+    if (!color) {
+      return false;
+    }
+
     return (
       rgbToLuminance(color.rgb["r"], color.rgb["g"], color.rgb["b"]) <= 0.5
     );
@@ -532,13 +534,15 @@ const EditActionModal = ({
           </div>
         )}
       </div>
-      <div className="node-editor-row">
-        <label className="node-editor-title" htmlFor="favcolor">
-          Color:
-        </label>
-        <Saturation height={50} color={color} onChange={setColor} />
-        <Hue color={color} onChange={setColor} />
-      </div>
+      {color &&
+        <div className="node-editor-row">
+          <label className="node-editor-title" htmlFor="favcolor">
+            Color:
+          </label>
+          <Saturation height={50} color={color} onChange={setColor} />
+          <Hue color={color} onChange={setColor} />
+        </div>
+      }
     </Modal>
   );
 };
