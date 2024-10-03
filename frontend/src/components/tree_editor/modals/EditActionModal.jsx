@@ -15,7 +15,12 @@ import { ReactComponent as AcceptIcon } from "../img/accept.svg";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 
 import { rgbToLuminance } from "../../helper/colorHelper";
-import { addPort, removePort, ActionNodePortType, changeColorNode } from "../../helper/TreeEditorHelper";
+import {
+  addPort,
+  removePort,
+  ActionNodePortType,
+  changeColorNode,
+} from "../../helper/TreeEditorHelper";
 
 const initialEditActionModalData = {
   newInputName: "",
@@ -115,7 +120,14 @@ const EditActionModal = ({
   useEffect(() => {
     if (currentActionNode) {
       var rgb = [color.rgb["r"], color.rgb["g"], color.rgb["b"]];
-      changeColorNode(rgb, currentActionNode, engine, model, setDiagramEdited, updateJsonState);
+      changeColorNode(
+        rgb,
+        currentActionNode,
+        engine,
+        model,
+        setDiagramEdited,
+        updateJsonState,
+      );
     }
   }, [color]);
 
@@ -173,13 +185,15 @@ const EditActionModal = ({
   const addInput = () => {
     //TODO: Maybe display some error message when the name is invalid
     if (isInputNameValid(formState["newInputName"])) {
-      addPort(formState["newInputName"],
-              currentActionNode,
-              ActionNodePortType.Input,
-              engine,
-              model,
-              setDiagramEdited,
-              updateJsonState);
+      addPort(
+        formState["newInputName"],
+        currentActionNode,
+        ActionNodePortType.Input,
+        engine,
+        model,
+        setDiagramEdited,
+        updateJsonState,
+      );
     }
     setInputName(false);
     reRender();
@@ -188,13 +202,15 @@ const EditActionModal = ({
   const addOutput = () => {
     //TODO: Maybe display some error message when the name is invalid
     if (isOutputNameValid(formState["newOutputName"])) {
-      addPort(formState["newOutputName"],
-              currentActionNode,
-              ActionNodePortType.Output,
-              engine,
-              model,
-              setDiagramEdited,
-              updateJsonState);
+      addPort(
+        formState["newOutputName"],
+        currentActionNode,
+        ActionNodePortType.Output,
+        engine,
+        model,
+        setDiagramEdited,
+        updateJsonState,
+      );
     }
     setOutputName(false);
     reRender();
@@ -278,12 +294,14 @@ const EditActionModal = ({
                             }}
                             title="Delete"
                             onClick={() => {
-                              removePort(port[1],
-                                         currentActionNode,
-                                         engine,
-                                         model,
-                                         setDiagramEdited,
-                                         updateJsonState);
+                              removePort(
+                                port[1],
+                                currentActionNode,
+                                engine,
+                                model,
+                                setDiagramEdited,
+                                updateJsonState,
+                              );
                               reRender();
                             }}
                           >
@@ -405,12 +423,14 @@ const EditActionModal = ({
                             }}
                             title="Delete"
                             onClick={() => {
-                              removePort(port[1],
-                                         currentActionNode,
-                                         engine,
-                                         model,
-                                         setDiagramEdited,
-                                         updateJsonState);
+                              removePort(
+                                port[1],
+                                currentActionNode,
+                                engine,
+                                model,
+                                setDiagramEdited,
+                                updateJsonState,
+                              );
                               reRender();
                             }}
                           >

@@ -1,4 +1,10 @@
-import { DiagramEngine, DiagramModel, LinkModel, NodeModel, ZoomCanvasAction } from "@projectstorm/react-diagrams";
+import {
+  DiagramEngine,
+  DiagramModel,
+  LinkModel,
+  NodeModel,
+  ZoomCanvasAction,
+} from "@projectstorm/react-diagrams";
 
 import { BasicNodeFactory } from "../tree_editor/nodes/basic_node/BasicNodeFactory";
 import { BasicNodeModel } from "../tree_editor/nodes/basic_node/BasicNodeModel";
@@ -18,7 +24,6 @@ export enum ActionNodePortType {
 }
 
 export const isActionNode = (nodeName: string) => {
-
   // Check if the node is a user written action
   return ![
     "Sequence",
@@ -40,7 +45,15 @@ export const isActionNode = (nodeName: string) => {
   ].includes(nodeName);
 };
 
-export const addPort = (portName: string, node: BasicNodeModel, type: ActionNodePortType, engine:DiagramEngine, model:DiagramModel, diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>>, updateJsonState: Function) => {
+export const addPort = (
+  portName: string,
+  node: BasicNodeModel,
+  type: ActionNodePortType,
+  engine: DiagramEngine,
+  model: DiagramModel,
+  diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>>,
+  updateJsonState: Function,
+) => {
   //TODO: type should be an enum
   // Check that the user didn't cancel
   if (!node || !portName) {
@@ -78,7 +91,11 @@ export const addPort = (portName: string, node: BasicNodeModel, type: ActionNode
   engine.repaintCanvas();
 };
 
-const deletePortLink = (model: DiagramModel, portName: string, node: BasicNodeModel) => {
+const deletePortLink = (
+  model: DiagramModel,
+  portName: string,
+  node: BasicNodeModel,
+) => {
   // var link: LinkModel | undefined;
   var link: any;
   const nodePort = node.getPort(portName);
@@ -91,7 +108,14 @@ const deletePortLink = (model: DiagramModel, portName: string, node: BasicNodeMo
   }
 };
 
-export const removePort = (port: OutputPortModel | InputPortModel, node: BasicNodeModel, engine:DiagramEngine, model:DiagramModel, diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>>, updateJsonState: Function) => {
+export const removePort = (
+  port: OutputPortModel | InputPortModel,
+  node: BasicNodeModel,
+  engine: DiagramEngine,
+  model: DiagramModel,
+  diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>>,
+  updateJsonState: Function,
+) => {
   //TODO: type should be an enum
   // Check that the user didn't cancel
   if (!node || !port) {
@@ -137,7 +161,14 @@ export const removePort = (port: OutputPortModel | InputPortModel, node: BasicNo
   engine.repaintCanvas();
 };
 
-export const changeColorNode = (rgb: [number, number, number], node: BasicNodeModel, engine:DiagramEngine, model:DiagramModel, diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>>, updateJsonState: Function) => {
+export const changeColorNode = (
+  rgb: [number, number, number],
+  node: BasicNodeModel,
+  engine: DiagramEngine,
+  model: DiagramModel,
+  diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>>,
+  updateJsonState: Function,
+) => {
   node.setColor(
     "rgb(" +
       Math.round(rgb[0]) +
@@ -172,7 +203,11 @@ export const changeColorNode = (rgb: [number, number, number], node: BasicNodeMo
 };
 
 // Configures an engine with all the factories
-export const configureEngine = (engine: React.MutableRefObject<DiagramEngine>, basicNodeCallback: Function, tagNodeCallback: Function) => {
+export const configureEngine = (
+  engine: React.MutableRefObject<DiagramEngine>,
+  basicNodeCallback: Function,
+  tagNodeCallback: Function,
+) => {
   console.log("Configuring engine!");
   // Register factories
   engine.current
@@ -184,10 +219,7 @@ export const configureEngine = (engine: React.MutableRefObject<DiagramEngine>, b
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory(
-        "children",
-        (config) => new ChildrenPortModel(),
-      ),
+      new SimplePortFactory("children", (config) => new ChildrenPortModel()),
     );
   engine.current
     .getPortFactories()
@@ -207,18 +239,12 @@ export const configureEngine = (engine: React.MutableRefObject<DiagramEngine>, b
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory(
-        "tag output",
-        (config) => new TagOutputPortModel(),
-      ),
+      new SimplePortFactory("tag output", (config) => new TagOutputPortModel()),
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory(
-        "tag input",
-        (config) => new TagInputPortModel(),
-      ),
+      new SimplePortFactory("tag input", (config) => new TagInputPortModel()),
     );
 
   // Disable loose links

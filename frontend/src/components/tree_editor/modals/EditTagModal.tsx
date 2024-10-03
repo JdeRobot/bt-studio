@@ -19,7 +19,7 @@ const EditTagModal = ({
   engine,
   updateJsonState,
   setDiagramEdited,
-} : {
+}: {
   isOpen: boolean;
   onClose: Function;
   currentActionNode: TagNodeModel;
@@ -38,7 +38,7 @@ const EditTagModal = ({
       [name]: value,
     }));
     currentActionNode.setName(value);
-    
+
     setDiagramEdited(true);
     updateJsonState();
     engine.repaintCanvas();
@@ -48,14 +48,16 @@ const EditTagModal = ({
     setFormState(initialEditTagModalData);
     document.getElementById("node-editor-modal")!.focus();
     if (currentActionNode) {
-      var tagName: HTMLInputElement | null = document.getElementById("tagName") as HTMLInputElement;
+      var tagName: HTMLInputElement | null = document.getElementById(
+        "tagName",
+      ) as HTMLInputElement;
       if (tagName) {
         tagName.value = currentActionNode.getName();
       }
     }
   }, [isOpen]);
 
-  const horizontalScrolling = (e:any) => {
+  const horizontalScrolling = (e: any) => {
     e.preventDefault();
     var containerScrollPosition = e.target.scrollLeft;
     e.target.scrollBy({
