@@ -54,7 +54,6 @@ export const addPort = (
   diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>>,
   updateJsonState: Function,
 ) => {
-  //TODO: type should be an enum
   // Check that the user didn't cancel
   if (!node || !portName) {
     return;
