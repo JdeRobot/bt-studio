@@ -229,12 +229,14 @@ const DiagramEditor = memo(
       engine.current.zoomToFitNodes({ margin: 50 });
     };
 
-    const onActionEditor = () => {
+    const onNodeEditor = () => {
       const node = model.current.getNode(lastClickedNodeId);
       lastClickedNodeId = "";
       model.current.clearSelection();
       if (node instanceof BasicNodeModel) {
         actionEditor(node)
+      } else if (node instanceof TagNodeModel) {
+        tagEditor(node);
       }
     }
 
@@ -452,7 +454,7 @@ const DiagramEditor = memo(
           onAddNode={nodeTypeSelector}
           onDeleteNode={deleteLastClickedNode}
           onZoomToFit={zoomToFit}
-          onEditAction={onActionEditor}
+          onEditAction={onNodeEditor}
           hasSubtrees={hasSubtrees}
         />
         {engine.current && (
