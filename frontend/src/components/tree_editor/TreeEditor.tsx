@@ -4,6 +4,7 @@ import { useRef, memo } from "react";
 import createEngine, {
   DefaultLinkModel,
   DefaultNodeModel,
+  DiagramEngine,
   DiagramModel,
   NodeModel,
   ZoomCanvasAction,
@@ -43,12 +44,12 @@ const TreeEditor = memo(
     const [subtreeModalOpen, setSubTreeModalOpen] = useState(false);
     const [subTreeName, setSubTreeName] = useState("");
     const [editActionModalOpen, setEditActionModalOpen] = useState(false);
-    const [currentNode, setCurrentNode] = useState<BasicNodeModel | null>(null);
+    const [currentNode, setCurrentNode] = useState<BasicNodeModel | TagNodeModel | undefined>(undefined);
     const [editTagModalOpen, setEditTagModalOpen] = useState(false);
 
     // Model and Engine for models use
-    const [modalModel, setModalModel] = useState<DiagramModel|null>(null);
-    const [modalEngine, setModalEngine] = useState(null);
+    const [modalModel, setModalModel] = useState<DiagramModel | undefined>(undefined);
+    const [modalEngine, setModalEngine] = useState<DiagramEngine | undefined>(undefined);
 
     const updateJsonState = () => {
       if (modalModel) {
@@ -62,12 +63,12 @@ const TreeEditor = memo(
 
     const onEditActionModalClose = () => {
       setEditActionModalOpen(false);
-      setCurrentNode(null)
+      setCurrentNode(undefined)
     };
 
     const onEditTagModalClose = () => {
       setEditTagModalOpen(false);
-      setCurrentNode(null)
+      setCurrentNode(undefined)
     };
 
     return (
@@ -81,24 +82,32 @@ const TreeEditor = memo(
             setDiagramEdited={setDiagramEdited}
           />
         )}
-        <EditActionModal
-          isOpen={editActionModalOpen}
-          onClose={onEditActionModalClose}
-          currentActionNode={currentNode}
-          model={modalModel}
-          engine={modalEngine}
-          updateJsonState={updateJsonState}
-          setDiagramEdited={setDiagramEdited}
-        />
-        <EditTagModal
-          isOpen={editTagModalOpen}
-          onClose={onEditTagModalClose}
-          currentActionNode={currentNode}
-          model={modalModel}
-          engine={modalEngine}
-          updateJsonState={updateJsonState}
-          setDiagramEdited={setDiagramEdited}
-        />
+        { currentNode && modalModel && modalEngine &&
+        <>
+          { currentNode instanceof BasicNodeModel && 
+            <EditActionModal
+              isOpen={editActionModalOpen}
+              onClose={onEditActionModalClose}
+              currentActionNode={currentNode}
+              model={modalModel}
+              engine={modalEngine}
+              updateJsonState={updateJsonState}
+              setDiagramEdited={setDiagramEdited}
+            />
+          }
+          { currentNode instanceof TagNodeModel &&
+            <EditTagModal
+              isOpen={editTagModalOpen}
+              onClose={onEditTagModalClose}
+              currentActionNode={currentNode}
+              model={modalModel}
+              engine={modalEngine}
+              updateJsonState={updateJsonState}
+              setDiagramEdited={setDiagramEdited}
+            />
+          }
+        </>
+        }
         <DiagramEditor
           modelJson={modelJson}
           setResultJson={setResultJson}
