@@ -38,7 +38,7 @@ const TreeEditor = memo(
     modelJson: any;
     setResultJson: Function;
     projectName: string;
-    setDiagramEdited: Function;
+    setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
     hasSubtrees: boolean;
   }) => {
     const [subtreeModalOpen, setSubTreeModalOpen] = useState(false);
@@ -151,7 +151,7 @@ const DiagramEditor = memo(
     modelJson: any;
     setResultJson: Function;
     projectName: string;
-    setDiagramEdited: Function;
+    setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
     hasSubtrees: boolean;
     setModalModel: Function;
     setModalEngine: Function;

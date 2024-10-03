@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-import { Saturation, Hue, useColor } from "react-color-palette";
+import { Saturation, Hue, useColor, ColorService, IColor } from "react-color-palette";
 import "react-color-palette/css";
 
 import "./EditActionModal.css";
@@ -21,48 +21,13 @@ import {
   ActionNodePortType,
   changeColorNode,
 } from "../../helper/TreeEditorHelper";
+import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
+import { BasicNodeModel } from "../nodes/basic_node/BasicNodeModel";
 
 const initialEditActionModalData = {
   newInputName: "",
   newOutputName: "",
 };
-
-function rgb2hsv(r, g, b) {
-  let rabs, gabs, babs, rr, gg, bb, h, s, v, diff, diffc, percentRoundFn;
-  rabs = r / 255;
-  gabs = g / 255;
-  babs = b / 255;
-  v = Math.max(rabs, gabs, babs);
-  diff = v - Math.min(rabs, gabs, babs);
-  diffc = (c) => (v - c) / 6 / diff + 1 / 2;
-  percentRoundFn = (num) => Math.round(num * 100) / 100;
-  if (diff == 0) {
-    h = s = 0;
-  } else {
-    s = diff / v;
-    rr = diffc(rabs);
-    gg = diffc(gabs);
-    bb = diffc(babs);
-
-    if (rabs === v) {
-      h = bb - gg;
-    } else if (gabs === v) {
-      h = 1 / 3 + rr - bb;
-    } else if (babs === v) {
-      h = 2 / 3 + gg - rr;
-    }
-    if (h < 0) {
-      h += 1;
-    } else if (h > 1) {
-      h -= 1;
-    }
-  }
-  return {
-    h: Math.round(h * 360),
-    s: percentRoundFn(s * 100),
-    v: percentRoundFn(v * 100),
-  };
-}
 
 const EditActionModal = ({
   isOpen,
@@ -72,6 +37,14 @@ const EditActionModal = ({
   engine,
   updateJsonState,
   setDiagramEdited,
+}: {
+  isOpen: boolean;
+  onClose: Function;
+  currentActionNode: BasicNodeModel;
+  model: DiagramModel;
+  engine: DiagramEngine;
+  updateJsonState: Function;
+  setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const focusInputRef = useRef(null);
   const [color, setColor] = useColor("rgb(128 0 128)");
@@ -79,10 +52,8 @@ const EditActionModal = ({
   const [outputName, setOutputName] = React.useState(false);
   const [allowCreation, setAllowCreation] = React.useState(false);
   const [formState, setFormState] = useState(initialEditActionModalData);
-  const [, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event:any) => {
     const { name, value } = event.target;
     setFormState((prevFormData) => ({
       ...prevFormData,
@@ -98,28 +69,23 @@ const EditActionModal = ({
     setInputName(false);
     setOutputName(false);
     setFormState(initialEditActionModalData);
-    document.getElementById("node-editor-modal").focus();
+    document.getElementById("node-editor-modal")!.focus();
     if (currentActionNode) {
-      var colorRGB = currentActionNode
-        .getColor()
-        .split("(")[1]
-        .split(")")[0]
-        .split(",");
-      color.rgb["r"] = colorRGB[0];
-      color.rgb["g"] = colorRGB[1];
-      color.rgb["b"] = colorRGB[2];
-      var hsvColor = rgb2hsv(colorRGB[0], colorRGB[1], colorRGB[2]);
-      color.hsv["h"] = hsvColor["h"];
-      color.hsv["s"] = hsvColor["s"];
-      color.hsv["v"] = hsvColor["v"];
-      setColor(color);
-      reRender();
+      var rgb: IColor["rgb"] = ColorService.toRgb(currentActionNode.getColor())
+
+      const newColor: IColor = {
+        hex: ColorService.rgb2hex(rgb),
+        rgb: rgb,
+        hsv: ColorService.rgb2hsv(rgb),
+      }
+
+      setColor(newColor);
     }
   }, [isOpen]);
 
   useEffect(() => {
     if (currentActionNode) {
-      var rgb = [color.rgb["r"], color.rgb["g"], color.rgb["b"]];
+      var rgb: [number, number, number] = [color.rgb["r"], color.rgb["g"], color.rgb["b"]];
       changeColorNode(
         rgb,
         currentActionNode,
@@ -138,11 +104,10 @@ const EditActionModal = ({
   };
 
   const reRender = () => {
-    forceUpdate();
-    document.getElementById("node-editor-modal").focus();
+    document.getElementById("node-editor-modal")!.focus();
   };
 
-  const horizontalScrolling = (e) => {
+  const horizontalScrolling = (e: any) => {
     e.preventDefault();
     var containerScrollPosition = e.target.scrollLeft;
     e.target.scrollBy({
@@ -166,20 +131,20 @@ const EditActionModal = ({
     }
   };
 
-  const isInputNameValid = (name) => {
+  const isInputNameValid = (name: string) => {
     var inputPorts = Object.entries(currentActionNode.getPorts()).filter(
       (item) => item[1] instanceof InputPortModel,
     );
-    var merged = [].concat.apply([], inputPorts);
-    return name !== "" && !name.includes(" ") && !merged.includes(name);
+    var merged = [].concat.apply(inputPorts.map(x => x[0]), []);
+    return name !== "" && !name.includes(" ") && !merged.includes(name as never);
   };
 
-  const isOutputNameValid = (name) => {
+  const isOutputNameValid = (name: string) => {
     var outputPorts = Object.entries(currentActionNode.getPorts()).filter(
       (item) => item[1] instanceof OutputPortModel,
     );
-    var merged = [].concat.apply([], outputPorts);
-    return name !== "" && !name.includes(" ") && !merged.includes(name);
+    var merged = [].concat.apply(outputPorts.map(x => x[0]), []);
+    return name !== "" && !name.includes(" ") && !merged.includes(name as never);
   };
 
   const addInput = () => {
@@ -295,7 +260,7 @@ const EditActionModal = ({
                             title="Delete"
                             onClick={() => {
                               removePort(
-                                port[1],
+                                port[1] as InputPortModel,
                                 currentActionNode,
                                 engine,
                                 model,
@@ -424,7 +389,7 @@ const EditActionModal = ({
                             title="Delete"
                             onClick={() => {
                               removePort(
-                                port[1],
+                                port[1] as OutputPortModel,
                                 currentActionNode,
                                 engine,
                                 model,
@@ -551,7 +516,7 @@ const EditActionModal = ({
         <label className="node-editor-title" htmlFor="favcolor">
           Color:
         </label>
-        <Saturation height={50} width={300} color={color} onChange={setColor} />
+        <Saturation height={50} color={color} onChange={setColor} />
         <Hue color={color} onChange={setColor} />
       </div>
     </Modal>

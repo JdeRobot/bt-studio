@@ -10,7 +10,7 @@ const MainTreeEditorContainer = ({
   setGlobalJson,
 }: {
   projectName: string;
-  setProjectEdited: Function;
+  setProjectEdited: React.Dispatch<React.SetStateAction<boolean>>;
   setGlobalJson: Function;
 }) => {
   const [initialJson, setInitialJson] = useState("");

@@ -46,7 +46,7 @@ const EditTagModal = ({
 
   useEffect(() => {
     setFormState(initialEditTagModalData);
-    document.getElementById("node-editor-modal")!.focus();
+    document.getElementById("tag-editor-modal")!.focus();
     if (currentActionNode) {
       var tagName: HTMLInputElement | null = document.getElementById(
         "tagName",
