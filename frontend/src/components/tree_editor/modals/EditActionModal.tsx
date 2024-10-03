@@ -1,12 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
 import "react-color-palette/css";
-import {
-  Saturation,
-  Hue,
-  ColorService,
-  IColor,
-} from "react-color-palette";
+import { Saturation, Hue, ColorService, IColor } from "react-color-palette";
 
 import {
   addPort,
@@ -51,7 +46,7 @@ const EditActionModal = ({
   setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const focusInputRef = useRef(null);
-  const [color, setColor] = useState<IColor|undefined>(undefined);
+  const [color, setColor] = useState<IColor | undefined>(undefined);
   const [inputName, setInputName] = React.useState(false);
   const [outputName, setOutputName] = React.useState(false);
   const [allowCreation, setAllowCreation] = React.useState(false);
@@ -534,7 +529,7 @@ const EditActionModal = ({
           </div>
         )}
       </div>
-      {color &&
+      {color && (
         <div className="node-editor-row">
           <label className="node-editor-title" htmlFor="favcolor">
             Color:
@@ -542,7 +537,7 @@ const EditActionModal = ({
           <Saturation height={50} color={color} onChange={setColor} />
           <Hue color={color} onChange={setColor} />
         </div>
-      }
+      )}
     </Modal>
   );
 };
