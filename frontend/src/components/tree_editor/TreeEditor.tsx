@@ -4,26 +4,28 @@ import { useRef, memo } from "react";
 import createEngine, {
   DefaultLinkModel,
   DefaultNodeModel,
+  DiagramEngine,
   DiagramModel,
+  NodeModel,
   ZoomCanvasAction,
 } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
 import "./TreeEditor.css";
-import { BasicNodeFactory } from "./nodes/basic_node/BasicNodeFactory";
 import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
-import { TagNodeFactory } from "./nodes/tag_node/TagNodeFactory";
 import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
-import { SimplePortFactory } from "./nodes/SimplePortFactory";
 import { ChildrenPortModel } from "./nodes/basic_node/ports/children_port/ChildrenPortModel";
 import { ParentPortModel } from "./nodes/basic_node/ports/parent_port/ParentPortModel";
 import { OutputPortModel } from "./nodes/basic_node/ports/output_port/OutputPortModel";
 import { InputPortModel } from "./nodes/basic_node/ports/input_port/InputPortModel";
 import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutputPortModel";
-import { TagInputPortModel } from "./nodes/tag_node/ports/input_port/TagInputPortModel";
+
+import { configureEngine, isActionNode } from "../helper/TreeEditorHelper";
 
 import SubtreeModal from "./modals/SubTreeModal";
 import NodeMenu from "./NodeMenu";
+import EditActionModal from "./modals/EditActionModal";
+import EditTagModal from "./modals/EditTagModal";
 
 const TreeEditor = memo(
   ({
@@ -36,19 +38,48 @@ const TreeEditor = memo(
     modelJson: any;
     setResultJson: Function;
     projectName: string;
-    setDiagramEdited: Function;
+    setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
     hasSubtrees: boolean;
   }) => {
     const [subtreeModalOpen, setSubTreeModalOpen] = useState(false);
     const [subTreeName, setSubTreeName] = useState("");
+    const [editActionModalOpen, setEditActionModalOpen] = useState(false);
+    const [currentNode, setCurrentNode] = useState<
+      BasicNodeModel | TagNodeModel | undefined
+    >(undefined);
+    const [editTagModalOpen, setEditTagModalOpen] = useState(false);
+
+    // Model and Engine for models use
+    const [modalModel, setModalModel] = useState<DiagramModel | undefined>(
+      undefined,
+    );
+    const [modalEngine, setModalEngine] = useState<DiagramEngine | undefined>(
+      undefined,
+    );
+
+    const updateJsonState = () => {
+      if (modalModel) {
+        setResultJson(modalModel.serialize());
+      }
+    };
 
     const onSubTreeModalClose = () => {
       setSubTreeModalOpen(false);
     };
 
+    const onEditActionModalClose = () => {
+      setEditActionModalOpen(false);
+      setCurrentNode(undefined);
+    };
+
+    const onEditTagModalClose = () => {
+      setEditTagModalOpen(false);
+      setCurrentNode(undefined);
+    };
+
     return (
       <div>
-        {hasSubtrees && subtreeModalOpen && (
+        {hasSubtrees && (
           <SubtreeModal
             isOpen={subtreeModalOpen}
             onClose={onSubTreeModalClose}
@@ -57,14 +88,45 @@ const TreeEditor = memo(
             setDiagramEdited={setDiagramEdited}
           />
         )}
+        {currentNode && modalModel && modalEngine && (
+          <>
+            {currentNode instanceof BasicNodeModel && (
+              <EditActionModal
+                isOpen={editActionModalOpen}
+                onClose={onEditActionModalClose}
+                currentActionNode={currentNode}
+                model={modalModel}
+                engine={modalEngine}
+                updateJsonState={updateJsonState}
+                setDiagramEdited={setDiagramEdited}
+              />
+            )}
+            {currentNode instanceof TagNodeModel && (
+              <EditTagModal
+                isOpen={editTagModalOpen}
+                onClose={onEditTagModalClose}
+                currentActionNode={currentNode}
+                model={modalModel}
+                engine={modalEngine}
+                updateJsonState={updateJsonState}
+                setDiagramEdited={setDiagramEdited}
+              />
+            )}
+          </>
+        )}
         <DiagramEditor
           modelJson={modelJson}
           setResultJson={setResultJson}
           projectName={projectName}
           setDiagramEdited={setDiagramEdited}
           hasSubtrees={hasSubtrees}
+          setModalModel={setModalModel}
+          setModalEngine={setModalEngine}
           setSubTreeModalOpen={setSubTreeModalOpen}
           setSubTreeName={setSubTreeName}
+          setEditActionModalOpen={setEditActionModalOpen}
+          setEditTagModalOpen={setEditTagModalOpen}
+          setCurrentNode={setCurrentNode}
         />
       </div>
     );
@@ -78,16 +140,26 @@ const DiagramEditor = memo(
     projectName,
     setDiagramEdited,
     hasSubtrees,
+    setModalModel,
+    setModalEngine,
     setSubTreeModalOpen,
     setSubTreeName,
+    setEditActionModalOpen,
+    setEditTagModalOpen,
+    setCurrentNode,
   }: {
     modelJson: any;
     setResultJson: Function;
     projectName: string;
-    setDiagramEdited: Function;
+    setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
     hasSubtrees: boolean;
+    setModalModel: Function;
+    setModalEngine: Function;
     setSubTreeModalOpen: Function;
     setSubTreeName: Function;
+    setEditActionModalOpen: Function;
+    setEditTagModalOpen: Function;
+    setCurrentNode: Function;
   }) => {
     // VARS
 
@@ -104,72 +176,21 @@ const DiagramEditor = memo(
     // MODAL MANAGEMENT
     const modalManager = () => {
       const node = model.current.getNode(lastClickedNodeId);
-      if (node instanceof BasicNodeModel && node.getIsSubtree()) {
-        setSubTreeName(node.getName());
-        setSubTreeModalOpen(true);
+      lastClickedNodeId = "";
+      model.current.clearSelection();
+      if (node instanceof BasicNodeModel) {
+        if (node.getIsSubtree()) {
+          setSubTreeName(node.getName());
+          setSubTreeModalOpen(true);
+        } else {
+          actionEditor(node);
+        }
+      } else if (node instanceof TagNodeModel) {
+        tagEditor(node);
       }
     };
 
     // HELPERS
-
-    // Configures an engine with all the factories
-    const configureEngine = (engine: any) => {
-      console.log("Configuring engine!");
-      // Register factories
-      engine.current
-        .getNodeFactories()
-        .registerFactory(new BasicNodeFactory(modalManager));
-      engine.current
-        .getNodeFactories()
-        .registerFactory(new TagNodeFactory(modalManager));
-      engine.current
-        .getPortFactories()
-        .registerFactory(
-          new SimplePortFactory(
-            "children",
-            (config) => new ChildrenPortModel(),
-          ),
-        );
-      engine.current
-        .getPortFactories()
-        .registerFactory(
-          new SimplePortFactory("parent", (config) => new ParentPortModel()),
-        );
-      engine.current
-        .getPortFactories()
-        .registerFactory(
-          new SimplePortFactory("output", (config) => new OutputPortModel("")),
-        );
-      engine.current
-        .getPortFactories()
-        .registerFactory(
-          new SimplePortFactory("input", (config) => new InputPortModel("")),
-        );
-      engine.current
-        .getPortFactories()
-        .registerFactory(
-          new SimplePortFactory(
-            "tag output",
-            (config) => new TagOutputPortModel(),
-          ),
-        );
-      engine.current
-        .getPortFactories()
-        .registerFactory(
-          new SimplePortFactory(
-            "tag input",
-            (config) => new TagInputPortModel(),
-          ),
-        );
-
-      // Disable loose links
-      const state: any = engine.current.getStateMachine().getCurrentState();
-      state.dragNewLink.config.allowLooseLinks = false;
-
-      engine.current
-        .getActionEventBus()
-        .registerAction(new ZoomCanvasAction({ inverseZoom: true }));
-    };
 
     // Add the nodes default ports
     const addDefaultPorts = (node: any) => {
@@ -180,6 +201,23 @@ const DiagramEditor = memo(
         node.addInputPort("num_attempts");
       else if (nodeName === "Repeat") node.addInputPort("num_cycles");
       else if (nodeName === "Delay") node.addInputPort("delay_ms");
+
+      model.current.getNodes().forEach((oldNode: NodeModel) => {
+        //TODO: for the tags, this will never be called. Maybe have a common type
+        if (oldNode instanceof BasicNodeModel) {
+          var convNode = oldNode as BasicNodeModel;
+          if (convNode.getName() === node.getName() && node !== convNode) {
+            node.setColor(convNode.getColor());
+            Object.values(convNode.getPorts()).forEach((element) => {
+              if (element instanceof InputPortModel) {
+                node.addInputPort(element.getName());
+              } else if (element instanceof OutputPortModel) {
+                node.addOutputPort(element.getName());
+              }
+            });
+          }
+        }
+      });
     };
 
     // Updates the json state
@@ -206,8 +244,29 @@ const DiagramEditor = memo(
       engine.current.zoomToFitNodes({ margin: 50 });
     };
 
-    const actionEditor = () => {
-      console.log("Editing the action!");
+    const onNodeEditor = () => {
+      const node = model.current.getNode(lastClickedNodeId);
+      lastClickedNodeId = "";
+      model.current.clearSelection();
+      if (node instanceof BasicNodeModel) {
+        actionEditor(node);
+      } else if (node instanceof TagNodeModel) {
+        tagEditor(node);
+      }
+    };
+
+    const actionEditor = (node: BasicNodeModel) => {
+      if (isActionNode(node.getName())) {
+        setCurrentNode(node);
+        setEditActionModalOpen(true);
+      }
+    };
+
+    const tagEditor = (node: TagNodeModel) => {
+      if (isActionNode(node.getName())) {
+        setCurrentNode(node);
+        setEditTagModalOpen(true);
+      }
     };
 
     // LISTENERS
@@ -379,7 +438,7 @@ const DiagramEditor = memo(
     };
 
     // Configure the engine
-    configureEngine(engine);
+    configureEngine(engine, modalManager, modalManager);
 
     // Deserialize and load the model
     model.current.deserializeModel(modelJson, engine.current);
@@ -394,6 +453,9 @@ const DiagramEditor = memo(
       node.setSelected(false);
     });
 
+    setModalModel(model.current);
+    setModalEngine(engine.current);
+
     // Fixes uncomplete first serialization
     setTimeout(() => {
       console.log("Rendered!");
@@ -407,7 +469,7 @@ const DiagramEditor = memo(
           onAddNode={nodeTypeSelector}
           onDeleteNode={deleteLastClickedNode}
           onZoomToFit={zoomToFit}
-          onEditAction={actionEditor}
+          onEditAction={onNodeEditor}
           hasSubtrees={hasSubtrees}
         />
         {engine.current && (

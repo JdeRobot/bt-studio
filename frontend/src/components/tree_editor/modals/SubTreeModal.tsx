@@ -20,7 +20,7 @@ const SubtreeModal = ({
   onClose: Function;
   projectName: string;
   subtreeName: string;
-  setDiagramEdited: Function;
+  setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   // STATE
   const [initialJson, setInitialJson] = useState("");

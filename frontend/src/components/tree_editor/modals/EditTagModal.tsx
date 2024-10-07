@@ -1,35 +1,63 @@
 import React, { useState, useEffect, useRef } from "react";
+import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
 
 import Modal from "../../Modal/Modal";
-
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
+
+import { TagNodeModel } from "../nodes/tag_node/TagNodeModel";
+import { BasicNodeModel } from "../nodes/basic_node/BasicNodeModel";
 
 const initialEditTagModalData = {
   tagName: "",
 };
 
-const EditTagModal = ({ isOpen, onClose, currentActionNode }) => {
+const EditTagModal = ({
+  isOpen,
+  onClose,
+  currentActionNode,
+  model,
+  engine,
+  updateJsonState,
+  setDiagramEdited,
+}: {
+  isOpen: boolean;
+  onClose: Function;
+  currentActionNode: TagNodeModel;
+  model: DiagramModel;
+  engine: DiagramEngine;
+  updateJsonState: Function;
+  setDiagramEdited: Function;
+}) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialEditTagModalData);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: any) => {
     const { name, value } = event.target;
     setFormState((prevFormData) => ({
       ...prevFormData,
       [name]: value,
     }));
     currentActionNode.setName(value);
+
+    setDiagramEdited(true);
+    updateJsonState();
+    engine.repaintCanvas();
   };
 
   useEffect(() => {
     setFormState(initialEditTagModalData);
-    document.getElementById("node-editor-modal").focus();
+    document.getElementById("tag-editor-modal")!.focus();
     if (currentActionNode) {
-      document.getElementById("tagName").value = currentActionNode.getName();
+      var tagName: HTMLInputElement | null = document.getElementById(
+        "tagName",
+      ) as HTMLInputElement;
+      if (tagName) {
+        tagName.value = currentActionNode.getName();
+      }
     }
   }, [isOpen]);
 
-  const horizontalScrolling = (e) => {
+  const horizontalScrolling = (e: any) => {
     e.preventDefault();
     var containerScrollPosition = e.target.scrollLeft;
     e.target.scrollBy({
