@@ -177,11 +177,17 @@ const App = () => {
         >
           <div style={{ flex: 1 }}>
             {currentProjectname ? (
+              <>
+              <DiagramVisualizerContainer
+                projectName={currentProjectname}
+                manager={manager}
+              />
               <MainTreeEditorContainer
                 projectName={currentProjectname}
                 setProjectEdited={setProjectChanges}
                 setGlobalJson={setModelJson}
               />
+              </>
             ) : (
               <p>Loading...</p>
             )}

@@ -165,8 +165,8 @@ export const changeColorNode = (
   node: BasicNodeModel,
   engine: DiagramEngine,
   model: DiagramModel,
-  diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>>,
-  updateJsonState: Function,
+  diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>> = () => {},
+  updateJsonState: Function = () => {},
 ) => {
   node.setColor(
     "rgb(" +
@@ -204,8 +204,8 @@ export const changeColorNode = (
 // Configures an engine with all the factories
 export const configureEngine = (
   engine: React.MutableRefObject<DiagramEngine>,
-  basicNodeCallback: Function,
-  tagNodeCallback: Function,
+  basicNodeCallback: Function | null = null,
+  tagNodeCallback: Function | null = null,
 ) => {
   console.log("Configuring engine!");
   // Register factories
