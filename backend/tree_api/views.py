@@ -330,7 +330,7 @@ def get_subtree(request):
     print(subtree_path)
     if os.path.exists(subtree_path):
         with open(subtree_path, "r") as f:
-            subtree = f.read()
+            subtree = json.load(f)
             return Response({"subtree": subtree}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)

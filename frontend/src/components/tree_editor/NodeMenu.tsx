@@ -71,6 +71,7 @@ const NodeMenu = ({
   onZoomToFit,
   onEditAction,
   hasSubtrees,
+  setGoBack,
 }: {
   projectName: string;
   onAddNode: Function;
@@ -78,6 +79,7 @@ const NodeMenu = ({
   onZoomToFit: MouseEventHandler;
   onEditAction: MouseEventHandler;
   hasSubtrees: boolean;
+  setGoBack: Function;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>("");
@@ -93,7 +95,7 @@ const NodeMenu = ({
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
-    label: string,
+    label: string
   ) => {
     setAnchorEl(event.currentTarget);
     setMenuLabel(label);
@@ -104,7 +106,7 @@ const NodeMenu = ({
   const handleSelect = (nodeName: string) => {
     console.log("Selected: " + nodeName);
     const nodeType = Object.keys(NODE_MENU_ITEMS).find((key) =>
-      NODE_MENU_ITEMS[key].includes(nodeName),
+      NODE_MENU_ITEMS[key].includes(nodeName)
     );
     if (nodeType) {
       console.log("Node Type: " + nodeType);
@@ -207,13 +209,21 @@ const NodeMenu = ({
           onClick={() => {
             openInNewTab(
               new URL(
-                "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
-              ),
+                "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
+              )
             );
           }}
           title="Help"
         >
           <HelpIcon className="icon action-icon" fill={"var(--icon)"} />
+        </button>
+        <button
+          id="node-action-back-button"
+          className="node-action-button"
+          onClick={() => setGoBack(true)}
+          title="Go Back"
+        >
+          <ZoomToFitIcon className="icon action-icon" fill={"var(--icon)"} />
         </button>
       </div>
     </div>

@@ -20,9 +20,8 @@ import { OutputPortModel } from "./nodes/basic_node/ports/output_port/OutputPort
 import { InputPortModel } from "./nodes/basic_node/ports/input_port/InputPortModel";
 import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutputPortModel";
 
+import { saveSubtree } from "../../api_helper/TreeWrapper";
 import { configureEngine, isActionNode } from "../helper/TreeEditorHelper";
-
-import SubtreeModal from "./modals/SubTreeModal";
 import NodeMenu from "./NodeMenu";
 import EditActionModal from "./modals/EditActionModal";
 import EditTagModal from "./modals/EditTagModal";
@@ -34,15 +33,17 @@ const TreeEditor = memo(
     projectName,
     setDiagramEdited,
     hasSubtrees,
+    setSubTreeName,
+    setGoBack,
   }: {
     modelJson: any;
     setResultJson: Function;
     projectName: string;
     setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
     hasSubtrees: boolean;
+    setSubTreeName: Function;
+    setGoBack: Function;
   }) => {
-    const [subtreeModalOpen, setSubTreeModalOpen] = useState(false);
-    const [subTreeName, setSubTreeName] = useState("");
     const [editActionModalOpen, setEditActionModalOpen] = useState(false);
     const [currentNode, setCurrentNode] = useState<
       BasicNodeModel | TagNodeModel | undefined
@@ -51,20 +52,16 @@ const TreeEditor = memo(
 
     // Model and Engine for models use
     const [modalModel, setModalModel] = useState<DiagramModel | undefined>(
-      undefined,
+      undefined
     );
     const [modalEngine, setModalEngine] = useState<DiagramEngine | undefined>(
-      undefined,
+      undefined
     );
 
     const updateJsonState = () => {
       if (modalModel) {
         setResultJson(modalModel.serialize());
       }
-    };
-
-    const onSubTreeModalClose = () => {
-      setSubTreeModalOpen(false);
     };
 
     const onEditActionModalClose = () => {
@@ -79,15 +76,6 @@ const TreeEditor = memo(
 
     return (
       <div>
-        {hasSubtrees && (
-          <SubtreeModal
-            isOpen={subtreeModalOpen}
-            onClose={onSubTreeModalClose}
-            projectName={projectName}
-            subtreeName={subTreeName}
-            setDiagramEdited={setDiagramEdited}
-          />
-        )}
         {currentNode && modalModel && modalEngine && (
           <>
             {currentNode instanceof BasicNodeModel && (
@@ -122,15 +110,15 @@ const TreeEditor = memo(
           hasSubtrees={hasSubtrees}
           setModalModel={setModalModel}
           setModalEngine={setModalEngine}
-          setSubTreeModalOpen={setSubTreeModalOpen}
           setSubTreeName={setSubTreeName}
           setEditActionModalOpen={setEditActionModalOpen}
           setEditTagModalOpen={setEditTagModalOpen}
           setCurrentNode={setCurrentNode}
+          setGoBack={setGoBack}
         />
       </div>
     );
-  },
+  }
 );
 
 const DiagramEditor = memo(
@@ -142,11 +130,11 @@ const DiagramEditor = memo(
     hasSubtrees,
     setModalModel,
     setModalEngine,
-    setSubTreeModalOpen,
     setSubTreeName,
     setEditActionModalOpen,
     setEditTagModalOpen,
     setCurrentNode,
+    setGoBack,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -155,11 +143,11 @@ const DiagramEditor = memo(
     hasSubtrees: boolean;
     setModalModel: Function;
     setModalEngine: Function;
-    setSubTreeModalOpen: Function;
     setSubTreeName: Function;
     setEditActionModalOpen: Function;
     setEditTagModalOpen: Function;
     setCurrentNode: Function;
+    setGoBack: Function;
   }) => {
     // VARS
 
@@ -180,8 +168,10 @@ const DiagramEditor = memo(
       model.current.clearSelection();
       if (node instanceof BasicNodeModel) {
         if (node.getIsSubtree()) {
+          // Save the current subtree json
+          updateJsonState();
+
           setSubTreeName(node.getName());
-          setSubTreeModalOpen(true);
         } else {
           actionEditor(node);
         }
@@ -471,13 +461,14 @@ const DiagramEditor = memo(
           onZoomToFit={zoomToFit}
           onEditAction={onNodeEditor}
           hasSubtrees={hasSubtrees}
+          setGoBack={setGoBack}
         />
         {engine.current && (
           <CanvasWidget className="canvas" engine={engine.current} />
         )}
       </div>
     );
-  },
+  }
 );
 
 export default TreeEditor;
