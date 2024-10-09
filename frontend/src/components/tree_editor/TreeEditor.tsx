@@ -20,12 +20,15 @@ import { OutputPortModel } from "./nodes/basic_node/ports/output_port/OutputPort
 import { InputPortModel } from "./nodes/basic_node/ports/input_port/InputPortModel";
 import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutputPortModel";
 
-import { configureEngine, isActionNode } from "../helper/TreeEditorHelper";
+import { configureEngine, isActionNode, TreeViewType } from "../helper/TreeEditorHelper";
 
 import SubtreeModal from "./modals/SubTreeModal";
 import NodeMenu from "./NodeMenu";
 import EditActionModal from "./modals/EditActionModal";
 import EditTagModal from "./modals/EditTagModal";
+
+import DiagramVisualizer from "./DiagramVisualizer";
+import CommsManager from "../../api_helper/CommsManager";
 
 const TreeEditor = memo(
   ({
@@ -34,12 +37,18 @@ const TreeEditor = memo(
     projectName,
     setDiagramEdited,
     hasSubtrees,
+    treeStructure,
+    view,
+    changeView
   }: {
     modelJson: any;
     setResultJson: Function;
     projectName: string;
     setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
     hasSubtrees: boolean;
+    treeStructure:any;
+    view: TreeViewType;
+    changeView: Function;
   }) => {
     const [subtreeModalOpen, setSubTreeModalOpen] = useState(false);
     const [subTreeName, setSubTreeName] = useState("");
@@ -114,20 +123,32 @@ const TreeEditor = memo(
             )}
           </>
         )}
-        <DiagramEditor
-          modelJson={modelJson}
-          setResultJson={setResultJson}
-          projectName={projectName}
-          setDiagramEdited={setDiagramEdited}
-          hasSubtrees={hasSubtrees}
-          setModalModel={setModalModel}
-          setModalEngine={setModalEngine}
-          setSubTreeModalOpen={setSubTreeModalOpen}
-          setSubTreeName={setSubTreeName}
-          setEditActionModalOpen={setEditActionModalOpen}
-          setEditTagModalOpen={setEditTagModalOpen}
-          setCurrentNode={setCurrentNode}
-        />
+        {view === TreeViewType.Visualizer ? (
+          <DiagramVisualizer
+            modelJson={modelJson}
+            manager={CommsManager.getInstance()}
+            treeStructure={treeStructure}
+            view={view}
+            changeView={changeView}
+          />
+        ) : (
+          <DiagramEditor
+            modelJson={modelJson}
+            setResultJson={setResultJson}
+            projectName={projectName}
+            setDiagramEdited={setDiagramEdited}
+            view={view}
+            changeView={changeView}
+            hasSubtrees={hasSubtrees}
+            setModalModel={setModalModel}
+            setModalEngine={setModalEngine}
+            setSubTreeModalOpen={setSubTreeModalOpen}
+            setSubTreeName={setSubTreeName}
+            setEditActionModalOpen={setEditActionModalOpen}
+            setEditTagModalOpen={setEditTagModalOpen}
+            setCurrentNode={setCurrentNode}
+          />
+        )}
       </div>
     );
   },
@@ -139,6 +160,8 @@ const DiagramEditor = memo(
     setResultJson,
     projectName,
     setDiagramEdited,
+    view,
+    changeView,
     hasSubtrees,
     setModalModel,
     setModalEngine,
@@ -152,6 +175,8 @@ const DiagramEditor = memo(
     setResultJson: Function;
     projectName: string;
     setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
+    view: TreeViewType;
+    changeView: Function;
     hasSubtrees: boolean;
     setModalModel: Function;
     setModalEngine: Function;
@@ -471,6 +496,8 @@ const DiagramEditor = memo(
           onZoomToFit={zoomToFit}
           onEditAction={onNodeEditor}
           hasSubtrees={hasSubtrees}
+          view = {view}
+          changeView={changeView}
         />
         {engine.current && (
           <CanvasWidget className="canvas" engine={engine.current} />
