@@ -1,0 +1,8 @@
+{
+  "name": "default",
+  "type": "robotics_backend",
+  "config": {
+    "id": "follow_person_newmanager",
+    "launch_file_path": "/opt/jderobot/Launchers/follow_person.launch.py"
+  }
+}
