@@ -11,7 +11,6 @@ import VncViewer from "./components/vnc_viewer/VncViewer";
 import ErrorModal from "./components/error_popup/ErrorModal";
 import axios from "axios";
 import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
-import DiagramVisualizerContainer from "./components/bt_status_visualizer/DiagramVisualizerContainer";
 import CommsManager from "./api_helper/CommsManager";
 import { loadProjectConfig } from "./api_helper/TreeWrapper";
 
@@ -177,17 +176,12 @@ const App = () => {
         >
           <div style={{ flex: 1 }}>
             {currentProjectname ? (
-              <>
-              <DiagramVisualizerContainer
-                projectName={currentProjectname}
-                manager={manager}
-              />
               <MainTreeEditorContainer
                 projectName={currentProjectname}
                 setProjectEdited={setProjectChanges}
                 setGlobalJson={setModelJson}
+                modelJson={modelJson}
               />
-              </>
             ) : (
               <p>Loading...</p>
             )}
