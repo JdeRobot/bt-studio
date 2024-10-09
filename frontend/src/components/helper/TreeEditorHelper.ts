@@ -170,7 +170,9 @@ export const changeColorNode = (
   node: BasicNodeModel,
   engine: DiagramEngine,
   model: DiagramModel,
-  diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>> = () => {},
+  diagramEditedCallback: React.Dispatch<
+    React.SetStateAction<boolean>
+  > = () => {},
   updateJsonState: Function = () => {},
 ) => {
   node.setColor(

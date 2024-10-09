@@ -75,7 +75,7 @@ const NodeMenu = ({
   onEditAction,
   hasSubtrees,
   view,
-  changeView
+  changeView,
 }: {
   projectName: string;
   onAddNode: Function;
@@ -225,7 +225,13 @@ const NodeMenu = ({
         <button
           id="node-change-view-button"
           className="node-action-button"
-          onClick={() => changeView((view === TreeViewType.Editor) ? TreeViewType.Visualizer : TreeViewType.Editor)}
+          onClick={() =>
+            changeView(
+              view === TreeViewType.Editor
+                ? TreeViewType.Visualizer
+                : TreeViewType.Editor,
+            )
+          }
           title="Change view"
         >
           {view === TreeViewType.Editor ? (

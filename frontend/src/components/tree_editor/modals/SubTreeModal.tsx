@@ -67,7 +67,7 @@ const SubtreeModal = ({
     setInitialJson(resultJson);
     getBTTree();
     console.log("Changing view!");
-  }, [view])
+  }, [view]);
 
   const handleCancel = async () => {
     try {

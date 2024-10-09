@@ -20,7 +20,11 @@ import { OutputPortModel } from "./nodes/basic_node/ports/output_port/OutputPort
 import { InputPortModel } from "./nodes/basic_node/ports/input_port/InputPortModel";
 import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutputPortModel";
 
-import { configureEngine, isActionNode, TreeViewType } from "../helper/TreeEditorHelper";
+import {
+  configureEngine,
+  isActionNode,
+  TreeViewType,
+} from "../helper/TreeEditorHelper";
 
 import SubtreeModal from "./modals/SubTreeModal";
 import NodeMenu from "./NodeMenu";
@@ -39,14 +43,14 @@ const TreeEditor = memo(
     hasSubtrees,
     treeStructure,
     view,
-    changeView
+    changeView,
   }: {
     modelJson: any;
     setResultJson: Function;
     projectName: string;
     setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
     hasSubtrees: boolean;
-    treeStructure:any;
+    treeStructure: any;
     view: TreeViewType;
     changeView: Function;
   }) => {
@@ -496,7 +500,7 @@ const DiagramEditor = memo(
           onZoomToFit={zoomToFit}
           onEditAction={onNodeEditor}
           hasSubtrees={hasSubtrees}
-          view = {view}
+          view={view}
           changeView={changeView}
         />
         {engine.current && (

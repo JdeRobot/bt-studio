@@ -1,20 +1,28 @@
-import React, { useRef, memo , useState } from "react";
-import createEngine, {
-  DiagramModel,
-} from "@projectstorm/react-diagrams";
+import React, { useRef, memo, useState } from "react";
+import createEngine, { DiagramModel } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
 import "./DiagramEditor.css";
-import { changeColorNode, configureEngine} from "../helper/TreeEditorHelper";
+import { changeColorNode, configureEngine } from "../helper/TreeEditorHelper";
 import NodeMenu from "./NodeMenu";
 
-const setTreeStatus = (model: any, engine:any, updateTree: any, baseTree: any) => {
-  console.log(updateTree)
-  console.log(baseTree)
+const setTreeStatus = (
+  model: any,
+  engine: any,
+  updateTree: any,
+  baseTree: any,
+) => {
+  console.log(updateTree);
+  console.log(baseTree);
   setStatusNode(model, engine, updateTree, baseTree);
 };
 
-const setStatusNode = (model: any, engine:any, updateTree: any, baseTree: any) => {
+const setStatusNode = (
+  model: any,
+  engine: any,
+  updateTree: any,
+  baseTree: any,
+) => {
   var nodeName = baseTree["name"];
   var nodeId = baseTree["id"];
 
@@ -31,7 +39,7 @@ const setStatusNode = (model: any, engine:any, updateTree: any, baseTree: any) =
   try {
     nodeStatus = updateTree[nodeName]["state"];
   } catch (error) {
-    nodeStatus = "NONE"
+    nodeStatus = "NONE";
   }
 
   var node = model.getNode(nodeId);
@@ -42,28 +50,23 @@ const setStatusNode = (model: any, engine:any, updateTree: any, baseTree: any) =
 
   // node.setExecStatus(nodeStatus);
   // engine.repaintCanvas();
-  var rgb: [number, number, number] = [100,100,100];
+  var rgb: [number, number, number] = [100, 100, 100];
 
   switch (nodeStatus) {
     case "RUNNING":
-      rgb = [255,150,0]
+      rgb = [255, 150, 0];
       break;
     case "SUCCESS":
-      rgb = [0,250,0]
+      rgb = [0, 250, 0];
       break;
     case "FAILURE":
-      rgb = [200,0,0]
+      rgb = [200, 0, 0];
       break;
     default:
-      rgb = [100,100,100]
+      rgb = [100, 100, 100];
       break;
   }
-  changeColorNode(
-    rgb,
-    node,
-    engine,
-    model
-  );
+  changeColorNode(rgb, node, engine, model);
 };
 
 const DiagramVisualizer = memo(
@@ -72,13 +75,13 @@ const DiagramVisualizer = memo(
     manager,
     treeStructure,
     view,
-    changeView
+    changeView,
   }: {
     modelJson: any;
     manager: any;
     treeStructure: any;
-    view:any
-    changeView:any
+    view: any;
+    changeView: any;
   }) => {
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
@@ -89,7 +92,7 @@ const DiagramVisualizer = memo(
     configureEngine(engine);
 
     // Deserialize and load the model
-    console.log("Diagram Visualizer" );
+    console.log("Diagram Visualizer");
     model.current.deserializeModel(modelJson, engine.current);
     model.current.setLocked(true);
     engine.current.setModel(model.current);
@@ -114,12 +117,12 @@ const DiagramVisualizer = memo(
       <div>
         <NodeMenu
           projectName={"projectName"}
-          onAddNode={()=>{}}
-          onDeleteNode={()=>{}}
+          onAddNode={() => {}}
+          onDeleteNode={() => {}}
           onZoomToFit={zoomToFit}
-          onEditAction={()=>{}}
+          onEditAction={() => {}}
           hasSubtrees={false}
-          view = {view}
+          view={view}
           changeView={changeView}
         />
         {engine.current && (

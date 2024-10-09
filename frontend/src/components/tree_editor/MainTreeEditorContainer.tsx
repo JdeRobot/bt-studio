@@ -9,12 +9,12 @@ const MainTreeEditorContainer = ({
   projectName,
   setProjectEdited,
   setGlobalJson,
-  modelJson
+  modelJson,
 }: {
   projectName: string;
   setProjectEdited: React.Dispatch<React.SetStateAction<boolean>>;
   setGlobalJson: Function;
-  modelJson:any;
+  modelJson: any;
 }) => {
   const [initialJson, setInitialJson] = useState("");
   const [treeStructure, setTreeStructure] = useState("");
@@ -57,7 +57,7 @@ const MainTreeEditorContainer = ({
     setInitialJson(modelJson);
     getBTTree();
     console.log("Changing view!");
-  }, [view])
+  }, [view]);
 
   return (
     <div id="editor-container">
