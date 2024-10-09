@@ -8,6 +8,8 @@ import TreeEditor from "../TreeEditor";
 import { getSubtree } from "../../../api_helper/TreeWrapper";
 import "./SubTreeModal.css";
 import { saveSubtree } from "../../../api_helper/TreeWrapper";
+import axios from "axios";
+import { TreeViewType } from "../../helper/TreeEditorHelper";
 
 const SubtreeModal = ({
   isOpen,
@@ -25,6 +27,23 @@ const SubtreeModal = ({
   // STATE
   const [initialJson, setInitialJson] = useState("");
   const [resultJson, setResultJson] = useState("");
+  const [treeStructure, setTreeStructure] = useState("");
+  const [view, changeView] = useState<TreeViewType>(TreeViewType.Editor);
+
+  const getBTTree = async () => {
+    try {
+      const response = await axios.get("/tree_api/get_tree_structure/", {
+        params: {
+          project_name: projectName,
+        },
+      });
+      if (response.data.success) {
+        setTreeStructure(response.data.tree_structure);
+      }
+    } catch (error) {
+      console.error("Error fetching graph:", error);
+    }
+  };
 
   // EFFECTS
   useEffect(() => {
@@ -39,8 +58,16 @@ const SubtreeModal = ({
         }
       }
     };
+
     fetchSubtree();
+    getBTTree();
   }, [isOpen, projectName, subtreeName]);
+
+  useEffect(() => {
+    setInitialJson(resultJson);
+    getBTTree();
+    console.log("Changing view!");
+  }, [view])
 
   const handleCancel = async () => {
     try {
@@ -78,6 +105,9 @@ const SubtreeModal = ({
               projectName={projectName}
               setDiagramEdited={setDiagramEdited}
               hasSubtrees={false}
+              treeStructure={treeStructure}
+              view={view}
+              changeView={changeView}
             />
           )}
         </div>
