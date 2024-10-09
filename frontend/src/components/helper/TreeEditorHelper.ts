@@ -23,6 +23,11 @@ export enum ActionNodePortType {
   Output = 1,
 }
 
+export enum TreeViewType {
+  Editor = 0,
+  Visualizer = 1,
+}
+
 export const isActionNode = (nodeName: string) => {
   // Check if the node is a user written action
   return ![
