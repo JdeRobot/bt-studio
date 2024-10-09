@@ -7,6 +7,8 @@ import { ReactComponent as SubtreeIcon } from "./img/subtree.svg";
 import { ReactComponent as EditActionIcon } from "./img/edit_action.svg";
 import { ReactComponent as HelpIcon } from "./img/help.svg";
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
+import { ReactComponent as EyeOpenIcon } from "./img/eye_open.svg";
+import { ReactComponent as EyeClosedIcon } from "./img/eye_closed.svg";
 import { Menu, MenuItem } from "@mui/material";
 
 import {
@@ -14,6 +16,7 @@ import {
   getSubtreeList,
   getActionsList,
 } from "../../api_helper/TreeWrapper";
+import { TreeViewType } from "../helper/TreeEditorHelper";
 
 var NODE_MENU_ITEMS: Record<string, string[]> = {
   Sequences: ["Sequence", "ReactiveSequence", "SequenceWithMemory"],
@@ -71,6 +74,8 @@ const NodeMenu = ({
   onZoomToFit,
   onEditAction,
   hasSubtrees,
+  view,
+  changeView
 }: {
   projectName: string;
   onAddNode: Function;
@@ -78,6 +83,8 @@ const NodeMenu = ({
   onZoomToFit: MouseEventHandler;
   onEditAction: MouseEventHandler;
   hasSubtrees: boolean;
+  view: TreeViewType;
+  changeView: Function;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>("");
@@ -214,6 +221,18 @@ const NodeMenu = ({
           title="Help"
         >
           <HelpIcon className="icon action-icon" fill={"var(--icon)"} />
+        </button>
+        <button
+          id="node-change-view-button"
+          className="node-action-button"
+          onClick={() => changeView((view === TreeViewType.Editor) ? TreeViewType.Visualizer : TreeViewType.Editor)}
+          title="Change view"
+        >
+          {view === TreeViewType.Editor ? (
+            <EyeOpenIcon className="header-icon" stroke={"var(--icon)"} />
+          ) : (
+            <EyeClosedIcon className="header-icon" stroke={"var(--icon)"} />
+          )}
         </button>
       </div>
     </div>
