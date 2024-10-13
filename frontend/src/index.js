@@ -6,6 +6,8 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "beautiful-react-diagrams/styles.css";
 
+import {OptionsProvider} from "./components/options/Options";
+
 // Load Google Font
 WebFont.load({
   google: {
@@ -21,7 +23,9 @@ WebFont.load({
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
-  <App />,
+    <OptionsProvider>
+      <App />,
+    </OptionsProvider>
   // </React.StrictMode>,
 );
 

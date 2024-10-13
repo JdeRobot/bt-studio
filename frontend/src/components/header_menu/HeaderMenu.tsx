@@ -34,7 +34,6 @@ const HeaderMenu = ({
   modelJson,
   projectChanges,
   setProjectChanges,
-  settingsProps,
   gazeboEnabled,
   setGazeboEnabled,
   // onSetShowExecStatus,
@@ -47,7 +46,6 @@ const HeaderMenu = ({
   modelJson: string;
   projectChanges: boolean;
   setProjectChanges: Function;
-  settingsProps: Object;
   gazeboEnabled: boolean;
   setGazeboEnabled: Function;
   manager: CommsManager;
@@ -347,7 +345,6 @@ const HeaderMenu = ({
           onSubmit={onSubmit}
           onClose={onCloseSettingsModal}
           currentProjectname={currentProjectname}
-          settings={settingsProps}
         />
 
         <div className="header-button-container">

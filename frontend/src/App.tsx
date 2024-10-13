@@ -14,6 +14,8 @@ import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorCont
 import CommsManager from "./api_helper/CommsManager";
 import { loadProjectConfig } from "./api_helper/TreeWrapper";
 
+import {OptionsContext} from "./components/options/Options";
+
 const App = () => {
   const [editorWidth, setEditorWidth] = useState<number>(600);
   const [currentFilename, setCurrentFilename] = useState<string>("");
@@ -30,35 +32,7 @@ const App = () => {
   const [diagramEditorReady, setDiagramEditorReady] = useState<boolean>(false);
   const [appRunning, setAppRunning] = useState<boolean>(false);
 
-  // TODO: temporary
-  // const [showExecStatus, setShowExecStatus] = useState<boolean>(true);
-  // const onSetShowExecStatus = () => {
-  //   setShowExecStatus(!showExecStatus)
-  // }
-
-  // const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  // const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
-  ////////////////////// SETTINGS //////////////////////
-
-  // TODO: try to not repeat the default values
-  const [editorShowAccentColors, setEditorShowAccentColors] = useState(true);
-  const [theme, setTheme] = useState("dark");
-  const [btOrder, setBtOrder] = useState("bottom-to-top");
-
-  // Setting => name: {setter: function, value: name, default_value: default_value}
-  const settings = {
-    editorShowAccentColors: {
-      setter: setEditorShowAccentColors,
-      value: editorShowAccentColors,
-      default_value: true,
-    },
-    theme: { setter: setTheme, value: theme, default_value: "dark" },
-    btOrder: {
-      setter: setBtOrder,
-      value: btOrder,
-      default_value: "bottom-to-top",
-    },
-  };
+  const settings = React.useContext(OptionsContext);
   //////////////////////////////////////////////////////
 
   // RB manager setup
@@ -120,7 +94,7 @@ const App = () => {
   };
 
   return (
-    <div className="App" data-theme={theme}>
+    <div className="App" data-theme={settings.theme.value}>
       {/* <ErrorModal isOpen={isErrorModalOpen} onClose={closeError} /> */}
 
       <HeaderMenu
@@ -131,7 +105,6 @@ const App = () => {
         modelJson={modelJson}
         projectChanges={projectChanges}
         setProjectChanges={setProjectChanges}
-        settingsProps={settings}
         gazeboEnabled={gazeboEnabled}
         setGazeboEnabled={setGazeboEnabled}
         // onSetShowExecStatus={onSetShowExecStatus}
@@ -146,7 +119,7 @@ const App = () => {
             currentProjectname={currentProjectname}
             setProjectChanges={setProjectChanges}
             actionNodesData={actionNodesData}
-            showAccentColor={editorShowAccentColors}
+            showAccentColor={"editorShowAccentColors"}
             diagramEditorReady={diagramEditorReady}
           />
         </div>
