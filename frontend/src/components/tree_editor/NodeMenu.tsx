@@ -227,6 +227,7 @@ const NodeMenu = ({
           <ReturnIcon className="icon action-icon" fill={"var(--icon)"} />
         </button>
       </div>
+      <h3 className="subtree-name">Placeholder for subtree name</h3>
     </div>
   );
 };
