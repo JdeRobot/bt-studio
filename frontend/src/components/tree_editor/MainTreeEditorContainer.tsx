@@ -83,7 +83,9 @@ const MainTreeEditorContainer = ({
       console.log("Current hierarchy: ", currentHierarchy);
       console.log("Saving subtree: ", previousSubTreeName);
       console.log("Previous result JSON before saving: ", previousResultJson);
-      saveSubtreeJson(previousResultJson, previousSubTreeName); // Save the correct previous subtree
+      if (previousSubTreeName) {
+        saveSubtreeJson(previousResultJson, previousSubTreeName); // Save the correct previous subtree
+      }
     }
 
     setWentBack(false);
