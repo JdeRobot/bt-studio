@@ -14,7 +14,7 @@ import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorCont
 import CommsManager from "./api_helper/CommsManager";
 import { loadProjectConfig } from "./api_helper/TreeWrapper";
 
-import {OptionsContext} from "./components/options/Options";
+import { OptionsContext } from "./components/options/Options";
 
 const App = () => {
   const [editorWidth, setEditorWidth] = useState<number>(600);

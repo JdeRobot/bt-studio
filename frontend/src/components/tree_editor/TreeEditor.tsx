@@ -57,7 +57,7 @@ const TreeEditor = memo(
     view: TreeViewType;
     changeView: Function;
   }) => {
-    const settings  = React.useContext(OptionsContext); 
+    const settings = React.useContext(OptionsContext);
 
     const [subtreeModalOpen, setSubTreeModalOpen] = useState(false);
     const [subTreeName, setSubTreeName] = useState("");
@@ -77,7 +77,7 @@ const TreeEditor = memo(
     );
 
     useEffect(() => {
-      setBtOrder(settings.btOrder.value)
+      setBtOrder(settings.btOrder.value);
     }, [settings.btOrder.value]);
 
     const updateJsonState = () => {

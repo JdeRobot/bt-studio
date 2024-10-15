@@ -12,18 +12,13 @@ import Setting from "./sections/Setting";
 import Dropdown from "./options/Dropdown";
 import Checkbox from "./options/Checkbox";
 
-import {OptionsContext} from "../options/Options"
+import { OptionsContext } from "../options/Options";
 
-const SettingsModal = ({
-  onSubmit,
-  isOpen,
-  onClose,
-  currentProjectname,
-}) => {
+const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
   const [color, setColor] = useColor("rgb(128 0 128)");
   const [open, setOpen] = useState(false);
 
-  const settings  = React.useContext(OptionsContext); 
+  const settings = React.useContext(OptionsContext);
 
   useEffect(() => {
     // Load settings

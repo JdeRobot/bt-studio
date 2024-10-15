@@ -1,34 +1,34 @@
-import { createContext, useState } from 'react';
+import { createContext, useState } from "react";
 
 const OptionsContext = createContext<SettingsData>({
-    editorShowAccentColors: {
-      setter: () => {},
-      value: true,
-      default_value: true,
-    },
-    theme: { setter: () => {}, value: "dark", default_value: "dark"},
-    btOrder: {
-      setter: () => {},
-      value: "bottom-to-top",
-      default_value: "bottom-to-top",
-    },
+  editorShowAccentColors: {
+    setter: () => {},
+    value: true,
+    default_value: true,
+  },
+  theme: { setter: () => {}, value: "dark", default_value: "dark" },
+  btOrder: {
+    setter: () => {},
+    value: "bottom-to-top",
+    default_value: "bottom-to-top",
+  },
 });
 
 export interface SettingsData {
-    editorShowAccentColors: {
-      setter: Function,
-      value: boolean,
-      default_value: boolean,
-    },
-    theme: { setter: Function, value: string, default_value: string},
-    btOrder: {
-      setter: Function,
-      value: string,
-      default_value: string,
-    },
+  editorShowAccentColors: {
+    setter: Function;
+    value: boolean;
+    default_value: boolean;
+  };
+  theme: { setter: Function; value: string; default_value: string };
+  btOrder: {
+    setter: Function;
+    value: string;
+    default_value: string;
+  };
 }
 
-const OptionsProvider = ({ children } : {children:any}) => {
+const OptionsProvider = ({ children }: { children: any }) => {
   // TODO: try to not repeat the default values
   const [editorShowAccentColors, setEditorShowAccentColors] = useState(true);
   const [theme, setTheme] = useState("dark");
@@ -49,11 +49,11 @@ const OptionsProvider = ({ children } : {children:any}) => {
     },
   };
 
- return (
-   <OptionsContext.Provider value={settings}>
-     {children}
-   </OptionsContext.Provider>
- );
+  return (
+    <OptionsContext.Provider value={settings}>
+      {children}
+    </OptionsContext.Provider>
+  );
 };
 
 export { OptionsContext, OptionsProvider };
