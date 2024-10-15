@@ -2,7 +2,11 @@ import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import TreeEditor from "./TreeEditor";
-import { getProjectGraph, getSubtree } from "../../api_helper/TreeWrapper";
+import {
+  getProjectGraph,
+  getSubtree,
+  saveSubtree,
+} from "../../api_helper/TreeWrapper";
 
 const MainTreeEditorContainer = ({
   projectName,
@@ -20,6 +24,7 @@ const MainTreeEditorContainer = ({
   const [subTreeName, setSubTreeName] = useState("");
   const [treeHierarchy, setTreeHierarchy] = useState([] as string[]);
   const [goBack, setGoBack] = useState(false);
+  const [wentBack, setWentBack] = useState(false);
 
   // HELPERS
 
@@ -29,6 +34,19 @@ const MainTreeEditorContainer = ({
         ? await getSubtree(subTreeName, projectName)
         : await getProjectGraph(projectName);
       setInitialJson(graph_json);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const saveSubtreeJson = async (
+    previousResultJson: string,
+    previousName: string
+  ) => {
+    try {
+      await saveSubtree(previousResultJson, projectName, previousName);
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(error);
@@ -46,7 +64,6 @@ const MainTreeEditorContainer = ({
   // EFFECTS
 
   useEffect(() => {
-    console.log("Result JSON: ", resultJson);
     // When no subtree is selected, set the global json
     if (!subTreeName) {
       setGlobalJson(resultJson);
@@ -54,11 +71,25 @@ const MainTreeEditorContainer = ({
   }, [resultJson]);
 
   useEffect(() => {
-    // Fetch graph when component mounts
-    fetchTree();
-    if (subTreeName) {
+    if (subTreeName && !wentBack) {
+      console.log("Tracking hierarchy!");
       trackTreeHierarchy(subTreeName);
+
+      // Check if there's at least one item in the hierarchy before attempting to save
+      const currentHierarchy = treeHierarchy;
+      const previousResultJson = resultJson;
+      const previousSubTreeName = treeHierarchy[currentHierarchy.length - 1];
+
+      console.log("Current hierarchy: ", currentHierarchy);
+      console.log("Saving subtree: ", previousSubTreeName);
+      console.log("Previous result JSON before saving: ", previousResultJson);
+      saveSubtreeJson(previousResultJson, previousSubTreeName); // Save the correct previous subtree
     }
+
+    setWentBack(false);
+
+    // Fetch the new subtree or project graph
+    fetchTree();
     console.log("Getting graph!");
   }, [projectName, subTreeName]);
 
@@ -70,6 +101,7 @@ const MainTreeEditorContainer = ({
         return newHierarchy;
       });
       setGoBack(false);
+      setWentBack(true);
     }
   }, [goBack]);
 
