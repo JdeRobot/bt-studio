@@ -88,6 +88,7 @@ const MainTreeEditorContainer = ({
       }
     }
 
+    // We can go back again now
     setWentBack(false);
 
     // Fetch the new subtree or project graph

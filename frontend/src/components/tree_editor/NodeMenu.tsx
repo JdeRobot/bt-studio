@@ -7,6 +7,7 @@ import { ReactComponent as SubtreeIcon } from "./img/subtree.svg";
 import { ReactComponent as EditActionIcon } from "./img/edit_action.svg";
 import { ReactComponent as HelpIcon } from "./img/help.svg";
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
+import { ReactComponent as ReturnIcon } from "./img/return.svg";
 import { Menu, MenuItem } from "@mui/material";
 
 import {
@@ -223,7 +224,7 @@ const NodeMenu = ({
           onClick={() => setGoBack(true)}
           title="Go Back"
         >
-          <ZoomToFitIcon className="icon action-icon" fill={"var(--icon)"} />
+          <ReturnIcon className="icon action-icon" fill={"var(--icon)"} />
         </button>
       </div>
     </div>
