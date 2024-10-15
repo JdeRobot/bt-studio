@@ -13,11 +13,15 @@ const MainTreeEditorContainer = ({
   setProjectEdited: React.Dispatch<React.SetStateAction<boolean>>;
   setGlobalJson: Function;
 }) => {
+  // STATES
+
   const [initialJson, setInitialJson] = useState("");
   const [resultJson, setResultJson] = useState("");
   const [subTreeName, setSubTreeName] = useState("");
   const [treeHierarchy, setTreeHierarchy] = useState([] as string[]);
   const [goBack, setGoBack] = useState(false);
+
+  // HELPERS
 
   const fetchTree = async () => {
     try {
@@ -38,6 +42,16 @@ const MainTreeEditorContainer = ({
       setTreeHierarchy((prevHierarchy) => [...prevHierarchy, newSubTreeName]);
     }
   };
+
+  // EFFECTS
+
+  useEffect(() => {
+    console.log("Result JSON: ", resultJson);
+    // When no subtree is selected, set the global json
+    if (!subTreeName) {
+      setGlobalJson(resultJson);
+    }
+  }, [resultJson]);
 
   useEffect(() => {
     // Fetch graph when component mounts
@@ -69,7 +83,7 @@ const MainTreeEditorContainer = ({
       {initialJson ? (
         <TreeEditor
           modelJson={initialJson}
-          setResultJson={setGlobalJson}
+          setResultJson={setResultJson}
           projectName={projectName}
           setDiagramEdited={setProjectEdited}
           hasSubtrees={true}
