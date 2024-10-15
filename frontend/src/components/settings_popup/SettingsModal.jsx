@@ -116,11 +116,11 @@ const SettingsModal = ({
                     />
                   </Setting>
                 </SubSection>
-                <SubSection title="Editor">
+                {/* <SubSection title="Editor">
                   <Setting title="Show actions accent color">
                     <Checkbox setting={settings.editorShowAccentColors} />
                   </Setting>
-                </SubSection>
+                </SubSection> */}
               </Section>
               <Section title="Behaviour Tree">
                 <SubSection title="Execution settings">
