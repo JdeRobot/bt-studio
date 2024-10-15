@@ -20,12 +20,22 @@ import { OutputPortModel } from "./nodes/basic_node/ports/output_port/OutputPort
 import { InputPortModel } from "./nodes/basic_node/ports/input_port/InputPortModel";
 import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutputPortModel";
 
-import { configureEngine, isActionNode } from "../helper/TreeEditorHelper";
+import {
+  configureEngine,
+  isActionNode,
+  TreeViewType,
+} from "../helper/TreeEditorHelper";
 
 import SubtreeModal from "./modals/SubTreeModal";
 import NodeMenu from "./NodeMenu";
 import EditActionModal from "./modals/EditActionModal";
 import EditTagModal from "./modals/EditTagModal";
+
+import DiagramVisualizer from "./DiagramVisualizer";
+import CommsManager from "../../api_helper/CommsManager";
+import { OptionsContext } from "../options/Options";
+
+import "./TreeEditor.css";
 
 const TreeEditor = memo(
   ({
@@ -34,13 +44,21 @@ const TreeEditor = memo(
     projectName,
     setDiagramEdited,
     hasSubtrees,
+    treeStructure,
+    view,
+    changeView,
   }: {
     modelJson: any;
     setResultJson: Function;
     projectName: string;
     setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
     hasSubtrees: boolean;
+    treeStructure: any;
+    view: TreeViewType;
+    changeView: Function;
   }) => {
+    const settings = React.useContext(OptionsContext);
+
     const [subtreeModalOpen, setSubTreeModalOpen] = useState(false);
     const [subTreeName, setSubTreeName] = useState("");
     const [editActionModalOpen, setEditActionModalOpen] = useState(false);
@@ -48,6 +66,7 @@ const TreeEditor = memo(
       BasicNodeModel | TagNodeModel | undefined
     >(undefined);
     const [editTagModalOpen, setEditTagModalOpen] = useState(false);
+    const [btOrder, setBtOrder] = useState(settings.btOrder.default_value);
 
     // Model and Engine for models use
     const [modalModel, setModalModel] = useState<DiagramModel | undefined>(
@@ -56,6 +75,10 @@ const TreeEditor = memo(
     const [modalEngine, setModalEngine] = useState<DiagramEngine | undefined>(
       undefined,
     );
+
+    useEffect(() => {
+      setBtOrder(settings.btOrder.value);
+    }, [settings.btOrder.value]);
 
     const updateJsonState = () => {
       if (modalModel) {
@@ -114,20 +137,61 @@ const TreeEditor = memo(
             )}
           </>
         )}
-        <DiagramEditor
-          modelJson={modelJson}
-          setResultJson={setResultJson}
-          projectName={projectName}
-          setDiagramEdited={setDiagramEdited}
-          hasSubtrees={hasSubtrees}
-          setModalModel={setModalModel}
-          setModalEngine={setModalEngine}
-          setSubTreeModalOpen={setSubTreeModalOpen}
-          setSubTreeName={setSubTreeName}
-          setEditActionModalOpen={setEditActionModalOpen}
-          setEditTagModalOpen={setEditTagModalOpen}
-          setCurrentNode={setCurrentNode}
-        />
+        {view === TreeViewType.Visualizer ? (
+          <DiagramVisualizer
+            modelJson={modelJson}
+            manager={CommsManager.getInstance()}
+            treeStructure={treeStructure}
+            view={view}
+            changeView={changeView}
+          />
+        ) : (
+          <DiagramEditor
+            modelJson={modelJson}
+            setResultJson={setResultJson}
+            projectName={projectName}
+            setDiagramEdited={setDiagramEdited}
+            view={view}
+            changeView={changeView}
+            hasSubtrees={hasSubtrees}
+            setModalModel={setModalModel}
+            setModalEngine={setModalEngine}
+            setSubTreeModalOpen={setSubTreeModalOpen}
+            setSubTreeName={setSubTreeName}
+            setEditActionModalOpen={setEditActionModalOpen}
+            setEditTagModalOpen={setEditTagModalOpen}
+            setCurrentNode={setCurrentNode}
+          />
+        )}
+        <button className="bt-order-indicator" title={"BT Order: " + btOrder}>
+          <svg
+            className="w-6 h-6 text-gray-800 dark:text-white"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            {btOrder === "bottom-to-top" ? (
+              <path
+                stroke="var(--background)"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 6v13m0-13 4 4m-4-4-4 4"
+              />
+            ) : (
+              <path
+                stroke="var(--background)"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 19V5m0 14-4-4m4 4 4-4"
+              />
+            )}
+          </svg>
+        </button>
       </div>
     );
   },
@@ -139,6 +203,8 @@ const DiagramEditor = memo(
     setResultJson,
     projectName,
     setDiagramEdited,
+    view,
+    changeView,
     hasSubtrees,
     setModalModel,
     setModalEngine,
@@ -152,6 +218,8 @@ const DiagramEditor = memo(
     setResultJson: Function;
     projectName: string;
     setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
+    view: TreeViewType;
+    changeView: Function;
     hasSubtrees: boolean;
     setModalModel: Function;
     setModalEngine: Function;
@@ -471,6 +539,8 @@ const DiagramEditor = memo(
           onZoomToFit={zoomToFit}
           onEditAction={onNodeEditor}
           hasSubtrees={hasSubtrees}
+          view={view}
+          changeView={changeView}
         />
         {engine.current && (
           <CanvasWidget className="canvas" engine={engine.current} />

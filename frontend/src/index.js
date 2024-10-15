@@ -6,6 +6,8 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "beautiful-react-diagrams/styles.css";
 
+import { OptionsProvider } from "./components/options/Options";
+
 // Load Google Font
 WebFont.load({
   google: {
@@ -20,9 +22,11 @@ WebFont.load({
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  // <React.StrictMode>
+  <OptionsProvider>
+    <App />,
+  </OptionsProvider>,
+  // </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

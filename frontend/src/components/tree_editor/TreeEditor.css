@@ -3,3 +3,15 @@
   width: 100%;
   background-color: var(--canvas-background);
 }
+
+.bt-order-indicator {
+  display: flex;
+  position: relative;
+  width: 30px;
+  height: 30px;
+  bottom: 25px;
+  border: 0;
+  background-color: transparent;
+  margin-left: auto;
+  justify-content: center;
+}
