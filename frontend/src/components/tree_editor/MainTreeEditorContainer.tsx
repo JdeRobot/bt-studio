@@ -98,6 +98,7 @@ const MainTreeEditorContainer = ({
 
   useEffect(() => {
     if (goBack) {
+      saveSubtreeJson(resultJson, subTreeName); // Save the current subtree
       setTreeHierarchy((prevHierarchy) => {
         const newHierarchy = prevHierarchy.slice(0, -1);
         setSubTreeName(newHierarchy[newHierarchy.length - 1] || "");
