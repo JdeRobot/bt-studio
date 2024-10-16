@@ -830,26 +830,49 @@ def generate_app(request):
 
         # Get the subtrees that are present in the tree
         possible_trees = [file.split(".")[0] for file in os.listdir(subtree_path)]
+
+        # Track processed subtrees to avoid reprocessing
+        processed_subtrees = set()
+
+        # Read and parse the main tree
         with open(main_tree_tmp_path) as f:
             main_tree_str = f.read()
         main_tree = ET.fromstring(main_tree_str)
-        subtrees = tree_generator.get_subtree_set(main_tree, possible_trees)
 
-        for subtree_file in os.listdir(subtree_path):
-            if subtree_file.split(".")[0] not in subtrees:
-                continue
+        # Keep processing until no more subtrees are found
+        while True:
+            # Get the current subtrees present in the tree
+            subtrees = tree_generator.get_subtree_set(main_tree, possible_trees)
 
-            subtree_tmp_path = os.path.join(
-                result_trees_tmp_path, subtree_file.replace(".json", ".xml")
-            )
-            subtree_graph = open(os.path.join(subtree_path, subtree_file)).read()
-            print("Processing subtree: ", subtree_file)
-            json_translator.translate(
-                subtree_graph,
-                subtree_tmp_path,
-                bt_order,
-            )
-            print("Subtree processed")
+            # Check if there are any unprocessed subtrees
+            unprocessed_subtrees = [s for s in subtrees if s not in processed_subtrees]
+
+            if not unprocessed_subtrees:
+                print("No more subtrees to process")
+                # No more subtrees to process, exit the loop
+                break
+
+            for subtree_file in os.listdir(subtree_path):
+                subtree_name = subtree_file.split(".")[0]
+                if subtree_name not in unprocessed_subtrees:
+                    continue
+
+                subtree_tmp_path = os.path.join(
+                    result_trees_tmp_path, subtree_file.replace(".json", ".xml")
+                )
+                subtree_graph = open(os.path.join(subtree_path, subtree_file)).read()
+                print("Processing subtree: ", subtree_file)
+
+                # Translate the subtree
+                json_translator.translate(
+                    subtree_graph,
+                    subtree_tmp_path,
+                    bt_order,
+                )
+                print("Subtree processed")
+
+                # Mark this subtree as processed
+                processed_subtrees.add(subtree_name)
 
         # Generate a self-contained tree
         tree_generator.generate(
