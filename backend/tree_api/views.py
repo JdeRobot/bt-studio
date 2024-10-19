@@ -278,16 +278,21 @@ def save_subtree(request):
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, project_name)
-    subtree_path = os.path.join(
-        project_path, "code", "trees", "subtrees", f"{subtree_name}.json"
+    json_path = os.path.join(
+        project_path, "code", "trees", "subtrees", "json", f"{subtree_name}.json"
+    )
+    xml_path = os.path.join(
+        project_path, "code", "trees", "subtrees", f"{subtree_name}.xml"
     )
 
     if project_path and subtree_name and subtree_json:
 
         try:
             # Write the subtree JSON to the file
-            with open(subtree_path, "w") as f:
+            with open(json_path, "w") as f:
                 f.write(subtree_json)
+
+            json_translator.translate(subtree_json, xml_path, "bottom-to-top")
 
             return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
@@ -324,10 +329,9 @@ def get_subtree(request):
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     subtree_path = os.path.join(
-        project_path, "code/trees/subtrees/", f"{subtree_name}.json"
+        project_path, "code/trees/subtrees/json", f"{subtree_name}.json"
     )
 
-    print(subtree_path)
     if os.path.exists(subtree_path):
         with open(subtree_path, "r") as f:
             subtree = json.load(f)
@@ -834,15 +838,15 @@ def generate_app(request):
         # Track processed subtrees to avoid reprocessing
         processed_subtrees = set()
 
-        # Read and parse the main tree
+        # Start with the main tree
         with open(main_tree_tmp_path) as f:
             main_tree_str = f.read()
-        main_tree = ET.fromstring(main_tree_str)
+        current_tree = ET.fromstring(main_tree_str)
 
-        # Keep processing until no more subtrees are found
+        # Translate all the subtrees recursively
         while True:
-            # Get the current subtrees present in the tree
-            subtrees = tree_generator.get_subtree_set(main_tree, possible_trees)
+            # Get the subtrees that are present in the current tree
+            subtrees = tree_generator.get_subtree_set(current_tree, possible_trees)
 
             # Check if there are any unprocessed subtrees
             unprocessed_subtrees = [s for s in subtrees if s not in processed_subtrees]
@@ -869,7 +873,6 @@ def generate_app(request):
                     subtree_tmp_path,
                     bt_order,
                 )
-                print("Subtree processed")
 
                 # Mark this subtree as processed
                 processed_subtrees.add(subtree_name)

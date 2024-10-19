@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<Root name="Tree Root">
+  <BehaviorTree>
+    <Sequence name="Sequence">
+      <Forward name="Forward"/>
+      <CheckObstacle name="CheckObstacle"/>
+    </Sequence>
+  </BehaviorTree>
+</Root>

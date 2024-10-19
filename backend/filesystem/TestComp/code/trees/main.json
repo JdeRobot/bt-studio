@@ -57,8 +57,8 @@
                         {
                             "id": "739b0e25-46da-40b5-9f83-233ce52cd5f4",
                             "type": "point",
-                            "x": 636.019656072042,
-                            "y": 107.27954500890095
+                            "x": 636.0312737732802,
+                            "y": 107.28124696513333
                         }
                     ],
                     "labels": [],
@@ -85,8 +85,8 @@
                         {
                             "id": "7c7a6c56-e39e-4302-8d0f-a700b4e5bd1b",
                             "type": "point",
-                            "x": 636.6617005611881,
-                            "y": 271.9201681009197
+                            "x": 636.6563356991508,
+                            "y": 271.90625645867215
                         }
                     ],
                     "labels": [],
@@ -139,8 +139,8 @@
                         {
                             "id": "63fc5b76-ebf0-4de6-aa4f-05404b494f3a",
                             "type": "parent",
-                            "x": 631.0196046536588,
-                            "y": 102.27954908909115,
+                            "x": 631.0312963529947,
+                            "y": 102.28125104532353,
                             "name": "parent",
                             "alignment": "left",
                             "parentNode": "61ab023c-e0a3-4a85-b5bf-9bfdb2ba3c00",
@@ -199,15 +199,15 @@
                 "da6daeeb-fadd-41df-8350-920867f81e7b": {
                     "id": "da6daeeb-fadd-41df-8350-920867f81e7b",
                     "type": "basic",
-                    "selected": true,
+                    "selected": false,
                     "x": 634.6617066079941,
                     "y": 250.9201625340947,
                     "ports": [
                         {
                             "id": "5588906f-ad99-4d1a-9a2b-2afee0f709f9",
                             "type": "parent",
-                            "x": 631.6616861418536,
-                            "y": 266.9201721811099,
+                            "x": 631.6562842807682,
+                            "y": 266.90626053886234,
                             "name": "parent",
                             "alignment": "left",
                             "parentNode": "da6daeeb-fadd-41df-8350-920867f81e7b",
@@ -220,7 +220,7 @@
                     ],
                     "name": "TestSub",
                     "color": "rgb(179,89,0)",
-                    "is_selected": true,
+                    "is_selected": false,
                     "is_subtree": true
                 }
             }

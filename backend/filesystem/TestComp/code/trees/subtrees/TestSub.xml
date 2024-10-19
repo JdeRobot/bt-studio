@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<Root name="Tree Root">
+  <BehaviorTree>
+    <Sequence name="Sequence">
+      <Turn name="Turn"/>
+      <Forward name="Forward"/>
+      <Prueb1 name="Prueb1"/>
+      <OtherTest name="OtherTest"/>
+    </Sequence>
+  </BehaviorTree>
+</Root>
