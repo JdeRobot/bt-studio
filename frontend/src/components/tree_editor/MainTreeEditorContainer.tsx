@@ -43,7 +43,7 @@ const MainTreeEditorContainer = ({
 
   const saveSubtreeJson = async (
     previousResultJson: string,
-    previousName: string
+    previousName: string,
   ) => {
     try {
       await saveSubtree(previousResultJson, projectName, previousName);

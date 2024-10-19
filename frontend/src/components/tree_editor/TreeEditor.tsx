@@ -52,10 +52,10 @@ const TreeEditor = memo(
 
     // Model and Engine for models use
     const [modalModel, setModalModel] = useState<DiagramModel | undefined>(
-      undefined
+      undefined,
     );
     const [modalEngine, setModalEngine] = useState<DiagramEngine | undefined>(
-      undefined
+      undefined,
     );
 
     const updateJsonState = () => {
@@ -118,7 +118,7 @@ const TreeEditor = memo(
         />
       </div>
     );
-  }
+  },
 );
 
 const DiagramEditor = memo(
@@ -468,7 +468,7 @@ const DiagramEditor = memo(
         )}
       </div>
     );
-  }
+  },
 );
 
 export default TreeEditor;
