@@ -42,6 +42,7 @@ class Forward(py_trees.behaviour.Behaviour):
         msg = geometry_msgs.msg.Twist()
         msg.linear.x = float(tree_tools.get_port_content(self.ports["speed"]))
         self.publisher.publish(msg)
+        print("Forward")
 
         return py_trees.common.Status.RUNNING
 

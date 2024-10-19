@@ -41,6 +41,7 @@ class Turn(py_trees.behaviour.Behaviour):
         msg = geometry_msgs.msg.Twist()
         msg.angular.z = 0.4
         self.publisher.publish(msg)
+        print("Turning")
 
         return py_trees.common.Status.RUNNING
 
