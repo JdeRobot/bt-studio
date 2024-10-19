@@ -188,6 +188,7 @@ def get_project_configuration(request):
     else:
         return Response({"error": "Project parameter is missing"}, status=400)
 
+
 @api_view(["GET"])
 def get_tree_structure(request):
 
@@ -217,6 +218,7 @@ def get_tree_structure(request):
         return Response(
             {"error": "The project does not have a graph definition"}, status=404
         )
+
 
 @api_view(["POST"])
 def save_project_configuration(request):
