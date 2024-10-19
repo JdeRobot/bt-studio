@@ -828,59 +828,33 @@ def generate_app(request):
         # Translate the received JSON
         main_tree_tmp_path = os.path.join(result_trees_tmp_path, "main.xml")
         json_translator.translate(main_tree_graph, main_tree_tmp_path, bt_order)
-        print("Translated main tree")
+        print("Received main tree translated")
 
-        # Translate subtrees
-
-        # Get the subtrees that are present in the tree
-        possible_trees = [file.split(".")[0] for file in os.listdir(subtree_path)]
-
-        # Track processed subtrees to avoid reprocessing
-        processed_subtrees = set()
-
-        # Start with the main tree
-        with open(main_tree_tmp_path) as f:
-            main_tree_str = f.read()
-        current_tree = ET.fromstring(main_tree_str)
-
-        # Translate all the subtrees recursively
-        while True:
-            # Get the subtrees that are present in the current tree
-            subtrees = tree_generator.get_subtree_set(current_tree, possible_trees)
-
-            # Check if there are any unprocessed subtrees
-            unprocessed_subtrees = [s for s in subtrees if s not in processed_subtrees]
-
-            if not unprocessed_subtrees:
-                print("No more subtrees to process")
-                # No more subtrees to process, exit the loop
-                break
-
-            for subtree_file in os.listdir(subtree_path):
-                subtree_name = subtree_file.split(".")[0]
-                if subtree_name not in unprocessed_subtrees:
-                    continue
-
-                subtree_tmp_path = os.path.join(
-                    result_trees_tmp_path, subtree_file.replace(".json", ".xml")
+        # Copy all the subtrees to the temp folder
+        for subtree_file in os.listdir(subtree_path):
+            if subtree_file.endswith(".xml"):
+                shutil.copy(
+                    os.path.join(subtree_path, subtree_file), result_trees_tmp_path
                 )
-                subtree_graph = open(os.path.join(subtree_path, subtree_file)).read()
-                print("Processing subtree: ", subtree_file)
-
-                # Translate the subtree
-                json_translator.translate(
-                    subtree_graph,
-                    subtree_tmp_path,
-                    bt_order,
-                )
-
-                # Mark this subtree as processed
-                processed_subtrees.add(subtree_name)
 
         # Generate a self-contained tree
         tree_generator.generate(
             result_trees_tmp_path, action_path, self_contained_tree_path
         )
+        # while True:
+
+        #     current_tree = tree_generator.generate(
+        #         result_trees_tmp_path, action_path, main_tree_tmp_path
+        #     )
+
+        #     # No changes in the main tree, break and save the self-contained tree
+        #     if previous_tree == current_tree:
+        #         with open(self_contained_tree_path, "w") as f:
+        #             f.write(current_tree)
+        #         print("No changes in the tree, saving self-contained tree")
+        #         break
+
+        #     previous_tree = current_tree
 
         # Using the self-contained tree, package the ROS 2 app
         zip_file_path = app_generator.generate(

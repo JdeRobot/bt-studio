@@ -2,10 +2,10 @@
 <Root name="Tree Root">
   <BehaviorTree>
     <Sequence name="Sequence">
-      <Turn name="Turn"/>
-      <Forward name="Forward"/>
-      <Prueb1 name="Prueb1"/>
       <OtherTest name="OtherTest"/>
+      <Forward name="Forward"/>
+      <Turn name="Turn"/>
+      <Prueb1 name="Prueb1"/>
     </Sequence>
   </BehaviorTree>
 </Root>
