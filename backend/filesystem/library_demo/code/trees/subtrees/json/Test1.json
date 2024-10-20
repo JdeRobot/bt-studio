@@ -1,0 +1,48 @@
+{
+    "id": "fa2362dc-cffa-4764-9b70-90d475be0c02",
+    "offsetX": -5.628119613229821,
+    "offsetY": 4.788388817065306,
+    "zoom": 66,
+    "gridSize": 0,
+    "layers": [
+        {
+            "id": "1d9af8b5-858e-4253-9057-fbf3c9f2442d",
+            "type": "diagram-links",
+            "isSvg": true,
+            "transformed": true,
+            "models": {}
+        },
+        {
+            "id": "fed3b351-5f1a-4cad-9f61-031f8a6af57e",
+            "type": "diagram-nodes",
+            "isSvg": false,
+            "transformed": true,
+            "models": {
+                "94891f48-9deb-4724-a39d-3551b000dcf6": {
+                    "id": "94891f48-9deb-4724-a39d-3551b000dcf6",
+                    "type": "basic",
+                    "selected": false,
+                    "x": 200,
+                    "y": 200,
+                    "ports": [
+                        {
+                            "id": "d988236c-73d4-423a-8acc-05911daede71",
+                            "type": "children",
+                            "x": 291.64069082023457,
+                            "y": 215.99999978001466,
+                            "name": "children",
+                            "alignment": "right",
+                            "parentNode": "94891f48-9deb-4724-a39d-3551b000dcf6",
+                            "links": [],
+                            "in": false,
+                            "label": "children"
+                        }
+                    ],
+                    "name": "Tree Root",
+                    "color": "rgb(0,204,0)",
+                    "is_selected": false
+                }
+            }
+        }
+    ]
+}

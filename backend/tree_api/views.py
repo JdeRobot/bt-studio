@@ -269,19 +269,29 @@ def create_subtree(request):
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
-    init_json_path = os.path.join(settings.BASE_DIR, "templates/init_graph.json")
-    init_xml_path = os.path.join(settings.BASE_DIR, "templates/init_graph.xml")
-    json_path = os.path.join(
+    library_path = os.path.join(settings.BASE_DIR, "library", subtree_name)
+    template_path = os.path.join(settings.BASE_DIR, "templates")
+    src_path = template_path
+
+    # Check if the subtree is already implemented on the library
+    if os.path.exists(library_path):
+        src_path = library_path
+
+    # Setup init and copy paths
+    init_json_path = os.path.join(src_path, "graph.json")
+    init_xml_path = os.path.join(src_path, "graph.xml")
+    project_json_path = os.path.join(
         project_path, "code", "trees", "subtrees", "json", f"{subtree_name}.json"
     )
-    xml_path = os.path.join(
+    project_xml_path = os.path.join(
         project_path, "code", "trees", "subtrees", f"{subtree_name}.xml"
     )
 
-    if not os.path.exists(json_path) and not os.path.exists(xml_path):
-        print("Copying")
-        shutil.copy(init_json_path, json_path)
-        shutil.copy(init_xml_path, xml_path)
+    # Copy the subtree to the project
+    if not os.path.exists(project_json_path) and not os.path.exists(project_xml_path):
+        print("Copying from: " + src_path)
+        shutil.copy(init_json_path, project_json_path)
+        shutil.copy(init_xml_path, project_xml_path)
         return Response({"success": True}, status=status.HTTP_201_CREATED)
     else:
         return Response(
