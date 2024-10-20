@@ -66,7 +66,7 @@ const MainTreeEditorContainer = ({
     previousName: string,
   ) => {
     if (view === TreeViewType.Visualizer) {
-      return
+      return;
     }
     try {
       await saveSubtree(previousResultJson, projectName, previousName);
@@ -125,7 +125,7 @@ const MainTreeEditorContainer = ({
       saveSubtreeJson(resultJson, subTreeName); // Save the current subtree
       setTreeHierarchy((prevHierarchy) => {
         const newHierarchy = prevHierarchy.slice(0, -1);
-        console.log("SET")
+        console.log("SET");
         setSubTreeName(newHierarchy[newHierarchy.length - 1] || "");
         return newHierarchy;
       });

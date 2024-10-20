@@ -59,7 +59,7 @@ const TreeEditor = memo(
     view: TreeViewType;
     changeView: Function;
     setSubTreeName: Function;
-    subTreeName:string;
+    subTreeName: string;
     setGoBack: Function;
   }) => {
     const settings = React.useContext(OptionsContext);
@@ -207,7 +207,7 @@ const DiagramEditor = memo(
     setEditTagModalOpen,
     setCurrentNode,
     setGoBack,
-    subTreeName
+    subTreeName,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -223,7 +223,7 @@ const DiagramEditor = memo(
     setEditTagModalOpen: Function;
     setCurrentNode: Function;
     setGoBack: Function;
-    subTreeName:string;
+    subTreeName: string;
   }) => {
     // VARS
 

@@ -78,7 +78,7 @@ const DiagramVisualizer = memo(
     view,
     changeView,
     setGoBack,
-    subTreeName
+    subTreeName,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -87,7 +87,7 @@ const DiagramVisualizer = memo(
     view: any;
     changeView: any;
     setGoBack: Function;
-    subTreeName:string;
+    subTreeName: string;
   }) => {
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
@@ -122,7 +122,7 @@ const DiagramVisualizer = memo(
     // Fixes uncomplete first serialization
     setTimeout(() => {
       console.log("Rendered!");
-      setResultJson(model.current.serialize())
+      setResultJson(model.current.serialize());
     }, 1);
 
     return (

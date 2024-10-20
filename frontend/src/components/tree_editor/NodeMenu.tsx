@@ -77,7 +77,7 @@ const NodeMenu = ({
   view,
   changeView,
   setGoBack,
-  subTreeName
+  subTreeName,
 }: {
   projectName: string;
   onAddNode: Function;
@@ -88,7 +88,7 @@ const NodeMenu = ({
   view: TreeViewType;
   changeView: Function;
   setGoBack: Function;
-  subTreeName:string;
+  subTreeName: string;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>("");
