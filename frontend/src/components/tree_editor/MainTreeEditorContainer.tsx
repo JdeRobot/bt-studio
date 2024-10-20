@@ -158,6 +158,7 @@ const MainTreeEditorContainer = ({
           view={view}
           changeView={changeView}
           setSubTreeName={setSubTreeName}
+          subTreeName={subTreeName}
           setGoBack={setGoBack}
         />
       ) : (

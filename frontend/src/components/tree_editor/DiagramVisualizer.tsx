@@ -78,6 +78,7 @@ const DiagramVisualizer = memo(
     view,
     changeView,
     setGoBack,
+    subTreeName
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -86,6 +87,7 @@ const DiagramVisualizer = memo(
     view: any;
     changeView: any;
     setGoBack: Function;
+    subTreeName:string;
   }) => {
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
@@ -135,6 +137,7 @@ const DiagramVisualizer = memo(
           view={view}
           changeView={changeView}
           setGoBack={setGoBack}
+          subTreeName={subTreeName}
         />
         {engine.current && (
           <CanvasWidget className="canvas" engine={engine.current} />

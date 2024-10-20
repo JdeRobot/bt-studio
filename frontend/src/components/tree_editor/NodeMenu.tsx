@@ -77,6 +77,7 @@ const NodeMenu = ({
   view,
   changeView,
   setGoBack,
+  subTreeName
 }: {
   projectName: string;
   onAddNode: Function;
@@ -87,6 +88,7 @@ const NodeMenu = ({
   view: TreeViewType;
   changeView: Function;
   setGoBack: Function;
+  subTreeName:string;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>("");
@@ -251,7 +253,7 @@ const NodeMenu = ({
           <ReturnIcon className="header-icon" fill={"var(--icon)"} />
         </button>
       </div>
-      <h3 className="subtree-name">Placeholder for subtree name</h3>
+      <h2 className="subtree-name">{subTreeName}</h2>
     </div>
   );
 };

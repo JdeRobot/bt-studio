@@ -47,6 +47,7 @@ const TreeEditor = memo(
     view,
     changeView,
     setSubTreeName,
+    subTreeName,
     setGoBack,
   }: {
     modelJson: any;
@@ -58,6 +59,7 @@ const TreeEditor = memo(
     view: TreeViewType;
     changeView: Function;
     setSubTreeName: Function;
+    subTreeName:string;
     setGoBack: Function;
   }) => {
     const settings = React.useContext(OptionsContext);
@@ -134,6 +136,7 @@ const TreeEditor = memo(
             view={view}
             changeView={changeView}
             setGoBack={setGoBack}
+            subTreeName={subTreeName}
           />
         ) : (
           <DiagramEditor
@@ -151,6 +154,7 @@ const TreeEditor = memo(
             setEditTagModalOpen={setEditTagModalOpen}
             setCurrentNode={setCurrentNode}
             setGoBack={setGoBack}
+            subTreeName={subTreeName}
           />
         )}
         <button className="bt-order-indicator" title={"BT Order: " + btOrder}>
@@ -203,6 +207,7 @@ const DiagramEditor = memo(
     setEditTagModalOpen,
     setCurrentNode,
     setGoBack,
+    subTreeName
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -218,6 +223,7 @@ const DiagramEditor = memo(
     setEditTagModalOpen: Function;
     setCurrentNode: Function;
     setGoBack: Function;
+    subTreeName:string;
   }) => {
     // VARS
 
@@ -534,6 +540,7 @@ const DiagramEditor = memo(
           view={view}
           changeView={changeView}
           setGoBack={setGoBack}
+          subTreeName={subTreeName}
         />
         {engine.current && (
           <CanvasWidget className="canvas" engine={engine.current} />
