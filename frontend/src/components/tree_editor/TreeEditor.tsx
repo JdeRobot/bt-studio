@@ -26,9 +26,6 @@ import {
   TreeViewType,
 } from "../helper/TreeEditorHelper";
 
-import SubtreeModal from "./modals/SubTreeModal";
-import { saveSubtree } from "../../api_helper/TreeWrapper";
-
 import NodeMenu from "./NodeMenu";
 import EditActionModal from "./modals/EditActionModal";
 import EditTagModal from "./modals/EditTagModal";
@@ -136,6 +133,7 @@ const TreeEditor = memo(
             treeStructure={treeStructure}
             view={view}
             changeView={changeView}
+            setGoBack={setGoBack}
           />
         ) : (
           <DiagramEditor
