@@ -36,6 +36,7 @@ def create_project(request):
 
     tree_path = os.path.join(project_path, "code/trees")
     subtree_path = os.path.join(tree_path, "subtrees")
+    subtree_json_path = os.path.join(subtree_path, "json")
     init_graph_path = os.path.join(settings.BASE_DIR, "templates/init_graph.json")
 
     # Default cfg values
@@ -56,6 +57,7 @@ def create_project(request):
         os.mkdir(universes_path)
         os.mkdir(tree_path)
         os.mkdir(subtree_path)
+        os.mkdir(subtree_json_path)
 
         # Create default config
         with open(config_path, "w") as cfg:
