@@ -271,13 +271,19 @@ def create_subtree(request):
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
+    project_actions_path = os.path.join(project_path, "code", "actions")
     library_path = os.path.join(settings.BASE_DIR, "library", subtree_name)
+    library_actions_path = os.path.join(library_path, "actions")
     template_path = os.path.join(settings.BASE_DIR, "templates")
     src_path = template_path
 
     # Check if the subtree is already implemented on the library
     if os.path.exists(library_path):
         src_path = library_path
+        if os.path.exists(library_actions_path):
+            shutil.copytree(
+                library_actions_path, project_actions_path, dirs_exist_ok=True
+            )
 
     # Setup init and copy paths
     init_json_path = os.path.join(src_path, "graph.json")
