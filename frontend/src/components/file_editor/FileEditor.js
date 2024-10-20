@@ -22,7 +22,7 @@ const FileEditor = ({
   const initFile = async () => {
     try {
       const response = await axios.get(
-        `/tree_api/get_file?project_name=${currentProjectname}&filename=${currentFilename}`
+        `/tree_api/get_file?project_name=${currentProjectname}&filename=${currentFilename}`,
       );
       const content = response.data.content;
       setFileContent(content);
