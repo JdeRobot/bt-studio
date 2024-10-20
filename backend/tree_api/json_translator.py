@@ -81,7 +81,6 @@ def get_data_ports(node_models, link_models, node_id):
 
 
 def build_xml(node_models, link_models, tree_structure, node_id, xml_parent, order):
-
     node_name = node_models[node_id]["name"]
     data_ports = get_data_ports(node_models, link_models, node_id)
 
@@ -192,6 +191,8 @@ def translate(content, tree_path, raw_order):
 
     # Save the xml in the specified route
     xml_string = prettify_xml(root)
+    print(xml_string)
+    print(tree_path)
     f = open(tree_path, "w")
     f.write(xml_string)
     f.close()

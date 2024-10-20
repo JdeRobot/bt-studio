@@ -33,6 +33,7 @@ const FileEditor = ({
   };
 
   const autoSave = async () => {
+    console.log("Auto saving file...");
     try {
       const response = await axios.post("/tree_api/save_file/", {
         project_name: currentProjectname,

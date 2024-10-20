@@ -1,19 +1,20 @@
 import py_trees
 import geometry_msgs
+import tree_tools
 
 
-class Turn(py_trees.behaviour.Behaviour):
+class Forward(py_trees.behaviour.Behaviour):
     def __init__(self, name, ports=None):
         """Constructor, executed when the class is instantiated"""
 
-        # Configure the name of the behavioure
+        # Configure the name of the behaviour
         super().__init__(name)
         self.logger.debug("%s.__init__()" % (self.__class__.__name__))
 
         # Get the ports
         self.ports = ports
 
-    def setup(self, **kwargs: int) -> None:
+    def setup(self, **kwargs) -> None:
         """Executed when the setup function is called upon the tree"""
 
         # Get the node passed from the tree (needed for interaction with ROS)
@@ -39,8 +40,9 @@ class Turn(py_trees.behaviour.Behaviour):
 
         # Publish the speed msg
         msg = geometry_msgs.msg.Twist()
-        msg.angular.z = 0.4
+        msg.linear.x = float(tree_tools.get_port_content(self.ports["speed"]))
         self.publisher.publish(msg)
+        print("Forward")
 
         return py_trees.common.Status.RUNNING
 

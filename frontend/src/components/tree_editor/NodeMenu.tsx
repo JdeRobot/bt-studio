@@ -7,6 +7,7 @@ import { ReactComponent as SubtreeIcon } from "./img/subtree.svg";
 import { ReactComponent as EditActionIcon } from "./img/edit_action.svg";
 import { ReactComponent as HelpIcon } from "./img/help.svg";
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
+import { ReactComponent as ReturnIcon } from "./img/return.svg";
 import { Menu, MenuItem } from "@mui/material";
 
 import {
@@ -71,6 +72,7 @@ const NodeMenu = ({
   onZoomToFit,
   onEditAction,
   hasSubtrees,
+  setGoBack,
 }: {
   projectName: string;
   onAddNode: Function;
@@ -78,6 +80,7 @@ const NodeMenu = ({
   onZoomToFit: MouseEventHandler;
   onEditAction: MouseEventHandler;
   hasSubtrees: boolean;
+  setGoBack: Function;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>("");
@@ -215,7 +218,16 @@ const NodeMenu = ({
         >
           <HelpIcon className="icon action-icon" fill={"var(--icon)"} />
         </button>
+        <button
+          id="node-action-back-button"
+          className="node-action-button"
+          onClick={() => setGoBack(true)}
+          title="Go Back"
+        >
+          <ReturnIcon className="icon action-icon" fill={"var(--icon)"} />
+        </button>
       </div>
+      <h3 className="subtree-name">Placeholder for subtree name</h3>
     </div>
   );
 };
