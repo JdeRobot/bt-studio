@@ -41,8 +41,6 @@ class Turn(py_trees.behaviour.Behaviour):
         # Get values from the ports
         speed = tree_tools.get_port_content(self.ports["speed"])
         direction = tree_tools.get_port_content(self.ports["direction"])
-        print(speed)
-        print(direction)
 
         # Check if speed and direction are not empty before converting
         if speed and direction:
