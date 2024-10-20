@@ -170,7 +170,7 @@ const HeaderMenu = ({
       const appBlob = await generateApp(
         modelJson,
         currentProjectname,
-        "bottom-to-top",
+        "top-to-bottom",
       );
 
       // Create a download link and trigger download
@@ -202,7 +202,7 @@ const HeaderMenu = ({
         const appBlob = await generateDockerizedApp(
           modelJson,
           currentProjectname,
-          "bottom-to-top",
+          "top-to-bottom",
         );
 
         // Convert the blob to base64 using FileReader

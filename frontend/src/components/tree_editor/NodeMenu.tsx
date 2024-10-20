@@ -9,6 +9,7 @@ import { ReactComponent as HelpIcon } from "./img/help.svg";
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
 import { ReactComponent as EyeOpenIcon } from "./img/eye_open.svg";
 import { ReactComponent as EyeClosedIcon } from "./img/eye_closed.svg";
+import { ReactComponent as ReturnIcon } from "./img/return.svg";
 import { Menu, MenuItem } from "@mui/material";
 
 import {
@@ -76,6 +77,7 @@ const NodeMenu = ({
   hasSubtrees,
   view,
   changeView,
+  setGoBack,
 }: {
   projectName: string;
   onAddNode: Function;
@@ -85,6 +87,7 @@ const NodeMenu = ({
   hasSubtrees: boolean;
   view: TreeViewType;
   changeView: Function;
+  setGoBack: Function;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>("");
@@ -240,7 +243,16 @@ const NodeMenu = ({
             <EyeClosedIcon className="header-icon" stroke={"var(--icon)"} />
           )}
         </button>
+        <button
+          id="node-action-back-button"
+          className="node-action-button"
+          onClick={() => setGoBack(true)}
+          title="Go Back"
+        >
+          <ReturnIcon className="header-icon" fill={"var(--icon)"} />
+        </button>
       </div>
+      <h3 className="subtree-name">Placeholder for subtree name</h3>
     </div>
   );
 };

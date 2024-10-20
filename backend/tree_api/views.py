@@ -269,16 +269,19 @@ def create_subtree(request):
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
-    init_graph_path = os.path.join(settings.BASE_DIR, "templates/init_graph.json")
-    subtree_path = os.path.join(
-        project_path, "code/trees/subtrees/", f"{subtree_name}.json"
+    init_json_path = os.path.join(settings.BASE_DIR, "templates/init_graph.json")
+    init_xml_path = os.path.join(settings.BASE_DIR, "templates/init_graph.xml")
+    json_path = os.path.join(
+        project_path, "code", "trees", "subtrees", "json", f"{subtree_name}.json"
+    )
+    xml_path = os.path.join(
+        project_path, "code", "trees", "subtrees", f"{subtree_name}.xml"
     )
 
-    print(subtree_path)
-
-    if not os.path.exists(subtree_path):
+    if not os.path.exists(json_path) and not os.path.exists(xml_path):
         print("Copying")
-        shutil.copy(init_graph_path, subtree_path)
+        shutil.copy(init_json_path, json_path)
+        shutil.copy(init_xml_path, xml_path)
         return Response({"success": True}, status=status.HTTP_201_CREATED)
     else:
         return Response(
@@ -309,20 +312,27 @@ def save_subtree(request):
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, project_name)
-    subtree_path = os.path.join(
-        project_path, "code", "trees", "subtrees", f"{subtree_name}.json"
+    json_path = os.path.join(
+        project_path, "code", "trees", "subtrees", "json", f"{subtree_name}.json"
+    )
+    xml_path = os.path.join(
+        project_path, "code", "trees", "subtrees", f"{subtree_name}.xml"
     )
 
     if project_path and subtree_name and subtree_json:
 
         try:
             # Write the subtree JSON to the file
-            with open(subtree_path, "w") as f:
+            with open(json_path, "w") as f:
                 f.write(subtree_json)
+
+            # TOFIX: order hardcoded
+            json_translator.translate(subtree_json, xml_path, "top-to-bottom")
 
             return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
         except Exception as e:
+            print(e)
             return JsonResponse(
                 {"success": False, "message": f"Error saving subtree: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -355,13 +365,12 @@ def get_subtree(request):
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     subtree_path = os.path.join(
-        project_path, "code/trees/subtrees/", f"{subtree_name}.json"
+        project_path, "code/trees/subtrees/json", f"{subtree_name}.json"
     )
 
-    print(subtree_path)
     if os.path.exists(subtree_path):
         with open(subtree_path, "r") as f:
-            subtree = f.read()
+            subtree = json.load(f)
             return Response({"subtree": subtree}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -835,6 +844,7 @@ def generate_app(request):
     app_name = request.data.get("app_name")
     main_tree_graph = request.data.get("tree_graph")
     bt_order = request.data.get("bt_order")
+    print("bt order: ", bt_order)
 
     # Make folder path relative  to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -855,32 +865,13 @@ def generate_app(request):
         # Translate the received JSON
         main_tree_tmp_path = os.path.join(result_trees_tmp_path, "main.xml")
         json_translator.translate(main_tree_graph, main_tree_tmp_path, bt_order)
-        print("Translated main tree")
 
-        # Translate subtrees
-
-        # Get the subtrees that are present in the tree
-        possible_trees = [file.split(".")[0] for file in os.listdir(subtree_path)]
-        with open(main_tree_tmp_path) as f:
-            main_tree_str = f.read()
-        main_tree = ET.fromstring(main_tree_str)
-        subtrees = tree_generator.get_subtree_set(main_tree, possible_trees)
-
+        # Copy all the subtrees to the temp folder
         for subtree_file in os.listdir(subtree_path):
-            if subtree_file.split(".")[0] not in subtrees:
-                continue
-
-            subtree_tmp_path = os.path.join(
-                result_trees_tmp_path, subtree_file.replace(".json", ".xml")
-            )
-            subtree_graph = open(os.path.join(subtree_path, subtree_file)).read()
-            print("Processing subtree: ", subtree_file)
-            json_translator.translate(
-                subtree_graph,
-                subtree_tmp_path,
-                bt_order,
-            )
-            print("Subtree processed")
+            if subtree_file.endswith(".xml"):
+                shutil.copy(
+                    os.path.join(subtree_path, subtree_file), result_trees_tmp_path
+                )
 
         # Generate a self-contained tree
         tree_generator.generate(
@@ -941,6 +932,7 @@ def generate_dockerized_app(request):
     app_name = request.data.get("app_name")
     main_tree_graph = request.data.get("tree_graph")
     bt_order = request.data.get("bt_order")
+    print("Dockerized bt order: ", bt_order)
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -969,33 +961,12 @@ def generate_dockerized_app(request):
         main_tree_tmp_path = os.path.join(result_trees_tmp_path, "main.xml")
         json_translator.translate(main_tree_graph, main_tree_tmp_path, bt_order)
 
-        # 3. Translate subtrees
-
-        # Get the subtrees that are present in the tree
-        try:
-            possible_trees = [file.split(".")[0] for file in os.listdir(subtree_path)]
-            with open(main_tree_tmp_path) as f:
-                main_tree_str = f.read()
-            main_tree = ET.fromstring(main_tree_str)
-            subtrees = tree_generator.get_subtree_set(main_tree, possible_trees)
-
-            for subtree_file in os.listdir(subtree_path):
-                if subtree_file.split(".")[0] not in subtrees:
-                    continue
-
-                subtree_tmp_path = os.path.join(
-                    result_trees_tmp_path, subtree_file.replace(".json", ".xml")
+        # 3. Copy all the subtrees to the temp folder
+        for subtree_file in os.listdir(subtree_path):
+            if subtree_file.endswith(".xml"):
+                shutil.copy(
+                    os.path.join(subtree_path, subtree_file), result_trees_tmp_path
                 )
-                subtree_graph = open(os.path.join(subtree_path, subtree_file)).read()
-                print("Processing subtree: ", subtree_file)
-                json_translator.translate(
-                    subtree_graph,
-                    subtree_tmp_path,
-                    bt_order,
-                )
-                print("Subtree processed")
-        except:
-            print("No subtree")
 
         # 4. Generate a self-contained tree
         tree_generator.generate(

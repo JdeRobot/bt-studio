@@ -27,6 +27,8 @@ import {
 } from "../helper/TreeEditorHelper";
 
 import SubtreeModal from "./modals/SubTreeModal";
+import { saveSubtree } from "../../api_helper/TreeWrapper";
+
 import NodeMenu from "./NodeMenu";
 import EditActionModal from "./modals/EditActionModal";
 import EditTagModal from "./modals/EditTagModal";
@@ -47,6 +49,8 @@ const TreeEditor = memo(
     treeStructure,
     view,
     changeView,
+    setSubTreeName,
+    setGoBack,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -56,11 +60,12 @@ const TreeEditor = memo(
     treeStructure: any;
     view: TreeViewType;
     changeView: Function;
+    setSubTreeName: Function;
+    setGoBack: Function;
   }) => {
     const settings = React.useContext(OptionsContext);
 
     const [subtreeModalOpen, setSubTreeModalOpen] = useState(false);
-    const [subTreeName, setSubTreeName] = useState("");
     const [editActionModalOpen, setEditActionModalOpen] = useState(false);
     const [currentNode, setCurrentNode] = useState<
       BasicNodeModel | TagNodeModel | undefined
@@ -86,10 +91,6 @@ const TreeEditor = memo(
       }
     };
 
-    const onSubTreeModalClose = () => {
-      setSubTreeModalOpen(false);
-    };
-
     const onEditActionModalClose = () => {
       setEditActionModalOpen(false);
       setCurrentNode(undefined);
@@ -102,15 +103,6 @@ const TreeEditor = memo(
 
     return (
       <div>
-        {hasSubtrees && (
-          <SubtreeModal
-            isOpen={subtreeModalOpen}
-            onClose={onSubTreeModalClose}
-            projectName={projectName}
-            subtreeName={subTreeName}
-            setDiagramEdited={setDiagramEdited}
-          />
-        )}
         {currentNode && modalModel && modalEngine && (
           <>
             {currentNode instanceof BasicNodeModel && (
@@ -156,11 +148,11 @@ const TreeEditor = memo(
             hasSubtrees={hasSubtrees}
             setModalModel={setModalModel}
             setModalEngine={setModalEngine}
-            setSubTreeModalOpen={setSubTreeModalOpen}
             setSubTreeName={setSubTreeName}
             setEditActionModalOpen={setEditActionModalOpen}
             setEditTagModalOpen={setEditTagModalOpen}
             setCurrentNode={setCurrentNode}
+            setGoBack={setGoBack}
           />
         )}
         <button className="bt-order-indicator" title={"BT Order: " + btOrder}>
@@ -208,11 +200,11 @@ const DiagramEditor = memo(
     hasSubtrees,
     setModalModel,
     setModalEngine,
-    setSubTreeModalOpen,
     setSubTreeName,
     setEditActionModalOpen,
     setEditTagModalOpen,
     setCurrentNode,
+    setGoBack,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -223,11 +215,11 @@ const DiagramEditor = memo(
     hasSubtrees: boolean;
     setModalModel: Function;
     setModalEngine: Function;
-    setSubTreeModalOpen: Function;
     setSubTreeName: Function;
     setEditActionModalOpen: Function;
     setEditTagModalOpen: Function;
     setCurrentNode: Function;
+    setGoBack: Function;
   }) => {
     // VARS
 
@@ -248,8 +240,10 @@ const DiagramEditor = memo(
       model.current.clearSelection();
       if (node instanceof BasicNodeModel) {
         if (node.getIsSubtree()) {
+          // Save the current subtree json
+          updateJsonState();
+
           setSubTreeName(node.getName());
-          setSubTreeModalOpen(true);
         } else {
           actionEditor(node);
         }
@@ -541,6 +535,7 @@ const DiagramEditor = memo(
           hasSubtrees={hasSubtrees}
           view={view}
           changeView={changeView}
+          setGoBack={setGoBack}
         />
         {engine.current && (
           <CanvasWidget className="canvas" engine={engine.current} />
