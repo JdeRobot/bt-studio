@@ -2,11 +2,11 @@
 <Root name="Tree Root">
   <BehaviorTree>
     <ReactiveSequence name="ReactiveSequence">
-      <ReactiveFallback name="ReactiveFallback">
+      <RetryUntilSuccessful name="RetryUntilSuccessful" num_attempts="10">
         <DistanceWatcher name="DistanceWatcher"/>
-        <Turn name="Turn" speed="0.3" direction="1"/>
-      </ReactiveFallback>
-      <Forward name="Forward" speed="0.5"/>
+      </RetryUntilSuccessful>
+      <AlignPerson name="AlignPerson"/>
+      <Forward name="Forward" speed="0.6"/>
     </ReactiveSequence>
   </BehaviorTree>
 </Root>

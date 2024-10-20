@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<Root name="Tree Root">
+  <BehaviorTree>
+    <ReactiveSequence name="ReactiveSequence">
+      <RetryUntilSuccessful name="RetryUntilSuccessful" num_attempts="10">
+        <DistanceWatcher name="DistanceWatcher"/>
+      </RetryUntilSuccessful>
+      <AlignPerson name="AlignPerson"/>
+      <Forward name="Forward" speed="0.6"/>
+    </ReactiveSequence>
+  </BehaviorTree>
+</Root>
