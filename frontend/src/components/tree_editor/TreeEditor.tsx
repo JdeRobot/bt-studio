@@ -128,6 +128,7 @@ const TreeEditor = memo(
         {view === TreeViewType.Visualizer ? (
           <DiagramVisualizer
             modelJson={modelJson}
+            setResultJson={setResultJson}
             manager={CommsManager.getInstance()}
             treeStructure={treeStructure}
             view={view}

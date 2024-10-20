@@ -1,6 +1,5 @@
 import React, { MouseEventHandler, useEffect, useState } from "react";
 import "./NodeMenu.css";
-import axios from "axios";
 
 import { ReactComponent as DeleteIcon } from "./img/del_node.svg";
 import { ReactComponent as SubtreeIcon } from "./img/subtree.svg";

@@ -65,6 +65,9 @@ const MainTreeEditorContainer = ({
     previousResultJson: string,
     previousName: string,
   ) => {
+    if (view === TreeViewType.Visualizer) {
+      return
+    }
     try {
       await saveSubtree(previousResultJson, projectName, previousName);
     } catch (error: unknown) {
@@ -112,16 +115,17 @@ const MainTreeEditorContainer = ({
     setWentBack(false);
 
     // Fetch the new subtree or project graph
-    getBTTree();
+    // getBTTree();
     fetchTree();
     console.log("Getting graph!");
-  }, [projectName, subTreeName, view]);
+  }, [projectName, subTreeName]);
 
   useEffect(() => {
     if (goBack) {
       saveSubtreeJson(resultJson, subTreeName); // Save the current subtree
       setTreeHierarchy((prevHierarchy) => {
         const newHierarchy = prevHierarchy.slice(0, -1);
+        console.log("SET")
         setSubTreeName(newHierarchy[newHierarchy.length - 1] || "");
         return newHierarchy;
       });
@@ -135,11 +139,11 @@ const MainTreeEditorContainer = ({
     console.log("Updated Subtree hierarchy: ", treeHierarchy);
   }, [treeHierarchy]);
 
-  // useEffect(() => {
-  //   setInitialJson(modelJson);
-  //   getBTTree();
-  //   console.log("Changing view!");
-  // }, [view]);
+  useEffect(() => {
+    // fetchTree();
+    getBTTree();
+    console.log("Changing view!");
+  }, [view]);
 
   return (
     <div id="editor-container">

@@ -72,6 +72,7 @@ const setStatusNode = (
 const DiagramVisualizer = memo(
   ({
     modelJson,
+    setResultJson,
     manager,
     treeStructure,
     view,
@@ -79,6 +80,7 @@ const DiagramVisualizer = memo(
     setGoBack,
   }: {
     modelJson: any;
+    setResultJson: Function;
     manager: any;
     treeStructure: any;
     view: any;
@@ -114,6 +116,12 @@ const DiagramVisualizer = memo(
     const zoomToFit = () => {
       engine.current.zoomToFitNodes({ margin: 50 });
     };
+
+    // Fixes uncomplete first serialization
+    setTimeout(() => {
+      console.log("Rendered!");
+      setResultJson(model.current.serialize())
+    }, 1);
 
     return (
       <div>
