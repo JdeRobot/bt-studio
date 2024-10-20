@@ -1,12 +1,13 @@
 import React, { MouseEventHandler, useEffect, useState } from "react";
 import "./NodeMenu.css";
-import axios from "axios";
 
 import { ReactComponent as DeleteIcon } from "./img/del_node.svg";
 import { ReactComponent as SubtreeIcon } from "./img/subtree.svg";
 import { ReactComponent as EditActionIcon } from "./img/edit_action.svg";
 import { ReactComponent as HelpIcon } from "./img/help.svg";
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
+import { ReactComponent as EyeOpenIcon } from "./img/eye_open.svg";
+import { ReactComponent as EyeClosedIcon } from "./img/eye_closed.svg";
 import { ReactComponent as ReturnIcon } from "./img/return.svg";
 import { Menu, MenuItem } from "@mui/material";
 
@@ -15,6 +16,7 @@ import {
   getSubtreeList,
   getActionsList,
 } from "../../api_helper/TreeWrapper";
+import { TreeViewType } from "../helper/TreeEditorHelper";
 
 var NODE_MENU_ITEMS: Record<string, string[]> = {
   Sequences: ["Sequence", "ReactiveSequence", "SequenceWithMemory"],
@@ -72,7 +74,10 @@ const NodeMenu = ({
   onZoomToFit,
   onEditAction,
   hasSubtrees,
+  view,
+  changeView,
   setGoBack,
+  subTreeName,
 }: {
   projectName: string;
   onAddNode: Function;
@@ -80,7 +85,10 @@ const NodeMenu = ({
   onZoomToFit: MouseEventHandler;
   onEditAction: MouseEventHandler;
   hasSubtrees: boolean;
+  view: TreeViewType;
+  changeView: Function;
   setGoBack: Function;
+  subTreeName: string;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>("");
@@ -219,15 +227,33 @@ const NodeMenu = ({
           <HelpIcon className="icon action-icon" fill={"var(--icon)"} />
         </button>
         <button
+          id="node-change-view-button"
+          className="node-action-button"
+          onClick={() =>
+            changeView(
+              view === TreeViewType.Editor
+                ? TreeViewType.Visualizer
+                : TreeViewType.Editor,
+            )
+          }
+          title="Change view"
+        >
+          {view === TreeViewType.Editor ? (
+            <EyeOpenIcon className="header-icon" stroke={"var(--icon)"} />
+          ) : (
+            <EyeClosedIcon className="header-icon" stroke={"var(--icon)"} />
+          )}
+        </button>
+        <button
           id="node-action-back-button"
           className="node-action-button"
           onClick={() => setGoBack(true)}
           title="Go Back"
         >
-          <ReturnIcon className="icon action-icon" fill={"var(--icon)"} />
+          <ReturnIcon className="header-icon" fill={"var(--icon)"} />
         </button>
       </div>
-      <h3 className="subtree-name">Placeholder for subtree name</h3>
+      <h2 className="subtree-name">{subTreeName}</h2>
     </div>
   );
 };

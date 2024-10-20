@@ -22,8 +22,6 @@ import { ReactComponent as DownloadIcon } from "./img/download.svg";
 import { ReactComponent as RunIcon } from "./img/run.svg";
 import { ReactComponent as StopIcon } from "./img/stop.svg";
 import { ReactComponent as ResetIcon } from "./img/reset.svg";
-import { ReactComponent as EyeOpenIcon } from "./img/eye_open.svg";
-import { ReactComponent as EyeClosedIcon } from "./img/eye_closed.svg";
 import ProjectModal from "./modals/ProjectModal";
 import UniversesModal from "./modals/UniverseModal";
 import SettingsModal from "../settings_popup/SettingsModal";
@@ -36,7 +34,6 @@ const HeaderMenu = ({
   modelJson,
   projectChanges,
   setProjectChanges,
-  settingsProps,
   gazeboEnabled,
   setGazeboEnabled,
   // onSetShowExecStatus,
@@ -49,7 +46,6 @@ const HeaderMenu = ({
   modelJson: string;
   projectChanges: boolean;
   setProjectChanges: Function;
-  settingsProps: Object;
   gazeboEnabled: boolean;
   setGazeboEnabled: Function;
   manager: CommsManager;
@@ -349,7 +345,6 @@ const HeaderMenu = ({
           onSubmit={onSubmit}
           onClose={onCloseSettingsModal}
           currentProjectname={currentProjectname}
-          settings={settingsProps}
         />
 
         <div className="header-button-container">
@@ -418,17 +413,6 @@ const HeaderMenu = ({
           >
             <ResetIcon className="header-icon" stroke={"var(--icon)"} />
           </button>
-          {/* <button
-            className="header-button"
-            onClick={() => onSetShowExecStatus()}
-            title="Toggle status monitoring"
-          >
-            <EyeOpenIcon className="header-icon" stroke={"var(--icon)"} />
-            {appRunning ? (
-            ) : (
-              <EyeClosedIcon className="header-icon" stroke={"var(--icon)"} />
-            )}
-          </button> */}
         </div>
       </Toolbar>
     </AppBar>

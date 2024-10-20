@@ -7,19 +7,24 @@ import {
   getSubtree,
   saveSubtree,
 } from "../../api_helper/TreeWrapper";
+import { TreeViewType } from "../helper/TreeEditorHelper";
 
 const MainTreeEditorContainer = ({
   projectName,
   setProjectEdited,
   setGlobalJson,
+  modelJson,
 }: {
   projectName: string;
   setProjectEdited: React.Dispatch<React.SetStateAction<boolean>>;
   setGlobalJson: Function;
+  modelJson: any;
 }) => {
   // STATES
 
   const [initialJson, setInitialJson] = useState("");
+  const [treeStructure, setTreeStructure] = useState("");
+  const [view, changeView] = useState<TreeViewType>(TreeViewType.Editor);
   const [resultJson, setResultJson] = useState("");
   const [subTreeName, setSubTreeName] = useState("");
   const [treeHierarchy, setTreeHierarchy] = useState([] as string[]);
@@ -41,10 +46,28 @@ const MainTreeEditorContainer = ({
     }
   };
 
+  const getBTTree = async () => {
+    try {
+      const response = await axios.get("/tree_api/get_tree_structure/", {
+        params: {
+          project_name: projectName,
+        },
+      });
+      if (response.data.success) {
+        setTreeStructure(response.data.tree_structure);
+      }
+    } catch (error) {
+      console.error("Error fetching graph:", error);
+    }
+  };
+
   const saveSubtreeJson = async (
     previousResultJson: string,
     previousName: string,
   ) => {
+    if (view === TreeViewType.Visualizer) {
+      return;
+    }
     try {
       await saveSubtree(previousResultJson, projectName, previousName);
     } catch (error: unknown) {
@@ -92,6 +115,7 @@ const MainTreeEditorContainer = ({
     setWentBack(false);
 
     // Fetch the new subtree or project graph
+    // getBTTree();
     fetchTree();
     console.log("Getting graph!");
   }, [projectName, subTreeName]);
@@ -101,6 +125,7 @@ const MainTreeEditorContainer = ({
       saveSubtreeJson(resultJson, subTreeName); // Save the current subtree
       setTreeHierarchy((prevHierarchy) => {
         const newHierarchy = prevHierarchy.slice(0, -1);
+        console.log("SET");
         setSubTreeName(newHierarchy[newHierarchy.length - 1] || "");
         return newHierarchy;
       });
@@ -114,6 +139,12 @@ const MainTreeEditorContainer = ({
     console.log("Updated Subtree hierarchy: ", treeHierarchy);
   }, [treeHierarchy]);
 
+  useEffect(() => {
+    // fetchTree();
+    getBTTree();
+    console.log("Changing view!");
+  }, [view]);
+
   return (
     <div id="editor-container">
       {initialJson ? (
@@ -123,7 +154,11 @@ const MainTreeEditorContainer = ({
           projectName={projectName}
           setDiagramEdited={setProjectEdited}
           hasSubtrees={true}
+          treeStructure={treeStructure}
+          view={view}
+          changeView={changeView}
           setSubTreeName={setSubTreeName}
+          subTreeName={subTreeName}
           setGoBack={setGoBack}
         />
       ) : (
