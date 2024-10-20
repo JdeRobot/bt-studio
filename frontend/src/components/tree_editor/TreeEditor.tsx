@@ -62,7 +62,6 @@ const TreeEditor = memo(
   }) => {
     const settings = React.useContext(OptionsContext);
 
-    const [subtreeModalOpen, setSubTreeModalOpen] = useState(false);
     const [editActionModalOpen, setEditActionModalOpen] = useState(false);
     const [currentNode, setCurrentNode] = useState<
       BasicNodeModel | TagNodeModel | undefined

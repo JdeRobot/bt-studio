@@ -115,7 +115,7 @@ const MainTreeEditorContainer = ({
     getBTTree();
     fetchTree();
     console.log("Getting graph!");
-  }, [projectName, subTreeName]);
+  }, [projectName, subTreeName, view]);
 
   useEffect(() => {
     if (goBack) {
@@ -135,11 +135,11 @@ const MainTreeEditorContainer = ({
     console.log("Updated Subtree hierarchy: ", treeHierarchy);
   }, [treeHierarchy]);
 
-  useEffect(() => {
-    setInitialJson(modelJson);
-    getBTTree();
-    console.log("Changing view!");
-  }, [view]);
+  // useEffect(() => {
+  //   setInitialJson(modelJson);
+  //   getBTTree();
+  //   console.log("Changing view!");
+  // }, [view]);
 
   return (
     <div id="editor-container">
