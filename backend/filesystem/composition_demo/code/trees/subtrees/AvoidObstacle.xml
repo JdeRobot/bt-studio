@@ -2,6 +2,9 @@
 <Root name="Tree Root">
   <BehaviorTree>
     <ReactiveFallback name="ReactiveFallback">
+      <Inverter name="Inverter">
+        <ObstacleDetection name="ObstacleDetection"/>
+      </Inverter>
       <Turn name="Turn"/>
     </ReactiveFallback>
   </BehaviorTree>

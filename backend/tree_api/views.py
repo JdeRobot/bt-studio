@@ -301,6 +301,7 @@ def save_subtree(request):
             return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
         except Exception as e:
+            print(e)
             return JsonResponse(
                 {"success": False, "message": f"Error saving subtree: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

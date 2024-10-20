@@ -102,7 +102,6 @@ def add_actions_code(tree, actions, action_path):
 
 # Replaces all the subtrees in a given tree depth
 def replace_subtrees_in_tree(tree, subtrees, tree_path):
-    print("Tree before: " + ET.tostring(tree, encoding="unicode"))
 
     for subtree_name in subtrees:
         subtree_path = os.path.join(tree_path, f"{subtree_name}.xml")
@@ -130,8 +129,6 @@ def replace_subtrees_in_tree(tree, subtrees, tree_path):
                                 print(str(e))
                         # Remove the original subtree tag
                         parent.remove(subtree_tag)
-
-    print("Tree with substituted subs: " + ET.tostring(tree, encoding="unicode"))
 
 
 # Recursively replace all subtrees in a given tree
