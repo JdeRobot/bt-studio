@@ -140,6 +140,7 @@ const TreeEditor = memo(
             setGoBack={setGoBack}
             subTreeName={subTreeName}
             subTreeStructure={subTreeStructure}
+            setSubTreeName={setSubTreeName}
           />
         ) : (
           <DiagramEditor

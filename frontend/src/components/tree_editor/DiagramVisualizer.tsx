@@ -5,6 +5,7 @@ import { CanvasWidget } from "@projectstorm/react-canvas-core";
 import "./DiagramEditor.css";
 import { changeColorNode, configureEngine } from "../helper/TreeEditorHelper";
 import NodeMenu from "./NodeMenu";
+import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
 
 const setTreeStatus = (
   model: any,
@@ -103,6 +104,7 @@ const DiagramVisualizer = memo(
     setGoBack,
     subTreeName,
     subTreeStructure,
+    setSubTreeName,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -113,19 +115,13 @@ const DiagramVisualizer = memo(
     setGoBack: Function;
     subTreeName: string;
     subTreeStructure: number[];
+    setSubTreeName: Function;
   }) => {
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
     const engine = useRef(createEngine());
+    var lastClickedNodeId = "";
 
-    // Configure the engine
-    configureEngine(engine);
-
-    // Deserialize and load the model
-    console.log("Diagram Visualizer");
-    model.current.deserializeModel(modelJson, engine.current);
-    model.current.setLocked(true);
-    engine.current.setModel(model.current);
 
     const updateExecState = (msg: any) => {
       if (msg && msg.command === "update" && msg.data.update !== "") {
@@ -145,10 +141,48 @@ const DiagramVisualizer = memo(
 
     manager.unsubscribe("update", updateExecState);
     manager.subscribe("update", updateExecState);
+    
+    // MODAL MANAGEMENT
+    const openSubtree = () => {
+      const node = model.current.getNode(lastClickedNodeId);
+      lastClickedNodeId = "";
+      model.current.clearSelection();
+      if (node instanceof BasicNodeModel) {
+        if (node.getIsSubtree()) {
+          setSubTreeName(node.getName());
+        }
+      }
+    };
+
+    // Click listener
+    const attachClickListener = (node: any) => {
+      node.registerListener({
+        selectionChanged: (event: any) => {
+          if (event.isSelected) {
+            lastClickedNodeId = node.getID();
+          }
+        },
+      });
+    };
 
     const zoomToFit = () => {
       engine.current.zoomToFitNodes({ margin: 50 });
     };
+
+    // Configure the engine
+    configureEngine(engine, openSubtree);
+
+    // Deserialize and load the model
+    console.log("Diagram Visualizer");
+    model.current.deserializeModel(modelJson, engine.current);
+    model.current.setLocked(true);
+    engine.current.setModel(model.current);
+
+    // After deserialization, attach listeners to each node
+    const nodes = model.current.getNodes();
+    nodes.forEach((node) => {
+      attachClickListener(node);
+    });
 
     // Fixes uncomplete first serialization
     setTimeout(() => {
