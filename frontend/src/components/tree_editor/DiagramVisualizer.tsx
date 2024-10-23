@@ -22,7 +22,9 @@ const setStatusNode = (
   engine: any,
   updateTree: any,
   baseTree: any,
+  index: number = 0,
 ) => {
+  //TODO: match baseTree subTree name to update data
   var nodeName = baseTree["name"];
   var nodeId = baseTree["id"];
 
@@ -40,12 +42,16 @@ const setStatusNode = (
     nodeStatus = updateTree[nodeName]["state"];
   } catch (error) {
     nodeStatus = "NONE";
+    var nodeData = Object.entries(updateTree)[index][1] as {state: string}
+    nodeStatus = nodeData.state
   }
 
   var node = model.getNode(nodeId);
 
+  var index = 1;
   nodeChilds.forEach((element: any) => {
-    setStatusNode(model, engine, updateTree[nodeName], element);
+    setStatusNode(model, engine, updateTree[nodeName], element, index);
+    index += 1;
   });
 
   // node.setExecStatus(nodeStatus);
