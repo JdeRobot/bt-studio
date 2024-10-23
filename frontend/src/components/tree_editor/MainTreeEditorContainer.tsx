@@ -84,8 +84,6 @@ const MainTreeEditorContainer = ({
         }
         setTreeStructure(tree_structure);
         setSubTreeStructure(path);
-        console.log(tree_structure);
-        console.log(path);
       }
     } catch (error) {
       console.error("Error fetching graph:", error);

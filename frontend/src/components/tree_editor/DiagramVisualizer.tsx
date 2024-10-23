@@ -26,9 +26,9 @@ const setTreeStatus = (
   }
 
   // console.log(updateTree);
-  console.log("Estate", stateTree);
-  console.log("Base", baseTree);
-  console.log("Hierarchy", subtreeHierarchy);
+  // console.log("Estate", stateTree);
+  // console.log("Base", baseTree);
+  // console.log("Hierarchy", subtreeHierarchy);
   setStatusNode(model, engine, stateTree, baseTree);
 };
 
@@ -42,8 +42,6 @@ const setStatusNode = (
   var nodeName = baseTree["name"];
   var nodeId = baseTree["id"];
 
-  console.log(nodeName, nodeId);
-
   var nodeChilds;
   try {
     nodeChilds = baseTree["childs"];
@@ -51,15 +49,12 @@ const setStatusNode = (
     nodeChilds = [];
   }
 
-  //TODO: fix for decorators
-
   var nodeStatus;
   try {
     nodeStatus = updateTree[nodeName]["state"];
   } catch (error) {
     nodeStatus = "NONE";
     if (updateTree) {
-      console.log(updateTree);
       var nodeData = Object.entries(updateTree)[index][1] as { state: string };
       nodeStatus = nodeData.state;
     }
@@ -123,7 +118,6 @@ const DiagramVisualizer = memo(
     const model = useRef(new DiagramModel());
     const engine = useRef(createEngine());
 
-    // There is no need to use an effect as the editor will re render when the model json changes
     // Configure the engine
     configureEngine(engine);
 
