@@ -122,7 +122,6 @@ const DiagramVisualizer = memo(
     const engine = useRef(createEngine());
     var lastClickedNodeId = "";
 
-
     const updateExecState = (msg: any) => {
       if (msg && msg.command === "update" && msg.data.update !== "") {
         const updateStatus = JSON.parse(msg.data.update);
@@ -141,7 +140,7 @@ const DiagramVisualizer = memo(
 
     manager.unsubscribe("update", updateExecState);
     manager.subscribe("update", updateExecState);
-    
+
     // MODAL MANAGEMENT
     const openSubtree = () => {
       const node = model.current.getNode(lastClickedNodeId);
