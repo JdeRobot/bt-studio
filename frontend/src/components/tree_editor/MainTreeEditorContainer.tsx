@@ -7,7 +7,8 @@ import {
   getSubtree,
   saveSubtree,
 } from "../../api_helper/TreeWrapper";
-import { TreeViewType } from "../helper/TreeEditorHelper";
+import { TreeViewType, findSubtree } from "../helper/TreeEditorHelper";
+import { OptionsContext } from "../options/Options";
 
 const MainTreeEditorContainer = ({
   projectName,
@@ -20,14 +21,17 @@ const MainTreeEditorContainer = ({
   setGlobalJson: Function;
   modelJson: any;
 }) => {
+  const settings = React.useContext(OptionsContext);
+
   // STATES
 
   const [initialJson, setInitialJson] = useState("");
   const [treeStructure, setTreeStructure] = useState("");
+  const [subTreeStructure, setSubTreeStructure] = useState<number[]>([]);
   const [view, changeView] = useState<TreeViewType>(TreeViewType.Editor);
   const [resultJson, setResultJson] = useState("");
   const [subTreeName, setSubTreeName] = useState("");
-  const [treeHierarchy, setTreeHierarchy] = useState([] as string[]);
+  const [treeHierarchy, setTreeHierarchy] = useState<string[]>([]);
   const [goBack, setGoBack] = useState(false);
   const [wentBack, setWentBack] = useState(false);
 
@@ -46,6 +50,22 @@ const MainTreeEditorContainer = ({
     }
   };
 
+  const getSubtreeStructure = async (name: string) => {
+    try {
+      const response = await axios.get("/tree_api/get_subtree_structure/", {
+        params: {
+          project_name: projectName,
+          subtree_name: name,
+        },
+      });
+      if (response.data.success) {
+        return response.data.tree_structure;
+      }
+    } catch (error) {
+      console.error("Error fetching graph:", error);
+    }
+  };
+
   const getBTTree = async () => {
     try {
       const response = await axios.get("/tree_api/get_tree_structure/", {
@@ -54,7 +74,19 @@ const MainTreeEditorContainer = ({
         },
       });
       if (response.data.success) {
-        setTreeStructure(response.data.tree_structure);
+        // Navigate until root using baseTree
+        var path: number[] = [];
+        var tree_structure = response.data.tree_structure;
+        for (let index = 0; index < treeHierarchy.length; index++) {
+          var nextSubtree = treeHierarchy[index];
+          if (nextSubtree) {
+            var new_path = findSubtree(tree_structure, nextSubtree);
+            path = path.concat(new_path);
+            tree_structure = await getSubtreeStructure(nextSubtree);
+          }
+        }
+        setTreeStructure(tree_structure);
+        setSubTreeStructure(path);
       }
     } catch (error) {
       console.error("Error fetching graph:", error);
@@ -69,6 +101,7 @@ const MainTreeEditorContainer = ({
       return;
     }
     try {
+      // await saveSubtree(previousResultJson, projectName, previousName, settings.btOrder.value);
       await saveSubtree(previousResultJson, projectName, previousName);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -137,6 +170,9 @@ const MainTreeEditorContainer = ({
   // Add a new useEffect to log the updated treeHierarchy
   useEffect(() => {
     console.log("Updated Subtree hierarchy: ", treeHierarchy);
+    if (view === TreeViewType.Visualizer) {
+      getBTTree();
+    }
   }, [treeHierarchy]);
 
   useEffect(() => {
@@ -160,6 +196,7 @@ const MainTreeEditorContainer = ({
           setSubTreeName={setSubTreeName}
           subTreeName={subTreeName}
           setGoBack={setGoBack}
+          subTreeStructure={subTreeStructure}
         />
       ) : (
         <p>Loading...</p> // Display a loading message until the graph is fetched

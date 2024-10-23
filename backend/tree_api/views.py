@@ -222,6 +222,39 @@ def get_tree_structure(request):
         )
 
 
+@api_view(["GET"])
+def get_subtree_structure(request):
+
+    project_name = request.GET.get("project_name")
+    subtree_name = request.GET.get("subtree_name")
+
+    # Generate the paths
+    base_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(base_path, project_name)
+    subtree_path = os.path.join(project_path, "code/trees/subtrees/json")
+    graph_path = os.path.join(subtree_path, subtree_name + ".json")
+
+    # Check if the project exists
+    if os.path.exists(graph_path):
+        try:
+            with open(graph_path, "r") as f:
+                graph_data = json.load(f)
+
+                # Get the tree structure
+                tree_structure = json_translator.translate_tree_structure(graph_data)
+
+            return JsonResponse({"success": True, "tree_structure": tree_structure})
+        except Exception as e:
+            return JsonResponse(
+                {"success": False, "message": f"Error reading file: {str(e)}"},
+                status=500,
+            )
+    else:
+        return Response(
+            {"error": "The project does not have a graph definition"}, status=404
+        )
+
+
 @api_view(["POST"])
 def save_project_configuration(request):
 

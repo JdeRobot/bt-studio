@@ -5,16 +5,32 @@ import { CanvasWidget } from "@projectstorm/react-canvas-core";
 import "./DiagramEditor.css";
 import { changeColorNode, configureEngine } from "../helper/TreeEditorHelper";
 import NodeMenu from "./NodeMenu";
+import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
 
 const setTreeStatus = (
   model: any,
   engine: any,
   updateTree: any,
   baseTree: any,
+  subtreeHierarchy: number[],
 ) => {
+  var stateTree: any = updateTree;
   console.log(updateTree);
-  console.log(baseTree);
-  setStatusNode(model, engine, updateTree, baseTree);
+  console.log("Base", baseTree);
+  console.log("Hierarchy", subtreeHierarchy);
+
+  for (let index = 0; index < subtreeHierarchy.length; index++) {
+    var moveTo = subtreeHierarchy[index];
+    stateTree = Object.values(stateTree)[0];
+    stateTree = Object.entries(stateTree)[moveTo + 1];
+    var dict: any = {};
+    const name = stateTree[0];
+    dict[name] = stateTree[1];
+    stateTree = dict;
+  }
+
+  console.log("Estate", stateTree);
+  setStatusNode(model, engine, stateTree, baseTree);
 };
 
 const setStatusNode = (
@@ -22,6 +38,7 @@ const setStatusNode = (
   engine: any,
   updateTree: any,
   baseTree: any,
+  index: number = 0,
 ) => {
   var nodeName = baseTree["name"];
   var nodeId = baseTree["id"];
@@ -33,19 +50,23 @@ const setStatusNode = (
     nodeChilds = [];
   }
 
-  //TODO: fix for decorators
-
   var nodeStatus;
   try {
     nodeStatus = updateTree[nodeName]["state"];
   } catch (error) {
     nodeStatus = "NONE";
+    if (updateTree) {
+      var nodeData = Object.entries(updateTree)[index][1] as { state: string };
+      nodeStatus = nodeData.state;
+    }
   }
 
   var node = model.getNode(nodeId);
 
+  var index = 1;
   nodeChilds.forEach((element: any) => {
-    setStatusNode(model, engine, updateTree[nodeName], element);
+    setStatusNode(model, engine, updateTree[nodeName], element, index);
+    index += 1;
   });
 
   // node.setExecStatus(nodeStatus);
@@ -66,7 +87,10 @@ const setStatusNode = (
       rgb = [100, 100, 100];
       break;
   }
-  changeColorNode(rgb, node, engine, model);
+
+  if (node) {
+    changeColorNode(rgb, node, engine, model);
+  }
 };
 
 const DiagramVisualizer = memo(
@@ -79,6 +103,8 @@ const DiagramVisualizer = memo(
     changeView,
     setGoBack,
     subTreeName,
+    subTreeStructure,
+    setSubTreeName,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -88,20 +114,13 @@ const DiagramVisualizer = memo(
     changeView: any;
     setGoBack: Function;
     subTreeName: string;
+    subTreeStructure: number[];
+    setSubTreeName: Function;
   }) => {
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
     const engine = useRef(createEngine());
-
-    // There is no need to use an effect as the editor will re render when the model json changes
-    // Configure the engine
-    configureEngine(engine);
-
-    // Deserialize and load the model
-    console.log("Diagram Visualizer");
-    model.current.deserializeModel(modelJson, engine.current);
-    model.current.setLocked(true);
-    engine.current.setModel(model.current);
+    var lastClickedNodeId = "";
 
     const updateExecState = (msg: any) => {
       if (msg && msg.command === "update" && msg.data.update !== "") {
@@ -109,15 +128,60 @@ const DiagramVisualizer = memo(
         console.log("Repaint");
         const updateTree = updateStatus.tree;
         const updateBlackboard = updateStatus.blackboard;
-        setTreeStatus(model.current, engine.current, updateTree, treeStructure);
+        setTreeStatus(
+          model.current,
+          engine.current,
+          updateTree,
+          treeStructure,
+          subTreeStructure,
+        );
       }
     };
 
+    manager.unsubscribe("update", updateExecState);
     manager.subscribe("update", updateExecState);
+
+    // MODAL MANAGEMENT
+    const openSubtree = () => {
+      const node = model.current.getNode(lastClickedNodeId);
+      lastClickedNodeId = "";
+      model.current.clearSelection();
+      if (node instanceof BasicNodeModel) {
+        if (node.getIsSubtree()) {
+          setSubTreeName(node.getName());
+        }
+      }
+    };
+
+    // Click listener
+    const attachClickListener = (node: any) => {
+      node.registerListener({
+        selectionChanged: (event: any) => {
+          if (event.isSelected) {
+            lastClickedNodeId = node.getID();
+          }
+        },
+      });
+    };
 
     const zoomToFit = () => {
       engine.current.zoomToFitNodes({ margin: 50 });
     };
+
+    // Configure the engine
+    configureEngine(engine, openSubtree);
+
+    // Deserialize and load the model
+    console.log("Diagram Visualizer");
+    model.current.deserializeModel(modelJson, engine.current);
+    model.current.setLocked(true);
+    engine.current.setModel(model.current);
+
+    // After deserialization, attach listeners to each node
+    const nodes = model.current.getNodes();
+    nodes.forEach((node) => {
+      attachClickListener(node);
+    });
 
     // Fixes uncomplete first serialization
     setTimeout(() => {

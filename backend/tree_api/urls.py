@@ -21,6 +21,11 @@ urlpatterns = [
     path("translate_json/", views.translate_json, name="translate_json"),
     path("get_tree_structure/", views.get_tree_structure, name="get_tree_structure"),
     path(
+        "get_subtree_structure/",
+        views.get_subtree_structure,
+        name="get_subtree_structure",
+    ),
+    path(
         "get_universe_configuration/",
         views.get_universe_configuration,
         name="get_universe_configuration",
