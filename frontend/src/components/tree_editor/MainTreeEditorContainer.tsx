@@ -8,6 +8,7 @@ import {
   saveSubtree,
 } from "../../api_helper/TreeWrapper";
 import { TreeViewType, findSubtree } from "../helper/TreeEditorHelper";
+import { OptionsContext } from "../options/Options";
 
 const MainTreeEditorContainer = ({
   projectName,
@@ -20,6 +21,8 @@ const MainTreeEditorContainer = ({
   setGlobalJson: Function;
   modelJson: any;
 }) => {
+  const settings = React.useContext(OptionsContext);
+
   // STATES
 
   const [initialJson, setInitialJson] = useState("");
@@ -98,6 +101,7 @@ const MainTreeEditorContainer = ({
       return;
     }
     try {
+      // await saveSubtree(previousResultJson, projectName, previousName, settings.btOrder.value);
       await saveSubtree(previousResultJson, projectName, previousName);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -166,6 +170,9 @@ const MainTreeEditorContainer = ({
   // Add a new useEffect to log the updated treeHierarchy
   useEffect(() => {
     console.log("Updated Subtree hierarchy: ", treeHierarchy);
+    if (view === TreeViewType.Visualizer) {
+      getBTTree();
+    }
   }, [treeHierarchy]);
 
   useEffect(() => {

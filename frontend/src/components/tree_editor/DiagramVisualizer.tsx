@@ -14,6 +14,9 @@ const setTreeStatus = (
   subtreeHierarchy: number[],
 ) => {
   var stateTree: any = updateTree;
+  console.log(updateTree);
+  console.log("Base", baseTree);
+  console.log("Hierarchy", subtreeHierarchy);
 
   for (let index = 0; index < subtreeHierarchy.length; index++) {
     var moveTo = subtreeHierarchy[index];
@@ -25,10 +28,7 @@ const setTreeStatus = (
     stateTree = dict;
   }
 
-  // console.log(updateTree);
-  // console.log("Estate", stateTree);
-  // console.log("Base", baseTree);
-  // console.log("Hierarchy", subtreeHierarchy);
+  console.log("Estate", stateTree);
   setStatusNode(model, engine, stateTree, baseTree);
 };
 
