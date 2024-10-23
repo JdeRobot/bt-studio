@@ -47,6 +47,22 @@ const MainTreeEditorContainer = ({
     }
   };
 
+  const getSubtreeStructure = async (name: string) => {
+    try {
+      const response = await axios.get("/tree_api/get_subtree_structure/", {
+        params: {
+          project_name: projectName,
+          subtree_name: name,
+        },
+      });
+      if (response.data.success) {
+        return response.data.tree_structure;
+      }
+    } catch (error) {
+      console.error("Error fetching graph:", error);
+    }
+  };
+
   const getBTTree = async () => {
     try {
       const response = await axios.get("/tree_api/get_tree_structure/", {
@@ -55,24 +71,21 @@ const MainTreeEditorContainer = ({
         },
       });
       if (response.data.success) {
-        setTreeStructure(response.data.tree_structure);
         // Navigate until root using baseTree
         var path: number[] = [];
-        var tree_structure = response.data.tree_structure
-        var orig_tree_structure = response.data.tree_structure
+        var tree_structure = response.data.tree_structure;
         for (let index = 0; index < treeHierarchy.length; index++) {
-          var nextSubtree = treeHierarchy[index]
+          var nextSubtree = treeHierarchy[index];
           if (nextSubtree) {
-            var new_path = findSubtree(tree_structure, nextSubtree)
-            path = path.concat(new_path)
-            // TODO: call backend for subtree structure and append it to the path
-            // treeStructure = await getSubtreeStructure(nextSubtree)
-            // orig_tree_structure.childs = treeStructure
-            // TODO: then move to that part to continue the search 
-            console.log(path)
-          } 
+            var new_path = findSubtree(tree_structure, nextSubtree);
+            path = path.concat(new_path);
+            tree_structure = await getSubtreeStructure(nextSubtree);
+          }
         }
-        setSubTreeStructure(path)
+        setTreeStructure(tree_structure);
+        setSubTreeStructure(path);
+        console.log(tree_structure);
+        console.log(path);
       }
     } catch (error) {
       console.error("Error fetching graph:", error);

@@ -266,7 +266,7 @@ export const findSubtree = (
   baseTree: any,
   subTree: string,
   oldIndex: number = 0,
-) : number[] => {
+): number[] => {
   var path: number[] = [];
   var nodeChilds;
   var name = baseTree.name;
@@ -274,21 +274,25 @@ export const findSubtree = (
 
   name = baseTree.name;
 
-  if (name === subTree) { return [oldIndex] } 
+  if (name === subTree) {
+    return [oldIndex];
+  }
 
   try {
     nodeChilds = baseTree["childs"];
-  } catch (error) { return path }
+  } catch (error) {
+    return path;
+  }
 
   nodeChilds.forEach((element: any) => {
     var result = findSubtree(element, subTree, index);
     if (result.length === 0) {
-      return [index]
+      return [index];
     } else {
-      path = path.concat(result)
+      path = path.concat(result);
     }
-    index += 1
+    index += 1;
   });
 
   return path;
-}
+};

@@ -13,10 +13,23 @@ const setTreeStatus = (
   baseTree: any,
   subtreeHierarchy: number[],
 ) => {
-  console.log(updateTree);
-  console.log(baseTree);
-  console.log(subtreeHierarchy)
-  setStatusNode(model, engine, updateTree, baseTree);
+  var stateTree: any = updateTree;
+
+  for (let index = 0; index < subtreeHierarchy.length; index++) {
+    var moveTo = subtreeHierarchy[index];
+    stateTree = Object.values(stateTree)[0];
+    stateTree = Object.entries(stateTree)[moveTo + 1];
+    var dict: any = {};
+    const name = stateTree[0];
+    dict[name] = stateTree[1];
+    stateTree = dict;
+  }
+
+  // console.log(updateTree);
+  console.log("Estate", stateTree);
+  console.log("Base", baseTree);
+  console.log("Hierarchy", subtreeHierarchy);
+  setStatusNode(model, engine, stateTree, baseTree);
 };
 
 const setStatusNode = (
@@ -28,6 +41,8 @@ const setStatusNode = (
 ) => {
   var nodeName = baseTree["name"];
   var nodeId = baseTree["id"];
+
+  console.log(nodeName, nodeId);
 
   var nodeChilds;
   try {
@@ -43,8 +58,11 @@ const setStatusNode = (
     nodeStatus = updateTree[nodeName]["state"];
   } catch (error) {
     nodeStatus = "NONE";
-    var nodeData = Object.entries(updateTree)[index][1] as {state: string}
-    nodeStatus = nodeData.state
+    if (updateTree) {
+      console.log(updateTree);
+      var nodeData = Object.entries(updateTree)[index][1] as { state: string };
+      nodeStatus = nodeData.state;
+    }
   }
 
   var node = model.getNode(nodeId);
@@ -73,7 +91,10 @@ const setStatusNode = (
       rgb = [100, 100, 100];
       break;
   }
-  changeColorNode(rgb, node, engine, model);
+
+  if (node) {
+    changeColorNode(rgb, node, engine, model);
+  }
 };
 
 const DiagramVisualizer = memo(
@@ -118,10 +139,17 @@ const DiagramVisualizer = memo(
         console.log("Repaint");
         const updateTree = updateStatus.tree;
         const updateBlackboard = updateStatus.blackboard;
-        setTreeStatus(model.current, engine.current, updateTree, treeStructure, subTreeStructure);
+        setTreeStatus(
+          model.current,
+          engine.current,
+          updateTree,
+          treeStructure,
+          subTreeStructure,
+        );
       }
     };
 
+    manager.unsubscribe("update", updateExecState);
     manager.subscribe("update", updateExecState);
 
     const zoomToFit = () => {
