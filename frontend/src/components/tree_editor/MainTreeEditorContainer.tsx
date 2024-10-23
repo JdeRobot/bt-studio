@@ -7,7 +7,7 @@ import {
   getSubtree,
   saveSubtree,
 } from "../../api_helper/TreeWrapper";
-import { TreeViewType } from "../helper/TreeEditorHelper";
+import { TreeViewType, findSubtree } from "../helper/TreeEditorHelper";
 
 const MainTreeEditorContainer = ({
   projectName,
@@ -24,10 +24,11 @@ const MainTreeEditorContainer = ({
 
   const [initialJson, setInitialJson] = useState("");
   const [treeStructure, setTreeStructure] = useState("");
+  const [subTreeStructure, setSubTreeStructure] = useState<number[]>([]);
   const [view, changeView] = useState<TreeViewType>(TreeViewType.Editor);
   const [resultJson, setResultJson] = useState("");
   const [subTreeName, setSubTreeName] = useState("");
-  const [treeHierarchy, setTreeHierarchy] = useState([] as string[]);
+  const [treeHierarchy, setTreeHierarchy] = useState<string[]>([]);
   const [goBack, setGoBack] = useState(false);
   const [wentBack, setWentBack] = useState(false);
 
@@ -55,6 +56,23 @@ const MainTreeEditorContainer = ({
       });
       if (response.data.success) {
         setTreeStructure(response.data.tree_structure);
+        // Navigate until root using baseTree
+        var path: number[] = [];
+        var tree_structure = response.data.tree_structure
+        var orig_tree_structure = response.data.tree_structure
+        for (let index = 0; index < treeHierarchy.length; index++) {
+          var nextSubtree = treeHierarchy[index]
+          if (nextSubtree) {
+            var new_path = findSubtree(tree_structure, nextSubtree)
+            path = path.concat(new_path)
+            // TODO: call backend for subtree structure and append it to the path
+            // treeStructure = await getSubtreeStructure(nextSubtree)
+            // orig_tree_structure.childs = treeStructure
+            // TODO: then move to that part to continue the search 
+            console.log(path)
+          } 
+        }
+        setSubTreeStructure(path)
       }
     } catch (error) {
       console.error("Error fetching graph:", error);
@@ -160,6 +178,7 @@ const MainTreeEditorContainer = ({
           setSubTreeName={setSubTreeName}
           subTreeName={subTreeName}
           setGoBack={setGoBack}
+          subTreeStructure={subTreeStructure}
         />
       ) : (
         <p>Loading...</p> // Display a loading message until the graph is fetched

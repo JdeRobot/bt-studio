@@ -11,9 +11,11 @@ const setTreeStatus = (
   engine: any,
   updateTree: any,
   baseTree: any,
+  subtreeHierarchy: number[],
 ) => {
   console.log(updateTree);
   console.log(baseTree);
+  console.log(subtreeHierarchy)
   setStatusNode(model, engine, updateTree, baseTree);
 };
 
@@ -24,7 +26,6 @@ const setStatusNode = (
   baseTree: any,
   index: number = 0,
 ) => {
-  //TODO: match baseTree subTree name to update data
   var nodeName = baseTree["name"];
   var nodeId = baseTree["id"];
 
@@ -85,6 +86,7 @@ const DiagramVisualizer = memo(
     changeView,
     setGoBack,
     subTreeName,
+    subTreeStructure,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -94,6 +96,7 @@ const DiagramVisualizer = memo(
     changeView: any;
     setGoBack: Function;
     subTreeName: string;
+    subTreeStructure: number[];
   }) => {
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
@@ -115,7 +118,7 @@ const DiagramVisualizer = memo(
         console.log("Repaint");
         const updateTree = updateStatus.tree;
         const updateBlackboard = updateStatus.blackboard;
-        setTreeStatus(model.current, engine.current, updateTree, treeStructure);
+        setTreeStatus(model.current, engine.current, updateTree, treeStructure, subTreeStructure);
       }
     };
 

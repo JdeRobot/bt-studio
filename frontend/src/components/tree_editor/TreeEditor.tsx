@@ -49,6 +49,7 @@ const TreeEditor = memo(
     setSubTreeName,
     subTreeName,
     setGoBack,
+    subTreeStructure,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -61,6 +62,7 @@ const TreeEditor = memo(
     setSubTreeName: Function;
     subTreeName: string;
     setGoBack: Function;
+    subTreeStructure: number[];
   }) => {
     const settings = React.useContext(OptionsContext);
 
@@ -137,6 +139,7 @@ const TreeEditor = memo(
             changeView={changeView}
             setGoBack={setGoBack}
             subTreeName={subTreeName}
+            subTreeStructure={subTreeStructure}
           />
         ) : (
           <DiagramEditor
