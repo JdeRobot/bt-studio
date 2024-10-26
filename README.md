@@ -1,17 +1,15 @@
 <div id="top"></div>
 
-<a href="https://jderobot.github.io/"><img src="docs/assets/gif/logo.gif" width="150" align="right" /></a>
+# ![image](https://github.com/user-attachments/assets/26cd3114-9a1f-4d25-88ee-bb16f5d29ed3)
 
-# BT Studio
-
-![version](https://img.shields.io/badge/Version-0.4-blue)
+![version](https://img.shields.io/badge/Version-0.7-blue)
 ![distro](https://img.shields.io/badge/ROS2-Humble-blue)
-[![Forks][forks-shield]][forks-url]
 [![License](http://img.shields.io/:license-gpl-green.svg)](http://opensource.org/licenses/GPL-3.0)
+![stars](https://img.shields.io/github/stars/JdeRobot/bt-studio)
 
 ## Introduction
 
-BT Studio is an **open-source** tool crafted for the development of robotic applications. Its primary objective is to facilitate the quick deployment of behavior tree-based robotic applications within ROS 2. In BT Studio, a robotic app is defined as an graphical tree coupled with actions scripted in Python, which the tool then translates into a ROS 2 package. This process circumvents the unnecessary complexities often associated with ROS-specific configurations, offering developers a more streamlined approach.
+BT Studio is an **open-source** web IDE for the development of robotic applications. Its allows for quick deployment of behavior tree-based robotic applications within ROS 2. In BT Studio, a robotic app is defined as an graphical tree coupled with actions scripted in Python, which the tool then translates into a ROS 2 package. This process circumvents the unnecessary complexities often associated with ROS-specific configurations, offering developers a more streamlined approach.
 
 ## Usage
 
@@ -135,11 +133,20 @@ class TemplateAction(py_trees.behaviour.Behaviour):
 
 ```
 
-For examples of how to use ports in your actions, please refer to the [example actions](backend/filesystem/demo/actions/) provided with the repo in the actions folder. The structure is the same as [py_trees actions](https://py-trees.readthedocs.io/en/devel/behaviours.html), as this project uses the library underneath. Kudos to @stonier!
+For examples of how to use ports in your actions, please refer to the [example actions](https://github.com/JdeRobot/bt-studio/tree/main/backend/filesystem/library_demo) provided with one of BT Studio demos. The structure is the same as [py_trees actions](https://py-trees.readthedocs.io/en/devel/behaviours.html), as this project uses the library underneath. Kudos to @stonier!
 
 3. Define the tree structure
 
 Using the existing blocks, you may define the logic of your app. Here you have available all the defined actions. This can be done previously to step 2 if you prefer to define the logic of the tree before its implementation!
+
+BT Studio supports subtree composition, meaning you can easily split your application logic, allowing for greating flexibility and reusability. To create a new subtree, simply press the tree icon in the editor and navigate to it clicking the new created block. 
+
+BT Studio comes with four basic robotic behaviors that you can import in your application:
+
+* AlignPerson -> Allows a robot with a person using images. 
+* DistanceWatcher -> Checks if the robot is at a given instance to an obstacle.
+* FollowPerson -> Reactively follows a person using images.
+* MoveAvoidingObstacles -> The robot goes straight until it finds an obstacle, then it tries to find the nearest clear space. 
 
 4. Downloading the app
 
@@ -210,10 +217,6 @@ ros2 run your_app_name executor
 You can see a running application as reference here:
 
 [Showcase video](https://www.youtube.com/watch?v=Bo4SJEiBKGQ)
-
-## Roadmap
-
-In the future, this project will have total integration with [RoboticsAcademy](https://github.com/JdeRobot/RoboticsAcademy), so developers will be able to deploy the trees in a dockerized environment. 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [contributors-shield]: https://img.shields.io/github/contributors/JdeRobot/bt-studio
