@@ -312,7 +312,7 @@ def get_branches(element):
             if child_instance is not None:
                 child = child_instance
         retry_name = "Retry_" + str(nfailures)
-        instance = Class(name=retry_name, num_failures=int(nfailures), child=child)
+        instance = Class(name=class_name, num_failures=int(nfailures), child=child)
     elif "Repeat" in class_name:
         num_cycles = element.get("num_cycles")
         for child_element in element:
@@ -320,7 +320,7 @@ def get_branches(element):
             if child_instance is not None:
                 child = child_instance
         repeat_name = "Repeat_" + str(num_cycles)
-        instance = Class(name=repeat_name, child=child, num_success=int(num_cycles))
+        instance = Class(name=class_name, child=child, num_success=int(num_cycles))
     elif (
         "Inverter" in class_name
         or "Force" in class_name

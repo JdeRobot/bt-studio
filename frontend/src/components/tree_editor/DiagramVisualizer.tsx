@@ -15,13 +15,18 @@ const setTreeStatus = (
   subtreeHierarchy: number[],
 ) => {
   var stateTree: any = updateTree;
-  console.log(updateTree);
+  console.log(Object.values(stateTree));
   console.log("Base", baseTree);
   console.log("Hierarchy", subtreeHierarchy);
+
+  if (subtreeHierarchy.length > 0) {
+    subtreeHierarchy = subtreeHierarchy.concat([0]);
+  }
 
   for (let index = 0; index < subtreeHierarchy.length; index++) {
     var moveTo = subtreeHierarchy[index];
     stateTree = Object.values(stateTree)[0];
+    console.log(moveTo, stateTree);
     stateTree = Object.entries(stateTree)[moveTo + 1];
     var dict: any = {};
     const name = stateTree[0];
@@ -50,6 +55,7 @@ const setStatusNode = (
     nodeChilds = [];
   }
 
+  console.trace(updateTree);
   var nodeStatus;
   try {
     nodeStatus = updateTree[nodeName]["state"];
@@ -64,7 +70,9 @@ const setStatusNode = (
   var node = model.getNode(nodeId);
 
   var index = 1;
+  // console.trace(nodeChilds)
   nodeChilds.forEach((element: any) => {
+    console.trace(element);
     setStatusNode(model, engine, updateTree[nodeName], element, index);
     index += 1;
   });

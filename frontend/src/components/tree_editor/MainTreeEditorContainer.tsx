@@ -56,6 +56,7 @@ const MainTreeEditorContainer = ({
         params: {
           project_name: projectName,
           subtree_name: name,
+          bt_order: settings.btOrder.value,
         },
       });
       if (response.data.success) {
@@ -71,6 +72,7 @@ const MainTreeEditorContainer = ({
       const response = await axios.get("/tree_api/get_tree_structure/", {
         params: {
           project_name: projectName,
+          bt_order: settings.btOrder.value,
         },
       });
       if (response.data.success) {
@@ -79,12 +81,15 @@ const MainTreeEditorContainer = ({
         var tree_structure = response.data.tree_structure;
         for (let index = 0; index < treeHierarchy.length; index++) {
           var nextSubtree = treeHierarchy[index];
+          console.log("Tree", tree_structure);
           if (nextSubtree) {
             var new_path = findSubtree(tree_structure, nextSubtree);
             path = path.concat(new_path);
             tree_structure = await getSubtreeStructure(nextSubtree);
           }
+          console.log("TreePath", path);
         }
+
         setTreeStructure(tree_structure);
         setSubTreeStructure(path);
       }
@@ -179,7 +184,7 @@ const MainTreeEditorContainer = ({
     // fetchTree();
     getBTTree();
     console.log("Changing view!");
-  }, [view]);
+  }, [view, settings.btOrder.value]);
 
   return (
     <div id="editor-container">

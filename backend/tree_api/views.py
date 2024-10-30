@@ -195,6 +195,7 @@ def get_project_configuration(request):
 def get_tree_structure(request):
 
     project_name = request.GET.get("project_name")
+    bt_order = request.GET.get("bt_order")
 
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -208,7 +209,9 @@ def get_tree_structure(request):
                 graph_data = json.load(f)
 
                 # Get the tree structure
-                tree_structure = json_translator.translate_tree_structure(graph_data)
+                tree_structure = json_translator.translate_tree_structure(
+                    graph_data, bt_order
+                )
 
             return JsonResponse({"success": True, "tree_structure": tree_structure})
         except Exception as e:
@@ -227,6 +230,7 @@ def get_subtree_structure(request):
 
     project_name = request.GET.get("project_name")
     subtree_name = request.GET.get("subtree_name")
+    bt_order = request.GET.get("bt_order")
 
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -241,7 +245,9 @@ def get_subtree_structure(request):
                 graph_data = json.load(f)
 
                 # Get the tree structure
-                tree_structure = json_translator.translate_tree_structure(graph_data)
+                tree_structure = json_translator.translate_tree_structure(
+                    graph_data, bt_order
+                )
 
             return JsonResponse({"success": True, "tree_structure": tree_structure})
         except Exception as e:
@@ -378,7 +384,7 @@ def save_subtree(request):
                 f.write(subtree_json)
 
             # TOFIX: order hardcoded
-            json_translator.translate(subtree_json, xml_path, "top-to-bottom")
+            # json_translator.translate(subtree_json, xml_path, "top-to-bottom")
 
             return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
@@ -919,10 +925,17 @@ def generate_app(request):
 
         # Copy all the subtrees to the temp folder
         for subtree_file in os.listdir(subtree_path):
-            if subtree_file.endswith(".xml"):
-                shutil.copy(
-                    os.path.join(subtree_path, subtree_file), result_trees_tmp_path
+            if subtree_file.endswith(".json"):
+                subtree_name = base = os.path.splitext(os.path.basename(subtree_file))[
+                    0
+                ]
+                xml_path = os.path.join(
+                    project_path, "code", "trees", "subtrees", f"{subtree_name}.xml"
                 )
+
+                json_translator.translate(subtree_file, xml_path, bt_order)
+
+                shutil.copy(xml_path, result_trees_tmp_path)
 
         # Generate a self-contained tree
         tree_generator.generate(
@@ -991,7 +1004,7 @@ def generate_dockerized_app(request):
     action_path = os.path.join(project_path, "code/actions")
 
     working_folder = "/tmp/wf"
-    subtree_path = os.path.join(project_path, "code/trees/subtrees")
+    subtree_path = os.path.join(project_path, "code/trees/subtrees/json")
     result_trees_tmp_path = os.path.join("/tmp/trees/")
     self_contained_tree_path = os.path.join(working_folder, "self_contained_tree.xml")
     tree_gardener_src = os.path.join(settings.BASE_DIR, "tree_gardener")
@@ -1014,10 +1027,23 @@ def generate_dockerized_app(request):
 
         # 3. Copy all the subtrees to the temp folder
         for subtree_file in os.listdir(subtree_path):
-            if subtree_file.endswith(".xml"):
-                shutil.copy(
-                    os.path.join(subtree_path, subtree_file), result_trees_tmp_path
+            if subtree_file.endswith(".json"):
+                subtree_name = base = os.path.splitext(os.path.basename(subtree_file))[
+                    0
+                ]
+                print(os.path.join(subtree_path, subtree_file))
+
+                xml_path = os.path.join(
+                    project_path, "code", "trees", "subtrees", f"{subtree_name}.xml"
                 )
+
+                with open(os.path.join(subtree_path, subtree_file), "r+") as f:
+                    # Reading from a file
+                    subtree_json = f.read()
+
+                json_translator.translate(subtree_json, xml_path, bt_order)
+
+                shutil.copy(xml_path, result_trees_tmp_path)
 
         # 4. Generate a self-contained tree
         tree_generator.generate(

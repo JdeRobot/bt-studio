@@ -265,7 +265,7 @@ export const configureEngine = (
 export const findSubtree = (
   baseTree: any,
   subTree: string,
-  oldIndex: number = 0,
+  oldIndex: number = -1,
 ): number[] => {
   var path: number[] = [];
   var nodeChilds;
@@ -273,26 +273,37 @@ export const findSubtree = (
   var index = 0;
 
   name = baseTree.name;
+  console.log("Name", name);
 
   if (name === subTree) {
-    return [oldIndex];
+    console.log("found", oldIndex);
+    if (oldIndex >= 0) {
+      return [oldIndex];
+    } else {
+      return [];
+    }
   }
 
   try {
     nodeChilds = baseTree["childs"];
+    console.log("NameCh", nodeChilds);
   } catch (error) {
     return path;
   }
 
-  nodeChilds.forEach((element: any) => {
+  for (let index = 0; index < nodeChilds.length; index++) {
+    //TODO: rethink
+    const element = nodeChilds[index];
     var result = findSubtree(element, subTree, index);
+    console.log("subtree", subTree, result);
     if (result.length === 0) {
-      return [index];
+      index += 1;
     } else {
-      path = path.concat(result);
+      path = path.concat([index]);
+      console.log("End", path);
+      return path;
     }
-    index += 1;
-  });
+  }
 
-  return path;
+  return [];
 };

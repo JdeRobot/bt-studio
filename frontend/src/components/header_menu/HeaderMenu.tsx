@@ -1,4 +1,4 @@
-import { MouseEventHandler, useEffect, useState } from "react";
+import { MouseEventHandler, useContext, useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import {
@@ -25,6 +25,7 @@ import { ReactComponent as ResetIcon } from "./img/reset.svg";
 import ProjectModal from "./modals/ProjectModal";
 import UniversesModal from "./modals/UniverseModal";
 import SettingsModal from "../settings_popup/SettingsModal";
+import { OptionsContext } from "../options/Options";
 
 const HeaderMenu = ({
   currentProjectname,
@@ -50,6 +51,9 @@ const HeaderMenu = ({
   setGazeboEnabled: Function;
   manager: CommsManager;
 }) => {
+  // Settings
+  const settings = useContext(OptionsContext);
+
   // Project state
   const [existingProjects, setExistingProjects] = useState("");
 
@@ -202,7 +206,7 @@ const HeaderMenu = ({
         const appBlob = await generateDockerizedApp(
           modelJson,
           currentProjectname,
-          "top-to-bottom",
+          settings.btOrder.value,
         );
 
         // Convert the blob to base64 using FileReader
