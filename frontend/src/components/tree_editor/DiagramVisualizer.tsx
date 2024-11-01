@@ -19,10 +19,6 @@ const setTreeStatus = (
   console.log("Base", baseTree);
   console.log("Hierarchy", subtreeHierarchy);
 
-  if (subtreeHierarchy.length > 0) {
-    subtreeHierarchy = subtreeHierarchy.concat([0]);
-  }
-
   for (let index = 0; index < subtreeHierarchy.length; index++) {
     var moveTo = subtreeHierarchy[index];
     stateTree = Object.values(stateTree)[0];

@@ -81,10 +81,11 @@ const MainTreeEditorContainer = ({
         var tree_structure = response.data.tree_structure;
         for (let index = 0; index < treeHierarchy.length; index++) {
           var nextSubtree = treeHierarchy[index];
-          console.log("Tree", tree_structure);
           if (nextSubtree) {
             var new_path = findSubtree(tree_structure, nextSubtree);
-            path = path.concat(new_path);
+            if (new_path) {
+              path = path.concat(new_path); //TODO: check if its not new_path.concat(path)
+            }
             tree_structure = await getSubtreeStructure(nextSubtree);
           }
           console.log("TreePath", path);

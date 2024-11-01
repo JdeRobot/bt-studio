@@ -266,44 +266,28 @@ export const findSubtree = (
   baseTree: any,
   subTree: string,
   oldIndex: number = -1,
-): number[] => {
+): number[] | undefined => {
   var path: number[] = [];
   var nodeChilds;
   var name = baseTree.name;
-  var index = 0;
-
-  name = baseTree.name;
-  console.log("Name", name);
 
   if (name === subTree) {
-    console.log("found", oldIndex);
-    if (oldIndex >= 0) {
-      return [oldIndex];
-    } else {
-      return [];
-    }
+    return (oldIndex >= 0) ? [] : undefined;
   }
 
   try {
     nodeChilds = baseTree["childs"];
-    console.log("NameCh", nodeChilds);
   } catch (error) {
-    return path;
+    return undefined;
   }
 
   for (let index = 0; index < nodeChilds.length; index++) {
-    //TODO: rethink
-    const element = nodeChilds[index];
-    var result = findSubtree(element, subTree, index);
-    console.log("subtree", subTree, result);
-    if (result.length === 0) {
-      index += 1;
-    } else {
-      path = path.concat([index]);
-      console.log("End", path);
+    var result = findSubtree(nodeChilds[index], subTree, index);
+    if (result) {
+      path = [index].concat(result);
       return path;
     }
   }
 
-  return [];
+  return undefined;
 };
