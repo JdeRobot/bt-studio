@@ -272,7 +272,7 @@ export const findSubtree = (
   var name = baseTree.name;
 
   if (name === subTree) {
-    return (oldIndex >= 0) ? [] : undefined;
+    return oldIndex >= 0 ? [] : undefined;
   }
 
   try {

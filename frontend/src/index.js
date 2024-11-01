@@ -25,7 +25,7 @@ root.render(
   // <React.StrictMode>
   <OptionsProvider>
     <App />
-  </OptionsProvider>
+  </OptionsProvider>,
   // </React.StrictMode>,
 );
 
