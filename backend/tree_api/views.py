@@ -1026,24 +1026,27 @@ def generate_dockerized_app(request):
         json_translator.translate(main_tree_graph, main_tree_tmp_path, bt_order)
 
         # 3. Copy all the subtrees to the temp folder
-        for subtree_file in os.listdir(subtree_path):
-            if subtree_file.endswith(".json"):
-                subtree_name = base = os.path.splitext(os.path.basename(subtree_file))[
-                    0
-                ]
-                print(os.path.join(subtree_path, subtree_file))
+        try:
+            for subtree_file in os.listdir(subtree_path):
+                if subtree_file.endswith(".json"):
+                    subtree_name = base = os.path.splitext(os.path.basename(subtree_file))[
+                        0
+                    ]
+                    print(os.path.join(subtree_path, subtree_file))
 
-                xml_path = os.path.join(
-                    project_path, "code", "trees", "subtrees", f"{subtree_name}.xml"
-                )
+                    xml_path = os.path.join(
+                        project_path, "code", "trees", "subtrees", f"{subtree_name}.xml"
+                    )
 
-                with open(os.path.join(subtree_path, subtree_file), "r+") as f:
-                    # Reading from a file
-                    subtree_json = f.read()
+                    with open(os.path.join(subtree_path, subtree_file), "r+") as f:
+                        # Reading from a file
+                        subtree_json = f.read()
 
-                json_translator.translate(subtree_json, xml_path, bt_order)
+                    json_translator.translate(subtree_json, xml_path, bt_order)
 
-                shutil.copy(xml_path, result_trees_tmp_path)
+                    shutil.copy(xml_path, result_trees_tmp_path)
+        except:
+            print("No subtrees")  
 
         # 4. Generate a self-contained tree
         tree_generator.generate(
