@@ -1,1 +1,8 @@
-{"name": "library_demo", "config": {"editorShowAccentColors": true, "theme": "dark", "btOrder": "bottom-to-top"}}
+{
+    "name": "library_demo",
+    "config": {
+        "editorShowAccentColors": true,
+        "theme": "dark",
+        "btOrder": "top-to-bottom"
+    }
+}

@@ -1,5 +1,9 @@
 import React, { useRef, memo, useState } from "react";
-import createEngine, { DiagramModel, NodeModel, NodeModelGenerics } from "@projectstorm/react-diagrams";
+import createEngine, {
+  DiagramModel,
+  NodeModel,
+  NodeModelGenerics,
+} from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
 import "./DiagramEditor.css";
@@ -104,16 +108,16 @@ const updateBlackboardValues = (
   const blackboardRegex = /^\{[^}]*\}/i;
   let tags = model.getNodes().filter(function (node) {
     return node instanceof TagNodeModel && blackboardRegex.test(node.getName());
-  })
+  });
 
   console.log(tags);
-  let notFoundTags:NodeModel<NodeModelGenerics>[] = []
+  let notFoundTags: NodeModel<NodeModelGenerics>[] = [];
 
-  Object.entries(blackboard).forEach(element => {
-    console.log(element)
+  Object.entries(blackboard).forEach((element) => {
+    console.log(element);
     for (let index = 0; index < tags.length; index++) {
       const tag = tags[index] as TagNodeModel;
-      let tagSplit = tag.getName().split(" = ")
+      let tagSplit = tag.getName().split(" = ");
       const tagStr = tagSplit[0].slice(1, -1); // Remove {}
       if (tagStr === element[0]) {
         tag.setName(`{${tagStr}} = ${element[1]}`);
@@ -171,11 +175,7 @@ const DiagramVisualizer = memo(
           treeStructure,
           subTreeStructure,
         );
-        updateBlackboardValues(
-          model.current,
-          engine.current,
-          updateBlackboard
-        )
+        updateBlackboardValues(model.current, engine.current, updateBlackboard);
       }
     };
 
