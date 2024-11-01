@@ -1,14 +1,15 @@
 import React, { useRef, memo, useState } from "react";
-import createEngine, { DiagramModel } from "@projectstorm/react-diagrams";
+import createEngine, { DiagramModel, NodeModel, NodeModelGenerics } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
 import "./DiagramEditor.css";
 import { changeColorNode, configureEngine } from "../helper/TreeEditorHelper";
 import NodeMenu from "./NodeMenu";
 import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
+import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
 
 const setTreeStatus = (
-  model: any,
+  model: DiagramModel,
   engine: any,
   updateTree: any,
   baseTree: any,
@@ -35,7 +36,7 @@ const setTreeStatus = (
 };
 
 const setStatusNode = (
-  model: any,
+  model: DiagramModel,
   engine: any,
   updateTree: any,
   baseTree: any,
@@ -51,7 +52,6 @@ const setStatusNode = (
     nodeChilds = [];
   }
 
-  console.trace(updateTree);
   var nodeStatus;
   try {
     nodeStatus = updateTree[nodeName]["state"];
@@ -63,12 +63,11 @@ const setStatusNode = (
     }
   }
 
-  var node = model.getNode(nodeId);
+  var node = model.getNode(nodeId) as BasicNodeModel;
 
   var index = 1;
   // console.trace(nodeChilds)
   nodeChilds.forEach((element: any) => {
-    console.trace(element);
     setStatusNode(model, engine, updateTree[nodeName], element, index);
     index += 1;
   });
@@ -95,6 +94,38 @@ const setStatusNode = (
   if (node) {
     changeColorNode(rgb, node, engine, model);
   }
+};
+
+const updateBlackboardValues = (
+  model: DiagramModel,
+  engine: any,
+  blackboard: any,
+) => {
+  const blackboardRegex = /^\{[^}]*\}/i;
+  let tags = model.getNodes().filter(function (node) {
+    return node instanceof TagNodeModel && blackboardRegex.test(node.getName());
+  })
+
+  console.log(tags);
+  let notFoundTags:NodeModel<NodeModelGenerics>[] = []
+
+  Object.entries(blackboard).forEach(element => {
+    console.log(element)
+    for (let index = 0; index < tags.length; index++) {
+      const tag = tags[index] as TagNodeModel;
+      let tagSplit = tag.getName().split(" = ")
+      const tagStr = tagSplit[0].slice(1, -1); // Remove {}
+      if (tagStr === element[0]) {
+        tag.setName(`{${tagStr}} = ${element[1]}`);
+      } else {
+        notFoundTags.push(tag);
+      }
+    }
+    tags = notFoundTags;
+    notFoundTags = [];
+  });
+
+  engine.repaintCanvas();
 };
 
 const DiagramVisualizer = memo(
@@ -127,6 +158,7 @@ const DiagramVisualizer = memo(
     var lastClickedNodeId = "";
 
     const updateExecState = (msg: any) => {
+      // TODO: add some kind of limit of updates per second to avoid crashes
       if (msg && msg.command === "update" && msg.data.update !== "") {
         const updateStatus = JSON.parse(msg.data.update);
         console.log("Repaint");
@@ -139,6 +171,11 @@ const DiagramVisualizer = memo(
           treeStructure,
           subTreeStructure,
         );
+        updateBlackboardValues(
+          model.current,
+          engine.current,
+          updateBlackboard
+        )
       }
     };
 
