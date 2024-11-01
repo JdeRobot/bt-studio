@@ -1029,9 +1029,9 @@ def generate_dockerized_app(request):
         try:
             for subtree_file in os.listdir(subtree_path):
                 if subtree_file.endswith(".json"):
-                    subtree_name = base = os.path.splitext(os.path.basename(subtree_file))[
-                        0
-                    ]
+                    subtree_name = base = os.path.splitext(
+                        os.path.basename(subtree_file)
+                    )[0]
                     print(os.path.join(subtree_path, subtree_file))
 
                     xml_path = os.path.join(
@@ -1046,7 +1046,7 @@ def generate_dockerized_app(request):
 
                     shutil.copy(xml_path, result_trees_tmp_path)
         except:
-            print("No subtrees")  
+            print("No subtrees")
 
         # 4. Generate a self-contained tree
         tree_generator.generate(
