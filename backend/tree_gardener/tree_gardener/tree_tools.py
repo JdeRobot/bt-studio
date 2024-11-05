@@ -106,7 +106,8 @@ def ascii_blackboard_to_json(blackboard):
     json_str = '"blackboard":{'
     do_append_coma = False
 
-    # FIX: [entry, value] = line.strip()[1:].split(":")
+    ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+    blackboard = ansi_escape.sub("", blackboard)
 
     for line in iter(blackboard.splitlines()):
         if "Blackboard Data" in line:
@@ -115,18 +116,20 @@ def ascii_blackboard_to_json(blackboard):
             continue
         if do_append_coma:
             json_str += ","
-        else:
-            do_append_coma = True
         # Remove whitespaces with strip and remove / from entry
-        [entry, value] = line.strip()[1:].split(":")
-        json_str += f'"{entry.strip()}":"{value.strip()}"'
+        try:
+            [entry, value] = line.strip()[1:].split(":")
+            json_str += f'"{entry.strip()}":"{value.strip()}"'
+            do_append_coma = True
+        except:
+            pass
     json_str += "}"
     return json_str
 
 
 def ascii_bt_to_json(tree, blackboard, file):
     file.write("{")
-    # file.write(f"{ascii_tree_to_json(tree)},{ascii_blackboard_to_json(blackboard)}")
-    file.write(f"{ascii_tree_to_json(tree)}")
+    file.write(f"{ascii_tree_to_json(tree)},{ascii_blackboard_to_json(blackboard)}")
+    # file.write(f"{ascii_tree_to_json(tree)}")
     file.write("}")
     file.close()

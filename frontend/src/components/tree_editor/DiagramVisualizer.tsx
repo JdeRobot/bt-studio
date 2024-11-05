@@ -1,27 +1,50 @@
 import React, { useRef, memo, useState } from "react";
-import createEngine, { DiagramModel } from "@projectstorm/react-diagrams";
+import createEngine, {
+  DiagramModel,
+  NodeModel,
+  NodeModelGenerics,
+} from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
 import "./DiagramEditor.css";
 import { changeColorNode, configureEngine } from "../helper/TreeEditorHelper";
 import NodeMenu from "./NodeMenu";
+import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
+import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
 
 const setTreeStatus = (
-  model: any,
+  model: DiagramModel,
   engine: any,
   updateTree: any,
   baseTree: any,
+  subtreeHierarchy: number[],
 ) => {
-  console.log(updateTree);
-  console.log(baseTree);
-  setStatusNode(model, engine, updateTree, baseTree);
+  var stateTree: any = updateTree;
+  console.log(Object.values(stateTree));
+  console.log("Base", baseTree);
+  console.log("Hierarchy", subtreeHierarchy);
+
+  for (let index = 0; index < subtreeHierarchy.length; index++) {
+    var moveTo = subtreeHierarchy[index];
+    stateTree = Object.values(stateTree)[0];
+    console.log(moveTo, stateTree);
+    stateTree = Object.entries(stateTree)[moveTo + 1];
+    var dict: any = {};
+    const name = stateTree[0];
+    dict[name] = stateTree[1];
+    stateTree = dict;
+  }
+
+  console.log("Estate", stateTree);
+  setStatusNode(model, engine, stateTree, baseTree);
 };
 
 const setStatusNode = (
-  model: any,
+  model: DiagramModel,
   engine: any,
   updateTree: any,
   baseTree: any,
+  index: number = 0,
 ) => {
   var nodeName = baseTree["name"];
   var nodeId = baseTree["id"];
@@ -33,19 +56,24 @@ const setStatusNode = (
     nodeChilds = [];
   }
 
-  //TODO: fix for decorators
-
   var nodeStatus;
   try {
     nodeStatus = updateTree[nodeName]["state"];
   } catch (error) {
     nodeStatus = "NONE";
+    if (updateTree) {
+      var nodeData = Object.entries(updateTree)[index][1] as { state: string };
+      nodeStatus = nodeData.state;
+    }
   }
 
-  var node = model.getNode(nodeId);
+  var node = model.getNode(nodeId) as BasicNodeModel;
 
+  var index = 1;
+  // console.trace(nodeChilds)
   nodeChilds.forEach((element: any) => {
-    setStatusNode(model, engine, updateTree[nodeName], element);
+    setStatusNode(model, engine, updateTree[nodeName], element, index);
+    index += 1;
   });
 
   // node.setExecStatus(nodeStatus);
@@ -66,7 +94,42 @@ const setStatusNode = (
       rgb = [100, 100, 100];
       break;
   }
-  changeColorNode(rgb, node, engine, model);
+
+  if (node) {
+    changeColorNode(rgb, node, engine, model);
+  }
+};
+
+const updateBlackboardValues = (
+  model: DiagramModel,
+  engine: any,
+  blackboard: any,
+) => {
+  const blackboardRegex = /^\{[^}]*\}/i;
+  let tags = model.getNodes().filter(function (node) {
+    return node instanceof TagNodeModel && blackboardRegex.test(node.getName());
+  });
+
+  console.log(tags);
+  let notFoundTags: NodeModel<NodeModelGenerics>[] = [];
+
+  Object.entries(blackboard).forEach((element) => {
+    console.log(element);
+    for (let index = 0; index < tags.length; index++) {
+      const tag = tags[index] as TagNodeModel;
+      let tagSplit = tag.getName().split(" = ");
+      const tagStr = tagSplit[0].slice(1, -1); // Remove {}
+      if (tagStr === element[0]) {
+        tag.setName(`{${tagStr}} = ${element[1]}`);
+      } else {
+        notFoundTags.push(tag);
+      }
+    }
+    tags = notFoundTags;
+    notFoundTags = [];
+  });
+
+  engine.repaintCanvas();
 };
 
 const DiagramVisualizer = memo(
@@ -79,6 +142,8 @@ const DiagramVisualizer = memo(
     changeView,
     setGoBack,
     subTreeName,
+    subTreeStructure,
+    setSubTreeName,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -88,14 +153,64 @@ const DiagramVisualizer = memo(
     changeView: any;
     setGoBack: Function;
     subTreeName: string;
+    subTreeStructure: number[];
+    setSubTreeName: Function;
   }) => {
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
     const engine = useRef(createEngine());
+    var lastClickedNodeId = "";
 
-    // There is no need to use an effect as the editor will re render when the model json changes
+    const updateExecState = (msg: any) => {
+      // TODO: add some kind of limit of updates per second to avoid crashes
+      if (msg && msg.command === "update" && msg.data.update !== "") {
+        const updateStatus = JSON.parse(msg.data.update);
+        console.log("Repaint");
+        const updateTree = updateStatus.tree;
+        const updateBlackboard = updateStatus.blackboard;
+        setTreeStatus(
+          model.current,
+          engine.current,
+          updateTree,
+          treeStructure,
+          subTreeStructure,
+        );
+        updateBlackboardValues(model.current, engine.current, updateBlackboard);
+      }
+    };
+
+    manager.unsubscribe("update", updateExecState);
+    manager.subscribe("update", updateExecState);
+
+    // MODAL MANAGEMENT
+    const openSubtree = () => {
+      const node = model.current.getNode(lastClickedNodeId);
+      lastClickedNodeId = "";
+      model.current.clearSelection();
+      if (node instanceof BasicNodeModel) {
+        if (node.getIsSubtree()) {
+          setSubTreeName(node.getName());
+        }
+      }
+    };
+
+    // Click listener
+    const attachClickListener = (node: any) => {
+      node.registerListener({
+        selectionChanged: (event: any) => {
+          if (event.isSelected) {
+            lastClickedNodeId = node.getID();
+          }
+        },
+      });
+    };
+
+    const zoomToFit = () => {
+      engine.current.zoomToFitNodes({ margin: 50 });
+    };
+
     // Configure the engine
-    configureEngine(engine);
+    configureEngine(engine, openSubtree);
 
     // Deserialize and load the model
     console.log("Diagram Visualizer");
@@ -103,21 +218,11 @@ const DiagramVisualizer = memo(
     model.current.setLocked(true);
     engine.current.setModel(model.current);
 
-    const updateExecState = (msg: any) => {
-      if (msg && msg.command === "update" && msg.data.update !== "") {
-        const updateStatus = JSON.parse(msg.data.update);
-        console.log("Repaint");
-        const updateTree = updateStatus.tree;
-        const updateBlackboard = updateStatus.blackboard;
-        setTreeStatus(model.current, engine.current, updateTree, treeStructure);
-      }
-    };
-
-    manager.subscribe("update", updateExecState);
-
-    const zoomToFit = () => {
-      engine.current.zoomToFitNodes({ margin: 50 });
-    };
+    // After deserialization, attach listeners to each node
+    const nodes = model.current.getNodes();
+    nodes.forEach((node) => {
+      attachClickListener(node);
+    });
 
     // Fixes uncomplete first serialization
     setTimeout(() => {

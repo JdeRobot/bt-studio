@@ -261,3 +261,33 @@ export const configureEngine = (
     .getActionEventBus()
     .registerAction(new ZoomCanvasAction({ inverseZoom: true }));
 };
+
+export const findSubtree = (
+  baseTree: any,
+  subTree: string,
+  oldIndex: number = -1,
+): number[] | undefined => {
+  var path: number[] = [];
+  var nodeChilds;
+  var name = baseTree.name;
+
+  if (name === subTree) {
+    return oldIndex >= 0 ? [] : undefined;
+  }
+
+  try {
+    nodeChilds = baseTree["childs"];
+  } catch (error) {
+    return undefined;
+  }
+
+  for (let index = 0; index < nodeChilds.length; index++) {
+    var result = findSubtree(nodeChilds[index], subTree, index);
+    if (result) {
+      path = [index].concat(result);
+      return path;
+    }
+  }
+
+  return undefined;
+};

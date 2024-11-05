@@ -198,7 +198,7 @@ def translate(content, tree_path, raw_order):
     f.close()
 
 
-def translate_tree_structure(content):
+def translate_tree_structure(content, raw_order):
     # Parse the JSON data
     parsed_json = content
 
@@ -209,12 +209,12 @@ def translate_tree_structure(content):
     # Get the tree structure
     tree_structure = get_tree_structure(link_models, node_models)
     # Get the order of bt: True = Ascendent; False = Descendent
-    # order = raw_order == "bottom-to-top"
+    order = raw_order == "bottom-to-top"
 
     # Generate XML
     start_node_id = get_start_node_id(node_models, link_models)
     root = build_tree_structure(
-        node_models, link_models, tree_structure, start_node_id, False
+        node_models, link_models, tree_structure, start_node_id, order
     )
 
     return root
