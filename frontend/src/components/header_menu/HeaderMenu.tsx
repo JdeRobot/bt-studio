@@ -96,7 +96,10 @@ const HeaderMenu = ({
       } else {
         console.log("Custom universe rework underway");
         console.warn("Custom universe rework underway");
-        const zipBlob: Blob = await getCustomUniverseZip(configJson.name, currentProjectname);
+        const zipBlob: Blob = await getCustomUniverseZip(
+          configJson.name,
+          currentProjectname,
+        );
         var reader = new FileReader();
         reader.readAsDataURL(zipBlob);
         reader.onloadend = async function () {
@@ -114,7 +117,7 @@ const HeaderMenu = ({
           console.log("RB universe launched!");
           await manager.prepareVisualization(universe_config.visualization);
           console.log("Viz ready!");
-        }
+        };
       }
     } catch (error: unknown) {
       throw error; // rethrow
