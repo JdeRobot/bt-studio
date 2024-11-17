@@ -94,31 +94,35 @@ const HeaderMenu = ({
         await manager.prepareVisualization(universe_config.visualization);
         console.log("Viz ready!");
       } else {
+        console.log("Custom universe rework underway");
         console.warn("Custom universe rework underway");
+        const zipBlob: Blob = await getCustomUniverseZip(
+          configJson.name,
+          currentProjectname,
+        );
+        var reader = new FileReader();
+        reader.readAsDataURL(zipBlob);
+        reader.onloadend = async function () {
+          // Get the zip in base64
+          var base64data = reader.result;
+          const universe_config = {
+            name: configJson.name,
+            launch_file_path: configJson.ram_config.launch_file_path,
+            ros_version: configJson.ram_config.ros_version,
+            visualization: "bt_studio",
+            world: configJson.ram_config.world,
+            zip: base64data,
+          };
+          await manager.launchWorld(universe_config);
+          console.log("RB universe launched!");
+          await manager.prepareVisualization(universe_config.visualization);
+          console.log("Viz ready!");
+        };
       }
     } catch (error: unknown) {
       throw error; // rethrow
     }
   };
-
-  // const launchUniverse = async (universe_name) => {
-  //   const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
-  //     currentProjectname,
-  //   )}&universe_name=${encodeURIComponent(universe_name)}`;
-
-  //   try {
-  //     const response = await axios.get(apiUrl);
-  //     console.log("Stored universe config: " + response.data);
-  //     const stored_cfg = JSON.parse(response.data);
-  //     if (stored_cfg.type === "robotics_backend") {
-  //       await launchBackendUniverse(stored_cfg);
-  //     } else {
-  //       launchCustomUniverse(stored_cfg);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error launching universe:", error);
-  //   }
-  // };
 
   // Project handling
 

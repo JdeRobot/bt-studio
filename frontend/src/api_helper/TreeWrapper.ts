@@ -182,21 +182,17 @@ const getCustomUniverseZip = async (
 
   const apiUrl = "/tree_api/get_universe_zip/";
   try {
-    // Configure the request options
-    const config = {
-      method: "POST",
-      url: apiUrl,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: JSON.stringify({
+    // Make the request
+    const response = await axios.post(
+      apiUrl,
+      {
         app_name: currentProjectname,
         universe_name: universeName,
-      }),
-    };
-
-    // Make the request
-    const response = await axios(config);
+      },
+      {
+        responseType: "blob", // Ensure the response is treated as a Blob
+      },
+    );
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
@@ -204,7 +200,7 @@ const getCustomUniverseZip = async (
         response.data.message || "Failed to retrieve custom universe",
       ); // Response error
     }
-    return new Blob([response.data], { type: "application/octet-stream" });
+    return response.data;
   } catch (error: unknown) {
     throw error; // Rethrow
   }
