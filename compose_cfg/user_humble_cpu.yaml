@@ -17,7 +17,7 @@ services:
       timeout: 1s
       retries: 20
 
-  robotics-academy:
+  bt-studio:
     image: jderobot/robotics-academy:latest
     container_name: developer-container
     command:  "--bt"
