@@ -63,6 +63,9 @@ nvm use 17
 cd frontend/
 yarn install
 yarn build
+# Rename main files
+cd build/static/js && for filename in main.*; do mv "$filename" "main.js""$(echo "$filename" | sed -e 's/main.*.js//g')"; done && cd ..
+cd css && for filename in main.*; do mv "$filename" "main.css""$(echo "$filename" | sed -e 's/main.*.css//g')"; done && cd ../../..
 cd ..
 
 # Prepare the compose file
