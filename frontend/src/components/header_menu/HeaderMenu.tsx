@@ -327,7 +327,7 @@ const HeaderMenu = ({
 
   return (
     <AppBar position="static">
-      <Toolbar>
+      <Toolbar style={{"backgroundColor":"var(--header)"}}>
         <LogoIcon className="jde-icon" fill="var(--icon)" />
         <h1 className="Header-text">BT Studio IDE</h1>
         <ProjectModal
