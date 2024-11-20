@@ -321,7 +321,7 @@ const HeaderMenu = ({
     setSettingsModalOpen(false);
   };
 
-  const onSubmit = (data: unknown) => {};
+  const onSubmit = (data: unknown) => { };
 
   const openError = (err: unknown) => {
     console.log("Modal error!");
@@ -329,7 +329,7 @@ const HeaderMenu = ({
 
   return (
     <AppBar position="static">
-      <Toolbar style={{"backgroundColor":"var(--header)"}}>
+      <Toolbar style={{ "backgroundColor": "var(--header)" }}>
         <LogoIcon className="jde-icon" fill="var(--icon)" />
         <h1 className="Header-text">BT Studio IDE</h1>
         <ProjectModal
