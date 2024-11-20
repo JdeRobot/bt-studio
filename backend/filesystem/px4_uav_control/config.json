@@ -1,0 +1,8 @@
+{
+    "name": "px4_uav_control",
+    "config": {
+        "editorShowAccentColors": true,
+        "theme": "dark",
+        "btOrder": "bottom-to-top"
+    }
+}

@@ -1,0 +1,294 @@
+{
+    "id": "6965f5c5-3788-427f-a066-24494d05dbf4",
+    "offsetX": 9.450677130431785,
+    "offsetY": -108.65427956445936,
+    "zoom": 71.09999999999992,
+    "gridSize": 0,
+    "layers": [
+        {
+            "id": "3c777675-aadf-46eb-9bc1-7772fe191011",
+            "type": "diagram-links",
+            "isSvg": true,
+            "transformed": true,
+            "models": {
+                "396b885c-960f-48c4-af6f-619b7243d3be": {
+                    "id": "396b885c-960f-48c4-af6f-619b7243d3be",
+                    "type": "default",
+                    "selected": false,
+                    "source": "e6829f4f-5e0c-494a-be5c-be3b1a0b5a4c",
+                    "sourcePort": "42be04c1-b9a7-482f-a3ad-14af212d8195",
+                    "target": "ac94de35-3590-41a2-9126-2e77c61ee0ca",
+                    "targetPort": "36e40ad6-1c14-47b1-84f3-b8e73789312e",
+                    "points": [
+                        {
+                            "id": "dd2fad6f-c19e-4da1-8f90-1719569ce20f",
+                            "type": "point",
+                            "x": 115.8749956987819,
+                            "y": 293.9999923070041
+                        },
+                        {
+                            "id": "b1eb51c2-fe74-4255-961c-990c011922d9",
+                            "type": "point",
+                            "x": 223.4843971387653,
+                            "y": 332.49999883115584
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                },
+                "719acb68-d759-48aa-adce-93fee46efdfc": {
+                    "id": "719acb68-d759-48aa-adce-93fee46efdfc",
+                    "type": "default",
+                    "selected": false,
+                    "source": "ac94de35-3590-41a2-9126-2e77c61ee0ca",
+                    "sourcePort": "ddfba7cc-8323-4f0f-b4b4-bb98530f1139",
+                    "target": "8abddf62-30cb-4417-8869-859fc37ccd1b",
+                    "targetPort": "5ce8bfd9-37ce-4bb0-87a3-d6af9c552ea3",
+                    "points": [
+                        {
+                            "id": "df596725-4545-47e2-b41c-74425700b588",
+                            "type": "point",
+                            "x": 387.0937690483778,
+                            "y": 332.49999883115584
+                        },
+                        {
+                            "id": "b0738f8b-071f-4bc9-b15f-11a8acb1a6f5",
+                            "type": "point",
+                            "x": 429.90293486347105,
+                            "y": 436.7843148390896
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                },
+                "66c4c79c-a88d-46b7-a788-f699d75e323a": {
+                    "id": "66c4c79c-a88d-46b7-a788-f699d75e323a",
+                    "type": "default",
+                    "selected": false,
+                    "source": "ac94de35-3590-41a2-9126-2e77c61ee0ca",
+                    "sourcePort": "ddfba7cc-8323-4f0f-b4b4-bb98530f1139",
+                    "target": "271e6ca3-f445-42a0-ad99-dea47d8f0d8a",
+                    "targetPort": "4f76030d-965e-42d2-9093-09d0df8b8f98",
+                    "points": [
+                        {
+                            "id": "d58373db-4a2f-43cc-8292-160e104b7af4",
+                            "type": "point",
+                            "x": 387.0937690483778,
+                            "y": 332.49999883115584
+                        },
+                        {
+                            "id": "d277d856-1e70-4cc9-8ff3-af7e053713f2",
+                            "type": "point",
+                            "x": 462.512061602329,
+                            "y": 235.57902502253438
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                },
+                "c0c2a056-1ff9-44f4-988d-a628d55f07b0": {
+                    "id": "c0c2a056-1ff9-44f4-988d-a628d55f07b0",
+                    "type": "default",
+                    "selected": true,
+                    "source": "8abddf62-30cb-4417-8869-859fc37ccd1b",
+                    "sourcePort": "0221083d-596a-4bba-8f6c-84c00b918db6",
+                    "target": null,
+                    "targetPort": null,
+                    "points": [
+                        {
+                            "id": "e588a679-4872-4856-84c2-88f09feccd4a",
+                            "type": "point",
+                            "x": 580.9655045688824,
+                            "y": 436.7843148390893
+                        },
+                        {
+                            "id": "96b8d9f0-de13-4b54-a5ac-edbad89bc41f",
+                            "type": "point",
+                            "x": 0,
+                            "y": 0
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                }
+            }
+        },
+        {
+            "id": "96ed375b-efac-45e3-b77b-77040d3ad195",
+            "type": "diagram-nodes",
+            "isSvg": false,
+            "transformed": true,
+            "models": {
+                "e6829f4f-5e0c-494a-be5c-be3b1a0b5a4c": {
+                    "id": "e6829f4f-5e0c-494a-be5c-be3b1a0b5a4c",
+                    "type": "basic",
+                    "selected": false,
+                    "x": 19.65022137887409,
+                    "y": 273.0007069241359,
+                    "ports": [
+                        {
+                            "id": "42be04c1-b9a7-482f-a3ad-14af212d8195",
+                            "type": "children",
+                            "x": 110.87496307802328,
+                            "y": 288.9999811472709,
+                            "name": "children",
+                            "alignment": "right",
+                            "parentNode": "e6829f4f-5e0c-494a-be5c-be3b1a0b5a4c",
+                            "links": [
+                                "396b885c-960f-48c4-af6f-619b7243d3be"
+                            ],
+                            "in": false,
+                            "label": "children"
+                        }
+                    ],
+                    "name": "Tree Root",
+                    "color": "rgb(0,204,0)"
+                },
+                "8abddf62-30cb-4417-8869-859fc37ccd1b": {
+                    "id": "8abddf62-30cb-4417-8869-859fc37ccd1b",
+                    "type": "basic",
+                    "selected": true,
+                    "x": 427.90337973476176,
+                    "y": 415.7862740023827,
+                    "ports": [
+                        {
+                            "id": "5ce8bfd9-37ce-4bb0-87a3-d6af9c552ea3",
+                            "type": "parent",
+                            "x": 424.90290224271257,
+                            "y": 431.78430367935607,
+                            "name": "parent",
+                            "alignment": "left",
+                            "parentNode": "8abddf62-30cb-4417-8869-859fc37ccd1b",
+                            "links": [
+                                "719acb68-d759-48aa-adce-93fee46efdfc"
+                            ],
+                            "in": true,
+                            "label": "parent"
+                        },
+                        {
+                            "id": "0221083d-596a-4bba-8f6c-84c00b918db6",
+                            "type": "children",
+                            "x": 575.9655148701745,
+                            "y": 431.78430367935607,
+                            "name": "children",
+                            "alignment": "right",
+                            "parentNode": "8abddf62-30cb-4417-8869-859fc37ccd1b",
+                            "links": [
+                                "c0c2a056-1ff9-44f4-988d-a628d55f07b0"
+                            ],
+                            "in": false,
+                            "label": "children"
+                        }
+                    ],
+                    "name": "ReactiveFallback",
+                    "color": "rgb(255,0,0)",
+                    "is_selected": true
+                },
+                "ac94de35-3590-41a2-9126-2e77c61ee0ca": {
+                    "id": "ac94de35-3590-41a2-9126-2e77c61ee0ca",
+                    "type": "basic",
+                    "selected": false,
+                    "x": 221.49178255372948,
+                    "y": 311.504424778761,
+                    "ports": [
+                        {
+                            "id": "36e40ad6-1c14-47b1-84f3-b8e73789312e",
+                            "type": "parent",
+                            "x": 218.4844074400575,
+                            "y": 327.4999876714226,
+                            "name": "parent",
+                            "alignment": "left",
+                            "parentNode": "ac94de35-3590-41a2-9126-2e77c61ee0ca",
+                            "links": [
+                                "396b885c-960f-48c4-af6f-619b7243d3be"
+                            ],
+                            "in": true,
+                            "label": "parent"
+                        },
+                        {
+                            "id": "ddfba7cc-8323-4f0f-b4b4-bb98530f1139",
+                            "type": "children",
+                            "x": 382.0937364276192,
+                            "y": 327.4999876714226,
+                            "name": "children",
+                            "alignment": "right",
+                            "parentNode": "ac94de35-3590-41a2-9126-2e77c61ee0ca",
+                            "links": [
+                                "719acb68-d759-48aa-adce-93fee46efdfc",
+                                "66c4c79c-a88d-46b7-a788-f699d75e323a"
+                            ],
+                            "in": false,
+                            "label": "children"
+                        }
+                    ],
+                    "name": "ReactiveSequence",
+                    "color": "rgb(0,128,255)"
+                },
+                "271e6ca3-f445-42a0-ad99-dea47d8f0d8a": {
+                    "id": "271e6ca3-f445-42a0-ad99-dea47d8f0d8a",
+                    "type": "basic",
+                    "selected": false,
+                    "x": 460.52151830496285,
+                    "y": 214.5935547784981,
+                    "ports": [
+                        {
+                            "id": "4f76030d-965e-42d2-9093-09d0df8b8f98",
+                            "type": "parent",
+                            "x": 457.5120719036212,
+                            "y": 230.57903532382656,
+                            "name": "parent",
+                            "alignment": "left",
+                            "parentNode": "271e6ca3-f445-42a0-ad99-dea47d8f0d8a",
+                            "links": [
+                                "66c4c79c-a88d-46b7-a788-f699d75e323a"
+                            ],
+                            "in": true,
+                            "label": "parent"
+                        }
+                    ],
+                    "name": "ArmDisarm",
+                    "color": "rgb(128,0,128)",
+                    "is_selected": false,
+                    "is_subtree": false
+                },
+                "e1d1b82b-dd43-4307-8631-0dbd780c5201": {
+                    "id": "e1d1b82b-dd43-4307-8631-0dbd780c5201",
+                    "type": "basic",
+                    "selected": false,
+                    "x": 705.0539360104443,
+                    "y": 315.90616893901654,
+                    "ports": [
+                        {
+                            "id": "cc561422-089c-4c5c-90c7-dd50bd8af96f",
+                            "type": "parent",
+                            "x": 702.0416565280494,
+                            "y": 331.9012576833992,
+                            "name": "parent",
+                            "alignment": "left",
+                            "parentNode": "e1d1b82b-dd43-4307-8631-0dbd780c5201",
+                            "links": [],
+                            "in": true,
+                            "label": "parent"
+                        }
+                    ],
+                    "name": "Control",
+                    "color": "rgb(128,0,128)",
+                    "is_selected": false,
+                    "is_subtree": false
+                }
+            }
+        }
+    ]
+}
