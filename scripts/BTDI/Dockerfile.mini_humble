@@ -32,11 +32,12 @@ RUN git clone --depth 1 https://github.com/JdeRobot/bt-studio.git -b $BT_STUDIO 
 
 # Compiling and sourcing the workspace
 WORKDIR /home/ws
-# RUN /bin/bash -c "source /home/drones_ws/install/setup.bash; rosdep install --from-paths src --ignore-src -r --rosdistro humble -y"
+RUN /bin/bash -c "source /home/drones_ws/install/setup.bash; rosdep install --from-paths src --ignore-src -r --rosdistro humble -y"
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash; colcon build --symlink-install"
 
 # build frontend
-RUN 'cd /BtStudio/frontend/ && yarn install && yarn build cd build/static/js && for filename in main.*; do mv "$filename" "main.js""$(echo "$filename" | sed -e "s/main.*.js//g")"; done && cd ../css && for filename in main.*; do mv "$filename" "main.css""$(echo "$filename" | sed -e "s/main.*.css//g")"; done'
+RUN /bin/bash -c "chmod +x /BtStudio/scripts/move_frontend.sh"
+RUN /bin/bash -c "cd /BtStudio/frontend/ && yarn install && yarn build && sh ../scripts/move_frontend.sh"
 
 # Django server
 EXPOSE 7164
