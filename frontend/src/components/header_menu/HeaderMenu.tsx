@@ -11,7 +11,9 @@ import {
 } from "../../api_helper/TreeWrapper";
 import CommsManager from "../../api_helper/CommsManager";
 
-import { ReactComponent as LogoIcon } from "../file_editor/img/logo_jderobot_monocolor.svg";
+import {
+  ReactComponent as LogoIcon
+} from "../file_editor/img/logo_jderobot_monocolor.svg";
 
 import "./HeaderMenu.css";
 import { ReactComponent as ProjectsIcon } from "./img/change_project.svg";

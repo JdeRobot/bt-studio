@@ -23,5 +23,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("tree_api/", include("backend.tree_api.urls")),
     path("frontend/", include("frontend.urls")),
-    path('', lambda request: redirect('frontend/', permanent=True)),
+    path("", lambda request: redirect("frontend/", permanent=True)),
 ]

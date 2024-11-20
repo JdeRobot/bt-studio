@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-sbf#&=tir*7__rh#a=6yv)gm9nbgvxy@vn(21j2)(r80le5klp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "backend.tree_api",
-    "frontend.apps.FrontendConfig"
+    "frontend.apps.FrontendConfig",
 ]
 
 MIDDLEWARE = [
@@ -58,7 +58,7 @@ ROOT_URLCONF = "backend.backend.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, '../frontend')],
+        "DIRS": [os.path.join(BASE_DIR, "../frontend")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -78,13 +78,13 @@ WSGI_APPLICATION = "backend.backend.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'universe_db' ,
-        'USER': 'user-dev',
-        'PASSWORD': 'bt-studio-dev',
-        'HOST': 'my-postgres',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "universe_db",
+        "USER": "user-dev",
+        "PASSWORD": "bt-studio-dev",
+        "HOST": "my-postgres",
+        "PORT": "5432",
     }
 }
 
@@ -124,11 +124,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = "staticfiles"
 
 STATICFILES_DIRS = (
     # os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, '../frontend/build'),    # React frontend statics
+    os.path.join(BASE_DIR, "../frontend/build"),  # React frontend statics
 )
 
 
