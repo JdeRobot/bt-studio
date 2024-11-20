@@ -3,7 +3,7 @@ services:
     image: postgres:latest
     container_name: universe_db
     environment:
-      POSTGRES_DB: academy_db 
+      POSTGRES_DB: universe_db 
       POSTGRES_USER: user-dev 
       POSTGRES_PASSWORD: bt-studio-dev
     ports:
@@ -12,7 +12,7 @@ services:
       - ./RoboticsInfrastructure/database/universes.sql:/docker-entrypoint-initdb.d/1.sql
       - ./backend/django_auth.sql:/docker-entrypoint-initdb.d/2.sql
     healthcheck:
-      test: pg_isready -U user-dev -d academy_db
+      test: pg_isready -U user-dev -d universe_db
       interval: 3s
       timeout: 1s
       retries: 20
@@ -20,7 +20,7 @@ services:
   bt-studio:
     image: jderobot/bt-studio:latest
     container_name: developer-container
-    command:  "--bt"
+    command:  "-bt"
     devices:
       - /dev/dri/card0:/dev/dri/card0
       - /dev/dri/renderD128:/dev/dri/renderD128
