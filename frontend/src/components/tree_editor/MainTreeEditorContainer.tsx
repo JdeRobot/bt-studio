@@ -160,16 +160,18 @@ const MainTreeEditorContainer = ({
   }, [projectName, subTreeName]);
 
   useEffect(() => {
+    if (treeHierarchy.length === 0) {
+      setGoBack(false);
+    }
+
     if (goBack) {
-      if (treeHierarchy.length > 0) {
-        saveSubtreeJson(resultJson, subTreeName); // Save the current subtree
-        setTreeHierarchy((prevHierarchy) => {
-          const newHierarchy = prevHierarchy.slice(0, -1);
-          console.log("SET");
-          setSubTreeName(newHierarchy[newHierarchy.length - 1] || "");
-          return newHierarchy;
-        });
-      }
+      saveSubtreeJson(resultJson, subTreeName); // Save the current subtree
+      setTreeHierarchy((prevHierarchy) => {
+        const newHierarchy = prevHierarchy.slice(0, -1);
+        console.log("SET");
+        setSubTreeName(newHierarchy[newHierarchy.length - 1] || "");
+        return newHierarchy;
+      });
       setGoBack(false);
       setWentBack(true);
     }
