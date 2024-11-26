@@ -162,6 +162,7 @@ const MainTreeEditorContainer = ({
   useEffect(() => {
     if (treeHierarchy.length === 0) {
       setGoBack(false);
+      return;
     }
 
     if (goBack) {
