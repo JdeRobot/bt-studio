@@ -1,4 +1,5 @@
 import functools
+import sys
 import rclpy
 import py_trees
 from rclpy.node import Node
@@ -6,6 +7,19 @@ import tree_factory
 import os
 from tree_tools import ascii_bt_to_json
 
+def start_console():
+    # Get all the file descriptors and choose the latest one
+    fds = os.listdir("/dev/pts/")
+    console_fd = str(max(map(int, fds[:-1])))
+
+    sys.stderr = open('/dev/pts/' + console_fd, 'w')
+    sys.stdout = open('/dev/pts/' + console_fd, 'w')
+    sys.stdin = open('/dev/pts/' + console_fd, 'r' )
+
+def close_console():
+    sys.stderr.close()
+    sys.stdout.close()
+    sys.stdin.close()
 
 class TreeExecutor(Node):
     def __init__(self):
@@ -46,11 +60,14 @@ class TreeExecutor(Node):
 
 
 def main():
+    # Start the console
+    start_console()
     # Init the components
     rclpy.init()
     executor = TreeExecutor()
     # Spin the tree
     executor.spin_tree()
-
+    # Close the console
+    close_console() 
 
 main()
