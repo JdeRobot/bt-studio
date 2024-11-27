@@ -1,7 +1,7 @@
 import "./VncViewer.css";
 import BounceLoader from "react-spinners/BounceLoader";
 
-const TerminalViewer = ({ gazeboEnabled }) => {
+const VncViewer = ({ gazeboEnabled } : {gazeboEnabled:boolean}) => {
   return (
     <div className="viewer">
       {gazeboEnabled ? (
@@ -11,7 +11,7 @@ const TerminalViewer = ({ gazeboEnabled }) => {
             width: "100%",
             height: "100%",
           }}
-          src={"http://127.0.0.1:1108/vnc.html?resize=remote&autoconnect=true"}
+          src={"http://127.0.0.1:6080/vnc.html?resize=remote&autoconnect=true"}
         />
       ) : (
         <div className="loader">
@@ -22,4 +22,4 @@ const TerminalViewer = ({ gazeboEnabled }) => {
   );
 };
 
-export default TerminalViewer;
+export default VncViewer;
