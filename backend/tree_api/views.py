@@ -8,6 +8,7 @@ from . import app_generator
 from . import tree_generator
 from . import json_translator
 from . import templates
+from .models import Universe
 from .project_view import list_dir, EntryEncoder
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -1281,3 +1282,18 @@ def upload_code(request):
         # Clean up the temporary zip file
         if os.path.exists(temp_zip_path):
             os.remove(temp_zip_path)
+
+@api_view(["GET"])
+def list_docker_universes(request):
+    try:
+        universes = Universe.objects.all()
+        universes_docker_list = [
+            x.name
+            for x in universes
+        ]
+        print(universes_docker_list)
+        # Return the list of projects
+        return Response({"universes": universes_docker_list})
+
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
