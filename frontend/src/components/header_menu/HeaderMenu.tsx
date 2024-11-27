@@ -8,6 +8,7 @@ import {
   generateDockerizedApp,
   getUniverseConfig,
   getCustomUniverseZip,
+  getRoboticsBackendUniversePath,
 } from "../../api_helper/TreeWrapper";
 import CommsManager from "../../api_helper/CommsManager";
 
@@ -80,13 +81,14 @@ const HeaderMenu = ({
 
     try {
       if (configJson.type === "robotics_backend") {
+        const launch_file_path = await getRoboticsBackendUniversePath(configJson.id);
+
         const universe_config = {
           name: configJson.name,
-          launch_file_path: configJson.config.launch_file_path,
+          launch_file_path: launch_file_path,
           ros_version: "ROS2",
           visualization: "bt_studio",
           world: "gazebo",
-          exercise_id: configJson.config.id,
         };
 
         await manager.launchWorld(universe_config);

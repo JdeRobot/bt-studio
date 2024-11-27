@@ -173,6 +173,26 @@ const getUniverseConfig = async (
   }
 };
 
+const getRoboticsBackendUniversePath = async (universeName: string) => {
+  if (!universeName) throw new Error("The universe name is not set");
+
+  const apiUrl = `/tree_api/get_docker_universe_path?name=${encodeURIComponent(universeName)}`;
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(
+        response.data.message || "Failed to retrieve universe config",
+      ); // Response error
+    }
+
+    return JSON.stringify(response.data.universe_path);
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+}
+
 const getCustomUniverseZip = async (
   universeName: string,
   currentProjectname: string,
@@ -383,6 +403,7 @@ export {
   generateApp,
   generateDockerizedApp,
   getUniverseConfig,
+  getRoboticsBackendUniversePath,
   getCustomUniverseZip,
   createSubtree,
   getSubtreeList,

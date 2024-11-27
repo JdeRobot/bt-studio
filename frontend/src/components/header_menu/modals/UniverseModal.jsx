@@ -95,6 +95,11 @@ const UniverseModal = ({
     }
   };
 
+  const importFromRoboticsBackend = () => {
+    console.log("Create from RB");
+    //TODO: need to get the name and open a dropdown to select the universe
+  };
+
   const importFromZip = () => {
     setUploadModalOpen(true);
   };
@@ -170,7 +175,7 @@ const UniverseModal = ({
             >
               Import from zip
             </div>
-            <div className="project-modal-create-button" onClick={() => {}}>
+            <div className="project-modal-create-button" onClick={() => {importFromRoboticsBackend()}}>
               Import from Robotics Backend library
             </div>
             {/* <div className='project-modal-create-button'>Other</div> */}
