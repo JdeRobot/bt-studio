@@ -1,6 +1,6 @@
 services:
   my-postgres:
-    image: postgres:latest
+    image: jderobot/bt-studio-database:latest
     container_name: universe_db
     environment:
       POSTGRES_DB: universe_db 

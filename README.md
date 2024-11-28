@@ -15,63 +15,42 @@ BT Studio is an **open-source** tool crafted for the development of robotic appl
 
 ## Usage
 
-### Installation
+### Basic: No cloning repo
+
+To save the code you will need to download the app. Everything will be reset every time the command below is launched.
+
+```bash
+curl -s https://raw.githubusercontent.com/JdeRobot/JdeRobot/main/scripts/run.sh | sudo bash
+```
+
+### Developer
+
+Here the code will be saved in 'backend/filesystem' and the current database and bt-studio will be used inside the docker.
 
 1. Clone the repo and enter it
 ```bash
-git clone https://github.com/JdeRobot/bt-studio
+git clone --recurse-submodules https://github.com/JdeRobot/bt-studio.git -b <src-branch>
 cd bt-studio
 ```
 
-2. Install the necessary packages
+2. Launch the docker: it can be done in the following ways.
+
+* **Recomended** Using the developer script (docker compose):
 ```bash
-sudo apt update
-sudo apt install npm python3-vcstool python3-pip python3-rosdep python3-colcon-common-extensions python3-autopep8 -y
+sh scripts/develop.sh
 ```
 
-4. Install the backend dependencies
+* Using docker run **(does not use the current database and bt-studio)**:
 ```bash
-cd backend
-pip install virtualenv
-virtualenv backend_env
-source backend_env/bin/activate
-pip install django djangorestframework
+docker run --hostname my-postgres --name universe_db -d\
+    -e POSTGRES_DB=universe_db \
+    -e POSTGRES_USER=user-dev \
+    -e POSTGRES_PASSWORD=bt-studio-dev \
+    -e POSTGRES_PORT=5432 \
+    -d -p 5432:5432 \
+    jderobot/bt-studio-database:latest
+docker run --rm -it $(nvidia-smi >/dev/null 2>&1 && echo "--gpus all" || echo "") --device /dev/dri -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link universe_db jderobot/bt-studio:latest
 ```
-
-5. Launch the backend
-
-```bash
-python3 manage.py runserver
-```
-
-**Do not close the terminal where this is executing!**. Django provides the necessary backend funcionalities. For continuing the process, simply open a new terminal. 
-
-6. Install the appropiate nodejs version
-
-```bash
-wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-source ~/.bashrc
-nvm install 16
-nvm use 16
-```
-
-7. Install Yarn
-
-```bash
-sudo npm install --global yarn
-```
-
-8. Setup the frontend
-
-From the bt_studio folder:
-
-```bash
-cd frontend
-yarn install
-yarn start
-```
-
-A new window in the browser should have opened. If not, go to [BT Studio](http://localhost:3000/)
 
 ### Generating apps
 
