@@ -56,7 +56,7 @@ const UniverseModal = ({
     loadUniverseList();
   }, [isOpen, universeAdded]);
 
-  const handleInputChange = (event: any) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormState((prevFormData) => ({
       ...prevFormData,

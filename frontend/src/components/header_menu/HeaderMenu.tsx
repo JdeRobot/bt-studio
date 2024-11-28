@@ -56,7 +56,7 @@ const HeaderMenu = ({
   const settings = useContext(OptionsContext);
 
   // Project state
-  const [existingProjects, setExistingProjects] = useState("");
+  const [existingProjects, setExistingProjects] = useState<string[]>([]);
 
   // App state
   const [appRunning, setAppRunning] = useState(false);
