@@ -160,6 +160,11 @@ const MainTreeEditorContainer = ({
   }, [projectName, subTreeName]);
 
   useEffect(() => {
+    if (treeHierarchy.length === 0) {
+      setGoBack(false);
+      return;
+    }
+
     if (goBack) {
       saveSubtreeJson(resultJson, subTreeName); // Save the current subtree
       setTreeHierarchy((prevHierarchy) => {

@@ -8,6 +8,7 @@ import {
   generateDockerizedApp,
   getUniverseConfig,
   getCustomUniverseZip,
+  getRoboticsBackendUniversePath,
 } from "../../api_helper/TreeWrapper";
 import CommsManager from "../../api_helper/CommsManager";
 
@@ -55,7 +56,7 @@ const HeaderMenu = ({
   const settings = useContext(OptionsContext);
 
   // Project state
-  const [existingProjects, setExistingProjects] = useState("");
+  const [existingProjects, setExistingProjects] = useState<string[]>([]);
 
   // App state
   const [appRunning, setAppRunning] = useState(false);
@@ -80,13 +81,16 @@ const HeaderMenu = ({
 
     try {
       if (configJson.type === "robotics_backend") {
+        const launch_file_path = await getRoboticsBackendUniversePath(
+          configJson.id,
+        );
+
         const universe_config = {
           name: configJson.name,
-          launch_file_path: configJson.config.launch_file_path,
+          launch_file_path: launch_file_path,
           ros_version: "ROS2",
           visualization: "bt_studio",
           world: "gazebo",
-          exercise_id: configJson.config.id,
         };
 
         await manager.launchWorld(universe_config);
@@ -327,7 +331,7 @@ const HeaderMenu = ({
 
   return (
     <AppBar position="static">
-      <Toolbar>
+      <Toolbar style={{ backgroundColor: "var(--header)" }}>
         <LogoIcon className="jde-icon" fill="var(--icon)" />
         <h1 className="Header-text">BT Studio IDE</h1>
         <ProjectModal

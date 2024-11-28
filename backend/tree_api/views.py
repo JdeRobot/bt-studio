@@ -8,6 +8,7 @@ from . import app_generator
 from . import tree_generator
 from . import json_translator
 from . import templates
+from .models import Universe
 from .project_view import list_dir, EntryEncoder
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -1233,6 +1234,50 @@ def upload_universe(request):
 
 
 @api_view(["POST"])
+def add_docker_universe(request):
+
+    # Check if 'name' and 'zipfile' are in the request data
+    if (
+        "universe_name" not in request.data
+        or "app_name" not in request.data
+        or "id" not in request.data
+    ):
+        return Response(
+            {"error": "Name and id are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the name and the zip file from the request
+    universe_name = request.data["universe_name"]
+    app_name = request.data["app_name"]
+    id = request.data["id"]
+
+    # Make folder path relative to Django app
+    base_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(base_path, app_name)
+    universes_path = os.path.join(project_path, "universes")
+    universe_path = os.path.join(universes_path, universe_name)
+
+    # Create the folder if it doesn't exist
+    if not os.path.exists(universe_path):
+        os.makedirs(universe_path)
+
+    # Fill the config dictionary of the universe
+    ram_launch_path = "/workspace/worlds/" + universe_name + "/universe.launch.py"
+    universe_config = {"name": universe_name, "id": id, "type": "robotics_backend"}
+
+    # Generate the json config
+    config_path = os.path.join(universe_path, "config.json")
+    with open(config_path, "w") as config_file:
+        json.dump(universe_config, config_file, ensure_ascii=False, indent=4)
+
+    return Response(
+        {"success": True, "message": "Universe uploaded successfully"},
+        status=status.HTTP_200_OK,
+    )
+
+
+@api_view(["POST"])
 def upload_code(request):
 
     # Check if 'name' and 'zipfile' are in the request data
@@ -1281,3 +1326,36 @@ def upload_code(request):
         # Clean up the temporary zip file
         if os.path.exists(temp_zip_path):
             os.remove(temp_zip_path)
+
+
+@api_view(["GET"])
+def list_docker_universes(request):
+    try:
+        universes = Universe.objects.all()
+        universes_docker_list = [x.name for x in universes]
+        print(universes_docker_list)
+        # Return the list of projects
+        return Response({"universes": universes_docker_list})
+
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
+
+
+@api_view(["GET"])
+def get_docker_universe_path(request):
+    name = request.GET.get("name")
+
+    # Check if 'name' is in the request data
+    if not name:
+        return Response(
+            {"success": False, "message": "Project parameter is missing"}, status=400
+        )
+
+    try:
+        universe = Universe.objects.get(name=name)
+
+        # Return the list of projects
+        return Response({"universe_path": universe.launch_file_path})
+
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
