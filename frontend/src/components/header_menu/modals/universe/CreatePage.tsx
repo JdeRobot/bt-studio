@@ -73,12 +73,16 @@ const CreatePage = ({
       //TODO: invalid docker universe
       return;
     }
-    
-    createRoboticsBackendUniverse(currentProject, formState.universeName, formState.dockerUniverseName)
+
+    createRoboticsBackendUniverse(
+      currentProject,
+      formState.universeName,
+      formState.dockerUniverseName,
+    );
     setVisible(false);
   };
 
-  const closeDropdown = (e:any) => {
+  const closeDropdown = (e: any) => {
     if (openDropdown && !dropdown.current?.contains(e.target)) {
       setOpenDropdown(false);
     }
@@ -151,13 +155,15 @@ const CreatePage = ({
             placeholder="Universe Name"
             required={true}
           />
-          <label htmlFor="dockerUniverseName" className="modal-complex-input-label">
+          <label
+            htmlFor="dockerUniverseName"
+            className="modal-complex-input-label"
+          >
             Select Robotics Backend Universe
           </label>
           <datalist id="dockerUniverses">
-            {availableUniverses && availableUniverses.map((name) => (
-              <option value={name}/>
-            ))}
+            {availableUniverses &&
+              availableUniverses.map((name) => <option value={name} />)}
           </datalist>
         </div>
       </div>

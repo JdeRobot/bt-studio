@@ -19,15 +19,15 @@ const ProjectModal = ({
   setExistingProjects,
   createProject,
   openError,
-} : {
-  onSubmit: FormEventHandler<HTMLFormElement>,
-  isOpen: boolean,
-  onClose: Function,
-  currentProject: string,
-  existingProjects: string[],
-  setExistingProjects: Function,
-  createProject: Function,
-  openError: Function,
+}: {
+  onSubmit: FormEventHandler<HTMLFormElement>;
+  isOpen: boolean;
+  onClose: Function;
+  currentProject: string;
+  existingProjects: string[];
+  setExistingProjects: Function;
+  createProject: Function;
+  openError: Function;
 }) => {
   const focusInputRef = useRef<any>(null);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
@@ -55,7 +55,7 @@ const ProjectModal = ({
     getProjects();
   }, [isOpen]);
 
-  const handleInputChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormState((prevFormData) => ({
       ...prevFormData,
@@ -79,7 +79,7 @@ const ProjectModal = ({
     onClose();
   };
 
-  const deleteProject = async (project:string) => {
+  const deleteProject = async (project: string) => {
     if (currentProject === project) {
       //TODO: change this to change project before deleting
       return;

@@ -81,7 +81,9 @@ const HeaderMenu = ({
 
     try {
       if (configJson.type === "robotics_backend") {
-        const launch_file_path = await getRoboticsBackendUniversePath(configJson.id);
+        const launch_file_path = await getRoboticsBackendUniversePath(
+          configJson.id,
+        );
 
         const universe_config = {
           name: configJson.name,

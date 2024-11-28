@@ -1,7 +1,7 @@
 import "./VncViewer.css";
 import BounceLoader from "react-spinners/BounceLoader";
 
-const VncViewer = ({ gazeboEnabled } : {gazeboEnabled:boolean}) => {
+const VncViewer = ({ gazeboEnabled }: { gazeboEnabled: boolean }) => {
   return (
     <div className="viewer">
       {gazeboEnabled ? (
