@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./UniverseUploadModal.css";
 import Modal from "../../Modal/Modal";
-import back_modal_img from "../../Modal/img/back.svg";
-import close_modal_img from "../../Modal/img/close.svg";
-import delete_icon from "../../tree_editor/img/delete.svg";
+import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 import axios from "axios";
 
 const initialProjectData = {
@@ -106,13 +104,13 @@ const UniverseUploadModal = ({
           >
             Upload a zip file with your universe
           </label>
-          <img
-            className="modal-titlebar-close"
+          <CloseIcon
+            className="modal-titlebar-close icon"
             onClick={() => {
               handleCancel();
             }}
-            src={close_modal_img}
-          ></img>
+            fill={"var(--icon)"}
+          />
         </div>
         <div className="form-row">
           <div className="modal-complex-input-row-container">

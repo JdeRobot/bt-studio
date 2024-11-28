@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, FormEventHandler } from "react";
 import "./UniverseModal.css";
 import Modal from "../../Modal/Modal";
-import { ReactComponent as BackIcon } from "../../Modal/img/back.svg";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 import { ReactComponent as DeleteIcon } from "../../tree_editor/img/delete.svg";
+import CreatePage from "./universe/CreatePage";
 import axios from "axios";
 import UniverseUploadModal from "./UniverseUploadModal";
 
@@ -29,6 +29,7 @@ const UniverseModal = ({
   const [existingUniverses, setUniversesProjects] = useState([]);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [universeAdded, setUniverseAdded] = useState(false);
+  const [creationMenu, showCreationMenu] = useState<boolean>(false);
 
   const loadUniverseList = async () => {
     try {
@@ -54,6 +55,7 @@ const UniverseModal = ({
     }
 
     loadUniverseList();
+    showCreationMenu(false);
   }, [isOpen, universeAdded]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,6 +106,7 @@ const UniverseModal = ({
   const importFromRoboticsBackend = () => {
     console.log("Create from RB");
     //TODO: need to get the name and open a dropdown to select the universe
+    showCreationMenu(true);
   };
 
   const importFromZip = () => {
@@ -132,61 +135,73 @@ const UniverseModal = ({
         setUniverseAdded={setUniverseAdded}
       />
       <form onSubmit={onSubmit} onReset={handleCancel}>
-        <div className="modal-titlebar">
-          <label
-            className="modal-titlebar-title"
-            htmlFor="actionName"
-            style={{ textAlign: "center" }}
-          >
-            Manage your Universes
-          </label>
-          <CloseIcon
-            className="modal-titlebar-close icon"
-            onClick={() => {
-              handleCancel();
-            }}
-            fill={"var(--icon)"}
-          />
-        </div>
-        <div className="form-row">
-          <ul className="project-entry-list">
-            {Object.entries(existingUniverses).map((project) => {
-              return (
-                <div
-                  className="project-entry"
-                  onClick={() => onClose(project[1])}
-                >
-                  <label className="project-entry-name">{project[1]}</label>
-                  <DeleteIcon
-                    className="project-entry-delete icon"
-                    title="Delete"
-                    onClick={(e) => {
-                      deleteUniverse(project[1]);
-                      e.stopPropagation();
-                    }}
-                    fill={"var(--icon)"}
-                  />
-                </div>
-              );
-            })}
-          </ul>
-        </div>
-        <div className="form-row">
-          <div className="project-modal-creation-buttons-container">
-            <div
-              className="project-modal-create-button"
-              onClick={() => {
-                importFromZip();
-              }}
+        {!creationMenu ? (
+        <>
+          <div className="modal-titlebar">
+            <label
+              className="modal-titlebar-title"
+              htmlFor="actionName"
+              style={{ textAlign: "center" }}
             >
-              Import from zip
-            </div>
-            <div className="project-modal-create-button" onClick={() => {importFromRoboticsBackend()}}>
-              Import from Robotics Backend library
-            </div>
-            {/* <div className='project-modal-create-button'>Other</div> */}
+              Manage your Universes
+            </label>
+            <CloseIcon
+              className="modal-titlebar-close icon"
+              onClick={() => {
+                handleCancel();
+              }}
+              fill={"var(--icon)"}
+            />
           </div>
-        </div>
+          <div className="form-row">
+            <ul className="project-entry-list">
+              {Object.entries(existingUniverses).map((project) => {
+                return (
+                  <div
+                    className="project-entry"
+                    onClick={() => onClose(project[1])}
+                  >
+                    <label className="project-entry-name">{project[1]}</label>
+                    <DeleteIcon
+                      className="project-entry-delete icon"
+                      title="Delete"
+                      onClick={(e) => {
+                        deleteUniverse(project[1]);
+                        e.stopPropagation();
+                      }}
+                      fill={"var(--icon)"}
+                    />
+                  </div>
+                );
+              })}
+            </ul>
+          </div>
+          <div className="form-row">
+            <div className="project-modal-creation-buttons-container">
+              <div
+                className="project-modal-create-button"
+                onClick={() => {
+                  importFromZip();
+                }}
+              >
+                Import from zip
+              </div>
+              <div className="project-modal-create-button" onClick={() => {importFromRoboticsBackend()}}>
+                Import from Robotics Backend library
+              </div>
+              {/* <div className='project-modal-create-button'>Other</div> */}
+            </div>
+          </div>
+        </> ) : (
+        <>
+          <CreatePage
+            setVisible={showCreationMenu}
+            visible={creationMenu}
+            onClose={onClose}
+            currentProject={currentProject}
+            openError={openError}
+          />
+        </>)}
       </form>
     </Modal>
   );

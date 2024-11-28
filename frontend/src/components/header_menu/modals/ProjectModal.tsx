@@ -63,8 +63,6 @@ const ProjectModal = ({
     }));
   };
 
-  const handleSubmit = (event:any) => {};
-
   const handleCancel = () => {
     setCreateProjectOpen(false);
     if (currentProject !== "") {

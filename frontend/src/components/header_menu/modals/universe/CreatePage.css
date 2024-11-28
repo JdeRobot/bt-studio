@@ -1,0 +1,19 @@
+.universe-create-name {
+  margin-top: 30px;
+  width: 75%;
+}
+
+#create-new-universe {
+  margin-top: 40px;
+  height: 30px;
+  width: auto;
+  padding: 5px;
+  color: var(--text);
+  background-color: var(--buttons);
+  border: none;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: var(--buttons-hover);
+  }
+}
