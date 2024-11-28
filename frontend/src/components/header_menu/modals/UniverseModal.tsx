@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, FormEventHandler } from "react";
 import "./UniverseModal.css";
 import Modal from "../../Modal/Modal";
 import { ReactComponent as BackIcon } from "../../Modal/img/back.svg";
@@ -17,8 +17,14 @@ const UniverseModal = ({
   onClose,
   currentProject,
   openError,
+}:{
+  onSubmit: FormEventHandler<HTMLFormElement>,
+  isOpen: boolean,
+  onClose: Function,
+  currentProject: string,
+  openError: Function,
 }) => {
-  const focusInputRef = useRef(null);
+  const focusInputRef = useRef<any>(null);
   const [formState, setFormState] = useState(initialProjectData);
   const [existingUniverses, setUniversesProjects] = useState([]);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
@@ -50,7 +56,7 @@ const UniverseModal = ({
     loadUniverseList();
   }, [isOpen, universeAdded]);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: any) => {
     const { name, value } = event.target;
     setFormState((prevFormData) => ({
       ...prevFormData,
@@ -71,7 +77,7 @@ const UniverseModal = ({
     onClose();
   };
 
-  const deleteUniverse = async (universe_name) => {
+  const deleteUniverse = async (universe_name:string) => {
     try {
       const apiUrl = `/tree_api/delete_universe?project_name=${currentProject}&universe_name=${universe_name}`;
       const response = await axios.get(apiUrl);
@@ -79,7 +85,7 @@ const UniverseModal = ({
         loadUniverseList();
         console.log("Universe deleted successfully");
       }
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
@@ -104,11 +110,11 @@ const UniverseModal = ({
     setUploadModalOpen(true);
   };
 
-  const handleCloseUploadUniverseModal = (universe_name) => {
+  const handleCloseUploadUniverseModal = (universe_name: string) => {
     setUploadModalOpen(false);
   };
 
-  const handleFormSubmit = (data) => {};
+  const handleFormSubmit = (data:any) => {};
 
   return (
     <Modal
