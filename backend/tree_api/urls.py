@@ -54,6 +54,14 @@ urlpatterns = [
     path("create_subtree/", views.create_subtree, name="create_subtree"),
     path("get_subtree/", views.get_subtree, name="get_subtree"),
     path("save_subtree/", views.save_subtree, name="save_subtree"),
-    path("list_docker_universes/", views.list_docker_universes, name="list_docker_universes"),
-    path("get_docker_universe_path/", views.get_docker_universe_path, name="get_docker_universe_path"),
+    path(
+        "list_docker_universes/",
+        views.list_docker_universes,
+        name="list_docker_universes",
+    ),
+    path(
+        "get_docker_universe_path/",
+        views.get_docker_universe_path,
+        name="get_docker_universe_path",
+    ),
 ]

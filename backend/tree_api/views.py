@@ -1232,6 +1232,7 @@ def upload_universe(request):
         status=status.HTTP_200_OK,
     )
 
+
 @api_view(["POST"])
 def add_docker_universe(request):
 
@@ -1263,11 +1264,7 @@ def add_docker_universe(request):
 
     # Fill the config dictionary of the universe
     ram_launch_path = "/workspace/worlds/" + universe_name + "/universe.launch.py"
-    universe_config = {
-        "name": universe_name,
-        "id": id,
-        "type": "robotics_backend"
-    }
+    universe_config = {"name": universe_name, "id": id, "type": "robotics_backend"}
 
     # Generate the json config
     config_path = os.path.join(universe_path, "config.json")
@@ -1278,7 +1275,6 @@ def add_docker_universe(request):
         {"success": True, "message": "Universe uploaded successfully"},
         status=status.HTTP_200_OK,
     )
-
 
 
 @api_view(["POST"])
@@ -1331,14 +1327,12 @@ def upload_code(request):
         if os.path.exists(temp_zip_path):
             os.remove(temp_zip_path)
 
+
 @api_view(["GET"])
 def list_docker_universes(request):
     try:
         universes = Universe.objects.all()
-        universes_docker_list = [
-            x.name
-            for x in universes
-        ]
+        universes_docker_list = [x.name for x in universes]
         print(universes_docker_list)
         # Return the list of projects
         return Response({"universes": universes_docker_list})
@@ -1346,7 +1340,8 @@ def list_docker_universes(request):
     except Exception as e:
         return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
-@api_view(["GET"]) 
+
+@api_view(["GET"])
 def get_docker_universe_path(request):
     name = request.GET.get("name")
 
