@@ -132,15 +132,20 @@ const App = () => {
           minConstraints={[400, 400]}
           maxConstraints={[800, 900]}
         >
-          <div style={{ width: `${editorWidth}px` , height: 'calc(100vh - 68px)', display: 'flex', flexDirection: 'column'}}>
+          <div
+            style={{
+              width: `${editorWidth}px`,
+              height: "calc(100vh - 68px)",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <FileEditor
               currentFilename={currentFilename}
               currentProjectname={currentProjectname}
               setProjectChanges={setProjectChanges}
             />
-            { gazeboEnabled &&
-              <TerminalViewer gazeboEnabled={gazeboEnabled} />
-            }
+            {gazeboEnabled && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
           </div>
         </Resizable>
 
