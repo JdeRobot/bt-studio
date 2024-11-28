@@ -20,7 +20,7 @@ BT Studio is an **open-source** tool crafted for the development of robotic appl
 To save the code you will need to download the app. Everything will be reset every time the command below is launched.
 
 ```bash
-curl -s https://raw.githubusercontent.com/JdeRobot/JdeRobot/main/scripts/run.sh | sudo bash
+curl -s https://raw.githubusercontent.com/JdeRobot/main/scripts/run.sh | sudo bash
 ```
 
 ### Developer
