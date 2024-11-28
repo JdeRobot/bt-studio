@@ -3,9 +3,11 @@ import "./CreatePage.css";
 import { ReactComponent as BackIcon } from "../../../Modal/img/back.svg";
 import { ReactComponent as CloseIcon } from "../../../Modal/img/close.svg";
 import axios from "axios";
+import { createRoboticsBackendUniverse } from "../../../../api_helper/TreeWrapper";
 
 const initialUniverseData = {
   universeName: "",
+  dockerUniverseName: "",
 };
 
 const CreatePage = ({
@@ -22,14 +24,16 @@ const CreatePage = ({
   openError: Function;
 }) => {
   const focusInputRef = useRef<any>(null);
+  const dropdown = useRef<any>(null);
   const [formState, setFormState] = useState(initialUniverseData);
-  const [availableUniverses, setUniversesDocker] = useState([]);
+  const [availableUniverses, setUniversesDocker] = useState<string[]>([]);
+  const [openDropdown, setOpenDropdown] = useState<boolean>(false);
 
   const loadUniverseList = async () => {
     try {
       const listApiUrl = `/tree_api/list_docker_universes`;
       const response = await axios.get(listApiUrl);
-      setUniversesDocker(response.data.universes_list);
+      setUniversesDocker(response.data.universes);
     } catch (error) {
       console.error("Error while fetching universes list:", error);
       openError(`An error occurred while fetching the universes list`);
@@ -61,14 +65,26 @@ const CreatePage = ({
   };
 
   const handleCreate = () => {
-    if (formState.universeName === "") {
+    if (formState.universeName === "" && formState.dockerUniverseName === "") {
       return;
     }
-    //TODO: create universe here
-    onClose();
+
+    if (!availableUniverses.includes(formState.dockerUniverseName)) {
+      //TODO: invalid docker universe
+      return;
+    }
+    
+    createRoboticsBackendUniverse(currentProject, formState.universeName, formState.dockerUniverseName)
+    setVisible(false);
   };
 
-  const handleFormSubmit = (data: any) => {};
+  const closeDropdown = (e:any) => {
+    if (openDropdown && !dropdown.current?.contains(e.target)) {
+      setOpenDropdown(false);
+    }
+  };
+
+  document.addEventListener("mousedown", closeDropdown);
 
   return (
     <>
@@ -107,6 +123,7 @@ const CreatePage = ({
             autoComplete="off"
             maxLength={20}
             placeholder="Universe Name"
+            required={true}
           />
           <label htmlFor="universeName" className="modal-complex-input-label">
             Universe Name
@@ -119,6 +136,29 @@ const CreatePage = ({
             resources. The name should be in lower case without spaces and
             should not start with a number. The maximum length is 20 characters.
           </label>
+        </div>
+      </div>
+      <div className="modal-complex-input-row-container">
+        <div className="universe-create-name modal-complex-input-container">
+          <input
+            ref={dropdown}
+            type="text"
+            id="dockerUniverseName"
+            name="dockerUniverseName"
+            list="dockerUniverses"
+            className="modal-complex-input"
+            onChange={handleInputChange}
+            placeholder="Universe Name"
+            required={true}
+          />
+          <label htmlFor="dockerUniverseName" className="modal-complex-input-label">
+            Select Robotics Backend Universe
+          </label>
+          <datalist id="dockerUniverses">
+            {availableUniverses && availableUniverses.map((name) => (
+              <option value={name}/>
+            ))}
+          </datalist>
         </div>
       </div>
       <div className="modal-complex-input-row-container">

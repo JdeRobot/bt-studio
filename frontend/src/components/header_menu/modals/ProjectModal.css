@@ -135,6 +135,7 @@
   background-color: var(--buttons);
   border: none;
   border-radius: 5px;
+  user-select: none;
 }
 
 #create-new-project:hover {

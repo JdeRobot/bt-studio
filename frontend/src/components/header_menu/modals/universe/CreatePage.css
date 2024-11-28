@@ -12,6 +12,7 @@
   background-color: var(--buttons);
   border: none;
   border-radius: 5px;
+  user-select: none;
 
   &:hover {
     background-color: var(--buttons-hover);

@@ -7,10 +7,6 @@ import CreatePage from "./universe/CreatePage";
 import axios from "axios";
 import UniverseUploadModal from "./UniverseUploadModal";
 
-const initialProjectData = {
-  projectName: "",
-};
-
 const UniverseModal = ({
   onSubmit,
   isOpen,
@@ -25,7 +21,6 @@ const UniverseModal = ({
   openError: Function,
 }) => {
   const focusInputRef = useRef<any>(null);
-  const [formState, setFormState] = useState(initialProjectData);
   const [existingUniverses, setUniversesProjects] = useState([]);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [universeAdded, setUniverseAdded] = useState(false);
@@ -44,7 +39,7 @@ const UniverseModal = ({
   };
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!isOpen || creationMenu) {
       return;
     }
 
@@ -56,27 +51,12 @@ const UniverseModal = ({
 
     loadUniverseList();
     showCreationMenu(false);
-  }, [isOpen, universeAdded]);
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormState((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
+  }, [isOpen, universeAdded, creationMenu]);
 
   const handleCancel = () => {
     if (currentProject !== "") {
       onClose();
     }
-  };
-
-  const handleCreate = () => {
-    if (formState.projectName === "") {
-      return;
-    }
-    onClose();
   };
 
   const deleteUniverse = async (universe_name:string) => {

@@ -90,7 +90,7 @@ const saveProject = async (modelJson: string, currentProjectname: string) => {
 
 const loadProjectConfig = async (
   currentProjectname: string,
-  settings: Object,
+  settings: Object
 ) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
@@ -101,7 +101,7 @@ const loadProjectConfig = async (
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
       throw new Error(
-        response.data.message || "Failed to retrieve project config",
+        response.data.message || "Failed to retrieve project config"
       ); // Response error
     }
 
@@ -112,7 +112,7 @@ const loadProjectConfig = async (
     // Load all the settings
     Object.entries(settings).map(([key, value]) => {
       value.setter(
-        project_settings[key] ? project_settings[key] : value.default_value,
+        project_settings[key] ? project_settings[key] : value.default_value
       );
     });
   } catch (error) {
@@ -135,7 +135,7 @@ const getProjectGraph = async (currentProjectname: string) => {
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
       throw new Error(
-        response.data.message || "Failed to retrieve project graph",
+        response.data.message || "Failed to retrieve project graph"
       ); // Response error
     }
 
@@ -149,13 +149,13 @@ const getProjectGraph = async (currentProjectname: string) => {
 
 const getUniverseConfig = async (
   universeName: string,
-  currentProjectname: string,
+  currentProjectname: string
 ) => {
   if (!universeName) throw new Error("The universe name is not set");
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
   const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
-    currentProjectname,
+    currentProjectname
   )}&universe_name=${encodeURIComponent(universeName)}`;
   try {
     const response = await axios.get(apiUrl);
@@ -163,7 +163,7 @@ const getUniverseConfig = async (
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
       throw new Error(
-        response.data.message || "Failed to retrieve universe config",
+        response.data.message || "Failed to retrieve universe config"
       ); // Response error
     }
 
@@ -183,7 +183,7 @@ const getRoboticsBackendUniversePath = async (universeName: string) => {
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
       throw new Error(
-        response.data.message || "Failed to retrieve universe config",
+        response.data.message || "Failed to retrieve universe config"
       ); // Response error
     }
 
@@ -191,11 +191,37 @@ const getRoboticsBackendUniversePath = async (universeName: string) => {
   } catch (error: unknown) {
     throw error; // Rethrow
   }
-}
+};
+
+const createRoboticsBackendUniverse = async (
+  projectName: string,
+  universeName: string,
+  universeId: string
+) => {
+  if (!projectName) throw new Error("The project name is not set");
+  if (!universeName) throw new Error("The universe name is not set");
+  if (!universeId) throw new Error("The universe id is not set");
+
+  const apiUrl = "/tree_api/add_docker_universe/";
+  try {
+    const response = await axios.post(apiUrl, {
+      app_name: projectName,
+      universe_name: universeName,
+      id: universeId,
+    });
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to save subtree."); // Response error
+    }
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
 
 const getCustomUniverseZip = async (
   universeName: string,
-  currentProjectname: string,
+  currentProjectname: string
 ) => {
   if (!universeName) throw new Error("The universe name is not set");
   if (!currentProjectname) throw new Error("Current Project name is not set");
@@ -211,13 +237,13 @@ const getCustomUniverseZip = async (
       },
       {
         responseType: "blob", // Ensure the response is treated as a Blob
-      },
+      }
     );
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
       throw new Error(
-        response.data.message || "Failed to retrieve custom universe",
+        response.data.message || "Failed to retrieve custom universe"
       ); // Response error
     }
     return response.data;
@@ -231,7 +257,7 @@ const getCustomUniverseZip = async (
 const generateApp = async (
   modelJson: Object,
   currentProjectname: string,
-  btOrder: string,
+  btOrder: string
 ) => {
   if (!modelJson) throw new Error("Tree JSON is empty!");
   if (!currentProjectname) throw new Error("Current Project name is not set");
@@ -250,7 +276,7 @@ const generateApp = async (
       },
       {
         responseType: "blob", // Ensure the response is treated as a Blob
-      },
+      }
     );
 
     // Handle unsuccessful response status (e.g., non-2xx status)
@@ -267,7 +293,7 @@ const generateApp = async (
 const generateDockerizedApp = async (
   modelJson: Object,
   currentProjectname: string,
-  btOrder: string,
+  btOrder: string
 ) => {
   if (!modelJson) throw new Error("Tree JSON is empty!");
   if (!currentProjectname) throw new Error("Current Project name is not set");
@@ -284,7 +310,7 @@ const generateDockerizedApp = async (
       },
       {
         responseType: "blob", // Ensure the response is treated as a Blob
-      },
+      }
     );
 
     // Handle unsuccessful response status (e.g., non-2xx status)
@@ -302,7 +328,7 @@ const generateDockerizedApp = async (
 
 const createSubtree = async (
   subtreeName: string,
-  currentProjectname: string,
+  currentProjectname: string
 ) => {
   if (!subtreeName.trim()) {
     throw new Error("Subtree name cannot be empty.");
@@ -371,7 +397,7 @@ const getSubtree = async (subtreeName: string, projectName: string) => {
 const saveSubtree = async (
   modelJson: string,
   currentProjectname: string,
-  subtreeName: string,
+  subtreeName: string
 ) => {
   if (!modelJson) throw new Error("Tree JSON is empty!");
   if (!currentProjectname) throw new Error("Current Project name is not set");
@@ -411,4 +437,5 @@ export {
   getFileList,
   getActionsList,
   saveSubtree,
+  createRoboticsBackendUniverse
 };
