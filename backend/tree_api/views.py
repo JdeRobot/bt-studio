@@ -38,7 +38,7 @@ def create_project(request):
     tree_path = os.path.join(project_path, "code/trees")
     subtree_path = os.path.join(tree_path, "subtrees")
     subtree_json_path = os.path.join(subtree_path, "json")
-    init_graph_path = os.path.join(settings.BASE_DIR, "templates/init_graph.json")
+    init_graph_path = os.path.join(settings.BASE_DIR, "templates/graph.json")
 
     # Default cfg values
     default_cfg = {
