@@ -163,6 +163,13 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o 
     ros-humble-py-trees \
     ros-humble-py-trees-ros
 
+# Create workspace and add extra packages
+RUN mkdir -p /home/ws/src/
+RUN git clone --recursive https://github.com/javizqh/darknet_ros_fp16.git /home/ws/src/darknet_ros_fp16 && /home/ws/src/darknet_ros_fp16/darknet_ros/rm_darknet_CMakeLists.sh
+
+# Install Nav2
+RUN apt-get install -y ros-humble-navigation2 ros-humble-nav2-bringup
+
 # PX4 pip installs
 RUN python3.10 -m pip install jsonschema==4.18.0
 
