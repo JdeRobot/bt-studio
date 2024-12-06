@@ -263,7 +263,7 @@ const DiagramEditor = memo(
     const changeViewExpanded = (view: TreeViewType) => {
       updateJsonState();
       changeView(view);
-    }
+    };
 
     // HELPERS
 

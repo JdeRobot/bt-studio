@@ -189,7 +189,7 @@ const MainTreeEditorContainer = ({
   useEffect(() => {
     // fetchTree();
     if (view === TreeViewType.Visualizer) {
-      setInitialJson(resultJson)
+      setInitialJson(resultJson);
       getBTTree();
     }
     console.log("Changing view!");
