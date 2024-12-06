@@ -64,7 +64,10 @@ def get_data_ports(node_models, link_models, node_id):
         if port["type"] == "input" or port["type"] == "output":
 
             # Get the link connecting the port to the value tag
-            tag_port_link = link_models[port["links"][0]]
+            try:
+                tag_port_link = link_models[port["links"][0]]
+            except Exception as e:
+                continue
 
             # The current node name is needed for checking which end of the link is the tag
             node_name = node_models[node_id]["name"]

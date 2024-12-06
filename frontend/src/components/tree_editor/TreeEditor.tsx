@@ -260,6 +260,11 @@ const DiagramEditor = memo(
       }
     };
 
+    const changeViewExpanded = (view: TreeViewType) => {
+      updateJsonState();
+      changeView(view);
+    }
+
     // HELPERS
 
     // Add the nodes default ports
@@ -542,7 +547,7 @@ const DiagramEditor = memo(
           onEditAction={onNodeEditor}
           hasSubtrees={hasSubtrees}
           view={view}
-          changeView={changeView}
+          changeView={changeViewExpanded}
           setGoBack={setGoBack}
           subTreeName={subTreeName}
         />
