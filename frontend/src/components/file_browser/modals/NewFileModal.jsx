@@ -3,9 +3,9 @@ import "./NewFileModal.css";
 import Modal, { ModalTitlebar } from "../../Modal/Modal";
 import { CardEntryProps } from "./NewFileTypes";
 
-import { ReactComponent as EmptyTeplateIcon } from "../img/empty_template.svg";
-import { ReactComponent as ActionTeplateIcon } from "../img/action_template.svg";
-import { ReactComponent as IOTeplateIcon } from "../img/io_template.svg";
+import { default as EmptyTeplateIcon } from "../img/empty_template.svg";
+import { default as ActionTeplateIcon } from "../img/action_template.svg";
+import { default as IOTeplateIcon } from "../img/io_template.svg";
 
 const initialNewFileModalData = {
   fileType: "plain",

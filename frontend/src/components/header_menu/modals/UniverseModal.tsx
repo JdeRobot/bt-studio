@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, FormEventHandler } from "react";
 import "./UniverseModal.css";
 import Modal from "../../Modal/Modal";
-import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
-import { ReactComponent as DeleteIcon } from "../../tree_editor/img/delete.svg";
+import { default as CloseIcon } from "../../Modal/img/close.svg";
+import { default as DeleteIcon } from "../../tree_editor/img/delete.svg";
 import CreatePage from "./universe/CreatePage";
 import axios from "axios";
 import UniverseUploadModal from "./UniverseUploadModal";

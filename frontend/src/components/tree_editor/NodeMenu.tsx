@@ -1,14 +1,14 @@
 import React, { MouseEventHandler, useEffect, useState } from "react";
 import "./NodeMenu.css";
 
-import { ReactComponent as DeleteIcon } from "./img/del_node.svg";
-import { ReactComponent as SubtreeIcon } from "./img/subtree.svg";
-import { ReactComponent as EditActionIcon } from "./img/edit_action.svg";
-import { ReactComponent as HelpIcon } from "./img/help.svg";
-import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
-import { ReactComponent as EyeOpenIcon } from "./img/eye_open.svg";
-import { ReactComponent as EyeClosedIcon } from "./img/eye_closed.svg";
-import { ReactComponent as ReturnIcon } from "./img/return.svg";
+import { default as DeleteIcon } from "./img/del_node.svg";
+import { default as SubtreeIcon } from "./img/subtree.svg";
+import { default as EditActionIcon } from "./img/edit_action.svg";
+import { default as HelpIcon } from "./img/help.svg";
+import { default as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
+import { default as EyeOpenIcon } from "./img/eye_open.svg";
+import { default as EyeClosedIcon } from "./img/eye_closed.svg";
+import { default as ReturnIcon } from "./img/return.svg";
 import { Menu, MenuItem } from "@mui/material";
 
 import {

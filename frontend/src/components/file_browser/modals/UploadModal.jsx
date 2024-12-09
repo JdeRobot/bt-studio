@@ -6,7 +6,7 @@ import "./UploadModal.css";
 import Modal from "../../Modal/Modal";
 import ProgressBar from "../../progress_bar/ProgressBar";
 
-import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
+import { default as CloseIcon } from "../../Modal/img/close.svg";
 
 const UploadModal = ({
   onSubmit,

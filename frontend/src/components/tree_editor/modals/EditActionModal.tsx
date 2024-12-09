@@ -11,11 +11,11 @@ import {
 } from "../../helper/TreeEditorHelper";
 import { rgbToLuminance } from "../../helper/colorHelper";
 
-import { ReactComponent as AddIcon } from "../img/add.svg";
-import { ReactComponent as DeleteIcon } from "../img/delete.svg";
-import { ReactComponent as CancelIcon } from "../img/cancel.svg";
-import { ReactComponent as AcceptIcon } from "../img/accept.svg";
-import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
+import { default as AddIcon } from "../img/add.svg";
+import { default as DeleteIcon } from "../img/delete.svg";
+import { default as CancelIcon } from "../img/cancel.svg";
+import { default as AcceptIcon } from "../img/accept.svg";
+import { default as CloseIcon } from "../../Modal/img/close.svg";
 
 import "./EditActionModal.css";
 import Modal from "../../Modal/Modal";

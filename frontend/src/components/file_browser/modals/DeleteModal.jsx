@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./DeleteModal.css";
 import Modal from "../../Modal/Modal";
 
-import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
+import { default as CloseIcon } from "../../Modal/img/close.svg";
 
 // TODO add a way to select if plain text file
 const DeleteModal = ({ onSubmit, isOpen, onClose, selectedEntry }) => {

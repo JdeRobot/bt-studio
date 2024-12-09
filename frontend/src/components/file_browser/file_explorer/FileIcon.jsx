@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-import { ReactComponent as ClosedArrowIcon } from "./img/arrowSide.svg";
-import { ReactComponent as OpenArrowIcon } from "./img/arrowDown.svg";
-import { ReactComponent as ClosedFolderIcon } from "./img/closedFolder.svg";
-import { ReactComponent as OpenFolderIcon } from "./img/openFolder.svg";
-import { ReactComponent as BaseFileIcon } from "./img/file.svg";
-import { ReactComponent as ActionFileIcon } from "./img/file-action.svg";
+import { default as ClosedArrowIcon } from "./img/arrowSide.svg";
+import { default as OpenArrowIcon } from "./img/arrowDown.svg";
+import { default as ClosedFolderIcon } from "./img/closedFolder.svg";
+import { default as OpenFolderIcon } from "./img/openFolder.svg";
+import { default as BaseFileIcon } from "./img/file.svg";
+import { default as ActionFileIcon } from "./img/file-action.svg";
 
 function FileIcon({ is_dir, is_collapsed, name, group }) {
   var returnVal = (

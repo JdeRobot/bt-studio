@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Modal from "../../Modal/Modal";
 
-import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
+import { default as CloseIcon } from "../../Modal/img/close.svg";
 
 const initialNewFolderModalData = {
   renameData: "",

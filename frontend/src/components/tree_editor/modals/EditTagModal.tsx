@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
 
 import Modal from "../../Modal/Modal";
-import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
+import { default as CloseIcon } from "../../Modal/img/close.svg";
 
 import { TagNodeModel } from "../nodes/tag_node/TagNodeModel";
 import { BasicNodeModel } from "../nodes/basic_node/BasicNodeModel";

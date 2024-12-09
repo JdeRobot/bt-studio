@@ -5,8 +5,8 @@ import "ace-builds/src-noconflict/mode-python";
 import "ace-builds/src-noconflict/theme-monokai";
 import "./FileEditor.css";
 
-import { ReactComponent as SaveIcon } from "./img/save.svg";
-import { ReactComponent as SplashIcon } from "./img/logo_jderobot_monocolor.svg";
+import { default as SaveIcon } from "./img/save.svg";
+import { default as SplashIcon } from "./img/logo_jderobot_monocolor.svg";
 
 const FileEditor = ({
   currentFilename,

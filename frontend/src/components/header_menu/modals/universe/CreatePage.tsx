@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, FormEventHandler } from "react";
 import "./CreatePage.css";
-import { ReactComponent as BackIcon } from "../../../Modal/img/back.svg";
-import { ReactComponent as CloseIcon } from "../../../Modal/img/close.svg";
+import { default as BackIcon } from "../../../Modal/img/back.svg";
+import { default as CloseIcon } from "../../../Modal/img/close.svg";
 import axios from "axios";
 import { createRoboticsBackendUniverse } from "../../../../api_helper/TreeWrapper";
 

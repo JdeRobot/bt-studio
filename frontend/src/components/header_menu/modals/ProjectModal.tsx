@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, FormEventHandler } from "react";
 import "./ProjectModal.css";
 import Modal from "../../Modal/Modal";
-import { ReactComponent as BackIcon } from "../../Modal/img/back.svg";
-import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
-import { ReactComponent as DeleteIcon } from "../../tree_editor/img/delete.svg";
+import { default as BackIcon } from "../../Modal/img/back.svg";
+import { default as CloseIcon } from "../../Modal/img/close.svg";
+import { default as DeleteIcon } from "../../tree_editor/img/delete.svg";
 import axios from "axios";
 
 const initialProjectData = {

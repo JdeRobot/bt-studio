@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import "./Modal.css";
-import { ReactComponent as CloseIcon } from "./img/close.svg";
+import { default as CloseIcon } from "./img/close.svg";
 
 const Modal = ({
   id = "modal",

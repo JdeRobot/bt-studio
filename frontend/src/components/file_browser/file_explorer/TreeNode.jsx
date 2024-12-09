@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { ReactComponent as ActionIcon } from "./img/action.svg";
+import { default as ActionIcon } from "./img/action.svg";
 import FileIcon from "./FileIcon.jsx";
 
 function TreeNode({

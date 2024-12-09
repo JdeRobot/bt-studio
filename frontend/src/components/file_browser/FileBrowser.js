@@ -8,11 +8,11 @@ import UploadModal from "./modals/UploadModal.jsx";
 import DeleteModal from "./modals/DeleteModal.jsx";
 import FileExplorer from "./file_explorer/FileExplorer.jsx";
 
-import { ReactComponent as AddIcon } from "./img/add.svg";
-import { ReactComponent as AddFolderIcon } from "./img/add_folder.svg";
-import { ReactComponent as DeleteIcon } from "./img/delete.svg";
-import { ReactComponent as RefreshIcon } from "./img/refresh.svg";
-import { ReactComponent as RenameIcon } from "./img/rename.svg";
+import { default as AddIcon } from "./img/add.svg";
+import { default as AddFolderIcon } from "./img/add_folder.svg";
+import { default as DeleteIcon } from "./img/delete.svg";
+import { default as RefreshIcon } from "./img/refresh.svg";
+import { default as RenameIcon } from "./img/rename.svg";
 
 function getParentDir(file) {
   // Check if is a directory and if not get the parent directory of the file

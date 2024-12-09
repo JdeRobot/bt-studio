@@ -3,7 +3,7 @@ import { Saturation, Hue, useColor } from "react-color-palette";
 import "react-color-palette/css";
 import "./SettingsModal.css";
 import Modal from "../Modal/Modal";
-import { ReactComponent as CloseIcon } from "../Modal/img/close.svg";
+import { default as CloseIcon } from "../Modal/img/close.svg";
 
 import Section from "./sections/Section";
 import SubSection from "./sections/SubSection";
