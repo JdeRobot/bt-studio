@@ -61,6 +61,7 @@ const setStatusNode = (
     nodeStatus = updateTree[nodeName]["state"];
   } catch (error) {
     nodeStatus = "NONE";
+    //FIX: bug here
     if (updateTree) {
       var nodeData = Object.entries(updateTree)[index][1] as { state: string };
       nodeStatus = nodeData.state;

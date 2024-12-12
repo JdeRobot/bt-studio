@@ -316,6 +316,8 @@ def create_subtree(request):
     library_actions_path = os.path.join(library_path, "actions")
     template_path = os.path.join(settings.BASE_DIR, "templates")
     src_path = template_path
+    project_subtree_path = os.path.join(project_path, "code", "trees", "subtrees")
+    project_subtree_json_path = os.path.join(project_subtree_path, "json")
 
     # Check if the subtree is already implemented on the library
     if os.path.exists(library_path):
@@ -328,12 +330,16 @@ def create_subtree(request):
     # Setup init and copy paths
     init_json_path = os.path.join(src_path, "graph.json")
     init_xml_path = os.path.join(src_path, "graph.xml")
-    project_json_path = os.path.join(
-        project_path, "code", "trees", "subtrees", "json", f"{subtree_name}.json"
-    )
-    project_xml_path = os.path.join(
-        project_path, "code", "trees", "subtrees", f"{subtree_name}.xml"
-    )
+    project_json_path = os.path.join(project_subtree_json_path, f"{subtree_name}.json")
+    project_xml_path = os.path.join(project_subtree_path, f"{subtree_name}.xml")
+
+    # Create subtree directory if it does not exist
+    if not os.path.exists(project_subtree_path):
+        os.mkdir(project_subtree_path)
+
+    # Create subtree directory if it does not exist
+    if not os.path.exists(project_subtree_json_path):
+        os.mkdir(project_subtree_json_path)
 
     # Copy the subtree to the project
     if not os.path.exists(project_json_path) and not os.path.exists(project_xml_path):
