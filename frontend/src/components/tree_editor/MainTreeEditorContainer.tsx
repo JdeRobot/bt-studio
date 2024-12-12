@@ -6,7 +6,7 @@ import {
   getProjectGraph,
   getSubtree,
   saveSubtree,
-  saveBaseTree
+  saveBaseTree,
 } from "../../api_helper/TreeWrapper";
 import { TreeViewType, findSubtree } from "../helper/TreeEditorHelper";
 import { OptionsContext } from "../options/Options";
@@ -40,7 +40,7 @@ const MainTreeEditorContainer = ({
 
   //TODO:implement this always
   // Save
-  const save = async (json: string, subtree:string) => {
+  const save = async (json: string, subtree: string) => {
     // Only save if the editor is active
     if (currentView.current !== TreeViewType.Editor) {
       return;
@@ -49,11 +49,11 @@ const MainTreeEditorContainer = ({
     if (subtree) {
       await saveSubtree(json, projectName, subtree);
     } else {
-      console.log("Saving base tree")
+      console.log("Saving base tree");
       await saveBaseTree(json, projectName);
     }
-    setProjectEdited(false)
-  }
+    setProjectEdited(false);
+  };
   // Load
   const load = async () => {
     try {
@@ -66,7 +66,7 @@ const MainTreeEditorContainer = ({
         console.error(error);
       }
     }
-  }
+  };
 
   // Update
   const update = () => {
@@ -76,8 +76,7 @@ const MainTreeEditorContainer = ({
     }
 
     setInitialJson(resultJson);
-  }
-
+  };
 
   // HELPERS
 
@@ -221,7 +220,7 @@ const MainTreeEditorContainer = ({
       if (view === TreeViewType.Visualizer) {
         getBTTree();
       }
-    })
+    });
   }, [view]);
 
   return (
