@@ -113,7 +113,7 @@ def get_project_list(request):
 
 
 @api_view(["POST"])
-def save_project(request):
+def save_base_tree(request):
 
     # Get the app name and the graph
     project_name = request.data.get("project_name")
@@ -263,7 +263,7 @@ def get_subtree_structure(request):
 
 
 @api_view(["POST"])
-def save_project_configuration(request):
+def save_base_tree_configuration(request):
 
     project_name = request.data.get("project_name")
 

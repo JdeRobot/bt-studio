@@ -3,7 +3,7 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import {
   createProject,
-  saveProject,
+  saveBaseTree,
   generateApp,
   generateDockerizedApp,
   getUniverseConfig,
@@ -163,8 +163,11 @@ const HeaderMenu = ({
   };
 
   const onSaveProject = async () => {
+    if (!projectChanges) {
+      return;
+    }
     try {
-      await saveProject(modelJson, currentProjectname);
+      await saveBaseTree(modelJson, currentProjectname);
       setProjectChanges(false);
       console.log("Project saved");
     } catch (error) {
