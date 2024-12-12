@@ -163,6 +163,9 @@ const HeaderMenu = ({
   };
 
   const onSaveProject = async () => {
+    if (!projectChanges) {
+      return;
+    }
     try {
       await saveBaseTree(modelJson, currentProjectname);
       setProjectChanges(false);

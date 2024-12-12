@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import TreeEditor from "./TreeEditor";
@@ -6,6 +6,7 @@ import {
   getProjectGraph,
   getSubtree,
   saveSubtree,
+  saveBaseTree
 } from "../../api_helper/TreeWrapper";
 import { TreeViewType, findSubtree } from "../helper/TreeEditorHelper";
 import { OptionsContext } from "../options/Options";
@@ -35,9 +36,26 @@ const MainTreeEditorContainer = ({
   const [goBack, setGoBack] = useState(false);
   const [wentBack, setWentBack] = useState(false);
 
-  // HELPERS
+  const currentView = useRef(TreeViewType.Editor);
 
-  const fetchTree = async () => {
+  //TODO:implement this always
+  // Save
+  const save = async (json: string, subtree:string) => {
+    // Only save if the editor is active
+    if (currentView.current !== TreeViewType.Editor) {
+      return;
+    }
+    // If in subtree save subtree, else save base tree
+    if (subtree) {
+      await saveSubtree(json, projectName, subtree);
+    } else {
+      console.log("Saving base tree")
+      await saveBaseTree(json, projectName);
+    }
+    setProjectEdited(false)
+  }
+  // Load
+  const load = async () => {
     try {
       const graph_json = subTreeName
         ? await getSubtree(subTreeName, projectName)
@@ -48,7 +66,20 @@ const MainTreeEditorContainer = ({
         console.error(error);
       }
     }
-  };
+  }
+
+  // Update
+  const update = () => {
+    // Only save if the editor is active
+    if (currentView.current !== TreeViewType.Editor) {
+      return;
+    }
+
+    setInitialJson(resultJson);
+  }
+
+
+  // HELPERS
 
   const getSubtreeStructure = async (name: string) => {
     try {
@@ -99,23 +130,6 @@ const MainTreeEditorContainer = ({
     }
   };
 
-  const saveSubtreeJson = async (
-    previousResultJson: string,
-    previousName: string,
-  ) => {
-    if (view === TreeViewType.Visualizer) {
-      return;
-    }
-    try {
-      // await saveSubtree(previousResultJson, projectName, previousName, settings.btOrder.value);
-      await saveSubtree(previousResultJson, projectName, previousName);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(error);
-      }
-    }
-  };
-
   const trackTreeHierarchy = (newSubTreeName: string) => {
     if (newSubTreeName && !treeHierarchy.includes(newSubTreeName)) {
       console.log("Adding to hierarchy: ", newSubTreeName);
@@ -133,6 +147,16 @@ const MainTreeEditorContainer = ({
   }, [resultJson]);
 
   useEffect(() => {
+    // We can go back again now
+    setWentBack(false);
+
+    // Fetch the new subtree or project graph
+    load();
+    console.log("Getting graph!");
+    changeView(TreeViewType.Editor);
+  }, [projectName]);
+
+  useEffect(() => {
     if (subTreeName && !wentBack) {
       console.log("Tracking hierarchy!");
       trackTreeHierarchy(subTreeName);
@@ -145,19 +169,17 @@ const MainTreeEditorContainer = ({
       console.log("Current hierarchy: ", currentHierarchy);
       console.log("Saving subtree: ", previousSubTreeName);
       console.log("Previous result JSON before saving: ", previousResultJson);
-      if (previousSubTreeName) {
-        saveSubtreeJson(previousResultJson, previousSubTreeName); // Save the correct previous subtree
-      }
+
+      save(previousResultJson, previousSubTreeName);
     }
 
     // We can go back again now
     setWentBack(false);
 
     // Fetch the new subtree or project graph
-    // getBTTree();
-    fetchTree();
+    load();
     console.log("Getting graph!");
-  }, [projectName, subTreeName]);
+  }, [subTreeName]);
 
   useEffect(() => {
     if (treeHierarchy.length === 0) {
@@ -166,7 +188,7 @@ const MainTreeEditorContainer = ({
     }
 
     if (goBack) {
-      saveSubtreeJson(resultJson, subTreeName); // Save the current subtree
+      save(resultJson, subTreeName);
       setTreeHierarchy((prevHierarchy) => {
         const newHierarchy = prevHierarchy.slice(0, -1);
         console.log("SET");
@@ -181,19 +203,26 @@ const MainTreeEditorContainer = ({
   // Add a new useEffect to log the updated treeHierarchy
   useEffect(() => {
     console.log("Updated Subtree hierarchy: ", treeHierarchy);
-    if (view === TreeViewType.Visualizer) {
+    if (currentView.current === TreeViewType.Visualizer) {
       getBTTree();
     }
   }, [treeHierarchy]);
 
   useEffect(() => {
-    // fetchTree();
-    if (view === TreeViewType.Visualizer) {
-      setInitialJson(resultJson);
+    if (currentView.current === TreeViewType.Visualizer) {
       getBTTree();
     }
-    console.log("Changing view!");
-  }, [view, settings.btOrder.value]);
+  }, [settings.btOrder.value]);
+
+  useEffect(() => {
+    save(resultJson, subTreeName).then(() => {
+      update();
+      currentView.current = view;
+      if (view === TreeViewType.Visualizer) {
+        getBTTree();
+      }
+    })
+  }, [view]);
 
   return (
     <div id="editor-container">
