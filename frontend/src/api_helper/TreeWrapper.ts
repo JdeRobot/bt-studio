@@ -68,11 +68,11 @@ const createProject = async (projectName: string) => {
   }
 };
 
-const saveProject = async (modelJson: string, currentProjectname: string) => {
+const saveBaseTree = async (modelJson: string, currentProjectname: string) => {
   if (!modelJson) throw new Error("Tree JSON is empty!");
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
-  const apiUrl = "/tree_api/save_project/";
+  const apiUrl = "/tree_api/save_base_tree/";
   try {
     const response = await axios.post(apiUrl, {
       project_name: currentProjectname,
@@ -423,7 +423,7 @@ const saveSubtree = async (
 // Named export
 export {
   createProject,
-  saveProject,
+  saveBaseTree,
   loadProjectConfig,
   getProjectGraph,
   generateApp,
