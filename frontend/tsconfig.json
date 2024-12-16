@@ -3,7 +3,7 @@
     "paths": {
       "@BtComponents/*": [ "./src/components/*" ],
       "@BtHooks/*": [ "./src/hooks/*" ],
-      "@BtHelper/*": ["./src/api_helpers/*"],
+      "@BtHelper/*": ["./src/api_helper/*"]
     },
     "target": "es5",
     "lib": [ "dom", "dom.iterable", "esnext" ],
