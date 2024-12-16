@@ -16,6 +16,7 @@ import { loadProjectConfig } from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
 import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
+import StatusBar from "./components/status_bar/StatusBar";
 
 const App = () => {
   const [editorWidth, setEditorWidth] = useState<number>(600);
@@ -171,6 +172,7 @@ const App = () => {
           </div>
         </Resizable>
       </div>
+      <StatusBar/>
     </div>
   );
 };

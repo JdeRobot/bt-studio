@@ -246,4 +246,6 @@ h3 {
   --bt-status-success: #29ac29;
   --bt-status-failure: #b11111;
   --bt-status-invalid: #494949;
+
+  --status-bar: var(--primary-200);
 }
