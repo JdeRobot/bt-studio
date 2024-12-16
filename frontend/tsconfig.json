@@ -1,8 +1,13 @@
 {
   "compilerOptions": {
+    "paths": {
+      "@BtComponents/*": [ "./src/components/*" ],
+      "@BtHooks/*": [ "./src/hooks/*" ],
+      "@BtHelper/*": ["./src/api_helpers/*"],
+    },
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "types": ["./svg.d.ts"],
+    "lib": [ "dom", "dom.iterable", "esnext" ],
+    "types": [ "./svg.d.ts" ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

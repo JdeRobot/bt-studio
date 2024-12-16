@@ -1,3 +1,5 @@
+require('module-alias/register');
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import WebFont from "webfontloader";
@@ -6,7 +8,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "beautiful-react-diagrams/styles.css";
 
-import { OptionsProvider } from "./components/options/Options";
+import { OptionsProvider } from "@BtComponents/options/Options";
 
 // Load Google Font
 WebFont.load({

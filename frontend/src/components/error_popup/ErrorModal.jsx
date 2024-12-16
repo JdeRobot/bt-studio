@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./ErrorModal.css";
-import Modal from "../Modal/Modal";
+import Modal from "@BtComponents/Modal/Modal";
 
 const ErrorModal = ({ onSubmit, isOpen, onClose }) => {
   const focusInputRef = useRef(null);

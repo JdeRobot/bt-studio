@@ -1,21 +1,21 @@
 // App.js
 import React, { useMemo, useState, useEffect } from "react";
 // import useLocalStorage from 'use-local-storage'
-import { useUnload } from "./hooks/useUnload";
+import { useUnload } from "@BtHooks//useUnload";
 import { Resizable } from "react-resizable";
-import HeaderMenu from "./components/header_menu/HeaderMenu";
-import FileBrowser from "./components/file_browser/FileBrowser";
-import FileEditor from "./components/file_editor/FileEditor";
+import HeaderMenu from "@BtComponents/header_menu/HeaderMenu";
+import FileBrowser from "@BtComponents/file_browser/FileBrowser";
+import FileEditor from "@BtComponents/file_editor/FileEditor";
 import "./App.css";
-import VncViewer from "./components/vnc_viewer/VncViewer";
-import ErrorModal from "./components/error_popup/ErrorModal";
+import VncViewer from "@BtComponents/vnc_viewer/VncViewer";
+import ErrorModal from "@BtComponents/error_popup/ErrorModal";
 import axios from "axios";
-import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
-import CommsManager from "./api_helper/CommsManager";
-import { loadProjectConfig } from "./api_helper/TreeWrapper";
+import MainTreeEditorContainer from "@BtComponents/tree_editor/MainTreeEditorContainer";
+import CommsManager from "@BtHelper/CommsManager";
+import { loadProjectConfig } from "@BtHelper/TreeWrapper";
 
-import { OptionsContext } from "./components/options/Options";
-import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
+import { OptionsContext } from "@BtComponents/options/Options";
+import TerminalViewer from "@BtComponents/vnc_viewer/TerminalViewer";
 
 const App = () => {
   const [editorWidth, setEditorWidth] = useState<number>(600);

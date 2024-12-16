@@ -33,7 +33,8 @@
     "react-treebeard": "^3.2.4",
     "typescript": "^5.2.2",
     "web-vitals": "^2.1.0",
-    "webfontloader": "^1.6.28"
+    "webfontloader": "^1.6.28",
+    "module-alias": "2.2.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -64,5 +65,8 @@
     "@types/uuid": "^10.0.0",
     "prettier": "^3.4.1",
     "typescript": "^5.2.2"
+  }
+  "_moduleAliases": {
+    "@BtComponents": "./src/componets",
   }
 }
