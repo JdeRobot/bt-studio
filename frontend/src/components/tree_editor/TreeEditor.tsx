@@ -173,7 +173,7 @@ const TreeEditor = memo(
           >
             {btOrder === "bottom-to-top" ? (
               <path
-                stroke="var(--background)"
+                stroke="var(--icon)"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
@@ -181,7 +181,7 @@ const TreeEditor = memo(
               />
             ) : (
               <path
-                stroke="var(--background)"
+                stroke="var(--icon)"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
