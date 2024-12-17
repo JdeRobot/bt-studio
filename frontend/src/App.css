@@ -43,6 +43,22 @@
   }
 }
 
+.resizable-horiz {
+  & .react-resizable-handle {
+    position: absolute;
+    width: 100%;
+    height: 5px;
+    top: 0;
+    left: 0;
+    cursor: row-resize;
+    z-index: 100;
+    background-color: var(--primary-100);
+    &:hover {
+      background-color: var(--primary-200);
+    }
+  }
+}
+
 .sidebar {
   width: 200px;
   min-width: 200px;

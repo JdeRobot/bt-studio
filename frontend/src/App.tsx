@@ -9,7 +9,6 @@ import FileEditor from "./components/file_editor/FileEditor";
 import "./App.css";
 import VncViewer from "./components/vnc_viewer/VncViewer";
 import ErrorModal from "./components/error_popup/ErrorModal";
-import axios from "axios";
 import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
 import CommsManager from "./api_helper/CommsManager";
 import { loadProjectConfig } from "./api_helper/TreeWrapper";

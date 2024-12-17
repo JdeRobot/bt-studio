@@ -233,7 +233,7 @@ const DiagramVisualizer = memo(
     }, 1);
 
     return (
-      <div>
+      <>
         <NodeMenu
           projectName={"projectName"}
           onAddNode={() => {}}
@@ -249,7 +249,7 @@ const DiagramVisualizer = memo(
         {engine.current && (
           <CanvasWidget className="canvas" engine={engine.current} />
         )}
-      </div>
+      </>
     );
   },
 );
