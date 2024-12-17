@@ -4,4 +4,24 @@
   height: 24px;
   width: 100%;
   background-color: var(--status-bar);
+  display: flex;
+  flex-direction: row;
+}
+
+.status-bar-button {
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  height: 24px;
+  width: 100px;
+  border: none;
+  background-color: transparent;
+  &:hover {
+    background-color: red;
+  }
+}
+
+.status-bar-icon {
+  height: 24px;
+  margin: 0 0 0 0;
+  padding: 2px 2px 2px 2px;
 }
