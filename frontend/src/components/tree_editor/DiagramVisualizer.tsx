@@ -6,11 +6,12 @@ import createEngine, {
 } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
-import "./DiagramEditor.css";
 import { changeColorNode, configureEngine } from "../helper/TreeEditorHelper";
 import NodeMenu from "./NodeMenu";
 import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
 import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
+
+import "./TreeEditor.css";
 
 const setTreeStatus = (
   model: DiagramModel,

@@ -19,7 +19,7 @@ import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
 import StatusBar from "./components/status_bar/StatusBar";
 
 const App = () => {
-  const [editorWidth, setEditorWidth] = useState<number>(600);
+  const [editorWidth, setEditorWidth] = useState<number>(800);
   const [currentFilename, setCurrentFilename] = useState<string>("");
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
