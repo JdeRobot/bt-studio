@@ -1,11 +1,13 @@
 .viewer {
   height: 100%;
   width: 100%;
+  background-color: var(--app-background);
 }
 
 .terminal {
   height: 50%;
   width: 100%;
+  background-color: var(--app-background);
 }
 
 .loader {

@@ -25,7 +25,7 @@ const App = () => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
-    {},
+    {}
   );
   const [modelJson, setModelJson] = useState<string>("");
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
@@ -101,7 +101,11 @@ const App = () => {
   };
 
   return (
-    <div className="App" data-theme={settings.theme.value} style={{display: "flex"}}>
+    <div
+      className="App"
+      data-theme={settings.theme.value}
+      style={{ display: "flex" }}
+    >
       {/* <ErrorModal isOpen={isErrorModalOpen} onClose={closeError} /> */}
 
       <HeaderMenu
@@ -167,11 +171,22 @@ const App = () => {
               currentProjectname={currentProjectname}
               setProjectChanges={setProjectChanges}
             />
-            {(gazeboEnabled && showTerminal) && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
+            {gazeboEnabled && showTerminal && (
+              <TerminalViewer gazeboEnabled={gazeboEnabled} />
+            )}
           </div>
         </Resizable>
 
-        <div style={{flex: "1 1 0%", display: "flex", flexDirection: "column", flexWrap: "nowrap", gap: "5px"}}>
+        <div
+          style={{
+            flex: "1 1 0%",
+            display: "flex",
+            flexDirection: "column",
+            flexWrap: "nowrap",
+            gap: "5px",
+            backgroundColor: "var(--control-bar)",
+          }}
+        >
           {currentProjectname ? (
             <MainTreeEditorContainer
               projectName={currentProjectname}
@@ -182,9 +197,7 @@ const App = () => {
           ) : (
             <p>Loading...</p>
           )}
-          {showSim &&
-            <VncViewer gazeboEnabled={gazeboEnabled} />
-          }
+          {showSim && <VncViewer gazeboEnabled={gazeboEnabled} />}
         </div>
       </div>
       <StatusBar

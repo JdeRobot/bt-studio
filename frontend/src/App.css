@@ -2,13 +2,13 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--background-100);
+  background-color: var(--app-background);
   color: var(--text);
   /* Other styles */
 }
 
 .HeaderMenu {
-  background-color: var(--background-100);
+  background-color: var(--app-background);
   color: var(--text);
   /* Other styles */
 }
@@ -17,7 +17,7 @@
   flex-grow: 1;
   display: flex;
   overflow: hidden;
-  background-color: var(--background-100);
+  background-color: var(--app-background);
 }
 
 .App-section {
@@ -214,8 +214,9 @@ h3 {
 :root,
 .App {
   --header: var(--primary-200);
+  --app-background: var(--background-100);
   --control-bar: var(--primary-100);
-  --canvas-background: var(--background-100);
+  --canvas-background: var(--app-background);
 
   --buttons: var(--background-300);
   --buttons-invisible: var(--background);
