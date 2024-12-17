@@ -4,6 +4,7 @@ import { OptionsContext } from "../options/Options";
 import "./StatusBar.css";
 
 import { ReactComponent as TerminalIcon } from "./img/terminal.svg";
+import { ReactComponent as SimulatorIcon } from "./img/gazebo.svg";
 
 const StatusBar = ({
 }: {
@@ -30,10 +31,13 @@ const StatusBar = ({
       <button
         className="status-bar-button"
         onClick={() => console.log("a")}
-        title="Toggle Gazebo"
-        style={{marginLeft:"auto"}}
+        title="Toggle Simulator"
+        style={{marginLeft:"auto", width: "300px"}}
       >
-        <TerminalIcon className="status-bar-icon" stroke={"var(--icon)"} />
+        <SimulatorIcon className="status-bar-icon" stroke={"var(--icon)"} />
+        <label className="status-bar-label">
+          Simulator
+        </label>
       </button>
     </div>
   );

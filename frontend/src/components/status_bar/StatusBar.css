@@ -12,11 +12,18 @@
   margin: 0 0 0 0;
   padding: 0 0 0 0;
   height: 24px;
-  width: 100px;
+  min-width: 100px;
+  width: fit-content;
   border: none;
   background-color: transparent;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
   &:hover {
-    background-color: red;
+    background-color: var(--bt-status-success);
   }
 }
 
@@ -24,4 +31,12 @@
   height: 24px;
   margin: 0 0 0 0;
   padding: 2px 2px 2px 2px;
+}
+
+.status-bar-label {
+  height: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 18px;
+  color: var(--text);
 }
