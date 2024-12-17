@@ -25,7 +25,7 @@ const App = () => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
-    {}
+    {},
   );
   const [modelJson, setModelJson] = useState<string>("");
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);

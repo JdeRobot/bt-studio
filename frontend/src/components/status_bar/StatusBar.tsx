@@ -24,7 +24,9 @@ const StatusBar = ({
     <div className="status-bar-container">
       <button
         className="status-bar-button"
-        onClick={() => {setTerminalVisible(!showTerminal)}}
+        onClick={() => {
+          setTerminalVisible(!showTerminal);
+        }}
         title="Toggle console"
       >
         <TerminalIcon className="status-bar-icon" stroke={"var(--icon)"} />
