@@ -3,7 +3,7 @@
 .output-port-widget {
   width: 10px;
   height: 10px;
-  background: black;
+  background: var(--border-color);
 }
 
 .output-label {

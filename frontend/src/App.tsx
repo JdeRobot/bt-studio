@@ -147,7 +147,7 @@ const App = () => {
               currentProjectname={currentProjectname}
               setProjectChanges={setProjectChanges}
             />
-            {gazeboEnabled && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
+            {(gazeboEnabled && showTerminal) && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
           </div>
         </Resizable>
 
