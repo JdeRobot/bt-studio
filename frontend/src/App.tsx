@@ -36,7 +36,7 @@ const App = () => {
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
 
   const settings = React.useContext(OptionsContext);
-  //////////////////////////////////////////////////////
+  //////////////////////////s////////////////////////////
 
   // RB manager setup
 
@@ -97,7 +97,7 @@ const App = () => {
   };
 
   return (
-    <div className="App" data-theme={settings.theme.value}>
+    <div className="App" data-theme={settings.theme.value} style={{display: "flex"}}>
       {/* <ErrorModal isOpen={isErrorModalOpen} onClose={closeError} /> */}
 
       <HeaderMenu
@@ -114,7 +114,7 @@ const App = () => {
         manager={manager}
       />
 
-      <div className="App-main" style={{ display: "flex" }}>
+      <div className="App-main">
         <div className="sideBar">
           <FileBrowser
             setCurrentFilename={setCurrentFilename}
@@ -137,9 +137,9 @@ const App = () => {
           <div
             style={{
               width: `${editorWidth}px`,
-              height: "calc(100vh - 68px)",
               display: "flex",
               flexDirection: "column",
+              gap: "5px",
             }}
           >
             <FileEditor
@@ -158,7 +158,7 @@ const App = () => {
           minConstraints={[300, 300]}
           maxConstraints={[300, 900]}
         >
-          <div style={{ flex: 1 }}>
+          <div style={{flex: "1 1 0%", display: "flex", flexDirection: "column", flexWrap: "nowrap", gap: "5px"}}>
             {currentProjectname ? (
               <MainTreeEditorContainer
                 projectName={currentProjectname}

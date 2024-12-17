@@ -1,12 +1,11 @@
 .viewer {
-  height: 40vh;
+  height: 100%;
   width: 100%;
-  z-index: 2;
 }
 
 .loader {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 40vh;
+  height: 100%;
 }

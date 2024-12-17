@@ -1,6 +1,4 @@
 .status-bar-container{
-  position: absolute;
-  bottom: 0px;
   height: 24px;
   width: 100%;
   background-color: var(--status-bar);

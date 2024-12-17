@@ -102,7 +102,7 @@ const TreeEditor = memo(
     };
 
     return (
-      <div>
+      <>
         {currentNode && modalModel && modalEngine && (
           <>
             {currentNode instanceof BasicNodeModel && (
@@ -190,7 +190,7 @@ const TreeEditor = memo(
             )}
           </svg>
         </button>
-      </div>
+      </>
     );
   },
 );
@@ -538,7 +538,7 @@ const DiagramEditor = memo(
     }, 1);
 
     return (
-      <div>
+      <>
         <NodeMenu
           projectName={projectName}
           onAddNode={nodeTypeSelector}
@@ -554,7 +554,7 @@ const DiagramEditor = memo(
         {engine.current && (
           <CanvasWidget className="canvas" engine={engine.current} />
         )}
-      </div>
+      </>
     );
   },
 );
