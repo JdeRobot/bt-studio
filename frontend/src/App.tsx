@@ -150,30 +150,22 @@ const App = () => {
             {(gazeboEnabled && showTerminal) && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
           </div>
         </Resizable>
-
-        <Resizable
-          width={100 % -editorWidth}
-          height={0}
-          onResize={(e, { size }) => onResize("sidebarWidth", size)}
-          minConstraints={[300, 300]}
-          maxConstraints={[300, 900]}
-        >
-          <div style={{flex: "1 1 0%", display: "flex", flexDirection: "column", flexWrap: "nowrap", gap: "5px"}}>
-            {currentProjectname ? (
-              <MainTreeEditorContainer
-                projectName={currentProjectname}
-                setProjectEdited={setProjectChanges}
-                setGlobalJson={setModelJson}
-                modelJson={modelJson}
-              />
-            ) : (
-              <p>Loading...</p>
-            )}
-            {showSim &&
-              <VncViewer gazeboEnabled={gazeboEnabled} />
-            }
-          </div>
-        </Resizable>
+        
+        <div style={{flex: "1 1 0%", display: "flex", flexDirection: "column", flexWrap: "nowrap", gap: "5px"}}>
+          {currentProjectname ? (
+            <MainTreeEditorContainer
+              projectName={currentProjectname}
+              setProjectEdited={setProjectChanges}
+              setGlobalJson={setModelJson}
+              modelJson={modelJson}
+            />
+          ) : (
+            <p>Loading...</p>
+          )}
+          {showSim &&
+            <VncViewer gazeboEnabled={gazeboEnabled} />
+          }
+        </div>
       </div>
       <StatusBar
         showSim={showSim}

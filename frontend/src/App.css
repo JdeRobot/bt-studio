@@ -31,11 +31,16 @@
 
 .react-resizable-handle {
   position: absolute;
-  width: 20px;
+  width: 5px;
   height: 100%;
   bottom: 0;
   right: 0;
   cursor: ew-resize;
+  z-index: 100;
+  background-color: var(--primary-100);
+  &:hover {
+    background-color: var(--primary-200);
+  }
 }
 
 .sidebar {
@@ -247,5 +252,5 @@ h3 {
   --bt-status-failure: #b11111;
   --bt-status-invalid: #494949;
 
-  --status-bar: var(--primary-200);
+  --status-bar: var(--primary-100);
 }
