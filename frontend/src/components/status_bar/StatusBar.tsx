@@ -7,7 +7,15 @@ import { ReactComponent as TerminalIcon } from "./img/terminal.svg";
 import { ReactComponent as SimulatorIcon } from "./img/gazebo.svg";
 
 const StatusBar = ({
+  showSim,
+  setSimVisible,
+  showTerminal,
+  setTerminalVisible,
 }: {
+  showSim: boolean;
+  setSimVisible: Function;
+  showTerminal: boolean;
+  setTerminalVisible: Function;
 }) => {
   // Settings
   const settings = useContext(OptionsContext);
@@ -16,7 +24,7 @@ const StatusBar = ({
     <div className="status-bar-container">
       <button
         className="status-bar-button"
-        onClick={() => console.log("a")}
+        onClick={() => {setTerminalVisible(!showTerminal)}}
         title="Toggle console"
       >
         <TerminalIcon className="status-bar-icon" stroke={"var(--icon)"} />
@@ -30,14 +38,14 @@ const StatusBar = ({
       </button>
       <button
         className="status-bar-button"
-        onClick={() => console.log("a")}
+        onClick={() => {
+          setSimVisible(!showSim);
+        }}
         title="Toggle Simulator"
-        style={{marginLeft:"auto", width: "300px"}}
+        style={{ marginLeft: "auto", width: "300px" }}
       >
         <SimulatorIcon className="status-bar-icon" stroke={"var(--icon)"} />
-        <label className="status-bar-label">
-          Simulator
-        </label>
+        <label className="status-bar-label">Simulator</label>
       </button>
     </div>
   );

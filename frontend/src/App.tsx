@@ -32,7 +32,8 @@ const App = () => {
   const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
   const [manager, setManager] = useState<any>(null);
   const [diagramEditorReady, setDiagramEditorReady] = useState<boolean>(false);
-  const [appRunning, setAppRunning] = useState<boolean>(false);
+  const [showSim, setSimVisible] = useState<boolean>(false);
+  const [showTerminal, setTerminalVisible] = useState<boolean>(false);
 
   const settings = React.useContext(OptionsContext);
   //////////////////////////////////////////////////////
@@ -168,11 +169,18 @@ const App = () => {
             ) : (
               <p>Loading...</p>
             )}
-            <VncViewer gazeboEnabled={gazeboEnabled} />
+            {showSim &&
+              <VncViewer gazeboEnabled={gazeboEnabled} />
+            }
           </div>
         </Resizable>
       </div>
-      <StatusBar/>
+      <StatusBar
+        showSim={showSim}
+        setSimVisible={setSimVisible}
+        showTerminal={showTerminal}
+        setTerminalVisible={setTerminalVisible}
+      />
     </div>
   );
 };
