@@ -3,9 +3,21 @@
   width: 100%;
 }
 
+.terminal {
+  height: 50%;
+  width: 100%;
+}
+
 .loader {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
+}
+
+.loader-terminal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50%;
 }

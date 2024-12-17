@@ -16,7 +16,7 @@
 .App-main {
   flex-grow: 1;
   display: flex;
-  overflow: auto;
+  overflow: hidden;
   background-color: var(--background);
 }
 
