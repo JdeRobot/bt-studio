@@ -19,6 +19,7 @@ import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
 import StatusBar from "./components/status_bar/StatusBar";
 
 const App = () => {
+  const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
   const [editorWidth, setEditorWidth] = useState<number>(800);
   const [currentFilename, setCurrentFilename] = useState<string>("");
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
@@ -78,6 +79,9 @@ const App = () => {
       case "editorWidth":
         setEditorWidth(size.width);
         break;
+      case "fileBrowserWidth":
+        setFileBrowserWidth(size.width);
+        break;
       default:
         break;
     }
@@ -115,17 +119,33 @@ const App = () => {
       />
 
       <div className="App-main">
-        <div className="sideBar">
-          <FileBrowser
-            setCurrentFilename={setCurrentFilename}
-            currentFilename={currentFilename}
-            currentProjectname={currentProjectname}
-            setProjectChanges={setProjectChanges}
-            actionNodesData={actionNodesData}
-            showAccentColor={"editorShowAccentColors"}
-            diagramEditorReady={diagramEditorReady}
-          />
-        </div>
+        <Resizable
+          width={fileBrowserWidth}
+          height={0}
+          onResize={(e, { size }) => onResize("fileBrowserWidth", size)}
+          minConstraints={[200, 200]}
+          maxConstraints={[400, 400]}
+        >
+          <div
+            style={{
+              width: `${fileBrowserWidth}px`,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div className="sideBar">
+              <FileBrowser
+                setCurrentFilename={setCurrentFilename}
+                currentFilename={currentFilename}
+                currentProjectname={currentProjectname}
+                setProjectChanges={setProjectChanges}
+                actionNodesData={actionNodesData}
+                showAccentColor={"editorShowAccentColors"}
+                diagramEditorReady={diagramEditorReady}
+              />
+            </div>
+          </div>
+        </Resizable>
 
         <Resizable
           width={editorWidth}
@@ -150,7 +170,7 @@ const App = () => {
             {(gazeboEnabled && showTerminal) && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
           </div>
         </Resizable>
-        
+
         <div style={{flex: "1 1 0%", display: "flex", flexDirection: "column", flexWrap: "nowrap", gap: "5px"}}>
           {currentProjectname ? (
             <MainTreeEditorContainer
