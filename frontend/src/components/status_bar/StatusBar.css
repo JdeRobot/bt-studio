@@ -64,6 +64,10 @@
   justify-content: center;
   background-color: var(--success);
 
+  & .status-bar-label {
+    font-size: 18px;
+  }
+
   &:hover {
     background-color: var(--success-hover);
   }
