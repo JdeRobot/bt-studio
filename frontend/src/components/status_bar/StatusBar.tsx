@@ -13,18 +13,18 @@ const StatusBar = ({
   showTerminal,
   setTerminalVisible,
   manager,
-  dockerData
+  dockerData,
 }: {
   showSim: boolean;
   setSimVisible: Function;
   showTerminal: boolean;
   setTerminalVisible: Function;
   manager: CommsManager;
-  dockerData:{
+  dockerData: {
     gpu_avaliable: string;
     robotics_backend_version: string;
     ros_version: string;
-  }|null;
+  } | null;
 }) => {
   // Settings
   const settings = useContext(OptionsContext);
@@ -42,16 +42,19 @@ const StatusBar = ({
       >
         <TerminalIcon className="status-bar-icon" stroke={"var(--icon)"} />
       </button>
-      <button
-        className="status-bar-button"
-        onClick={() => {}}
-        title="Toggle console"
-      >
-        <TerminalIcon className="status-bar-icon" stroke={"var(--icon)"} />
-        {dockerData && 
-          <label className="status-bar-label">{dockerData.robotics_backend_version}</label>
-        }
-      </button>
+      {dockerData && (
+        <>
+          <div className="status-bar-div">
+              <label>{`ROS 2 version: ${dockerData.ros_version}`}</label>
+          </div>
+          <div className="status-bar-div">
+              <label>{`GPU: ${dockerData.gpu_avaliable}`}</label>
+          </div>
+          <div className="status-bar-div">
+              <label>{`Robotics Backend name: ${dockerData.robotics_backend_version}`}</label>
+          </div>
+        </>
+      )}
       <button
         className={showSim ? `status-bar-button-active` : `status-bar-button`}
         onClick={() => {
