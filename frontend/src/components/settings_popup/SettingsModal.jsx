@@ -71,16 +71,16 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
           onReset={handleCancel}
           style={{ display: "flex", flexDirection: "column", flexGrow: "1" }}
         >
-          <div className="modal-titlebar">
+          <div className="bt-modal-titlebar">
             <label
-              className="modal-titlebar-title"
+              className="bt-modal-titlebar-title"
               htmlFor="actionName"
               style={{ textAlign: "center" }}
             >
               Settings
             </label>
             <CloseIcon
-              className="modal-titlebar-close icon"
+              className="bt-modal-titlebar-close icon"
               onClick={() => {
                 handleCancel();
               }}
@@ -88,10 +88,10 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
             />
           </div>
           <div
-            className="form-row"
+            className="bt-form-row"
             style={{ display: "flex", flexDirection: "column", flexGrow: "1" }}
           >
-            <ul className="settings-entry-list">
+            <ul className="bt-settings-entry-list">
               {/* <Section title="General">
                 <SubSection title="Accent Colors">
                   <Setting title ="Turn on project accent color">

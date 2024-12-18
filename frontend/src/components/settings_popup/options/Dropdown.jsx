@@ -20,9 +20,9 @@ const Dropdown = ({ setting, possibleValues }) => {
   document.addEventListener("mousedown", closeOpenMenus);
 
   return (
-    <div className="settings-dropdown" ref={dropdown}>
+    <div className="bt-settings-dropdown" ref={dropdown}>
       <button
-        className="settings-dropdown-preview"
+        className="bt-settings-dropdown-preview"
         onClick={(e) => {
           e.preventDefault();
           setOpen(!open);
@@ -31,10 +31,10 @@ const Dropdown = ({ setting, possibleValues }) => {
         {setting.value}
       </button>
       {open && (
-        <div className="settings-dropdown-list">
+        <div className="bt-settings-dropdown-list">
           {possibleValues.map((name, index) => (
             <button
-              className="settings-dropdown-item"
+              className="bt-settings-dropdown-item"
               onClick={(e) => changeValue(e, name)}
             >
               {name}

@@ -4,7 +4,7 @@ import "./Checkbox.css";
 
 const Checkbox = ({ setting }) => {
   return (
-    <div className="setting-checkbox-wrapper">
+    <div className="bt-setting-checkbox-wrapper">
       <input
         type="checkbox"
         checked={setting.value}

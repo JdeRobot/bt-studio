@@ -4,8 +4,8 @@ const Section = ({ title, children }) => {
   // const [open, setOpen] = useState(false);
 
   return (
-    <div className="setting-section">
-      <label className="setting-section-title">{title}</label>
+    <div className="bt-setting-section">
+      <label className="bt-setting-section-title">{title}</label>
       {children}
     </div>
   );
