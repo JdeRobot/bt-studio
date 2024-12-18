@@ -110,33 +110,33 @@ const ProjectModal = ({
       <form onSubmit={onSubmit} onReset={handleCancel}>
         {!createProjectOpen ? (
           <>
-            <div className="modal-titlebar">
+            <div className="bt-modal-titlebar">
               <label
-                className="modal-titlebar-title"
+                className="bt-modal-titlebar-title"
                 htmlFor="actionName"
                 style={{ textAlign: "center" }}
               >
                 Open a Project
               </label>
               <CloseIcon
-                className="modal-titlebar-close icon"
+                className="bt-modal-titlebar-close bt-icon"
                 onClick={() => {
                   handleCancel();
                 }}
                 fill={"var(--icon)"}
               />
             </div>
-            <div className="form-row">
-              <ul className="project-entry-list">
+            <div className="bt-form-row">
+              <ul className="bt-project-entry-list">
                 {Object.entries(existingProjects).map((project) => {
                   return (
                     <div
-                      className="project-entry"
+                      className="bt-project-entry"
                       onClick={() => onClose(project[1])}
                     >
-                      <label className="project-entry-name">{project[1]}</label>
+                      <label className="bt-project-entry-name">{project[1]}</label>
                       <DeleteIcon
-                        className="project-entry-delete icon"
+                        className="bt-project-entry-delete bt-icon"
                         title="Delete"
                         onClick={(e) => {
                           deleteProject(project[1]);
@@ -149,67 +149,67 @@ const ProjectModal = ({
                 })}
               </ul>
             </div>
-            <div className="form-row">
-              <div className="project-modal-creation-buttons-container">
+            <div className="bt-form-row">
+              <div className="bt-project-modal-creation-buttons-container">
                 <div
-                  className="project-modal-create-button"
+                  className="bt-project-modal-create-button"
                   onClick={() => {
                     setCreateProjectOpen(true);
                   }}
                 >
                   Create New Project
                 </div>
-                {/* <div className='project-modal-create-button'>Other</div>
-                <div className='project-modal-create-button'>Other</div> */}
+                {/* <div className='bt-project-modal-create-button'>Other</div>
+                <div className='bt-project-modal-create-button'>Other</div> */}
               </div>
             </div>
           </>
         ) : (
           <>
-            <div className="modal-titlebar">
+            <div className="bt-modal-titlebar">
               <BackIcon
-                className="modal-titlebar-back icon"
+                className="bt-modal-titlebar-back icon"
                 onClick={() => {
                   setCreateProjectOpen(false);
                 }}
                 fill={"var(--icon)"}
               />
               <label
-                className="modal-titlebar-title"
+                className="bt-modal-titlebar-title"
                 htmlFor="actionName"
                 style={{ textAlign: "center" }}
               >
                 Create New Project
               </label>
               <CloseIcon
-                className="modal-titlebar-close icon"
+                className="bt-modal-titlebar-close icon"
                 onClick={() => {
                   handleCancel();
                 }}
                 fill={"var(--icon)"}
               />
             </div>
-            <div className="modal-complex-input-row-container">
-              <div className="project-create-name modal-complex-input-container">
+            <div className="bt-modal-complex-input-row-container">
+              <div className="bt-project-create-name bt-modal-complex-input-container">
                 <input
                   ref={focusInputRef}
                   type="text"
                   id="projectName"
                   name="projectName"
-                  className="modal-complex-input"
+                  className="bt-modal-complex-input"
                   onChange={handleInputChange}
                   autoComplete="off"
                   placeholder="Project Name"
                 />
                 <label
                   htmlFor="projectName"
-                  className="modal-complex-input-label"
+                  className="bt-modal-complex-input-label"
                 >
                   Project Name
                 </label>
                 <label
                   htmlFor="projectName"
-                  className="modal-complex-input-indications"
+                  className="bt-modal-complex-input-indications"
                 >
                   A unique name that is used for the project folder and other
                   resources. The name should be in lower case without spaces and
@@ -217,7 +217,7 @@ const ProjectModal = ({
                 </label>
               </div>
             </div>
-            <div className="modal-complex-input-row-container">
+            <div className="bt-modal-complex-input-row-container">
               <div id="create-new-project" onClick={() => handleCreate()}>
                 Create Project
               </div>

@@ -92,49 +92,49 @@ const CreatePage = ({
 
   return (
     <>
-      <div className="modal-titlebar">
+      <div className="bt-modal-titlebar">
         <BackIcon
-          className="modal-titlebar-back icon"
+          className="bt-modal-titlebar-back bt-icon"
           onClick={() => {
             setVisible(false);
           }}
           fill={"var(--icon)"}
         />
         <label
-          className="modal-titlebar-title"
+          className="bt-modal-titlebar-title"
           htmlFor="actionName"
           style={{ textAlign: "center" }}
         >
           Create a Universe
         </label>
         <CloseIcon
-          className="modal-titlebar-close icon"
+          className="bt-modal-titlebar-close bt-icon"
           onClick={() => {
             handleCancel();
           }}
           fill={"var(--icon)"}
         />
       </div>
-      <div className="modal-complex-input-row-container">
-        <div className="universe-create-name modal-complex-input-container">
+      <div className="bt-modal-complex-input-row-container">
+        <div className="bt-universe-create-name bt-modal-complex-input-container">
           <input
             ref={focusInputRef}
             type="text"
             id="universeName"
             name="universeName"
-            className="modal-complex-input"
+            className="bt-modal-complex-input"
             onChange={handleInputChange}
             autoComplete="off"
             maxLength={20}
             placeholder="Universe Name"
             required={true}
           />
-          <label htmlFor="universeName" className="modal-complex-input-label">
+          <label htmlFor="universeName" className="bt-modal-complex-input-label">
             Universe Name
           </label>
           <label
             htmlFor="universeName"
-            className="modal-complex-input-indications"
+            className="bt-modal-complex-input-indications"
           >
             A unique name that is used for the universe folder and other
             resources. The name should be in lower case without spaces and
@@ -142,22 +142,22 @@ const CreatePage = ({
           </label>
         </div>
       </div>
-      <div className="modal-complex-input-row-container">
-        <div className="universe-create-name modal-complex-input-container">
+      <div className="bt-modal-complex-input-row-container">
+        <div className="bt-universe-create-name bt-modal-complex-input-container">
           <input
             ref={dropdown}
             type="text"
             id="dockerUniverseName"
             name="dockerUniverseName"
             list="dockerUniverses"
-            className="modal-complex-input"
+            className="bt-modal-complex-input"
             onChange={handleInputChange}
             placeholder="Universe Name"
             required={true}
           />
           <label
             htmlFor="dockerUniverseName"
-            className="modal-complex-input-label"
+            className="bt-modal-complex-input-label"
           >
             Select Robotics Backend Universe
           </label>
@@ -167,7 +167,7 @@ const CreatePage = ({
           </datalist>
         </div>
       </div>
-      <div className="modal-complex-input-row-container">
+      <div className="bt-modal-complex-input-row-container">
         <div id="create-new-universe" onClick={() => handleCreate()}>
           Create Universe
         </div>
