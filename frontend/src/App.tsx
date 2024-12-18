@@ -105,6 +105,18 @@ const App = () => {
     setTerminalVisible(true);
   }
 
+  const showVNCTerminal = (show: boolean) => {
+    if (gazeboEnabled) {
+      setTerminalVisible(show)
+    }
+  }
+
+  const showVNCSim = (show: boolean) => {
+    if (gazeboEnabled) {
+      setSimVisible(show)
+    }
+  }
+
   return (
     <div
       className="App"
@@ -208,9 +220,9 @@ const App = () => {
       </div>
       <StatusBar
         showSim={showSim}
-        setSimVisible={setSimVisible}
+        setSimVisible={showVNCSim}
         showTerminal={showTerminal}
-        setTerminalVisible={setTerminalVisible}
+        setTerminalVisible={showVNCTerminal}
       />
     </div>
   );

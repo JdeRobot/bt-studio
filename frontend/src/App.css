@@ -269,5 +269,8 @@ h3 {
   --bt-status-failure: #b11111;
   --bt-status-invalid: #494949;
 
+  --success: #29ac29;
+  --success-hover: #49eb49;
+
   --status-bar: var(--primary-100);
 }

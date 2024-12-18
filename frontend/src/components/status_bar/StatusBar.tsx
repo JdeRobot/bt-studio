@@ -23,7 +23,7 @@ const StatusBar = ({
   return (
     <div className="status-bar-container">
       <button
-        className="status-bar-button"
+        className={showTerminal ? `status-bar-button-active` : `status-bar-button`}
         onClick={() => {
           setTerminalVisible(!showTerminal);
         }}
@@ -39,7 +39,7 @@ const StatusBar = ({
         <TerminalIcon className="status-bar-icon" stroke={"var(--icon)"} />
       </button>
       <button
-        className="status-bar-button"
+        className={showSim ? `status-bar-button-active` : `status-bar-button`}
         onClick={() => {
           setSimVisible(!showSim);
         }}
