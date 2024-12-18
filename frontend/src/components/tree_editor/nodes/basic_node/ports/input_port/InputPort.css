@@ -1,18 +1,18 @@
 /* InputPort.css */
 
-.input-port-widget {
+.bt-input-port-widget {
   width: 10px;
   height: 10px;
   background: var(--border-color);
 }
 
-.input-label {
+.bt-input-label {
   padding-left: 5px;
   display: inline-block;
   vertical-align: middle;
 }
 
-.input-container {
+.bt-input-container {
   display: inline-flex;
   align-items: center;
   margin-top: 5px;

@@ -78,27 +78,27 @@ export const BasicNodeWidget = ({
 
   // Return the node to render
   return (
-    <div className="basic-node" style={nodeStyle}>
-      <div className="basic-layer">
-        <div className="basic-parent-port">
+    <div className="bt-basic-node" style={nodeStyle}>
+      <div className="bt-basic-layer">
+        <div className="bt-basic-parent-port">
           {parentPorts.length > 0 ? (
             parentPorts
           ) : (
-            <div className="basic-placeholder"></div>
+            <div className="bt-basic-placeholder"></div>
           )}
         </div>
-        <div className="basic-title">{node.getName()}</div>
-        <div className="basic-children-port">
+        <div className="bt-basic-title">{node.getName()}</div>
+        <div className="bt-basic-children-port">
           {childrenPorts.length > 0 ? (
             childrenPorts
           ) : (
-            <div className="basic-placeholder"></div>
+            <div className="bt-basic-placeholder"></div>
           )}
         </div>
       </div>
-      <div className="basic-layer">
-        <div className="basic-left-ports">{inputPorts}</div>
-        <div className="basic-right-ports">{outputPorts}</div>
+      <div className="bt-basic-layer">
+        <div className="bt-basic-left-ports">{inputPorts}</div>
+        <div className="bt-basic-right-ports">{outputPorts}</div>
       </div>
     </div>
   );

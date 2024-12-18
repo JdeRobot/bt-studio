@@ -1,12 +1,12 @@
 /* InputPort.css */
 
-.tag-input-port {
+.bt-tag-input-port {
   width: 10px;
   height: 10px;
   background: var(--border-color);
 }
 
-.tag-input-container {
+.bt-tag-input-container {
   display: inline-flex;
   align-items: center;
   margin-left: -4px;

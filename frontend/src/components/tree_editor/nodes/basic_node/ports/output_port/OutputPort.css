@@ -1,18 +1,18 @@
 /* InputPort.css */
 
-.output-port-widget {
+.bt-output-port-widget {
   width: 10px;
   height: 10px;
   background: var(--border-color);
 }
 
-.output-label {
+.bt-output-label {
   padding-right: 5px;
   display: inline-block;
   vertical-align: middle;
 }
 
-.output-container {
+.bt-output-container {
   display: inline-flex;
   align-items: center;
   margin-top: 5px;
