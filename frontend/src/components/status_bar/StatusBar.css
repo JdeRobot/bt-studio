@@ -76,7 +76,7 @@
 .bt-status-bar-icon {
   height: 24px;
   margin: 0 0 0 0;
-  padding: 2px 2px 2px 2px;
+  /* padding: 2px 2px 2px 2px; */
 }
 
 .bt-status-bar-label {

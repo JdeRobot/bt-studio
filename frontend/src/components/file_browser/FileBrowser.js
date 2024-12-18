@@ -312,27 +312,41 @@ const FileBrowser = ({
       <div className="bt-sidebar-entry">
         <div className="bt-sidebar-entry-menu">
           <button
+            className="bt-sidebar-button"
             onClick={() => handleCreateFile(null)}
             title="Create a new file"
           >
             <AddIcon className="bt-icon" fill={"var(--icon)"} />
           </button>
           <button
+            className="bt-sidebar-button"
             onClick={() => handleCreateFolder(null)}
             title="Create a new folder"
           >
             <AddFolderIcon className="bt-icon" stroke={"var(--icon)"} />
           </button>
-          <button onClick={() => fetchFileList()} title="Refresh View">
+          <button
+            className="bt-sidebar-button"
+            onClick={() => fetchFileList()}
+            title="Refresh View"
+          >
             <RefreshIcon className="bt-icon" stroke={"var(--icon)"} />
           </button>
           <div style={{ marginLeft: "auto" }} />
           {currentFilename !== "" && (
             <>
-              <button onClick={handleRenameCurrentFile} title="Rename file">
+              <button
+                className="bt-sidebar-button"
+                onClick={handleRenameCurrentFile}
+                title="Rename file"
+              >
                 <RenameIcon className="bt-icon" stroke={"var(--icon)"} />
               </button>
-              <button onClick={handleDeleteCurrentFile} title="Delete file">
+              <button
+                className="bt-sidebar-button"
+                onClick={handleDeleteCurrentFile}
+                title="Delete file"
+              >
                 <DeleteIcon className="bt-icon" fill={"var(--icon)"} />
               </button>
             </>
