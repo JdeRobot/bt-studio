@@ -174,3 +174,10 @@ export default class CommsManager {
     return this.send("disconnect");
   }
 }
+
+  const events = {
+    RESPONSES: ["ack", "error"],
+    UPDATE: "update",
+    STATE_CHANGED: "state-changed",
+    INTROSPECTION: "introspection",
+  };

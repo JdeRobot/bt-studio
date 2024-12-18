@@ -24,7 +24,7 @@ const App = () => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
-    {},
+    {}
   );
   const [modelJson, setModelJson] = useState<string>("");
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
@@ -35,6 +35,12 @@ const App = () => {
   const [showSim, setSimVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
 
+  const [dockerData, setDockerData] = useState<{
+    gpu_avaliable: string;
+    robotics_backend_version: string;
+    ros_version: string;
+  }|null>(null);
+
   const settings = React.useContext(OptionsContext);
   //////////////////////////s////////////////////////////
 
@@ -44,6 +50,10 @@ const App = () => {
     const manager = CommsManager.getInstance();
     setManager(manager);
   }, []);
+
+  const introspectionCallback = (msg: any) => {
+    setDockerData(msg.data);
+  };
 
   const connectWithRetry = async () => {
     try {
@@ -59,6 +69,7 @@ const App = () => {
   useEffect(() => {
     if (manager) {
       console.log("The manager is up!");
+      manager.subscribeOnce("introspection", introspectionCallback);
       connectWithRetry();
     }
   }, [manager]);
@@ -222,6 +233,8 @@ const App = () => {
         setSimVisible={showVNCSim}
         showTerminal={showTerminal}
         setTerminalVisible={showVNCTerminal}
+        manager={manager}
+        dockerData={dockerData}
       />
     </div>
   );
