@@ -27,32 +27,25 @@
   padding: 0 10px 0 10px;
   gap: 4px;
   background-color: var(--control-bar);
-
-  & button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 24px;
-    height: 24px;
-    background-color: var(--control-bar);
-    border: 0;
-    padding: 0 0 0 0;
-    &:hover {
-      background-color: var(--buttons-hover);
-      border-radius: 5px;
-    }
-  }
 }
 
 .bt-force-other-side {
   margin-left: auto;
 }
 
-.bt-buttons {
-  padding-left: 10px;
+.bt-sidebar-button {
   display: flex;
-  width: 70px;
-  justify-content: space-around;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  background-color: var(--control-bar);
+  border: 0;
+  padding: 0 0 0 0;
+  &:hover {
+    background-color: var(--buttons-hover);
+    border-radius: 5px;
+  }
 }
 
 .bt-menu-button {
