@@ -170,7 +170,7 @@ const ProjectModal = ({
           <>
             <div className="bt-modal-titlebar">
               <BackIcon
-                className="bt-modal-titlebar-back icon"
+                className="bt-modal-titlebar-back bt-icon"
                 onClick={() => {
                   setCreateProjectOpen(false);
                 }}
@@ -184,7 +184,7 @@ const ProjectModal = ({
                 Create New Project
               </label>
               <CloseIcon
-                className="bt-modal-titlebar-close icon"
+                className="bt-modal-titlebar-close bt-icon"
                 onClick={() => {
                   handleCancel();
                 }}
