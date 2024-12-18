@@ -72,7 +72,7 @@ const UniverseUploadModal = ({
     }
 
     try {
-      const response = await axios.post("/tree_api/upload_universe/", {
+      const response = await axios.post("/bt_studio/upload_universe/", {
         universe_name: universeName,
         zip_file: uploadedUniverse,
         app_name: currentProject,

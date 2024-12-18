@@ -31,7 +31,7 @@ const CreatePage = ({
 
   const loadUniverseList = async () => {
     try {
-      const listApiUrl = `/tree_api/list_docker_universes`;
+      const listApiUrl = `/bt_studio/list_docker_universes`;
       const response = await axios.get(listApiUrl);
       setUniversesDocker(response.data.universes);
     } catch (error) {

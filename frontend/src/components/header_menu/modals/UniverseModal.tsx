@@ -28,7 +28,7 @@ const UniverseModal = ({
 
   const loadUniverseList = async () => {
     try {
-      const listApiUrl = `/tree_api/get_universes_list?project_name=${currentProject}`;
+      const listApiUrl = `/bt_studio/get_universes_list?project_name=${currentProject}`;
       const response = await axios.get(listApiUrl);
       setUniversesProjects(response.data.universes_list);
       setUniverseAdded(false);
@@ -61,7 +61,7 @@ const UniverseModal = ({
 
   const deleteUniverse = async (universe_name: string) => {
     try {
-      const apiUrl = `/tree_api/delete_universe?project_name=${currentProject}&universe_name=${universe_name}`;
+      const apiUrl = `/bt_studio/delete_universe?project_name=${currentProject}&universe_name=${universe_name}`;
       const response = await axios.get(apiUrl);
       if (response.data.success) {
         loadUniverseList();
