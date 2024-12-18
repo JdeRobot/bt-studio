@@ -40,6 +40,7 @@ const HeaderMenu = ({
   setGazeboEnabled,
   // onSetShowExecStatus,
   manager,
+  showVNCViewer,
 }: {
   currentProjectname: string;
   setCurrentProjectname: Function;
@@ -51,6 +52,7 @@ const HeaderMenu = ({
   gazeboEnabled: boolean;
   setGazeboEnabled: Function;
   manager: CommsManager;
+  showVNCViewer: Function;
 }) => {
   // Settings
   const settings = useContext(OptionsContext);
@@ -304,6 +306,7 @@ const HeaderMenu = ({
           console.log("Launch universe successful");
           setGazeboEnabled(true);
           setCurrentUniverseName(universeName);
+          showVNCViewer();
         }
       } catch (error: unknown) {
         if (error instanceof Error) {

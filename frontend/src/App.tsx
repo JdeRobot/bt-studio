@@ -99,6 +99,12 @@ const App = () => {
     setErrorModalOpen(false);
   };
 
+  // Show VNC viewers
+  const showVNCViewer = () => {
+    setSimVisible(true);
+    setTerminalVisible(true);
+  }
+
   return (
     <div
       className="App"
@@ -119,6 +125,7 @@ const App = () => {
         setGazeboEnabled={setGazeboEnabled}
         // onSetShowExecStatus={onSetShowExecStatus}
         manager={manager}
+        showVNCViewer={showVNCViewer}
       />
 
       <div className="App-main">
