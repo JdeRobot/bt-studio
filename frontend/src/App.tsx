@@ -189,7 +189,7 @@ const App = () => {
               currentProjectname={currentProjectname}
               setProjectChanges={setProjectChanges}
             />
-            {gazeboEnabled && showTerminal && (
+            {showTerminal && (
               <TerminalViewer gazeboEnabled={gazeboEnabled} />
             )}
           </div>
