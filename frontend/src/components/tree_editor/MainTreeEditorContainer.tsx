@@ -224,7 +224,10 @@ const MainTreeEditorContainer = ({
   }, [view]);
 
   return (
-    <div id="editor-container">
+    <div
+      id="editor-container"
+      style={{ height: "100%", display: "flex", flexDirection: "column" }}
+    >
       {initialJson ? (
         <TreeEditor
           modelJson={initialJson}

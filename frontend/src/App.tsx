@@ -1,5 +1,5 @@
 // App.js
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 // import useLocalStorage from 'use-local-storage'
 import { useUnload } from "./hooks/useUnload";
 import { Resizable } from "react-resizable";
@@ -9,16 +9,17 @@ import FileEditor from "./components/file_editor/FileEditor";
 import "./App.css";
 import VncViewer from "./components/vnc_viewer/VncViewer";
 import ErrorModal from "./components/error_popup/ErrorModal";
-import axios from "axios";
 import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
 import CommsManager from "./api_helper/CommsManager";
 import { loadProjectConfig } from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
 import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
+import StatusBar from "./components/status_bar/StatusBar";
 
 const App = () => {
-  const [editorWidth, setEditorWidth] = useState<number>(600);
+  const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
+  const [editorWidth, setEditorWidth] = useState<number>(800);
   const [currentFilename, setCurrentFilename] = useState<string>("");
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
@@ -29,24 +30,47 @@ const App = () => {
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
   const [projectChanges, setProjectChanges] = useState<boolean>(false);
   const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
-  const [manager, setManager] = useState<any>(null);
+  const [manager, setManager] = useState<CommsManager | null>(null);
   const [diagramEditorReady, setDiagramEditorReady] = useState<boolean>(false);
-  const [appRunning, setAppRunning] = useState<boolean>(false);
+  const [showSim, setSimVisible] = useState<boolean>(false);
+  const [showTerminal, setTerminalVisible] = useState<boolean>(false);
+
+  const [dockerData, setDockerData] = useState<{
+    gpu_avaliable: string;
+    robotics_backend_version: string;
+    ros_version: string;
+  } | null>(null);
 
   const settings = React.useContext(OptionsContext);
-  //////////////////////////////////////////////////////
+  //////////////////////////s////////////////////////////
 
   // RB manager setup
+  const connected = useRef<boolean>(false);
 
   useEffect(() => {
     const manager = CommsManager.getInstance();
     setManager(manager);
   }, []);
 
+  const resetManager = () => {
+    CommsManager.deleteInstance();
+    const manager = CommsManager.getInstance();
+    setManager(manager);
+  };
+
+  const introspectionCallback = (msg: any) => {
+    setDockerData(msg.data);
+  };
+
   const connectWithRetry = async () => {
+    if (!manager || connected.current) {
+      return;
+    }
+
     try {
       await manager.connect();
       console.log("Connected!");
+      connected.current = true;
     } catch (error) {
       // Connection failed, try again after a delay
       console.log("Connection failed, trying again!");
@@ -57,12 +81,16 @@ const App = () => {
   useEffect(() => {
     if (manager) {
       console.log("The manager is up!");
+      manager.subscribeOnce("introspection", introspectionCallback);
       connectWithRetry();
     }
   }, [manager]);
 
   useUnload(() => {
-    manager.disconnect();
+    if (manager) {
+      manager.disconnect();
+      connected.current = false;
+    }
   });
 
   useEffect(() => {
@@ -75,6 +103,9 @@ const App = () => {
     switch (key) {
       case "editorWidth":
         setEditorWidth(size.width);
+        break;
+      case "fileBrowserWidth":
+        setFileBrowserWidth(size.width);
         break;
       default:
         break;
@@ -94,8 +125,30 @@ const App = () => {
     setErrorModalOpen(false);
   };
 
+  // Show VNC viewers
+  const showVNCViewer = () => {
+    setSimVisible(true);
+    setTerminalVisible(true);
+  };
+
+  const showVNCTerminal = (show: boolean) => {
+    if (gazeboEnabled) {
+      setTerminalVisible(show);
+    }
+  };
+
+  const showVNCSim = (show: boolean) => {
+    if (gazeboEnabled) {
+      setSimVisible(show);
+    }
+  };
+
   return (
-    <div className="App" data-theme={settings.theme.value}>
+    <div
+      className="App"
+      data-theme={settings.theme.value}
+      style={{ display: "flex" }}
+    >
       {/* <ErrorModal isOpen={isErrorModalOpen} onClose={closeError} /> */}
 
       <HeaderMenu
@@ -110,20 +163,37 @@ const App = () => {
         setGazeboEnabled={setGazeboEnabled}
         // onSetShowExecStatus={onSetShowExecStatus}
         manager={manager}
+        showVNCViewer={showVNCViewer}
       />
 
-      <div className="App-main" style={{ display: "flex" }}>
-        <div className="sideBar">
-          <FileBrowser
-            setCurrentFilename={setCurrentFilename}
-            currentFilename={currentFilename}
-            currentProjectname={currentProjectname}
-            setProjectChanges={setProjectChanges}
-            actionNodesData={actionNodesData}
-            showAccentColor={"editorShowAccentColors"}
-            diagramEditorReady={diagramEditorReady}
-          />
-        </div>
+      <div className="App-main">
+        <Resizable
+          width={fileBrowserWidth}
+          height={0}
+          onResize={(e, { size }) => onResize("fileBrowserWidth", size)}
+          minConstraints={[200, 200]}
+          maxConstraints={[400, 400]}
+        >
+          <div
+            style={{
+              width: `${fileBrowserWidth}px`,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div className="sideBar">
+              <FileBrowser
+                setCurrentFilename={setCurrentFilename}
+                currentFilename={currentFilename}
+                currentProjectname={currentProjectname}
+                setProjectChanges={setProjectChanges}
+                actionNodesData={actionNodesData}
+                showAccentColor={"editorShowAccentColors"}
+                diagramEditorReady={diagramEditorReady}
+              />
+            </div>
+          </div>
+        </Resizable>
 
         <Resizable
           width={editorWidth}
@@ -135,9 +205,10 @@ const App = () => {
           <div
             style={{
               width: `${editorWidth}px`,
-              height: "calc(100vh - 68px)",
               display: "flex",
               flexDirection: "column",
+              gap: "5px",
+              backgroundColor: "var(--control-bar)",
             }}
           >
             <FileEditor
@@ -145,32 +216,41 @@ const App = () => {
               currentProjectname={currentProjectname}
               setProjectChanges={setProjectChanges}
             />
-            {gazeboEnabled && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
+            {showTerminal && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
           </div>
         </Resizable>
 
-        <Resizable
-          width={100 % -editorWidth}
-          height={0}
-          onResize={(e, { size }) => onResize("sidebarWidth", size)}
-          minConstraints={[300, 300]}
-          maxConstraints={[300, 900]}
+        <div
+          style={{
+            flex: "1 1 0%",
+            display: "flex",
+            flexDirection: "column",
+            flexWrap: "nowrap",
+            gap: "5px",
+            backgroundColor: "var(--control-bar)",
+          }}
         >
-          <div style={{ flex: 1 }}>
-            {currentProjectname ? (
-              <MainTreeEditorContainer
-                projectName={currentProjectname}
-                setProjectEdited={setProjectChanges}
-                setGlobalJson={setModelJson}
-                modelJson={modelJson}
-              />
-            ) : (
-              <p>Loading...</p>
-            )}
-            <VncViewer gazeboEnabled={gazeboEnabled} />
-          </div>
-        </Resizable>
+          {currentProjectname ? (
+            <MainTreeEditorContainer
+              projectName={currentProjectname}
+              setProjectEdited={setProjectChanges}
+              setGlobalJson={setModelJson}
+              modelJson={modelJson}
+            />
+          ) : (
+            <p>Loading...</p>
+          )}
+          {showSim && <VncViewer gazeboEnabled={gazeboEnabled} />}
+        </div>
       </div>
+      <StatusBar
+        showSim={showSim}
+        setSimVisible={showVNCSim}
+        showTerminal={showTerminal}
+        setTerminalVisible={showVNCTerminal}
+        dockerData={dockerData}
+        resetManager={resetManager}
+      />
     </div>
   );
 };

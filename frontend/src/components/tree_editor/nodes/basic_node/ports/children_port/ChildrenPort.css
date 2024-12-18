@@ -3,6 +3,6 @@
 .port-children {
   height: 10px;
   width: 10px;
-  background-color: black;
+  background-color: var(--border-color);
   border-radius: 100%;
 }

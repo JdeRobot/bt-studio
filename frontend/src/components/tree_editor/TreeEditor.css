@@ -1,17 +1,17 @@
 .canvas {
-  height: 40vh;
+  height: 100%;
   width: 100%;
   background-color: var(--canvas-background);
 }
 
 .bt-order-indicator {
   display: flex;
-  position: relative;
+  height: 0px;
   width: 30px;
-  height: 30px;
-  bottom: 25px;
   border: 0;
-  background-color: transparent;
-  margin-left: auto;
+  padding: 0;
   justify-content: center;
+  margin-left: auto;
+  translate: -10px -35px;
+  background-color: initial;
 }

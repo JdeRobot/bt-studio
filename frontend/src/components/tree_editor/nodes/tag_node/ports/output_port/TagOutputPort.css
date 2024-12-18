@@ -3,7 +3,7 @@
 .tag-output-port {
   width: 10px;
   height: 10px;
-  background: black;
+  background: var(--border-color);
 }
 
 .tag-output-container {

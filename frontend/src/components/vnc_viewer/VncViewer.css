@@ -1,12 +1,25 @@
 .viewer {
-  height: 40vh;
+  height: 100%;
   width: 100%;
-  z-index: 2;
+  background-color: var(--app-background);
+}
+
+.terminal {
+  height: 50%;
+  width: 100%;
+  background-color: var(--app-background);
 }
 
 .loader {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 40vh;
+  height: 100%;
+}
+
+.loader-terminal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50%;
 }
