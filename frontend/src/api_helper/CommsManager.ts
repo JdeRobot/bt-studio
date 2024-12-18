@@ -7,7 +7,6 @@ type PromiseHandlers = {
 };
 
 type Events = string | string[];
-
 export default class CommsManager {
   private static instance: CommsManager | undefined;
   private ws: WebSocket;

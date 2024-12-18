@@ -51,7 +51,7 @@ const HeaderMenu = ({
   setProjectChanges: Function;
   gazeboEnabled: boolean;
   setGazeboEnabled: Function;
-  manager: CommsManager;
+  manager: CommsManager | null;
   showVNCViewer: Function;
 }) => {
   // Settings
@@ -71,6 +71,9 @@ const HeaderMenu = ({
   // RB helpers
 
   const terminateUniverse = async () => {
+    if (!manager) {
+      return;
+    }
     // Down the RB ladder
     await manager.terminateApplication();
     await manager.terminateVisualization();
@@ -78,6 +81,10 @@ const HeaderMenu = ({
   };
 
   const launchUniverse = async (universeConfig: string) => {
+    if (!manager) {
+      return;
+    }
+
     console.log("UC: " + universeConfig);
     const configJson = JSON.parse(universeConfig);
 
@@ -208,6 +215,11 @@ const HeaderMenu = ({
   };
 
   const onAppStateChange = async () => {
+    if (!manager) {
+      console.error("Manager is not running");
+      return;
+    }
+
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
       return;
@@ -258,6 +270,11 @@ const HeaderMenu = ({
   };
 
   const onResetApp = async () => {
+    if (!manager) {
+      console.error("Manager is not running");
+      return;
+    }
+
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
     }

@@ -1,5 +1,5 @@
 // App.js
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 // import useLocalStorage from 'use-local-storage'
 import { useUnload } from "./hooks/useUnload";
 import { Resizable } from "react-resizable";
@@ -30,7 +30,7 @@ const App = () => {
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
   const [projectChanges, setProjectChanges] = useState<boolean>(false);
   const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
-  const [manager, setManager] = useState<any>(null);
+  const [manager, setManager] = useState<CommsManager|null>(null);
   const [diagramEditorReady, setDiagramEditorReady] = useState<boolean>(false);
   const [showSim, setSimVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
@@ -45,8 +45,7 @@ const App = () => {
   //////////////////////////s////////////////////////////
 
   // RB manager setup
-  const [hasManagerReseted, setResetManager] = useState<boolean>(false);
-
+  const connected = useRef<boolean>(false);
 
   useEffect(() => {
     const manager = CommsManager.getInstance();
@@ -54,7 +53,6 @@ const App = () => {
   }, []);
 
   const resetManager = () => {
-    // setResetManager(true);
     CommsManager.deleteInstance();
     const manager = CommsManager.getInstance();
     setManager(manager);
@@ -65,17 +63,16 @@ const App = () => {
   };
 
   const connectWithRetry = async () => {
+    if (!manager || connected.current) {
+      return;
+    }
+
     try {
       await manager.connect();
       console.log("Connected!");
+      connected.current = true;
     } catch (error) {
-      console.log(error)
       // Connection failed, try again after a delay
-      // if (hasManagerReseted) {
-      //   console.log("Clear timeout")
-      //   setResetManager(false);
-      //   return;
-      // } 
       console.log("Connection failed, trying again!");
       setTimeout(connectWithRetry, 1000);
     }
@@ -90,7 +87,10 @@ const App = () => {
   }, [manager]);
 
   useUnload(() => {
-    manager.disconnect();
+    if (manager) {
+      manager.disconnect();
+      connected.current = false;
+    }
   });
 
   useEffect(() => {
