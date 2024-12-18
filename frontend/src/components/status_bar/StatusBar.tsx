@@ -30,53 +30,53 @@ const StatusBar = ({
   const settings = useContext(OptionsContext);
 
   return (
-    <div className="status-bar-container">
+    <div className="bt-status-bar-container">
       <button
         className={
-          showTerminal ? `status-bar-button-active` : `status-bar-button`
+          showTerminal ? `bt-status-bar-button-active` : `bt-status-bar-button`
         }
         onClick={() => {
           setTerminalVisible(!showTerminal);
         }}
         title="Toggle console"
       >
-        <TerminalIcon className="status-bar-icon" stroke={"var(--icon)"} />
+        <TerminalIcon className="bt-status-bar-icon" stroke={"var(--icon)"} />
       </button>
       {dockerData !== null ? (
         <>
-          <div className="status-bar-div" title="ROS 2 version">
-            <label className="status-bar-label">{`ROS 2: ${dockerData.ros_version}`}</label>
+          <div className="bt-status-bar-div" title="ROS 2 version">
+            <label className="bt-status-bar-label">{`ROS 2: ${dockerData.ros_version}`}</label>
           </div>
-          <div className="status-bar-div" title="GPU status">
-            <label className="status-bar-label">{`GPU: ${dockerData.gpu_avaliable}`}</label>
+          <div className="bt-status-bar-div" title="GPU status">
+            <label className="bt-status-bar-label">{`GPU: ${dockerData.gpu_avaliable}`}</label>
           </div>
-          <div className="status-bar-div" title="Robotics Backend version">
-            <label className="status-bar-label">{`Robotics Backend: ${dockerData.robotics_backend_version}`}</label>
+          <div className="bt-status-bar-div" title="Robotics Backend version">
+            <label className="bt-status-bar-label">{`Robotics Backend: ${dockerData.robotics_backend_version}`}</label>
           </div>
         </>
       ) : (
         <button
-          className={`status-bar-button`}
+          className={`bt-status-bar-button`}
           id={`reset-connection`}
           onClick={() => {
             resetManager();
           }}
           title="Reconnect with Robotics Backend"
         >
-          <ResetIcon className="status-bar-icon" stroke={"var(--icon)"} />
-          <label className="status-bar-label">Reconnect</label>
+          <ResetIcon className="bt-status-bar-icon" stroke={"var(--icon)"} />
+          <label className="bt-status-bar-label">Reconnect</label>
         </button>
       )}
       <button
-        className={showSim ? `status-bar-button-active` : `status-bar-button`}
+        className={showSim ? `bt-status-bar-button-active` : `bt-status-bar-button`}
         onClick={() => {
           setSimVisible(!showSim);
         }}
         title="Toggle Simulator"
         style={{ marginLeft: "auto", width: "300px" }}
       >
-        <SimulatorIcon className="status-bar-icon" stroke={"var(--icon)"} />
-        <label className="status-bar-label">Simulator</label>
+        <SimulatorIcon className="bt-status-bar-icon" stroke={"var(--icon)"} />
+        <label className="bt-status-bar-label">Simulator</label>
       </button>
     </div>
   );
