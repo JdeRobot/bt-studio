@@ -20,12 +20,11 @@ import StatusBar from "./components/status_bar/StatusBar";
 const App = () => {
   const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
   const [editorWidth, setEditorWidth] = useState<number>(800);
-  const [simHeight, setSimHeight] = useState<number>(0);
   const [currentFilename, setCurrentFilename] = useState<string>("");
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
-    {},
+    {}
   );
   const [modelJson, setModelJson] = useState<string>("");
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
@@ -107,9 +106,6 @@ const App = () => {
         break;
       case "fileBrowserWidth":
         setFileBrowserWidth(size.width);
-        break;
-      case "simHeight":
-        setSimHeight(size.height);
         break;
       default:
         break;
@@ -244,28 +240,7 @@ const App = () => {
           ) : (
             <p>Loading...</p>
           )}
-          {showSim && (
-            <Resizable
-              className="bt-resizable-horiz"
-              width={0}
-              height={simHeight}
-              axis="y"
-              onResize={(e, { size }) => {
-                onResize("simHeight", size);
-                console.log(e);
-              }}
-              minConstraints={[0, 0]}
-              maxConstraints={[500, 500]}
-            >
-              <div
-                style={{
-                  height: `calc(100% - ${simHeight}px)`,
-                }}
-              >
-                <VncViewer gazeboEnabled={gazeboEnabled} />
-              </div>
-            </Resizable>
-          )}
+          {showSim && <VncViewer gazeboEnabled={gazeboEnabled} />}
         </div>
       </div>
       <StatusBar
