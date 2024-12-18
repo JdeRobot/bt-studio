@@ -8,7 +8,7 @@
 
 .status-bar-button {
   margin: 0 0 0 0;
-  padding: 0 0 0 0;
+  padding: 10px 0 10px 0;
   height: 24px;
   min-width: 100px;
   width: fit-content;
@@ -31,7 +31,7 @@
 
 .status-bar-div {
   margin: 0 0 0 0;
-  padding: 0 0 0 0;
+  padding: 10px 0 10px 0;
   height: 24px;
   min-width: 100px;
   width: fit-content;
@@ -52,7 +52,7 @@
 
 .status-bar-button-active {
   margin: 0 0 0 0;
-  padding: 0 0 0 0;
+  padding: 10px 0 10px 0;
   height: 24px;
   min-width: 100px;
   width: fit-content;
