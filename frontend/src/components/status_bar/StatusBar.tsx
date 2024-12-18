@@ -55,17 +55,17 @@ const StatusBar = ({
           </div>
         </>
       ) : (
-      <button
-        className={`status-bar-button`}
-        id={`reset-connection`}
-        onClick={() => {
-          resetManager();
-        }}
-        title="Reconnect with Robotics Backend"
-      >
-        <ResetIcon className="status-bar-icon" stroke={"var(--icon)"} />
-        <label className="status-bar-label">Reconnect</label>
-      </button>
+        <button
+          className={`status-bar-button`}
+          id={`reset-connection`}
+          onClick={() => {
+            resetManager();
+          }}
+          title="Reconnect with Robotics Backend"
+        >
+          <ResetIcon className="status-bar-icon" stroke={"var(--icon)"} />
+          <label className="status-bar-label">Reconnect</label>
+        </button>
       )}
       <button
         className={showSim ? `status-bar-button-active` : `status-bar-button`}

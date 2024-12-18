@@ -30,7 +30,7 @@ const App = () => {
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
   const [projectChanges, setProjectChanges] = useState<boolean>(false);
   const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
-  const [manager, setManager] = useState<CommsManager|null>(null);
+  const [manager, setManager] = useState<CommsManager | null>(null);
   const [diagramEditorReady, setDiagramEditorReady] = useState<boolean>(false);
   const [showSim, setSimVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
@@ -56,7 +56,7 @@ const App = () => {
     CommsManager.deleteInstance();
     const manager = CommsManager.getInstance();
     setManager(manager);
-  }
+  };
 
   const introspectionCallback = (msg: any) => {
     setDockerData(msg.data);
