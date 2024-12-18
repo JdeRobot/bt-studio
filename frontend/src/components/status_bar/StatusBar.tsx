@@ -44,13 +44,13 @@ const StatusBar = ({
       </button>
       {dockerData && (
         <>
-          <div className="status-bar-div">
-              <label className="status-bar-label">{`ROS 2 version: ${dockerData.ros_version}`}</label>
+          <div className="status-bar-div" title="ROS 2 version">
+              <label className="status-bar-label">{`ROS 2: ${dockerData.ros_version}`}</label>
           </div>
-          <div className="status-bar-div">
+          <div className="status-bar-div" title="GPU status">
               <label className="status-bar-label">{`GPU: ${dockerData.gpu_avaliable}`}</label>
           </div>
-          <div className="status-bar-div">
+          <div className="status-bar-div" title="Robotics Backend version">
               <label className="status-bar-label">{`Robotics Backend: ${dockerData.robotics_backend_version}`}</label>
           </div>
         </>
