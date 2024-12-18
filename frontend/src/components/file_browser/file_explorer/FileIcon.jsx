@@ -10,7 +10,7 @@ import { ReactComponent as ActionFileIcon } from "./img/file-action.svg";
 function FileIcon({ is_dir, is_collapsed, name, group }) {
   var returnVal = (
     <>
-      <BaseFileIcon className="arrow-icon" fill={"var(--icon)"} />
+      <BaseFileIcon className="bt-arrow-icon" fill={"var(--icon)"} />
     </>
   );
 
@@ -18,15 +18,15 @@ function FileIcon({ is_dir, is_collapsed, name, group }) {
     if (is_collapsed) {
       return (
         <>
-          <ClosedArrowIcon className="arrow-icon" stroke={"var(--icon)"} />
-          <ClosedFolderIcon className="arrow-icon" fill={"var(--icon)"} />
+          <ClosedArrowIcon className="bt-arrow-icon" stroke={"var(--icon)"} />
+          <ClosedFolderIcon className="bt-arrow-icon" fill={"var(--icon)"} />
         </>
       );
     } else {
       return (
         <>
-          <OpenArrowIcon className="arrow-icon" stroke={"var(--icon)"} />
-          <OpenFolderIcon className="arrow-icon" fill={"var(--icon)"} />
+          <OpenArrowIcon className="bt-arrow-icon" stroke={"var(--icon)"} />
+          <OpenFolderIcon className="bt-arrow-icon" fill={"var(--icon)"} />
         </>
       );
     }
@@ -36,7 +36,7 @@ function FileIcon({ is_dir, is_collapsed, name, group }) {
     case "Action":
       returnVal = (
         <>
-          <ActionFileIcon className="arrow-icon" fill={"var(--icon)"} />
+          <ActionFileIcon className="bt-arrow-icon" fill={"var(--icon)"} />
         </>
       );
       break;

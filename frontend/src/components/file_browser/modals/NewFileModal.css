@@ -1,5 +1,5 @@
-.form-row select,
-.form-row button {
+.bt-form-row select,
+.bt-form-row button {
   width: 100%;
   display: block;
   border: none;
@@ -7,7 +7,7 @@
   font-size: medium;
 }
 
-.form-row button {
+.bt-form-row button {
   background-color: var(--buttons);
   margin-bottom: 10px;
   border-radius: 10px;
@@ -29,13 +29,13 @@
   background-color: var(--create-button);
 }
 
-.templates-col {
+.bt-templates-col {
   float: left; /* Float the buttons side by side */
   width: 30%;
   border-radius: 10px;
 }
 
-.templates-col div {
+.bt-templates-col div {
   border-radius: 10px;
   cursor: pointer; /* Pointer/hand icon */
   text-align: center;
@@ -43,26 +43,26 @@
   padding: 5px;
 }
 
-.templates-col:hover div {
+.bt-templates-col:hover div {
   background-color: var(--buttons-hover);
 }
 
-.templates-col .icon {
+.bt-templates-col .bt-icon {
   height: 90px;
   width: 30px;
 }
 
-.templates-col p {
+.bt-templates-col p {
   margin: 3px !important;
   color: var(--text);
 }
 
-.templates-col input[type="radio"] {
+.bt-templates-col input[type="radio"] {
   display: none;
   z-index: 100;
 }
 
-.templates-col input[type="radio"]:checked + div {
+.bt-templates-col input[type="radio"]:checked + div {
   /* background-color: var(--secondary) !important; */
   background: linear-gradient(
     -45deg,
@@ -72,14 +72,14 @@
   ) !important;
 }
 
-.templates-list-container {
+.bt-templates-list-container {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
 }
 
-.templates-list-title {
+.bt-templates-list-title {
   width: 100%;
   display: block;
   border: none;

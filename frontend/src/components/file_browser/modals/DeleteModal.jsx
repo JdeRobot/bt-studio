@@ -36,27 +36,27 @@ const DeleteModal = ({ onSubmit, isOpen, onClose, selectedEntry }) => {
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} onReset={handleCancel}>
-        <div className="modal-titlebar">
+        <div className="bt-modal-titlebar">
           <label
-            className="modal-titlebar-title"
+            className="bt-modal-titlebar-title"
             style={{ textAlign: "center" }}
           >
             Delete confirmation
           </label>
           <CloseIcon
-            className="modal-titlebar-close icon"
+            className="bt-modal-titlebar-close bt-icon"
             onClick={() => {
               handleCancel();
             }}
             fill={"var(--icon)"}
           />
         </div>
-        <div className="form-row">
-          <div className="delete-modal-prompt">
+        <div className="bt-form-row">
+          <div className="bt-delete-modal-prompt">
             <label> Do you want to delete {selectedEntry} ?</label>
           </div>
         </div>
-        <div className="button-row">
+        <div className="bt-button-row">
           <button type="reset" id="cancel-delete-selected">
             Cancel
           </button>

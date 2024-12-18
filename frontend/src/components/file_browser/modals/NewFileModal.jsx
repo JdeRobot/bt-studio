@@ -17,13 +17,13 @@ const initialNewFileModalData = {
 const plain = new CardEntryProps(
   "plain",
   "plainType",
-  <ActionTeplateIcon className="icon" fill={"var(--icon)"} />,
+  <ActionTeplateIcon className="bt-icon" fill={"var(--icon)"} />,
   "Plain File",
 );
 const actions = new CardEntryProps(
   "actions",
   "actionsType",
-  <IOTeplateIcon className="icon" fill={"var(--icon)"} />,
+  <IOTeplateIcon className="bt-icon" fill={"var(--icon)"} />,
   "Action",
 );
 
@@ -31,19 +31,19 @@ const actions = new CardEntryProps(
 const empty = new CardEntryProps(
   "empty",
   "emptyTemplate",
-  <EmptyTeplateIcon className="icon" stroke={"var(--icon)"} />,
+  <EmptyTeplateIcon className="bt-icon" stroke={"var(--icon)"} />,
   "Empty",
 );
 const action = new CardEntryProps(
   "action",
   "actionTemplate",
-  <ActionTeplateIcon className="icon" fill={"var(--icon)"} />,
+  <ActionTeplateIcon className="bt-icon" fill={"var(--icon)"} />,
   "Action",
 );
 const io = new CardEntryProps(
   "io",
   "ioTemplate",
-  <IOTeplateIcon className="icon" fill={"var(--icon)"} />,
+  <IOTeplateIcon className="bt-icon" fill={"var(--icon)"} />,
   "I/O",
 );
 
@@ -187,8 +187,8 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
           htmlFor="fileName"
           handleCancel={handleCancel}
         />
-        <div className="modal-complex-input-row-container">
-          <div className="modal-complex-input-container">
+        <div className="bt-modal-complex-input-row-container">
+          <div className="bt-modal-complex-input-container">
             <input
               ref={focusInputRef}
               type="text"
@@ -196,15 +196,15 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
               name="fileName"
               className={
                 isCreationAllowed || formState.fileName === ""
-                  ? "modal-complex-input"
-                  : "modal-complex-input modal-complex-input-invalid"
+                  ? "bt-modal-complex-input"
+                  : "bt-modal-complex-input bt-modal-complex-input-invalid"
               }
               onChange={handleInputChange}
               autoComplete="off"
               placeholder="File Name"
               required
             />
-            <label htmlFor="fileName" className="modal-complex-input-label">
+            <label htmlFor="fileName" className="bt-modal-complex-input-label">
               File Name
             </label>
           </div>
@@ -227,8 +227,8 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
             checkedCallback={onOptionTemplateChange}
           />
         )}
-        <div className="form-row">
-          <div className="button-row">
+        <div className="bt-form-row">
+          <div className="bt-button-row">
             <button
               type="submit"
               id="create-new-action"
@@ -254,11 +254,11 @@ const CardSelector = ({
   checkedCallback,
 }) => {
   return (
-    <div className="form-row" id={id}>
-      <label htmlFor="templateType" className="templates-list-title">
+    <div className="bt-form-row" id={id}>
+      <label htmlFor="templateType" className="bt-templates-list-title">
         {title}
       </label>
-      <div className="templates-list-container">
+      <div className="bt-templates-list-container">
         {contentArray.map((x) => (
           <CardEntry
             cardEntryProp={x}
@@ -279,7 +279,7 @@ const CardEntry = ({
   checkedCallback,
 }) => {
   return (
-    <div className="templates-col">
+    <div className="bt-templates-col">
       <label>
         <input
           type="radio"

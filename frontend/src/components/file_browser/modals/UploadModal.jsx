@@ -29,7 +29,7 @@ const UploadModal = ({
 
   const handleDrop = (event) => {
     event.preventDefault();
-    uploadAreaRef.current.classList.remove("drag-active");
+    uploadAreaRef.current.classList.remove("bt-drag-active");
 
     if (event.dataTransfer.files.length > 0) {
       uploadInputRef.current.files = event.dataTransfer.files;
@@ -105,43 +105,43 @@ const UploadModal = ({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} onReset={handleCancel}>
-        <div className="modal-titlebar">
+        <div className="bt-modal-titlebar">
           <label
-            className="modal-titlebar-title"
+            className="bt-modal-titlebar-title"
             htmlFor="uploadName"
             style={{ textAlign: "center" }}
           >
             Upload
           </label>
           <CloseIcon
-            className="modal-titlebar-close icon"
+            className="bt-modal-titlebar-close bt-icon"
             onClick={() => {
               handleCancel();
             }}
             fill={"var(--icon)"}
           />
         </div>
-        <div className="form-row">
+        <div className="bt-form-row">
           <label
             ref={uploadAreaRef}
             htmlFor="uploadDropInput"
-            className="modal-drop-container"
+            className="bt-modal-drop-container"
             onDragOver={(e) => {
               e.preventDefault();
             }}
             onDragEnter={() =>
-              uploadAreaRef.current.classList.add("drag-active")
+              uploadAreaRef.current.classList.add("bt-drag-active")
             }
             onDragLeave={() =>
-              uploadAreaRef.current.classList.remove("drag-active")
+              uploadAreaRef.current.classList.remove("bt-drag-active")
             }
             onDrop={(e) => handleDrop(e)}
           >
-            <span className="modal-drop-title">Drop files here</span>
+            <span className="bt-modal-drop-title">Drop files here</span>
             or
             <input
               ref={uploadInputRef}
-              className="modal-button"
+              className="bt-modal-button"
               id="uploadDropInput"
               onChange={(e) => handleAcceptedFiles(e.target.files)}
               type="file"
@@ -154,7 +154,7 @@ const UploadModal = ({
         </div>
         {uploadStatus !== "" && (
           <ProgressBar completed={uploadPercentage} />
-          // <div className="form-row">
+          // <div className="bt-form-row">
           // </div>
         )}
       </form>
