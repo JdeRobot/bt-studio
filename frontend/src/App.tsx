@@ -24,7 +24,7 @@ const App = () => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
-    {}
+    {},
   );
   const [modelJson, setModelJson] = useState<string>("");
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
@@ -39,7 +39,7 @@ const App = () => {
     gpu_avaliable: string;
     robotics_backend_version: string;
     ros_version: string;
-  }|null>(null);
+  } | null>(null);
 
   const settings = React.useContext(OptionsContext);
   //////////////////////////s////////////////////////////
