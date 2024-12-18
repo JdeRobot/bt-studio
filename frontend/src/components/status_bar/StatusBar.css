@@ -20,6 +20,10 @@
   align-items: center;
   justify-content: center;
 
+  & .status-bar-label {
+    font-size: 18px;
+  }
+
   &:hover {
     background-color: var(--primary-300);
   }
@@ -40,16 +44,6 @@
   justify-content: center;
 
   opacity: 50%;
-
-  & label {
-    height: 20px;
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 14px;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-  }
 
   &:hover {
     opacity: 100%;
@@ -85,7 +79,7 @@
   height: 20px;
   padding-left: 10px;
   padding-right: 10px;
-  font-size: 18px;
+  font-size: 14px;
   color: var(--text);
   display: flex;
   align-items: center;
