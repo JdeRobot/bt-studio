@@ -27,23 +27,23 @@ const ErrorModal = ({ onSubmit, isOpen, onClose }) => {
       isOpen={isOpen}
       onClose={onClose}
     >
-      <div className="modal-titlebar">
+      <div className="bt-modal-titlebar">
         <label
-          className="modal-titlebar-title"
+          className="bt-modal-titlebar-title"
           htmlFor="actionName"
           style={{ textAlign: "center" }}
         >
           Warning
         </label>
       </div>
-      <div className="form-row">
-        <div className="error-modal-buttons-container">
-          <label className="modal-error-label" id="errorMsg"></label>
+      <div className="bt-form-row">
+        <div className="bt-error-modal-buttons-container">
+          <label className="bt-modal-error-label" id="errorMsg"></label>
         </div>
       </div>
-      <div className="form-row">
-        <div className="error-modal-buttons-container">
-          <div className="error-modal-button" onClick={() => onClose()}>
+      <div className="bt-form-row">
+        <div className="bt-error-modal-buttons-container">
+          <div className="bt-error-modal-button" onClick={() => onClose()}>
             Close
           </div>
         </div>
