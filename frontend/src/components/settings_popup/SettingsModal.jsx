@@ -42,7 +42,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
     console.log(str);
 
     try {
-      const response = await fetch("/tree_api/save_base_tree_configuration/", {
+      const response = await fetch("/bt_studio/save_base_tree_configuration/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -82,7 +82,7 @@ const MainTreeEditorContainer = ({
 
   const getSubtreeStructure = async (name: string) => {
     try {
-      const response = await axios.get("/tree_api/get_subtree_structure/", {
+      const response = await axios.get("/bt_studio/get_subtree_structure/", {
         params: {
           project_name: projectName,
           subtree_name: name,
@@ -99,7 +99,7 @@ const MainTreeEditorContainer = ({
 
   const getBTTree = async () => {
     try {
-      const response = await axios.get("/tree_api/get_tree_structure/", {
+      const response = await axios.get("/bt_studio/get_tree_structure/", {
         params: {
           project_name: projectName,
           bt_order: settings.btOrder.value,

@@ -70,7 +70,7 @@ const UploadModal = ({
     console.log(currentProject);
 
     try {
-      const response = await axios.post("/tree_api/upload_code/", {
+      const response = await axios.post("/bt_studio/upload_code/", {
         project_name: currentProject,
         zip_file: uploadedData,
         location: location,

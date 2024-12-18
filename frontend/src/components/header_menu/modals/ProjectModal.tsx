@@ -34,7 +34,7 @@ const ProjectModal = ({
   const [formState, setFormState] = useState(initialProjectData);
 
   const getProjects = async () => {
-    const listApiUrl = `/tree_api/get_project_list`;
+    const listApiUrl = `/bt_studio/get_project_list`;
     try {
       const response = await axios.get(listApiUrl);
       setExistingProjects(response.data.project_list);
@@ -84,8 +84,8 @@ const ProjectModal = ({
       //TODO: change this to change project before deleting
       return;
     }
-    const apiUrl = `/tree_api/delete_project?project_name=${encodeURIComponent(project)}`;
-    const listApiUrl = `/tree_api/get_project_list`;
+    const apiUrl = `/bt_studio/delete_project?project_name=${encodeURIComponent(project)}`;
+    const listApiUrl = `/bt_studio/get_project_list`;
 
     // Delete and update
     const response = await axios.get(apiUrl);

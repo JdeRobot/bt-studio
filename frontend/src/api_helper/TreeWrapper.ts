@@ -12,7 +12,7 @@ const isSuccessful = (response: AxiosResponse) => {
 const getFileList = async (projectName: string) => {
   if (!projectName) throw new Error("Project name is not set");
 
-  const apiUrl = `/tree_api/get_file_list?project_name=${encodeURIComponent(projectName)}`;
+  const apiUrl = `/bt_studio/get_file_list?project_name=${encodeURIComponent(projectName)}`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -31,7 +31,7 @@ const getFileList = async (projectName: string) => {
 const getActionsList = async (projectName: string) => {
   if (!projectName) throw new Error("Project name is not set");
 
-  const apiUrl = `/tree_api/get_actions_list?project_name=${encodeURIComponent(projectName)}`;
+  const apiUrl = `/bt_studio/get_actions_list?project_name=${encodeURIComponent(projectName)}`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -54,7 +54,7 @@ const createProject = async (projectName: string) => {
     throw new Error("Project name cannot be empty.");
   }
 
-  const apiUrl = `/tree_api/create_project?project_name=${encodeURIComponent(projectName)}`;
+  const apiUrl = `/bt_studio/create_project?project_name=${encodeURIComponent(projectName)}`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -72,7 +72,7 @@ const saveBaseTree = async (modelJson: string, currentProjectname: string) => {
   if (!modelJson) throw new Error("Tree JSON is empty!");
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
-  const apiUrl = "/tree_api/save_base_tree/";
+  const apiUrl = "/bt_studio/save_base_tree/";
   try {
     const response = await axios.post(apiUrl, {
       project_name: currentProjectname,
@@ -94,7 +94,7 @@ const loadProjectConfig = async (
 ) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
-  const apiUrl = `/tree_api/get_project_configuration?project_name=${currentProjectname}`;
+  const apiUrl = `/bt_studio/get_project_configuration?project_name=${currentProjectname}`;
   try {
     const response = await axios.get(apiUrl);
 
@@ -128,7 +128,7 @@ const loadProjectConfig = async (
 const getProjectGraph = async (currentProjectname: string) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
-  const apiUrl = `/tree_api/get_project_graph?project_name=${currentProjectname}`;
+  const apiUrl = `/bt_studio/get_project_graph?project_name=${currentProjectname}`;
   try {
     const response = await axios.get(apiUrl);
 
@@ -154,7 +154,7 @@ const getUniverseConfig = async (
   if (!universeName) throw new Error("The universe name is not set");
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
-  const apiUrl = `/tree_api/get_universe_configuration?project_name=${encodeURIComponent(
+  const apiUrl = `/bt_studio/get_universe_configuration?project_name=${encodeURIComponent(
     currentProjectname,
   )}&universe_name=${encodeURIComponent(universeName)}`;
   try {
@@ -176,7 +176,7 @@ const getUniverseConfig = async (
 const getRoboticsBackendUniversePath = async (universeName: string) => {
   if (!universeName) throw new Error("The universe name is not set");
 
-  const apiUrl = `/tree_api/get_docker_universe_path?name=${encodeURIComponent(universeName)}`;
+  const apiUrl = `/bt_studio/get_docker_universe_path?name=${encodeURIComponent(universeName)}`;
   try {
     const response = await axios.get(apiUrl);
 
@@ -202,7 +202,7 @@ const createRoboticsBackendUniverse = async (
   if (!universeName) throw new Error("The universe name is not set");
   if (!universeId) throw new Error("The universe id is not set");
 
-  const apiUrl = "/tree_api/add_docker_universe/";
+  const apiUrl = "/bt_studio/add_docker_universe/";
   try {
     const response = await axios.post(apiUrl, {
       app_name: projectName,
@@ -226,7 +226,7 @@ const getCustomUniverseZip = async (
   if (!universeName) throw new Error("The universe name is not set");
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
-  const apiUrl = "/tree_api/get_universe_zip/";
+  const apiUrl = "/bt_studio/get_universe_zip/";
   try {
     // Make the request
     const response = await axios.post(
@@ -265,7 +265,7 @@ const generateApp = async (
 
   console.log("The modelJson is: ", modelJson);
 
-  const apiUrl = "/tree_api/generate_app/";
+  const apiUrl = "/bt_studio/generate_app/";
   try {
     const response = await axios.post(
       apiUrl,
@@ -299,7 +299,7 @@ const generateDockerizedApp = async (
   if (!currentProjectname) throw new Error("Current Project name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
 
-  const apiUrl = "/tree_api/generate_dockerized_app/";
+  const apiUrl = "/bt_studio/generate_dockerized_app/";
   try {
     const response = await axios.post(
       apiUrl,
@@ -337,7 +337,7 @@ const createSubtree = async (
     throw new Error("Current Project name is not set");
   }
 
-  const apiUrl = `/tree_api/create_subtree/`;
+  const apiUrl = `/bt_studio/create_subtree/`;
 
   try {
     const response = await axios.post(apiUrl, {
@@ -357,7 +357,7 @@ const createSubtree = async (
 const getSubtreeList = async (projectName: string) => {
   if (!projectName) throw new Error("Project name is not set");
 
-  const apiUrl = `/tree_api/get_subtree_list?project_name=${encodeURIComponent(projectName)}`;
+  const apiUrl = `/bt_studio/get_subtree_list?project_name=${encodeURIComponent(projectName)}`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -378,7 +378,7 @@ const getSubtree = async (subtreeName: string, projectName: string) => {
   if (!subtreeName) throw new Error("Subtree name is not set");
   if (!projectName) throw new Error("Project name is not set");
 
-  const apiUrl = `/tree_api/get_subtree?project_name=${encodeURIComponent(projectName)}&subtree_name=${encodeURIComponent(subtreeName)}`;
+  const apiUrl = `/bt_studio/get_subtree?project_name=${encodeURIComponent(projectName)}&subtree_name=${encodeURIComponent(subtreeName)}`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -403,7 +403,7 @@ const saveSubtree = async (
   if (!currentProjectname) throw new Error("Current Project name is not set");
   if (!subtreeName) throw new Error("Subtree name is not set");
 
-  const apiUrl = "/tree_api/save_subtree/";
+  const apiUrl = "/bt_studio/save_subtree/";
   try {
     const response = await axios.post(apiUrl, {
       project_name: currentProjectname,
