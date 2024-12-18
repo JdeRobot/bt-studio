@@ -103,19 +103,19 @@ const App = () => {
   const showVNCViewer = () => {
     setSimVisible(true);
     setTerminalVisible(true);
-  }
+  };
 
   const showVNCTerminal = (show: boolean) => {
     if (gazeboEnabled) {
-      setTerminalVisible(show)
+      setTerminalVisible(show);
     }
-  }
+  };
 
   const showVNCSim = (show: boolean) => {
     if (gazeboEnabled) {
-      setSimVisible(show)
+      setSimVisible(show);
     }
-  }
+  };
 
   return (
     <div
@@ -190,9 +190,7 @@ const App = () => {
               currentProjectname={currentProjectname}
               setProjectChanges={setProjectChanges}
             />
-            {showTerminal && (
-              <TerminalViewer gazeboEnabled={gazeboEnabled} />
-            )}
+            {showTerminal && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
           </div>
         </Resizable>
 

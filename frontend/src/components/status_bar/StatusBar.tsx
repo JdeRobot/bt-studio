@@ -23,7 +23,9 @@ const StatusBar = ({
   return (
     <div className="status-bar-container">
       <button
-        className={showTerminal ? `status-bar-button-active` : `status-bar-button`}
+        className={
+          showTerminal ? `status-bar-button-active` : `status-bar-button`
+        }
         onClick={() => {
           setTerminalVisible(!showTerminal);
         }}
