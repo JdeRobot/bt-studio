@@ -68,7 +68,9 @@ const StatusBar = ({
         </button>
       )}
       <button
-        className={showSim ? `bt-status-bar-button-active` : `bt-status-bar-button`}
+        className={
+          showSim ? `bt-status-bar-button-active` : `bt-status-bar-button`
+        }
         onClick={() => {
           setSimVisible(!showSim);
         }}

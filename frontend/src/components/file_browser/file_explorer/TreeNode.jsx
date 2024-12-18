@@ -41,7 +41,10 @@ function TreeNode({
         className={`bt-file-item-container ${currentFilename === node.path ? "bt-file-item-selected-container" : ""}`}
         onClick={() => handleClick()}
       >
-        <div className={"bt-file-item"} style={{ paddingLeft: depth * 16 + "px" }}>
+        <div
+          className={"bt-file-item"}
+          style={{ paddingLeft: depth * 16 + "px" }}
+        >
           <FileIcon
             is_dir={node.is_dir}
             is_collapsed={isCollapsed}

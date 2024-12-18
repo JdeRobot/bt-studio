@@ -32,7 +32,7 @@
   bottom: 0;
   right: 0;
   cursor: ew-resize;
-  z-index: 100;
+  z-index: 99;
   background-color: var(--primary-100);
   &:hover {
     background-color: var(--primary-200);
@@ -47,7 +47,7 @@
     top: 0;
     left: 0;
     cursor: row-resize;
-    z-index: 100;
+    z-index: 99;
     background-color: var(--primary-100);
     &:hover {
       background-color: var(--primary-200);

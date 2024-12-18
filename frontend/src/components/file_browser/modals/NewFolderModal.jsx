@@ -123,7 +123,10 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
               placeholder="Folder Name"
               required
             />
-            <label htmlFor="folderName" className="bt-modal-complex-input-label">
+            <label
+              htmlFor="folderName"
+              className="bt-modal-complex-input-label"
+            >
               Folder Name
             </label>
           </div>

@@ -185,7 +185,10 @@ const NodeMenu = ({
             }}
             title="Create Subtree"
           >
-            <SubtreeIcon className="bt-icon bt-action-icon" fill={"var(--icon)"} />
+            <SubtreeIcon
+              className="bt-icon bt-action-icon"
+              fill={"var(--icon)"}
+            />
           </button>
         )}
         <button
@@ -202,7 +205,10 @@ const NodeMenu = ({
           onClick={onEditAction}
           title="Edit"
         >
-          <EditActionIcon className="bt-icon action-icon" stroke={"var(--icon)"} />
+          <EditActionIcon
+            className="bt-icon bt-action-icon"
+            stroke={"var(--icon)"}
+          />
         </button>
         <button
           id="bt-node-action-zoom-button"
@@ -210,7 +216,10 @@ const NodeMenu = ({
           onClick={onZoomToFit}
           title="Zoom To Fit"
         >
-          <ZoomToFitIcon className="bt-icon bt-action-icon" fill={"var(--icon)"} />
+          <ZoomToFitIcon
+            className="bt-icon bt-action-icon"
+            fill={"var(--icon)"}
+          />
         </button>
         <button
           id="bt-node-action-help-button"

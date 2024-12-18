@@ -159,7 +159,10 @@ const RenameModal = ({
               }
               required
             />
-            <label htmlFor="renameData" className="bt-modal-complex-input-label">
+            <label
+              htmlFor="renameData"
+              className="bt-modal-complex-input-label"
+            >
               Rename {selectedEntry.is_dir ? "Folder" : "File"}
             </label>
           </div>

@@ -43,7 +43,12 @@ const Modal = ({
   }, [isModalOpen]);
 
   return (
-    <dialog id={id} ref={modalRef} onKeyDown={handleKeyDown} className="bt-modal">
+    <dialog
+      id={id}
+      ref={modalRef}
+      onKeyDown={handleKeyDown}
+      className="bt-modal"
+    >
       <div className="bt-modal-contents">{children}</div>
     </dialog>
   );

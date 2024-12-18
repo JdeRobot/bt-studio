@@ -129,7 +129,10 @@ const CreatePage = ({
             placeholder="Universe Name"
             required={true}
           />
-          <label htmlFor="universeName" className="bt-modal-complex-input-label">
+          <label
+            htmlFor="universeName"
+            className="bt-modal-complex-input-label"
+          >
             Universe Name
           </label>
           <label

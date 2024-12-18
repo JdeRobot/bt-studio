@@ -25,7 +25,7 @@ const App = () => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
-    {}
+    {},
   );
   const [modelJson, setModelJson] = useState<string>("");
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
@@ -250,7 +250,10 @@ const App = () => {
               width={0}
               height={simHeight}
               axis="y"
-              onResize={(e, { size }) => {onResize("simHeight", size);console.log(e)}}
+              onResize={(e, { size }) => {
+                onResize("simHeight", size);
+                console.log(e);
+              }}
               minConstraints={[0, 0]}
               maxConstraints={[500, 500]}
             >

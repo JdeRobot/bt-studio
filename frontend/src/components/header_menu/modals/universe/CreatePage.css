@@ -3,6 +3,11 @@
   width: 75%;
 }
 
+.bt-icon {
+  width: 20px;
+  height: 20px;
+}
+
 #create-new-universe {
   margin-top: 40px;
   height: 30px;

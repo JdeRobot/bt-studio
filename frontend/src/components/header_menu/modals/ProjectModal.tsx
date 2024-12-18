@@ -134,7 +134,9 @@ const ProjectModal = ({
                       className="bt-project-entry"
                       onClick={() => onClose(project[1])}
                     >
-                      <label className="bt-project-entry-name">{project[1]}</label>
+                      <label className="bt-project-entry-name">
+                        {project[1]}
+                      </label>
                       <DeleteIcon
                         className="bt-project-entry-delete bt-icon"
                         title="Delete"
