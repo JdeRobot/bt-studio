@@ -10,6 +10,7 @@ const VncViewer = ({ gazeboEnabled }: { gazeboEnabled: boolean }) => {
           style={{
             width: "100%",
             height: "100%",
+            border: 0,
           }}
           src={"http://127.0.0.1:6080/vnc.html?resize=remote&autoconnect=true"}
         />

@@ -182,6 +182,7 @@ const App = () => {
               display: "flex",
               flexDirection: "column",
               gap: "5px",
+              backgroundColor: "var(--control-bar)",
             }}
           >
             <FileEditor
