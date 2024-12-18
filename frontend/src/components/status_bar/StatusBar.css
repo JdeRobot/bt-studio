@@ -88,3 +88,15 @@
   display: flex;
   align-items: center;
 }
+
+#reset-connection {
+  background-color: var(--running);
+
+  & .status-bar-label {
+    font-size: 18px;
+  }
+
+  &:hover {
+    background-color: var(--running-hover);
+  }
+}

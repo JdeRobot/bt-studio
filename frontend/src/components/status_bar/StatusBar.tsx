@@ -5,21 +5,21 @@ import "./StatusBar.css";
 
 import { ReactComponent as TerminalIcon } from "./img/terminal.svg";
 import { ReactComponent as SimulatorIcon } from "./img/gazebo.svg";
-import CommsManager from "../../api_helper/CommsManager";
+import { ReactComponent as ResetIcon } from "./img/reset.svg";
 
 const StatusBar = ({
   showSim,
   setSimVisible,
   showTerminal,
   setTerminalVisible,
-  manager,
+  resetManager,
   dockerData,
 }: {
   showSim: boolean;
   setSimVisible: Function;
   showTerminal: boolean;
   setTerminalVisible: Function;
-  manager: CommsManager;
+  resetManager: Function;
   dockerData: {
     gpu_avaliable: string;
     robotics_backend_version: string;
@@ -42,7 +42,7 @@ const StatusBar = ({
       >
         <TerminalIcon className="status-bar-icon" stroke={"var(--icon)"} />
       </button>
-      {dockerData && (
+      {dockerData !== null ? (
         <>
           <div className="status-bar-div" title="ROS 2 version">
             <label className="status-bar-label">{`ROS 2: ${dockerData.ros_version}`}</label>
@@ -54,6 +54,18 @@ const StatusBar = ({
             <label className="status-bar-label">{`Robotics Backend: ${dockerData.robotics_backend_version}`}</label>
           </div>
         </>
+      ) : (
+      <button
+        className={`status-bar-button`}
+        id={`reset-connection`}
+        onClick={() => {
+          resetManager();
+        }}
+        title="Reconnect with Robotics Backend"
+      >
+        <ResetIcon className="status-bar-icon" stroke={"var(--icon)"} />
+        <label className="status-bar-label">Reconnect</label>
+      </button>
       )}
       <button
         className={showSim ? `status-bar-button-active` : `status-bar-button`}

@@ -45,11 +45,20 @@ const App = () => {
   //////////////////////////s////////////////////////////
 
   // RB manager setup
+  const [hasManagerReseted, setResetManager] = useState<boolean>(false);
+
 
   useEffect(() => {
     const manager = CommsManager.getInstance();
     setManager(manager);
   }, []);
+
+  const resetManager = () => {
+    // setResetManager(true);
+    CommsManager.deleteInstance();
+    const manager = CommsManager.getInstance();
+    setManager(manager);
+  }
 
   const introspectionCallback = (msg: any) => {
     setDockerData(msg.data);
@@ -60,7 +69,13 @@ const App = () => {
       await manager.connect();
       console.log("Connected!");
     } catch (error) {
+      console.log(error)
       // Connection failed, try again after a delay
+      // if (hasManagerReseted) {
+      //   console.log("Clear timeout")
+      //   setResetManager(false);
+      //   return;
+      // } 
       console.log("Connection failed, trying again!");
       setTimeout(connectWithRetry, 1000);
     }
@@ -233,8 +248,8 @@ const App = () => {
         setSimVisible={showVNCSim}
         showTerminal={showTerminal}
         setTerminalVisible={showVNCTerminal}
-        manager={manager}
         dockerData={dockerData}
+        resetManager={resetManager}
       />
     </div>
   );

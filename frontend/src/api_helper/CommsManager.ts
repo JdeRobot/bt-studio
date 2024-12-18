@@ -9,7 +9,7 @@ type PromiseHandlers = {
 type Events = string | string[];
 
 export default class CommsManager {
-  private static instance: CommsManager;
+  private static instance: CommsManager | undefined;
   private ws: WebSocket;
   private observers: { [id: string]: Function[] } = {};
   private pendingPromises: Map<string, PromiseHandlers> = new Map();
@@ -64,6 +64,13 @@ export default class CommsManager {
       CommsManager.instance = new CommsManager("ws://127.0.0.1:7163");
     }
     return CommsManager.instance;
+  }
+
+  public static deleteInstance() {
+    if (CommsManager.instance) {
+      delete CommsManager.instance;
+      CommsManager.instance = undefined;
+    }
   }
 
   public subscribe = (events: Events, callback: Function) => {

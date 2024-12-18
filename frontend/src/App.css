@@ -264,13 +264,15 @@ h3 {
   --bt-tag-blackboard-background: #5ba498;
   --bt-tag-normal-background: #a45b67;
 
-  --bt-status-running: #ee942e;
-  --bt-status-success: #29ac29;
-  --bt-status-failure: #b11111;
-  --bt-status-invalid: #494949;
-
   --success: #29ac29;
   --success-hover: #49eb49;
+  --running: #c4761e;
+  --running-hover: #e6881c;
+
+  --bt-status-running: var(--running);
+  --bt-status-success: var(--success);
+  --bt-status-failure: #b11111;
+  --bt-status-invalid: #494949;
 
   --status-bar: var(--primary-100);
 }
