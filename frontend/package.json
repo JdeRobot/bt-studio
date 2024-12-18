@@ -67,6 +67,6 @@
     "typescript": "^5.2.2"
   },
   "_moduleAliases": {
-    "@BtComponents": "./src/componets"
+    "@BtComponents": "./src/components"
   }
 }
