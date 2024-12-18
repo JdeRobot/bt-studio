@@ -1,4 +1,4 @@
-.more-actions-menu {
+.bt-more-actions-menu {
   position: absolute;
   width: auto;
   z-index: 100;
@@ -14,7 +14,7 @@
   background: var(--background);
 }
 
-.more-actions-menu-entry {
+.bt-more-actions-menu-entry {
   padding-left: 1rem;
   padding-right: 1rem;
   padding-top: 0.2rem;
@@ -26,7 +26,7 @@
   align-items: flex-start;
 }
 
-.more-actions-menu-divider {
+.bt-more-actions-menu-divider {
   height: 2px;
   margin-top: 0.4rem;
   margin-bottom: 0.4rem;
@@ -34,14 +34,14 @@
   background: var(--buttons);
 }
 
-.more-actions-menu-entry:first-of-type {
+.bt-more-actions-menu-entry:first-of-type {
   margin-top: 0.4rem;
 }
 
-.more-actions-menu-entry:last-of-type {
+.bt-more-actions-menu-entry:last-of-type {
   margin-bottom: 0.4rem;
 }
 
-.more-actions-menu-entry:hover {
+.bt-more-actions-menu-entry:hover {
   background: var(--buttons);
 }

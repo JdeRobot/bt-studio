@@ -3,7 +3,7 @@ import BounceLoader from "react-spinners/BounceLoader";
 
 const TerminalViewer = ({ gazeboEnabled }: { gazeboEnabled: boolean }) => {
   return (
-    <div className="terminal">
+    <div className="bt-terminal">
       {gazeboEnabled ? (
         <iframe
           id={"iframe"}
@@ -15,7 +15,7 @@ const TerminalViewer = ({ gazeboEnabled }: { gazeboEnabled: boolean }) => {
           src={"http://127.0.0.1:1108/vnc.html?resize=remote&autoconnect=true"}
         />
       ) : (
-        <div className="loader-terminal">
+        <div className="bt-loader-terminal">
           <BounceLoader color="var(--header)" size={80} speedMultiplier={0.7} />
         </div>
       )}

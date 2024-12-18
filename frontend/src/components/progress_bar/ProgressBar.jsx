@@ -2,9 +2,12 @@ import "./ProgressBar.css";
 
 const ProgressBar = ({ completed }) => {
   return (
-    <div className="progress-bar-container">
-      <div className="progress-bar-filler" style={{ width: `${completed}%` }}>
-        <span className="progress-bar-percentage">{`${completed}%`}</span>
+    <div className="bt-progress-bar-container">
+      <div
+        className="bt-progress-bar-filler"
+        style={{ width: `${completed}%` }}
+      >
+        <span className="bt-progress-bar-percentage">{`${completed}%`}</span>
       </div>
     </div>
   );

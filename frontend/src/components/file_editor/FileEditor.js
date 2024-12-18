@@ -104,22 +104,22 @@ const FileEditor = ({
   };
 
   return (
-    <div className="editor-container">
-      <div className="editor-menu">
+    <div className="bt-editor-container">
+      <div className="bt-editor-menu">
         <h2>File Editor</h2>
-        <div className="editor-buttons">
-          {hasUnsavedChanges && <div className="unsaved-dot"></div>}
-          <button className="save-button" onClick={handleSaveFile}>
-            <SaveIcon className="icon" fill={"var(--icon)"} />
+        <div className="bt-editor-buttons">
+          {hasUnsavedChanges && <div className="bt-unsaved-dot"></div>}
+          <button className="bt-save-button" onClick={handleSaveFile}>
+            <SaveIcon className="bt-icon" fill={"var(--icon)"} />
           </button>
         </div>
       </div>
       {fileContent !== null && (
-        <div className="zoom-buttons">
-          <button className="zoom-in" onClick={handleZoomIn}>
+        <div className="bt-zoom-buttons">
+          <button className="bt-zoom-in" onClick={handleZoomIn}>
             +
           </button>
-          <button className="zoom-in" onClick={handleZoomOut}>
+          <button className="bt-zoom-in" onClick={handleZoomOut}>
             -
           </button>
         </div>
@@ -143,7 +143,7 @@ const FileEditor = ({
           }}
         />
       ) : (
-        <SplashIcon className="splash-icon" fill="var(--header)" />
+        <SplashIcon className="bt-splash-icon" fill="var(--header)" />
       )}
     </div>
   );

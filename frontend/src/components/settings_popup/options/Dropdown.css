@@ -1,14 +1,14 @@
-.settings-dropdown {
+.bt-settings-dropdown {
   position: relative;
   display: inline-block;
   width: 50%;
 }
 
-.settings-dropdown-preview {
+.bt-settings-dropdown-preview {
   border-radius: 4px !important;
 }
 
-.settings-dropdown-list {
+.bt-settings-dropdown-list {
   display: block;
   position: absolute;
   width: 100%;
@@ -17,22 +17,22 @@
   z-index: 1;
 }
 
-.settings-dropdown-item:first-of-type {
+.bt-settings-dropdown-item:first-of-type {
   border-top-right-radius: 4px !important;
   border-top-left-radius: 4px !important;
 }
 
-.settings-dropdown-item:last-of-type {
+.bt-settings-dropdown-item:last-of-type {
   border-bottom-right-radius: 4px !important;
   border-bottom-left-radius: 4px !important;
 }
 
-.settings-dropdown-item {
+.bt-settings-dropdown-item {
   border-radius: 0px !important;
   margin-bottom: 0px !important;
   opacity: 1 !important;
 }
 
-.settings-dropdown-item:hover {
+.bt-settings-dropdown-item:hover {
   background-color: var(--buttons-hover);
 }

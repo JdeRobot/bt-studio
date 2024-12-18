@@ -74,36 +74,36 @@ const EditTagModal = ({
       isOpen={isOpen}
       onClose={onClose}
     >
-      <div className="modal-titlebar">
+      <div className="bt-modal-titlebar">
         <label
-          className="modal-titlebar-title"
+          className="bt-modal-titlebar-title"
           htmlFor="actionName"
           style={{ textAlign: "center" }}
         >
           Edit port value
         </label>
         <CloseIcon
-          className="modal-titlebar-close icon"
+          className="bt-modal-titlebar-close icon"
           onClick={() => {
             onClose();
           }}
           fill={"var(--icon)"}
         />
       </div>
-      <div className="modal-complex-input-row-container">
-        <div className="modal-complex-input-container">
+      <div className="bt-modal-complex-input-row-container">
+        <div className="bt-modal-complex-input-container">
           <input
             ref={focusInputRef}
             type="text"
             id="tagName"
             name="tagName"
-            className="modal-complex-input"
+            className="bt-modal-complex-input"
             onChange={handleInputChange}
             autoComplete="off"
             placeholder="Tag Name"
             required
           />
-          <label htmlFor="tagName" className="modal-complex-input-label">
+          <label htmlFor="tagName" className="bt-modal-complex-input-label">
             Tag Name
           </label>
         </div>

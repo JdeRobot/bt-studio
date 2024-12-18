@@ -1,11 +1,11 @@
-.sidebar-content {
+.bt-sidebar-content {
   width: 100%;
   display: flex;
   flex-direction: column;
   flex: 1 1 1px;
 }
 
-.sidebar-entry {
+.bt-sidebar-entry {
   height: fit-content;
   width: 100%;
   display: flex;
@@ -14,11 +14,11 @@
   gap: 4px;
 }
 
-.sidebar-entry-contents {
+.bt-sidebar-entry-contents {
   overflow-y: auto;
 }
 
-.sidebar-entry-menu {
+.bt-sidebar-entry-menu {
   display: flex;
   align-items: center;
   /* height: 32px;  */
@@ -44,18 +44,18 @@
   }
 }
 
-.force-other-side {
+.bt-force-other-side {
   margin-left: auto;
 }
 
-.buttons {
+.bt-buttons {
   padding-left: 10px;
   display: flex;
   width: 70px;
   justify-content: space-around;
 }
 
-.menu-button {
+.bt-menu-button {
   display: flex;
   justify-content: center;
   width: 28px;
@@ -69,12 +69,12 @@
   flex-wrap: wrap;
 }
 
-.menu-button:hover {
+.bt-menu-button:hover {
   background-color: var(--buttons-hover);
   border-radius: 5px;
 }
 
-.icon {
+.bt-icon {
   width: 20px;
   height: 20px;
 }

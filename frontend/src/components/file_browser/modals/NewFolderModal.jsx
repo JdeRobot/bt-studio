@@ -90,24 +90,24 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} onReset={handleCancel}>
-        <div className="modal-titlebar">
+        <div className="bt-modal-titlebar">
           <label
-            className="modal-titlebar-title"
+            className="bt-modal-titlebar-title"
             htmlFor="folderName"
             style={{ textAlign: "center" }}
           >
             Create new folder
           </label>
           <CloseIcon
-            className="modal-titlebar-close icon"
+            className="bt-modal-titlebar-close bt-icon"
             onClick={() => {
               handleCancel();
             }}
             fill={"var(--icon)"}
           />
         </div>
-        <div className="modal-complex-input-row-container">
-          <div className="modal-complex-input-container">
+        <div className="bt-modal-complex-input-row-container">
+          <div className="bt-modal-complex-input-container">
             <input
               ref={focusInputRef}
               type="text"
@@ -115,21 +115,24 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
               name="folderName"
               className={
                 isCreationAllowed || formState.folderName === ""
-                  ? "modal-complex-input"
-                  : "modal-complex-input modal-complex-input-invalid"
+                  ? "bt-modal-complex-input"
+                  : "bt-modal-complex-input bt-modal-complex-input-invalid"
               }
               onChange={handleInputChange}
               autoComplete="off"
               placeholder="Folder Name"
               required
             />
-            <label htmlFor="folderName" className="modal-complex-input-label">
+            <label
+              htmlFor="folderName"
+              className="bt-modal-complex-input-label"
+            >
               Folder Name
             </label>
           </div>
         </div>
-        <div className="form-row">
-          <div className="button-row">
+        <div className="bt-form-row">
+          <div className="bt-button-row">
             <button
               type="submit"
               id="create-new-action"

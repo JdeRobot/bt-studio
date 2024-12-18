@@ -149,8 +149,8 @@ const NodeMenu = ({
   };
 
   return (
-    <div className="node-header-container">
-      <div className="button-container">
+    <div className="bt-node-header-container">
+      <div className="bt-button-container">
         {Object.keys(NODE_MENU_ITEMS).map((label) => {
           if (label === "Subtrees" && !hasSubtrees) {
             return null;
@@ -158,7 +158,7 @@ const NodeMenu = ({
           return (
             <button
               key={label}
-              className="node-button"
+              className="bt-node-button"
               onClick={(e) => handleClick(e, label)}
             >
               {label}
@@ -175,46 +175,55 @@ const NodeMenu = ({
         ))}
       </Menu>
 
-      <div className="action-buttons">
+      <div className="bt-action-buttons">
         {hasSubtrees && (
           <button
-            id="node-action-subtree-button"
-            className="node-action-button"
+            id="bt-node-action-subtree-button"
+            className="bt-node-action-button"
             onClick={() => {
               onCreateSubtree();
             }}
             title="Create Subtree"
           >
-            <SubtreeIcon className="icon action-icon" fill={"var(--icon)"} />
+            <SubtreeIcon
+              className="bt-icon bt-action-icon"
+              fill={"var(--icon)"}
+            />
           </button>
         )}
         <button
-          id="node-action-delete-button"
-          className="node-action-button"
+          id="bt-node-action-delete-button"
+          className="bt-node-action-button"
           onClick={onDeleteNode}
           title="Delete"
         >
-          <DeleteIcon className="icon action-icon" fill={"var(--icon)"} />
+          <DeleteIcon className="bt-icon bt-action-icon" fill={"var(--icon)"} />
         </button>
         <button
           id="node-action-edit-button"
-          className="node-action-button"
+          className="bt-node-action-button"
           onClick={onEditAction}
           title="Edit"
         >
-          <EditActionIcon className="icon action-icon" stroke={"var(--icon)"} />
+          <EditActionIcon
+            className="bt-icon bt-action-icon"
+            stroke={"var(--icon)"}
+          />
         </button>
         <button
-          id="node-action-zoom-button"
-          className="node-action-button"
+          id="bt-node-action-zoom-button"
+          className="bt-node-action-button"
           onClick={onZoomToFit}
           title="Zoom To Fit"
         >
-          <ZoomToFitIcon className="icon action-icon" fill={"var(--icon)"} />
+          <ZoomToFitIcon
+            className="bt-icon bt-action-icon"
+            fill={"var(--icon)"}
+          />
         </button>
         <button
-          id="node-action-help-button"
-          className="node-action-button"
+          id="bt-node-action-help-button"
+          className="bt-node-action-button"
           onClick={() => {
             openInNewTab(
               new URL(
@@ -224,11 +233,11 @@ const NodeMenu = ({
           }}
           title="Help"
         >
-          <HelpIcon className="icon action-icon" fill={"var(--icon)"} />
+          <HelpIcon className="bt-icon bt-action-icon" fill={"var(--icon)"} />
         </button>
         <button
-          id="node-change-view-button"
-          className="node-action-button"
+          id="bt-node-change-view-button"
+          className="bt-node-action-button"
           onClick={() =>
             changeView(
               view === TreeViewType.Editor
@@ -239,21 +248,21 @@ const NodeMenu = ({
           title="Change view"
         >
           {view === TreeViewType.Editor ? (
-            <EyeOpenIcon className="header-icon" stroke={"var(--icon)"} />
+            <EyeOpenIcon className="bt-header-icon" stroke={"var(--icon)"} />
           ) : (
-            <EyeClosedIcon className="header-icon" stroke={"var(--icon)"} />
+            <EyeClosedIcon className="bt-header-icon" stroke={"var(--icon)"} />
           )}
         </button>
         <button
           id="node-action-back-button"
-          className="node-action-button"
+          className="bt-node-action-button"
           onClick={() => setGoBack(true)}
           title="Go Back"
         >
-          <ReturnIcon className="header-icon" fill={"var(--icon)"} />
+          <ReturnIcon className="bt-header-icon" fill={"var(--icon)"} />
         </button>
       </div>
-      <h2 className="subtree-name">{subTreeName}</h2>
+      <h2 className="bt-subtree-name">{subTreeName}</h2>
     </div>
   );
 };

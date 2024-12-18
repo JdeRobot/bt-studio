@@ -10,13 +10,13 @@ export const InputPortWidget = ({
   port: any;
 }) => {
   return (
-    <div className="input-container">
+    <div className="bt-input-container">
       <PortWidget
         port={port}
         engine={engine}
-        className="input-port-widget"
+        className="bt-input-port-widget"
       ></PortWidget>
-      <div className="input-label">{port.options.name}</div>
+      <div className="bt-input-label">{port.options.name}</div>
     </div>
   );
 };

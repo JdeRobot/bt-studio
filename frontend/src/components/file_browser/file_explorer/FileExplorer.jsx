@@ -59,7 +59,7 @@ const FileExplorer = ({
 
   if (Array.isArray(fileList)) {
     return (
-      <div className="sidebar-entry-contents">
+      <div className="bt-sidebar-entry-contents">
         {fileList.map((file) => (
           <TreeNode
             node={file}

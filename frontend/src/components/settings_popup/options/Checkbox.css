@@ -1,4 +1,4 @@
-.setting-checkbox-wrapper input[type="checkbox"] {
+.sbt-etting-checkbox-wrapper input[type="checkbox"] {
   /* removing default appearance */
   -webkit-appearance: none;
   appearance: none;
@@ -13,22 +13,22 @@
   cursor: pointer;
 }
 
-.setting-checkbox-wrapper input:checked {
+.bt-setting-checkbox-wrapper input:checked {
   background-color: var(--buttons);
   position: relative;
 }
 
-.setting-checkbox-wrapper input:hover {
+.bt-setting-checkbox-wrapper input:hover {
   background-color: var(--buttons-hover);
 }
 
-.setting-checkbox-wrapper input:checked::before {
+.bt-setting-checkbox-wrapper input:checked::before {
   content: "✔";
   font-size: 20px;
   color: var(--text);
 }
 
-.setting-checkbox-wrapper input[type="checkbox"]:disabled {
+.bt-setting-checkbox-wrapper input[type="checkbox"]:disabled {
   border-color: var(--text);
   background-color: var(--text);
 }

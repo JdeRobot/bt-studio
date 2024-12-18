@@ -10,11 +10,11 @@ export const InputPortWidget = ({
   port: any;
 }) => {
   return (
-    <div className="tag-input-container">
+    <div className="bt-tag-input-container">
       <PortWidget
         port={port}
         engine={engine}
-        className="tag-input-port"
+        className="bt-tag-input-port"
       ></PortWidget>
     </div>
   );

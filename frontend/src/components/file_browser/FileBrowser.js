@@ -308,32 +308,32 @@ const FileBrowser = ({
   };
 
   return (
-    <div className="sidebar-content">
-      <div className="sidebar-entry">
-        <div className="sidebar-entry-menu">
+    <div className="bt-sidebar-content">
+      <div className="bt-sidebar-entry">
+        <div className="bt-sidebar-entry-menu">
           <button
             onClick={() => handleCreateFile(null)}
             title="Create a new file"
           >
-            <AddIcon className="icon" fill={"var(--icon)"} />
+            <AddIcon className="bt-icon" fill={"var(--icon)"} />
           </button>
           <button
             onClick={() => handleCreateFolder(null)}
             title="Create a new folder"
           >
-            <AddFolderIcon className="icon" stroke={"var(--icon)"} />
+            <AddFolderIcon className="bt-icon" stroke={"var(--icon)"} />
           </button>
           <button onClick={() => fetchFileList()} title="Refresh View">
-            <RefreshIcon className="icon" stroke={"var(--icon)"} />
+            <RefreshIcon className="bt-icon" stroke={"var(--icon)"} />
           </button>
           <div style={{ marginLeft: "auto" }} />
           {currentFilename !== "" && (
             <>
               <button onClick={handleRenameCurrentFile} title="Rename file">
-                <RenameIcon className="icon" stroke={"var(--icon)"} />
+                <RenameIcon className="bt-icon" stroke={"var(--icon)"} />
               </button>
               <button onClick={handleDeleteCurrentFile} title="Delete file">
-                <DeleteIcon className="icon" fill={"var(--icon)"} />
+                <DeleteIcon className="bt-icon" fill={"var(--icon)"} />
               </button>
             </>
           )}

@@ -1,4 +1,4 @@
-.basic-node {
+.bt-basic-node {
   display: flex;
   justify-content: space-between;
   border: 2px solid var(--border-color);
@@ -8,40 +8,40 @@
   cursor: pointer;
 }
 
-.basic-title {
+.bt-basic-title {
   font-weight: bold;
 }
 
-.basic-right-ports {
+.bt-basic-right-ports {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   margin-right: -10px;
 }
 
-.basic-left-ports {
+.bt-basic-left-ports {
   display: flex;
   flex-direction: column;
   margin-left: -10px;
 }
 
-.basic-children-port {
+.bt-basic-children-port {
   margin-right: -15px;
   margin-left: 5px;
 }
 
-.basic-parent-port {
+.bt-basic-parent-port {
   margin-right: 5px;
   margin-left: -15px;
 }
 
-.basic-placeholder {
+.bt-basic-placeholder {
   width: 10px;
   height: 10px;
   border-radius: 50%;
 }
 
-.basic-layer {
+.bt-basic-layer {
   display: flex;
   flex-direction: row;
   justify-content: space-between;

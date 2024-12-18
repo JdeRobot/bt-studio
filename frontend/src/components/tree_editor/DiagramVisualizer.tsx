@@ -247,7 +247,7 @@ const DiagramVisualizer = memo(
           subTreeName={subTreeName}
         />
         {engine.current && (
-          <CanvasWidget className="canvas" engine={engine.current} />
+          <CanvasWidget className="bt-canvas" engine={engine.current} />
         )}
       </>
     );

@@ -3,7 +3,7 @@
   height: 75%;
 }
 
-.project-entry-list {
+.bt-project-entry-list {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,23 +24,23 @@
 }
 
 /* width */
-.project-entry-list::-webkit-scrollbar {
+.bt-project-entry-list::-webkit-scrollbar {
   width: 5px;
 }
 
 /* Track */
-.project-entry-list::-webkit-scrollbar-track {
+.bt-project-entry-list::-webkit-scrollbar-track {
   box-shadow: inset 0 0 5px var(--scrollbar);
   border-radius: 10px;
 }
 
 /* Handle */
-.project-entry-list::-webkit-scrollbar-thumb {
+.bt-project-entry-list::-webkit-scrollbar-thumb {
   background: var(--scrollbar);
   border-radius: 10px;
 }
 
-.project-entry {
+.bt-project-entry {
   width: 75%;
   height: 3rem;
   min-height: 3rem;
@@ -53,11 +53,11 @@
   grid-template-columns: auto 20px;
 }
 
-.project-entry:hover {
+.bt-project-entry:hover {
   background-color: var(--buttons-hover);
 }
 
-.project-entry-delete {
+.bt-project-entry-delete {
   padding: 0px;
   background: none !important;
   border-radius: 7px !important;
@@ -68,29 +68,29 @@
   visibility: hidden;
 }
 
-.project-entry:hover .project-entry-delete {
+.bt-project-entry:hover .bt-project-entry-delete {
   visibility: visible;
 }
 
-.project-entry-delete:hover {
+.bt-project-entry-delete:hover {
   background-color: hsla(0, 100%, 50%, 0.75) !important;
 }
 
-.project-entry + .project-entry {
+.bt-project-entry + .bt-project-entry {
   margin-top: 2px;
 }
 
-.project-entry:first-of-type {
+.bt-project-entry:first-of-type {
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
 }
 
-.project-entry:last-of-type {
+.bt-project-entry:last-of-type {
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
 }
 
-.project-modal-creation-buttons-container {
+.bt-project-modal-creation-buttons-container {
   position: absolute;
   bottom: 30px;
   display: flex;
@@ -100,7 +100,7 @@
   justify-content: space-evenly;
 }
 
-.project-modal-create-button {
+.bt-project-modal-create-button {
   height: 45px;
   width: 175px;
   align-content: center;
@@ -112,16 +112,16 @@
   user-select: none;
 }
 
-.project-modal-create-button:hover {
+.bt-project-modal-create-button:hover {
   background-color: var(--buttons-hover);
 }
 
-.project-entry-name {
+.bt-project-entry-name {
   background-color: transparent !important;
   margin-bottom: 0px !important;
 }
 
-.project-create-name {
+.bt-project-create-name {
   margin-top: 30px;
   width: 75%;
 }

@@ -40,15 +40,15 @@ export const TagNodeWidget = ({ engine, node }: { engine: any; node: any }) => {
 
   // Adjust class name depending on the quantity of ports
   if (inputPorts.length > 0 && outputPorts.length === 0) {
-    nodeClass = "tag-node tag-input";
+    nodeClass = "bt-tag-node bt-tag-input";
   } else if (inputPorts.length === 0 && outputPorts.length > 0) {
-    nodeClass = "tag-node tag-output";
+    nodeClass = "bt-tag-node bt-tag-output";
   }
 
   // Return the node to render
   return (
     <div className={nodeClass} style={tagStyle}>
-      <div className="tag-layer">
+      <div className="bt-tag-layer">
         {inputPorts}
         {node.getName()}
         {outputPorts}

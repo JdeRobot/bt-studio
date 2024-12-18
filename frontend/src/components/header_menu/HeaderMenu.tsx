@@ -355,8 +355,8 @@ const HeaderMenu = ({
   return (
     <AppBar position="static">
       <Toolbar style={{ backgroundColor: "var(--header)" }}>
-        <LogoIcon className="jde-icon" fill="var(--icon)" />
-        <h1 className="Header-text">BT Studio IDE</h1>
+        <LogoIcon className="bt-jde-icon" fill="var(--icon)" />
+        <h1 className="bt-Header-text">BT Studio IDE</h1>
         <ProjectModal
           isOpen={isProjectModalOpen}
           onSubmit={onSubmit}
@@ -382,71 +382,71 @@ const HeaderMenu = ({
           currentProjectname={currentProjectname}
         />
 
-        <div className="header-button-container">
+        <div className="bt-header-button-container">
           {currentProjectname && (
-            <span className="project-name-box">
-              <div className="project-name">
+            <span className="bt-project-name-box">
+              <div className="bt-project-name">
                 {currentProjectname +
                   " ~ " +
                   (currentUniverseName
                     ? currentUniverseName
                     : "No Universe selected")}
               </div>
-              {projectChanges && <div className="small-text">Unsaved</div>}
+              {projectChanges && <div className="bt-small-text">Unsaved</div>}
             </span>
           )}
           <button
-            className="header-button"
+            className="bt-header-button"
             onClick={onOpenProjectModal}
             title="Change project"
           >
-            <ProjectsIcon className="header-icon" fill={"var(--icon)"} />
+            <ProjectsIcon className="bt-header-icon" fill={"var(--icon)"} />
           </button>
           <button
-            className="header-button"
+            className="bt-header-button"
             onClick={onOpenUniverseModal}
             title="Universe menu"
           >
-            <UniversesIcon className="header-icon" fill={"var(--icon)"} />
+            <UniversesIcon className="bt-header-icon" fill={"var(--icon)"} />
           </button>
           <button
-            className="header-button"
+            className="bt-header-button"
             onClick={onOpenSettingsModal}
             title="Settings"
           >
-            <SettingsIcon className="header-icon" fill={"var(--icon)"} />
+            <SettingsIcon className="bt-header-icon" fill={"var(--icon)"} />
           </button>
           <button
-            className="header-button"
+            className="bt-header-button"
             onClick={onSaveProject}
             title="Save project"
           >
-            <SaveIcon className="header-icon" fill={"var(--icon)"} />
+            <SaveIcon className="bt-header-icon" fill={"var(--icon)"} />
           </button>
           <button
-            className="header-button"
+            className="bt-header-button"
             onClick={onDownloadApp}
             title="Download app"
           >
-            <DownloadIcon className="header-icon" stroke={"var(--icon)"} />
+            <DownloadIcon className="bt-header-icon" stroke={"var(--icon)"} />
           </button>
           <button
-            className="header-button"
+            className="bt-header-button"
             onClick={onAppStateChange}
             title="Run app"
           >
             {appRunning ? (
-              <StopIcon className="header-icon" fill={"var(--icon)"} />
+              <StopIcon className="bt-header-icon" fill={"var(--icon)"} />
             ) : (
-              <RunIcon className="header-icon" fill={"var(--icon)"} />
+              <RunIcon className="bt-header-icon" fill={"var(--icon)"} />
             )}
           </button>
           <button
-            className="header-button"
+            className="bt-header-button"
             onClick={onResetApp}
             title="Reset app"
           >
-            <ResetIcon className="header-icon" stroke={"var(--icon)"} />
+            <ResetIcon className="bt-header-icon" stroke={"var(--icon)"} />
           </button>
         </div>
       </Toolbar>

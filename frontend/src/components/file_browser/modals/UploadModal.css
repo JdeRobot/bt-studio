@@ -1,4 +1,4 @@
-.modal-button {
+.bt-modal-button {
   width: 350px;
   border: 2px solid var(--buttons);
   color: var(--text);
@@ -25,7 +25,7 @@
   }
 }
 
-.modal-drop-container {
+.bt-modal-drop-container {
   position: relative;
   display: flex;
   gap: 10px;
@@ -48,12 +48,12 @@
   }
 }
 
-.modal-drop-container.drag-active {
+.bt-modal-drop-container.bt-drag-active {
   background: var(--buttons);
   border-color: var(--background);
 }
 
-.modal-drop-title {
+.bt-modal-drop-title {
   color: var(--text);
   font-size: 20px;
   font-weight: bold;

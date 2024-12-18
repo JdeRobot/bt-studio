@@ -117,33 +117,35 @@ const UniverseModal = ({
       <form onSubmit={onSubmit} onReset={handleCancel}>
         {!creationMenu ? (
           <>
-            <div className="modal-titlebar">
+            <div className="bt-modal-titlebar">
               <label
-                className="modal-titlebar-title"
+                className="bt-modal-titlebar-title"
                 htmlFor="actionName"
                 style={{ textAlign: "center" }}
               >
                 Manage your Universes
               </label>
               <CloseIcon
-                className="modal-titlebar-close icon"
+                className="bt-modal-titlebar-close bt-icon"
                 onClick={() => {
                   handleCancel();
                 }}
                 fill={"var(--icon)"}
               />
             </div>
-            <div className="form-row">
-              <ul className="project-entry-list">
+            <div className="bt-form-row">
+              <ul className="bt-project-entry-list">
                 {Object.entries(existingUniverses).map((project) => {
                   return (
                     <div
-                      className="project-entry"
+                      className="bt-project-entry"
                       onClick={() => onClose(project[1])}
                     >
-                      <label className="project-entry-name">{project[1]}</label>
+                      <label className="bt-project-entry-name">
+                        {project[1]}
+                      </label>
                       <DeleteIcon
-                        className="project-entry-delete icon"
+                        className="bt-project-entry-delete bt-icon"
                         title="Delete"
                         onClick={(e) => {
                           deleteUniverse(project[1]);
@@ -156,10 +158,10 @@ const UniverseModal = ({
                 })}
               </ul>
             </div>
-            <div className="form-row">
-              <div className="project-modal-creation-buttons-container">
+            <div className="bt-form-row">
+              <div className="bt-project-modal-creation-buttons-container">
                 <div
-                  className="project-modal-create-button"
+                  className="bt-project-modal-create-button"
                   onClick={() => {
                     importFromZip();
                   }}
@@ -167,14 +169,14 @@ const UniverseModal = ({
                   Import from zip
                 </div>
                 <div
-                  className="project-modal-create-button"
+                  className="bt-project-modal-create-button"
                   onClick={() => {
                     importFromRoboticsBackend();
                   }}
                 >
                   Import from Robotics Backend library
                 </div>
-                {/* <div className='project-modal-create-button'>Other</div> */}
+                {/* <div className='bt-project-modal-create-button'>Other</div> */}
               </div>
             </div>
           </>

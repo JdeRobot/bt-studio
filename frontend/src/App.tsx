@@ -20,12 +20,11 @@ import StatusBar from "./components/status_bar/StatusBar";
 const App = () => {
   const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
   const [editorWidth, setEditorWidth] = useState<number>(800);
-  const [simHeight, setSimHeight] = useState<number>(0);
   const [currentFilename, setCurrentFilename] = useState<string>("");
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
-    {}
+    {},
   );
   const [modelJson, setModelJson] = useState<string>("");
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
@@ -108,9 +107,6 @@ const App = () => {
       case "fileBrowserWidth":
         setFileBrowserWidth(size.width);
         break;
-      case "simHeight":
-        setSimHeight(size.height);
-        break;
       default:
         break;
     }
@@ -149,7 +145,7 @@ const App = () => {
 
   return (
     <div
-      className="App"
+      className="bt-App"
       data-theme={settings.theme.value}
       style={{ display: "flex" }}
     >
@@ -170,7 +166,7 @@ const App = () => {
         showVNCViewer={showVNCViewer}
       />
 
-      <div className="App-main">
+      <div className="bt-App-main">
         <Resizable
           width={fileBrowserWidth}
           height={0}
@@ -185,7 +181,7 @@ const App = () => {
               flexDirection: "column",
             }}
           >
-            <div className="sideBar">
+            <div className="bt-sideBar">
               <FileBrowser
                 setCurrentFilename={setCurrentFilename}
                 currentFilename={currentFilename}
@@ -244,25 +240,7 @@ const App = () => {
           ) : (
             <p>Loading...</p>
           )}
-          {showSim && (
-            <Resizable
-              className="resizable-horiz"
-              width={0}
-              height={simHeight}
-              axis="y"
-              onResize={(e, { size }) => {onResize("simHeight", size);console.log(e)}}
-              minConstraints={[0, 0]}
-              maxConstraints={[500, 500]}
-            >
-              <div
-                style={{
-                  height: `calc(100% - ${simHeight}px)`,
-                }}
-              >
-                <VncViewer gazeboEnabled={gazeboEnabled} />
-              </div>
-            </Resizable>
-          )}
+          {showSim && <VncViewer gazeboEnabled={gazeboEnabled} />}
         </div>
       </div>
       <StatusBar

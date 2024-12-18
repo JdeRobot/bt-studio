@@ -1,4 +1,4 @@
-.status-bar-container {
+.bt-status-bar-container {
   height: 24px;
   width: 100%;
   background-color: var(--status-bar);
@@ -6,7 +6,7 @@
   flex-direction: row;
 }
 
-.status-bar-button {
+.bt-status-bar-button {
   margin: 0 0 0 0;
   padding: 10px 0 10px 0;
   height: 24px;
@@ -29,7 +29,7 @@
   }
 }
 
-.status-bar-div {
+.bt-status-bar-div {
   margin: 0 0 0 0;
   padding: 10px 0 10px 0;
   height: 24px;
@@ -50,7 +50,7 @@
   }
 }
 
-.status-bar-button-active {
+.bt-status-bar-button-active {
   margin: 0 0 0 0;
   padding: 10px 0 10px 0;
   height: 24px;
@@ -64,7 +64,7 @@
   justify-content: center;
   background-color: var(--success);
 
-  & .status-bar-label {
+  & .bt-status-bar-label {
     font-size: 18px;
   }
 
@@ -73,13 +73,13 @@
   }
 }
 
-.status-bar-icon {
+.bt-status-bar-icon {
   height: 24px;
   margin: 0 0 0 0;
   padding: 2px 2px 2px 2px;
 }
 
-.status-bar-label {
+.bt-status-bar-label {
   height: 20px;
   padding-left: 10px;
   padding-right: 10px;
@@ -92,7 +92,7 @@
 #reset-connection {
   background-color: var(--running);
 
-  & .status-bar-label {
+  & .bt-status-bar-label {
     font-size: 18px;
   }
 

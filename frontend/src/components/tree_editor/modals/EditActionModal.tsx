@@ -211,30 +211,30 @@ const EditActionModal = ({
       isOpen={isOpen}
       onClose={onClose}
     >
-      <div className="modal-titlebar">
+      <div className="bt-modal-titlebar">
         <label
-          className="modal-titlebar-title"
+          className="bt-modal-titlebar-title"
           htmlFor="actionName"
           style={{ textAlign: "center" }}
         >
           Edit action value
         </label>
         <CloseIcon
-          className="modal-titlebar-close icon"
+          className="bt-modal-titlebar-close icon"
           onClick={() => {
             onClose();
           }}
           fill={"var(--icon)"}
         />
       </div>
-      <div className="node-editor-row">
+      <div className="bt-node-editor-row">
         {currentActionNode && (
           <div
-            className="node-editor"
+            className="bt-node-editor"
             style={{ backgroundColor: currentActionNode.getColor() }}
           >
             <label
-              className="node-editor-name"
+              className="bt-node-editor-name"
               style={{
                 color: isBackgroundDark()
                   ? "var(--bt-light-text)"
@@ -243,19 +243,19 @@ const EditActionModal = ({
             >
               {currentActionNode.getName()}
             </label>
-            <div className="node-editor-io">
-              <div className="node-editor-inputs">
+            <div className="bt-node-editor-io">
+              <div className="bt-node-editor-inputs">
                 {Object.entries(currentActionNode.getPorts()).map(
                   (port, index) => {
                     if (port[1] instanceof InputPortModel) {
                       return (
                         <div
                           key={index}
-                          className="node-editor-input node-editor-io-entry"
+                          className="bt-node-editor-input bt-node-editor-io-entry"
                         >
                           <label
                             id={port[0]}
-                            className="node-editor-io-name"
+                            className="bt-node-editor-io-name"
                             onWheel={horizontalScrolling}
                             style={{
                               color: isBackgroundDark()
@@ -267,7 +267,7 @@ const EditActionModal = ({
                           </label>
                           <button
                             className={
-                              "node-editor-io-delete node-editor-hidden"
+                              "bt-node-editor-io-delete bt-node-editor-hidden"
                             }
                             style={{
                               color: isBackgroundDark()
@@ -288,7 +288,7 @@ const EditActionModal = ({
                             }}
                           >
                             <DeleteIcon
-                              className="icon"
+                              className="bt-icon"
                               fill={"var(--icon)"}
                               style={{
                                 filter: isBackgroundDark()
@@ -303,13 +303,13 @@ const EditActionModal = ({
                   },
                 )}
                 {inputName ? (
-                  <div className="node-editor-io-name-entry-container">
+                  <div className="bt-node-editor-io-name-entry-container">
                     <input
                       ref={focusInputRef}
                       type="text"
                       id="node-editor-io-name-entry"
                       name="newInputName"
-                      className="node-editor-io-name-entry"
+                      className="bt-node-editor-io-name-entry"
                       autoComplete="off"
                       onChange={handleInputChange}
                       required
@@ -320,7 +320,7 @@ const EditActionModal = ({
                       }}
                     />
                     <button
-                      className={"node-editor-io-delete"}
+                      className={"bt-node-editor-io-delete"}
                       style={{
                         color: isBackgroundDark()
                           ? "var(--bt-light-text)"
@@ -330,7 +330,7 @@ const EditActionModal = ({
                       onClick={() => cancelCreation()}
                     >
                       <CancelIcon
-                        className="icon"
+                        className="bt-icon"
                         fill={"var(--icon)"}
                         style={{
                           filter: isBackgroundDark()
@@ -341,7 +341,7 @@ const EditActionModal = ({
                     </button>
                     {allowCreation && (
                       <button
-                        className={"node-editor-io-accept"}
+                        className={"bt-node-editor-io-accept"}
                         style={{
                           color: isBackgroundDark()
                             ? "var(--bt-light-text)"
@@ -351,7 +351,7 @@ const EditActionModal = ({
                         onClick={() => addInput()}
                       >
                         <AcceptIcon
-                          className="icon"
+                          className="bt-icon"
                           fill={"var(--icon)"}
                           style={{
                             filter: isBackgroundDark()
@@ -364,7 +364,7 @@ const EditActionModal = ({
                   </div>
                 ) : (
                   <button
-                    className="node-editor-button"
+                    className="bt-node-editor-button"
                     style={{
                       color: isBackgroundDark()
                         ? "var(--bt-light-text)"
@@ -376,7 +376,7 @@ const EditActionModal = ({
                     title="Add input"
                   >
                     <AddIcon
-                      className="icon action-icon"
+                      className="bt-icon action-icon"
                       fill={"var(--icon)"}
                       style={{
                         filter: isBackgroundDark() ? "invert(0)" : "invert(1)",
@@ -385,18 +385,18 @@ const EditActionModal = ({
                   </button>
                 )}
               </div>
-              <div className="node-editor-outputs">
+              <div className="bt-node-editor-outputs">
                 {Object.entries(currentActionNode.getPorts()).map(
                   (port, index) => {
                     if (port[1] instanceof OutputPortModel) {
                       return (
                         <div
                           key={index}
-                          className="node-editor-output node-editor-io-entry"
+                          className="bt-node-editor-output bt-node-editor-io-entry"
                         >
                           <button
                             className={
-                              "node-editor-io-delete node-editor-hidden"
+                              "bt-node-editor-io-delete bt-node-editor-hidden"
                             }
                             style={{
                               color: isBackgroundDark()
@@ -417,7 +417,7 @@ const EditActionModal = ({
                             }}
                           >
                             <DeleteIcon
-                              className="icon"
+                              className="bt-icon"
                               fill={"var(--icon)"}
                               style={{
                                 filter: isBackgroundDark()
@@ -427,7 +427,7 @@ const EditActionModal = ({
                             />
                           </button>
                           <label
-                            className="node-editor-io-name"
+                            className="bt-node-editor-io-name"
                             onWheel={horizontalScrolling}
                             style={{
                               color: isBackgroundDark()
@@ -443,13 +443,13 @@ const EditActionModal = ({
                   },
                 )}
                 {outputName ? (
-                  <div className="node-editor-io-name-entry-container">
+                  <div className="bt-node-editor-io-name-entry-container">
                     <input
                       ref={focusInputRef}
                       type="text"
                       id="node-editor-io-name-entry"
                       name="newOutputName"
-                      className="node-editor-io-name-entry"
+                      className="bt-node-editor-io-name-entry"
                       autoComplete="off"
                       onChange={handleInputChange}
                       required
@@ -460,7 +460,7 @@ const EditActionModal = ({
                       }}
                     />
                     <button
-                      className={"node-editor-io-delete"}
+                      className={"bt-node-editor-io-delete"}
                       style={{
                         color: isBackgroundDark()
                           ? "var(--bt-light-text)"
@@ -470,7 +470,7 @@ const EditActionModal = ({
                       onClick={() => cancelCreation()}
                     >
                       <CancelIcon
-                        className="icon"
+                        className="bt-icon"
                         fill={"var(--icon)"}
                         style={{
                           filter: isBackgroundDark()
@@ -481,7 +481,7 @@ const EditActionModal = ({
                     </button>
                     {allowCreation && (
                       <button
-                        className={"node-editor-io-accept"}
+                        className={"bt-node-editor-io-accept"}
                         style={{
                           color: isBackgroundDark()
                             ? "var(--bt-light-text)"
@@ -491,7 +491,7 @@ const EditActionModal = ({
                         onClick={() => addOutput()}
                       >
                         <AcceptIcon
-                          className="icon"
+                          className="bt-icon"
                           fill={"var(--icon)"}
                           style={{
                             filter: isBackgroundDark()
@@ -504,7 +504,7 @@ const EditActionModal = ({
                   </div>
                 ) : (
                   <button
-                    className="node-editor-button"
+                    className="bt-node-editor-button"
                     style={{
                       color: isBackgroundDark()
                         ? "var(--bt-light-text)"
@@ -516,7 +516,7 @@ const EditActionModal = ({
                     title="Add output"
                   >
                     <AddIcon
-                      className="icon action-icon"
+                      className="bt-icon bt-action-icon"
                       fill={"var(--icon)"}
                       style={{
                         filter: isBackgroundDark() ? "invert(0)" : "invert(1)",
@@ -530,8 +530,8 @@ const EditActionModal = ({
         )}
       </div>
       {color && (
-        <div className="node-editor-row">
-          <label className="node-editor-title" htmlFor="favcolor">
+        <div className="bt-node-editor-row">
+          <label className="bt-node-editor-title" htmlFor="favcolor">
             Color:
           </label>
           <Saturation height={50} color={color} onChange={setColor} />

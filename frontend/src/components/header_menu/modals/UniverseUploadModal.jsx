@@ -96,37 +96,37 @@ const UniverseUploadModal = ({
       onClose={onClose}
     >
       <form onSubmit={onSubmit} onReset={handleCancel}>
-        <div className="modal-titlebar">
+        <div className="bt-modal-titlebar">
           <label
-            className="modal-titlebar-title"
+            className="bt-modal-titlebar-title"
             htmlFor="actionName"
             style={{ textAlign: "center" }}
           >
             Upload a zip file with your universe
           </label>
           <CloseIcon
-            className="modal-titlebar-close icon"
+            className="bt-modal-titlebar-close bt-icon"
             onClick={() => {
               handleCancel();
             }}
             fill={"var(--icon)"}
           />
         </div>
-        <div className="form-row">
-          <div className="modal-complex-input-row-container">
+        <div className="bt-form-row">
+          <div className="bt-modal-complex-input-row-container">
             <input
-              className="modal-complex-input"
+              className="bt-modal-complex-input"
               onChange={handleFileReader}
               type="file"
               accept=".zip,.rar,.7zip"
             />
           </div>
         </div>
-        <div className="upload-percentage">{uploadPercentage}</div>
-        <div className="form-row">
-          <div className="project-modal-creation-buttons-container">
+        <div className="bt-upload-percentage">{uploadPercentage}</div>
+        <div className="bt-form-row">
+          <div className="bt-project-modal-creation-buttons-container">
             <div
-              className="project-modal-create-button"
+              className="bt-roject-modal-create-button"
               onClick={() => {
                 saveZipUniverse();
               }}

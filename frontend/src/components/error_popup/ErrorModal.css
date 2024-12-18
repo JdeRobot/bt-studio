@@ -3,7 +3,7 @@
   border-color: var(--error-border) !important;
 }
 
-.error-modal-buttons-container {
+.bt-error-modal-buttons-container {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -11,7 +11,7 @@
   margin-top: 40px;
 }
 
-.error-modal-button {
+.bt-error-modal-button {
   height: 45px;
   width: 175px;
   padding: 15px;
@@ -23,11 +23,11 @@
   user-select: none;
 }
 
-.error-modal-button:hover {
+.bt-error-modal-button:hover {
   background-color: var(--error-button-hover) !important;
 }
 
-.modal-error-label {
+.bt-modal-error-label {
   color: var(--text);
   font-weight: 600;
   text-align: center;

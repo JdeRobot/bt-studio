@@ -11,7 +11,7 @@ export const ChildrenPortWidget = ({
 }) => {
   return (
     <PortWidget port={port} engine={engine}>
-      <div className="port-children"></div>
+      <div className="bt-port-children"></div>
     </PortWidget>
   );
 };

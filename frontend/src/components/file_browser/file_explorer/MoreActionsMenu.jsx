@@ -34,16 +34,16 @@ function MoreActionsMenu({
 
   return (
     <div
-      className="menu-backdrop"
+      className="bt-menu-backdrop"
       style={{ display: menuProps.isShown ? "inline-block" : "none" }}
       ref={menuRef}
     >
       <div
-        className="more-actions-menu"
+        className="bt-more-actions-menu"
         style={{ top: menuProps.position.y, left: menuProps.position.x }}
       >
         <div
-          className="more-actions-menu-entry"
+          className="bt-more-actions-menu-entry"
           onClick={() => {
             onRename(menuProps.file);
             closeMenu();
@@ -53,7 +53,7 @@ function MoreActionsMenu({
         </div>
         {true && (
           <div
-            className="more-actions-menu-entry"
+            className="bt-more-actions-menu-entry"
             onClick={() => {
               onDownload(menuProps.file);
               closeMenu();
@@ -63,7 +63,7 @@ function MoreActionsMenu({
           </div>
         )}
         <div
-          className="more-actions-menu-entry"
+          className="bt-more-actions-menu-entry"
           onClick={() => {
             onDelete(menuProps.file.path);
             closeMenu();
@@ -75,9 +75,9 @@ function MoreActionsMenu({
           menuProps.fileGroup === "Action" &&
           false && ( // TODO: disabled
             <>
-              <div className="more-actions-menu-divider" />
+              <div className="bt-more-actions-menu-divider" />
               <div
-                className="more-actions-menu-entry"
+                className="bt-more-actions-menu-entry"
                 onClick={() => {
                   // TODO open the same menu that in the diagram
                   console.log("Edit Action");
@@ -88,9 +88,9 @@ function MoreActionsMenu({
               </div>
             </>
           )}
-        <div className="more-actions-menu-divider" />
+        <div className="bt-more-actions-menu-divider" />
         <div
-          className="more-actions-menu-entry"
+          className="bt-more-actions-menu-entry"
           onClick={() => {
             onCreateFile(menuProps.file);
             closeMenu();
@@ -99,7 +99,7 @@ function MoreActionsMenu({
           <label>New File</label>
         </div>
         <div
-          className="more-actions-menu-entry"
+          className="bt-more-actions-menu-entry"
           onClick={() => {
             onCreateFolder(menuProps.file);
             closeMenu();
@@ -108,7 +108,7 @@ function MoreActionsMenu({
           <label>New Folder</label>
         </div>
         <div
-          className="more-actions-menu-entry"
+          className="bt-more-actions-menu-entry"
           onClick={() => {
             onUpload(menuProps.file);
             closeMenu();

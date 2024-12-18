@@ -4,8 +4,8 @@ const SubSection = ({ title, children }) => {
   // const [open, setOpen] = useState(false);
 
   return (
-    <div className="setting-subsection">
-      <label className="setting-subsection-title">{title}</label>
+    <div className="bt-setting-subsection">
+      <label className="bt-setting-subsection-title">{title}</label>
       {children}
     </div>
   );

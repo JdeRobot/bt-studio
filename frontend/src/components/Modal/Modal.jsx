@@ -43,8 +43,13 @@ const Modal = ({
   }, [isModalOpen]);
 
   return (
-    <dialog id={id} ref={modalRef} onKeyDown={handleKeyDown} className="modal">
-      <div className="modal-contents">{children}</div>
+    <dialog
+      id={id}
+      ref={modalRef}
+      onKeyDown={handleKeyDown}
+      className="bt-modal"
+    >
+      <div className="bt-modal-contents">{children}</div>
     </dialog>
   );
 };
@@ -53,16 +58,16 @@ export default Modal;
 
 export const ModalTitlebar = ({ title, htmlFor, handleCancel }) => {
   return (
-    <div className="modal-titlebar">
+    <div className="bt-modal-titlebar">
       <label
-        className="modal-titlebar-title"
+        className="bt-modal-titlebar-title"
         htmlFor={htmlFor}
         style={{ textAlign: "center" }}
       >
         {title}
       </label>
       <CloseIcon
-        className="modal-titlebar-close icon"
+        className="bt-modal-titlebar-close bt-icon"
         onClick={() => {
           handleCancel();
         }}

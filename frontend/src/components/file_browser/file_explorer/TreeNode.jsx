@@ -38,10 +38,13 @@ function TreeNode({
   return (
     <>
       <div
-        className={`file-item-container ${currentFilename === node.path ? "file-item-selected-container" : ""}`}
+        className={`bt-file-item-container ${currentFilename === node.path ? "bt-file-item-selected-container" : ""}`}
         onClick={() => handleClick()}
       >
-        <div className={"file-item"} style={{ paddingLeft: depth * 16 + "px" }}>
+        <div
+          className={"bt-file-item"}
+          style={{ paddingLeft: depth * 16 + "px" }}
+        >
           <FileIcon
             is_dir={node.is_dir}
             is_collapsed={isCollapsed}
@@ -51,7 +54,7 @@ function TreeNode({
           <label>{node.name}</label>
           {/* Add menu button */}
           <ActionIcon
-            className="more-action-icon arrow-icon"
+            className="bt-more-action-icon bt-arrow-icon"
             stroke={"var(--icon)"}
             title={"More"}
             onClick={(e) => {
@@ -64,7 +67,7 @@ function TreeNode({
           />
           {showAccentColor && diagramEditorReady && (
             <div
-              className="accent-color"
+              className="bt-accent-color"
               style={{
                 backgroundColor: actionNodesData[node.name.replace(".py", "")]
                   ? actionNodesData[node.name.replace(".py", "")]["color"]
