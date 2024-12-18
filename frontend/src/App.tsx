@@ -149,7 +149,7 @@ const App = () => {
 
   return (
     <div
-      className="App"
+      className="bt-App"
       data-theme={settings.theme.value}
       style={{ display: "flex" }}
     >
@@ -170,7 +170,7 @@ const App = () => {
         showVNCViewer={showVNCViewer}
       />
 
-      <div className="App-main">
+      <div className="bt-App-main">
         <Resizable
           width={fileBrowserWidth}
           height={0}
@@ -185,7 +185,7 @@ const App = () => {
               flexDirection: "column",
             }}
           >
-            <div className="sideBar">
+            <div className="bt-sideBar">
               <FileBrowser
                 setCurrentFilename={setCurrentFilename}
                 currentFilename={currentFilename}
@@ -246,7 +246,7 @@ const App = () => {
           )}
           {showSim && (
             <Resizable
-              className="resizable-horiz"
+              className="bt-resizable-horiz"
               width={0}
               height={simHeight}
               axis="y"

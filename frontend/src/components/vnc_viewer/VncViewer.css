@@ -1,23 +1,23 @@
-.viewer {
+.bt-viewer {
   height: 100%;
   width: 100%;
   background-color: var(--app-background);
 }
 
-.terminal {
+.bt-terminal {
   height: 50%;
   width: 100%;
   background-color: var(--app-background);
 }
 
-.loader {
+.bt-loader {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
 }
 
-.loader-terminal {
+.bt-loader-terminal {
   display: flex;
   align-items: center;
   justify-content: center;
