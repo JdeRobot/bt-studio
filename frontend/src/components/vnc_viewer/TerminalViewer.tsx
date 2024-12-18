@@ -10,6 +10,7 @@ const TerminalViewer = ({ gazeboEnabled }: { gazeboEnabled: boolean }) => {
           style={{
             width: "100%",
             height: "100%",
+            border: 0,
           }}
           src={"http://127.0.0.1:1108/vnc.html?resize=remote&autoconnect=true"}
         />
