@@ -12,6 +12,10 @@ const FileEditor = ({
   currentFilename,
   currentProjectname,
   setProjectChanges,
+}: {
+  currentFilename: any;
+  currentProjectname: any;
+  setProjectChanges: any;
 }) => {
   const [fileContent, setFileContent] = useState(null);
   const [fontSize, setFontSize] = useState(14);
@@ -35,11 +39,20 @@ const FileEditor = ({
   const autoSave = async () => {
     console.log("Auto saving file...");
     try {
-      const response = await axios.post("/bt_studio/save_file/", {
-        project_name: currentProjectname,
-        filename: filenameToSave,
-        content: fileContent,
-      });
+      const response = await axios.post(
+        "/bt_studio/save_file/",
+        {
+          project_name: currentProjectname,
+          filename: filenameToSave,
+          content: fileContent,
+        },
+        {
+          headers: {
+            //@ts-ignore Needed for compatibility with Unibotics
+            "X-CSRFToken": context.csrf,
+          },
+        },
+      );
       if (response.data.success) {
         setHasUnsavedChanges(false); // Reset the unsaved changes flag
         setProjectChanges(false);
@@ -76,11 +89,20 @@ const FileEditor = ({
   const handleSaveFile = async () => {
     if (currentFilename !== "") {
       try {
-        const response = await axios.post("/bt_studio/save_file/", {
-          project_name: projectToSave,
-          filename: currentFilename,
-          content: fileContent,
-        });
+        const response = await axios.post(
+          "/bt_studio/save_file/",
+          {
+            project_name: projectToSave,
+            filename: currentFilename,
+            content: fileContent,
+          },
+          {
+            headers: {
+              //@ts-ignore Needed for compatibility with Unibotics
+              "X-CSRFToken": context.csrf,
+            },
+          },
+        );
         if (response.data.success) {
           setHasUnsavedChanges(false); // Reset the unsaved changes flag
           setProjectChanges(false);
@@ -133,13 +155,13 @@ const FileEditor = ({
           height="calc(100% - 50px)"
           value={fileContent}
           fontSize={fontSize}
-          onChange={(newContent) => {
+          onChange={(newContent: any) => {
             setProjectChanges(true);
             setFileContent(newContent);
             setHasUnsavedChanges(true); // Set the unsaved changes flag
           }}
           setOptions={{
-            scrollPastEnd: 0.5,
+            scrollPastEnd: true,
           }}
         />
       ) : (
