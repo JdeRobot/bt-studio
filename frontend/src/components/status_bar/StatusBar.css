@@ -20,7 +20,7 @@
   align-items: center;
   justify-content: center;
 
-  & .status-bar-label {
+  & .bt-status-bar-label {
     font-size: 18px;
   }
 
