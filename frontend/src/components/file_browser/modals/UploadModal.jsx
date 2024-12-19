@@ -71,6 +71,10 @@ const UploadModal = ({
 
     try {
       const response = await axios.post("/bt_studio/upload_code/", {
+        headers: {
+          //@ts-ignore Needed for compatibility with Unibotics
+          "X-CSRFToken": context.csrf,
+        },
         project_name: currentProject,
         zip_file: uploadedData,
         location: location,

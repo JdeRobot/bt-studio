@@ -36,6 +36,10 @@ const FileEditor = ({
     console.log("Auto saving file...");
     try {
       const response = await axios.post("/bt_studio/save_file/", {
+        headers: {
+          //@ts-ignore Needed for compatibility with Unibotics
+          "X-CSRFToken": context.csrf,
+        },
         project_name: currentProjectname,
         filename: filenameToSave,
         content: fileContent,
@@ -77,6 +81,10 @@ const FileEditor = ({
     if (currentFilename !== "") {
       try {
         const response = await axios.post("/bt_studio/save_file/", {
+          headers: {
+            //@ts-ignore Needed for compatibility with Unibotics
+            "X-CSRFToken": context.csrf,
+          },
           project_name: projectToSave,
           filename: currentFilename,
           content: fileContent,

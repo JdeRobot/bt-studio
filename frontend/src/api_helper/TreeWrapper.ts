@@ -74,7 +74,12 @@ const saveBaseTree = async (modelJson: string, currentProjectname: string) => {
 
   const apiUrl = "/bt_studio/save_base_tree/";
   try {
-    const response = await axios.post(apiUrl, {
+    const response = await axios.post(apiUrl, 
+    {
+      headers: {
+        //@ts-ignore Needed for compatibility with Unibotics
+        "X-CSRFToken": context.csrf,
+      },
       project_name: currentProjectname,
       graph_json: JSON.stringify(modelJson),
     });
@@ -204,7 +209,12 @@ const createRoboticsBackendUniverse = async (
 
   const apiUrl = "/bt_studio/add_docker_universe/";
   try {
-    const response = await axios.post(apiUrl, {
+    const response = await axios.post(apiUrl, 
+    {
+      headers: {
+        //@ts-ignore Needed for compatibility with Unibotics
+        "X-CSRFToken": context.csrf,
+      },
       app_name: projectName,
       universe_name: universeName,
       id: universeId,
@@ -232,6 +242,10 @@ const getCustomUniverseZip = async (
     const response = await axios.post(
       apiUrl,
       {
+        headers: {
+          //@ts-ignore Needed for compatibility with Unibotics
+          "X-CSRFToken": context.csrf,
+        },
         app_name: currentProjectname,
         universe_name: universeName,
       },
@@ -270,6 +284,10 @@ const generateApp = async (
     const response = await axios.post(
       apiUrl,
       {
+        headers: {
+          //@ts-ignore Needed for compatibility with Unibotics
+          "X-CSRFToken": context.csrf,
+        },
         app_name: currentProjectname,
         tree_graph: JSON.stringify(modelJson),
         bt_order: btOrder,
@@ -304,6 +322,10 @@ const generateDockerizedApp = async (
     const response = await axios.post(
       apiUrl,
       {
+        headers: {
+          //@ts-ignore Needed for compatibility with Unibotics
+          "X-CSRFToken": context.csrf,
+        },
         app_name: currentProjectname,
         tree_graph: JSON.stringify(modelJson),
         bt_order: btOrder,
@@ -341,6 +363,10 @@ const createSubtree = async (
 
   try {
     const response = await axios.post(apiUrl, {
+      headers: {
+        //@ts-ignore Needed for compatibility with Unibotics
+        "X-CSRFToken": context.csrf,
+      },
       project_name: currentProjectname,
       subtree_name: subtreeName,
     });
@@ -406,6 +432,10 @@ const saveSubtree = async (
   const apiUrl = "/bt_studio/save_subtree/";
   try {
     const response = await axios.post(apiUrl, {
+      headers: {
+        //@ts-ignore Needed for compatibility with Unibotics
+        "X-CSRFToken": context.csrf,
+      },
       project_name: currentProjectname,
       subtree_name: subtreeName,
       subtree_json: JSON.stringify(modelJson),
