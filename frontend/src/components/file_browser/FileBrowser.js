@@ -4,7 +4,7 @@ import "./FileBrowser.css";
 import NewFileModal from "./modals/NewFileModal.jsx";
 import RenameModal from "./modals/RenameModal.jsx";
 import NewFolderModal from "./modals/NewFolderModal.jsx";
-import UploadModal from "./modals/UploadModal.jsx";
+import UploadModal from "./modals/UploadModal.tsx";
 import DeleteModal from "./modals/DeleteModal.jsx";
 import FileExplorer from "./file_explorer/FileExplorer.jsx";
 
