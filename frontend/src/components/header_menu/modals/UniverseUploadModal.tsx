@@ -15,6 +15,13 @@ const UniverseUploadModal = ({
   currentProject,
   openError,
   setUniverseAdded,
+} : {
+  onSubmit: any;
+  isOpen: any;
+  onClose: any;
+  currentProject: any;
+  openError: any;
+  setUniverseAdded: any;
 }) => {
   const [formState, setFormState] = useState(initialProjectData);
   const [uploadedUniverse, setUploadedUniverse] = useState("");
@@ -28,7 +35,7 @@ const UniverseUploadModal = ({
     }
   };
 
-  const handleFileReader = (event) => {
+  const handleFileReader = (event:any) => {
     setUploadStatus("Uploading");
     let reader = new FileReader();
     let file = event.target.files[0];
@@ -48,7 +55,7 @@ const UniverseUploadModal = ({
       }
     };
 
-    reader.onload = (e) => {
+    reader.onload = (e:any) => {
       console.log("Loaded!");
       const base64String = e.target.result.split(",")[1]; // Remove the data URL prefix
       setUploadedUniverse(base64String);

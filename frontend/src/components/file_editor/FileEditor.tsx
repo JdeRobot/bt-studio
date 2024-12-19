@@ -12,6 +12,10 @@ const FileEditor = ({
   currentFilename,
   currentProjectname,
   setProjectChanges,
+} : {
+  currentFilename: any;
+  currentProjectname: any;
+  setProjectChanges: any;
 }) => {
   const [fileContent, setFileContent] = useState(null);
   const [fontSize, setFontSize] = useState(14);
@@ -111,6 +115,7 @@ const FileEditor = ({
     setFontSize((prevFontSize) => Math.max(10, prevFontSize - 2));
   };
 
+
   return (
     <div className="bt-editor-container">
       <div className="bt-editor-menu">
@@ -141,13 +146,13 @@ const FileEditor = ({
           height="calc(100% - 50px)"
           value={fileContent}
           fontSize={fontSize}
-          onChange={(newContent) => {
+          onChange={(newContent:any) => {
             setProjectChanges(true);
             setFileContent(newContent);
             setHasUnsavedChanges(true); // Set the unsaved changes flag
           }}
           setOptions={{
-            scrollPastEnd: 0.5,
+            scrollPastEnd: true,
           }}
         />
       ) : (

@@ -14,12 +14,18 @@ const UploadModal = ({
   onClose,
   location,
   currentProject,
+}: {
+  onSubmit: any,
+  isOpen: any,
+  onClose: any,
+  location: any,
+  currentProject: any,
 }) => {
   const [uploadStatus, setUploadStatus] = useState("");
   const [uploadPercentage, setUploadPercentage] = useState(0);
 
-  const uploadInputRef = useRef(null);
-  const uploadAreaRef = useRef(null);
+  const uploadInputRef = useRef<any>(null);
+  const uploadAreaRef = useRef<any>(null);
 
   useEffect(() => {
     setUploadStatus("");
@@ -27,7 +33,7 @@ const UploadModal = ({
     uploadInputRef.current.value = "";
   }, [isOpen]);
 
-  const handleDrop = (event) => {
+  const handleDrop = (event:any) => {
     event.preventDefault();
     uploadAreaRef.current.classList.remove("bt-drag-active");
 
@@ -37,20 +43,20 @@ const UploadModal = ({
     }
   };
 
-  const onZipUpdate = (metadata) => {
+  const onZipUpdate = (metadata:any) => {
     setUploadPercentage(metadata.percent);
   };
 
-  const handleAcceptedFiles = async (files) => {
+  const handleAcceptedFiles = async (files:any) => {
     // TODO: Redo for directory
     handleZipFiles(Array.from(files));
   };
 
-  const handleZipFiles = async (file_array) => {
+  const handleZipFiles = async (file_array:any) => {
     // TODO: check if files are valid
     const zip = new JSZip();
 
-    file_array.forEach((file, index) => {
+    file_array.forEach((file:any, index:any) => {
       zip.file(file.name, file);
     });
 
@@ -65,7 +71,7 @@ const UploadModal = ({
     }
   };
 
-  const uploadFileToBackend = async (uploadedData) => {
+  const uploadFileToBackend = async (uploadedData:any) => {
     console.log("Calling the saving API");
     console.log(currentProject);
 
@@ -89,12 +95,12 @@ const UploadModal = ({
     onClose();
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event:any) => {
     event.preventDefault();
     onSubmit();
   };
 
-  const handleCancel = (event) => {
+  const handleCancel = (event:any) => {
     if (event) {
       event.preventDefault();
     }
@@ -119,8 +125,8 @@ const UploadModal = ({
           </label>
           <CloseIcon
             className="bt-modal-titlebar-close bt-icon"
-            onClick={() => {
-              handleCancel();
+            onClick={(e:any) => {
+              handleCancel(e);
             }}
             fill={"var(--icon)"}
           />
@@ -150,7 +156,6 @@ const UploadModal = ({
               onChange={(e) => handleAcceptedFiles(e.target.files)}
               type="file"
               title="Upload folder contents"
-              webkitdirectory="true"
               multiple
               required
             />
