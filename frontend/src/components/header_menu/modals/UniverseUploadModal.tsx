@@ -15,7 +15,7 @@ const UniverseUploadModal = ({
   currentProject,
   openError,
   setUniverseAdded,
-} : {
+}: {
   onSubmit: any;
   isOpen: any;
   onClose: any;
@@ -35,7 +35,7 @@ const UniverseUploadModal = ({
     }
   };
 
-  const handleFileReader = (event:any) => {
+  const handleFileReader = (event: any) => {
     setUploadStatus("Uploading");
     let reader = new FileReader();
     let file = event.target.files[0];
@@ -55,7 +55,7 @@ const UniverseUploadModal = ({
       }
     };
 
-    reader.onload = (e:any) => {
+    reader.onload = (e: any) => {
       console.log("Loaded!");
       const base64String = e.target.result.split(",")[1]; // Remove the data URL prefix
       setUploadedUniverse(base64String);
@@ -79,15 +79,20 @@ const UniverseUploadModal = ({
     }
 
     try {
-      const response = await axios.post("/bt_studio/upload_universe/", {
-        headers: {
-          //@ts-ignore Needed for compatibility with Unibotics
-          "X-CSRFToken": context.csrf,
+      const response = await axios.post(
+        "/bt_studio/upload_universe/",
+        {
+          universe_name: universeName,
+          zip_file: uploadedUniverse,
+          app_name: currentProject,
         },
-        universe_name: universeName,
-        zip_file: uploadedUniverse,
-        app_name: currentProject,
-      });
+        {
+          headers: {
+            //@ts-ignore Needed for compatibility with Unibotics
+            "X-CSRFToken": context.csrf,
+          },
+        },
+      );
       if (response.data.success) {
         console.log("Universe saved successfully.");
         setUniverseAdded(true);

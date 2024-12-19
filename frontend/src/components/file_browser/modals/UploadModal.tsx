@@ -15,11 +15,11 @@ const UploadModal = ({
   location,
   currentProject,
 }: {
-  onSubmit: any,
-  isOpen: any,
-  onClose: any,
-  location: any,
-  currentProject: any,
+  onSubmit: any;
+  isOpen: any;
+  onClose: any;
+  location: any;
+  currentProject: any;
 }) => {
   const [uploadStatus, setUploadStatus] = useState("");
   const [uploadPercentage, setUploadPercentage] = useState(0);
@@ -33,7 +33,7 @@ const UploadModal = ({
     uploadInputRef.current.value = "";
   }, [isOpen]);
 
-  const handleDrop = (event:any) => {
+  const handleDrop = (event: any) => {
     event.preventDefault();
     uploadAreaRef.current.classList.remove("bt-drag-active");
 
@@ -43,20 +43,20 @@ const UploadModal = ({
     }
   };
 
-  const onZipUpdate = (metadata:any) => {
+  const onZipUpdate = (metadata: any) => {
     setUploadPercentage(metadata.percent);
   };
 
-  const handleAcceptedFiles = async (files:any) => {
+  const handleAcceptedFiles = async (files: any) => {
     // TODO: Redo for directory
     handleZipFiles(Array.from(files));
   };
 
-  const handleZipFiles = async (file_array:any) => {
+  const handleZipFiles = async (file_array: any) => {
     // TODO: check if files are valid
     const zip = new JSZip();
 
-    file_array.forEach((file:any, index:any) => {
+    file_array.forEach((file: any, index: any) => {
       zip.file(file.name, file);
     });
 
@@ -71,20 +71,25 @@ const UploadModal = ({
     }
   };
 
-  const uploadFileToBackend = async (uploadedData:any) => {
+  const uploadFileToBackend = async (uploadedData: any) => {
     console.log("Calling the saving API");
     console.log(currentProject);
 
     try {
-      const response = await axios.post("/bt_studio/upload_code/", {
-        headers: {
-          //@ts-ignore Needed for compatibility with Unibotics
-          "X-CSRFToken": context.csrf,
+      const response = await axios.post(
+        "/bt_studio/upload_code/",
+        {
+          project_name: currentProject,
+          zip_file: uploadedData,
+          location: location,
         },
-        project_name: currentProject,
-        zip_file: uploadedData,
-        location: location,
-      });
+        {
+          headers: {
+            //@ts-ignore Needed for compatibility with Unibotics
+            "X-CSRFToken": context.csrf,
+          },
+        },
+      );
       if (response.data.success) {
         console.log("Universe saved successfully.");
       }
@@ -95,12 +100,12 @@ const UploadModal = ({
     onClose();
   };
 
-  const handleSubmit = (event:any) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
     onSubmit();
   };
 
-  const handleCancel = (event:any) => {
+  const handleCancel = (event: any) => {
     if (event) {
       event.preventDefault();
     }
@@ -125,7 +130,7 @@ const UploadModal = ({
           </label>
           <CloseIcon
             className="bt-modal-titlebar-close bt-icon"
-            onClick={(e:any) => {
+            onClick={(e: any) => {
               handleCancel(e);
             }}
             fill={"var(--icon)"}

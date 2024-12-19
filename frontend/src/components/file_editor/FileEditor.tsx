@@ -12,7 +12,7 @@ const FileEditor = ({
   currentFilename,
   currentProjectname,
   setProjectChanges,
-} : {
+}: {
   currentFilename: any;
   currentProjectname: any;
   setProjectChanges: any;
@@ -39,15 +39,20 @@ const FileEditor = ({
   const autoSave = async () => {
     console.log("Auto saving file...");
     try {
-      const response = await axios.post("/bt_studio/save_file/", {
-        headers: {
-          //@ts-ignore Needed for compatibility with Unibotics
-          "X-CSRFToken": context.csrf,
+      const response = await axios.post(
+        "/bt_studio/save_file/",
+        {
+          project_name: currentProjectname,
+          filename: filenameToSave,
+          content: fileContent,
         },
-        project_name: currentProjectname,
-        filename: filenameToSave,
-        content: fileContent,
-      });
+        {
+          headers: {
+            //@ts-ignore Needed for compatibility with Unibotics
+            "X-CSRFToken": context.csrf,
+          },
+        },
+      );
       if (response.data.success) {
         setHasUnsavedChanges(false); // Reset the unsaved changes flag
         setProjectChanges(false);
@@ -84,15 +89,20 @@ const FileEditor = ({
   const handleSaveFile = async () => {
     if (currentFilename !== "") {
       try {
-        const response = await axios.post("/bt_studio/save_file/", {
-          headers: {
-            //@ts-ignore Needed for compatibility with Unibotics
-            "X-CSRFToken": context.csrf,
+        const response = await axios.post(
+          "/bt_studio/save_file/",
+          {
+            project_name: projectToSave,
+            filename: currentFilename,
+            content: fileContent,
           },
-          project_name: projectToSave,
-          filename: currentFilename,
-          content: fileContent,
-        });
+          {
+            headers: {
+              //@ts-ignore Needed for compatibility with Unibotics
+              "X-CSRFToken": context.csrf,
+            },
+          },
+        );
         if (response.data.success) {
           setHasUnsavedChanges(false); // Reset the unsaved changes flag
           setProjectChanges(false);
@@ -114,7 +124,6 @@ const FileEditor = ({
   const handleZoomOut = () => {
     setFontSize((prevFontSize) => Math.max(10, prevFontSize - 2));
   };
-
 
   return (
     <div className="bt-editor-container">
@@ -146,7 +155,7 @@ const FileEditor = ({
           height="calc(100% - 50px)"
           value={fileContent}
           fontSize={fontSize}
-          onChange={(newContent:any) => {
+          onChange={(newContent: any) => {
             setProjectChanges(true);
             setFileContent(newContent);
             setHasUnsavedChanges(true); // Set the unsaved changes flag
