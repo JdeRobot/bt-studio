@@ -55,7 +55,7 @@ const HeaderMenu = ({
   setGazeboEnabled: Function;
   manager: CommsManager | null;
   showVNCViewer: Function;
-  isUnibotics:boolean;
+  isUnibotics: boolean;
 }) => {
   // Settings
   const settings = useContext(OptionsContext);
@@ -358,13 +358,13 @@ const HeaderMenu = ({
   return (
     <AppBar position="static">
       <Toolbar style={{ backgroundColor: "var(--header)" }}>
-        {isUnibotics ? 
+        {isUnibotics ? (
           <a href="/apps">
             <LogoUniboticsIcon className="bt-jde-icon" fill="var(--icon)" />
           </a>
-        :
+        ) : (
           <LogoIcon className="bt-jde-icon" fill="var(--icon)" />
-        }
+        )}
         <h1 className="bt-Header-text">BT Studio IDE</h1>
         <ProjectModal
           isOpen={isProjectModalOpen}

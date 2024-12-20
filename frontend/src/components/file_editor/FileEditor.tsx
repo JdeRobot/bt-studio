@@ -18,7 +18,7 @@ const FileEditor = ({
   currentFilename: any;
   currentProjectname: any;
   setProjectChanges: any;
-  isUnibotics:boolean;
+  isUnibotics: boolean;
 }) => {
   const [fileContent, setFileContent] = useState(null);
   const [fontSize, setFontSize] = useState(14);
@@ -169,11 +169,14 @@ const FileEditor = ({
         />
       ) : (
         <>
-        {isUnibotics ? 
-          <SplashIconUnibotics className="bt-splash-icon" fill="var(--header)" />
-        :
-          <SplashIcon className="bt-splash-icon" fill="var(--header)" />
-        }
+          {isUnibotics ? (
+            <SplashIconUnibotics
+              className="bt-splash-icon"
+              fill="var(--header)"
+            />
+          ) : (
+            <SplashIcon className="bt-splash-icon" fill="var(--header)" />
+          )}
         </>
       )}
     </div>

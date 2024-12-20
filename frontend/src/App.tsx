@@ -17,11 +17,7 @@ import { OptionsContext } from "./components/options/Options";
 import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
 import StatusBar from "./components/status_bar/StatusBar";
 
-const App = ({
-  isUnibotics
-} : {
-  isUnibotics:boolean
-}) => {
+const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
   const [editorWidth, setEditorWidth] = useState<number>(800);
   const [currentFilename, setCurrentFilename] = useState<string>("");
