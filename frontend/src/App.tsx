@@ -17,7 +17,11 @@ import { OptionsContext } from "./components/options/Options";
 import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
 import StatusBar from "./components/status_bar/StatusBar";
 
-const App = () => {
+const App = ({
+  isUnibotics
+} : {
+  isUnibotics:boolean
+}) => {
   const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
   const [editorWidth, setEditorWidth] = useState<number>(800);
   const [currentFilename, setCurrentFilename] = useState<string>("");
@@ -164,6 +168,7 @@ const App = () => {
         // onSetShowExecStatus={onSetShowExecStatus}
         manager={manager}
         showVNCViewer={showVNCViewer}
+        isUnibotics={isUnibotics}
       />
 
       <div className="bt-App-main">
@@ -215,6 +220,7 @@ const App = () => {
               currentFilename={currentFilename}
               currentProjectname={currentProjectname}
               setProjectChanges={setProjectChanges}
+              isUnibotics={isUnibotics}
             />
             {showTerminal && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
           </div>
