@@ -7,6 +7,7 @@ import "./FileEditor.css";
 
 import { ReactComponent as SaveIcon } from "./img/save.svg";
 import { ReactComponent as SplashIcon } from "./img/logo_jderobot_monocolor.svg";
+import { ReactComponent as SplashIconUnibotics } from "./img/logo_unibotics_monocolor.svg";
 
 const FileEditor = ({
   currentFilename,
@@ -165,7 +166,8 @@ const FileEditor = ({
           }}
         />
       ) : (
-        <SplashIcon className="bt-splash-icon" fill="var(--header)" />
+        // <SplashIcon className="bt-splash-icon" fill="var(--header)" />
+        <SplashIconUnibotics className="bt-splash-icon" fill="var(--header)" />
       )}
     </div>
   );

@@ -13,6 +13,7 @@ import {
 import CommsManager from "../../api_helper/CommsManager";
 
 import { ReactComponent as LogoIcon } from "../file_editor/img/logo_jderobot_monocolor.svg";
+import { ReactComponent as LogoUniboticsIcon } from "../file_editor/img/logo_unibotics_monocolor.svg";
 
 import "./HeaderMenu.css";
 import { ReactComponent as ProjectsIcon } from "./img/change_project.svg";
@@ -352,10 +353,15 @@ const HeaderMenu = ({
     console.log("Modal error!");
   };
 
+  //TODO: change icon and add redirection if Unibotics enabled
+  //  <a href="/apps">
+  //    <LogoUniboticsIcon className="bt-jde-icon" fill="var(--icon)" />
+  //  </a>
+
   return (
     <AppBar position="static">
       <Toolbar style={{ backgroundColor: "var(--header)" }}>
-        <LogoIcon className="bt-jde-icon" fill="var(--icon)" />
+        <LogoUniboticsIcon className="bt-jde-icon" fill="var(--icon)" />
         <h1 className="bt-Header-text">BT Studio IDE</h1>
         <ProjectModal
           isOpen={isProjectModalOpen}
