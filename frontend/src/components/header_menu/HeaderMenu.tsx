@@ -1,4 +1,5 @@
 import { MouseEventHandler, useContext, useEffect, useState } from "react";
+import JSZip from "jszip";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import {
@@ -231,26 +232,38 @@ const HeaderMenu = ({
     if (!appRunning) {
       try {
         // Get the blob from the API wrapper
-        const appBlob = await generateDockerizedApp(
+        const appFiles = await generateDockerizedApp(
           modelJson,
           currentProjectname,
           settings.btOrder.value,
         );
 
-        // Convert the blob to base64 using FileReader
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          const base64data = reader.result; // Get the zip in base64
+        // Create the zip with the files
 
+        const zip = new JSZip();
+
+        zip.file("self_contained_tree_path.xml", appFiles.tree);
+        zip.file("tree_factory.py", appFiles.factory);
+        zip.file("tree_tools.py", appFiles.tools);
+        zip.file("execute_docker.py", appFiles.entrypoint);
+
+        zip.generateAsync({type:"base64"}).then(async function(content) {
           // Send the base64 encoded blob
           await manager.run({
             type: "bt-studio",
-            code: base64data,
+            code: content,
           });
 
           console.log("Dockerized app started successfully");
-        };
-        reader.readAsDataURL(appBlob);
+        });
+
+        // // Convert the blob to base64 using FileReader
+        // const reader = new FileReader();
+        // reader.onloadend = async () => {
+        //   const base64data = reader.result; // Get the zip in base64
+
+        // };
+        // reader.readAsDataURL(appBlob);
 
         setAppRunning(true);
         console.log("App started successfully");

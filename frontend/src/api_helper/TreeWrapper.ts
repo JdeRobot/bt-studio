@@ -325,23 +325,9 @@ const generateDockerizedApp = async (
   if (!currentProjectname) throw new Error("Current Project name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
 
-  const apiUrl = "/bt_studio/generate_dockerized_app/";
+  const apiUrl = `/bt_studio/generate_dockerized_app?app_name=${currentProjectname}&tree_graph=${JSON.stringify(modelJson)}&bt_order=${btOrder}`;
   try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        app_name: currentProjectname,
-        tree_graph: JSON.stringify(modelJson),
-        bt_order: btOrder,
-      },
-      {
-        responseType: "blob", // Ensure the response is treated as a Blob
-        headers: {
-          //@ts-ignore Needed for compatibility with Unibotics
-          "X-CSRFToken": context.csrf,
-        },
-      }
-    );
+    const response = await axios.get(apiUrl);
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
