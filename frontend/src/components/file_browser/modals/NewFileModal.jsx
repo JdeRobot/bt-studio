@@ -79,9 +79,11 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
     setCreationType("plain");
     setTemplate("empty");
 
-    if (isOpen && location) {
+    if (isOpen) {
       //NOTE: One for actions and one for location
-      createValidNamesList(location, setSearchPlainList);
+      if (location) {
+        createValidNamesList(location, setSearchPlainList);
+      }
       createValidNamesList("actions", setSearchActionsList);
     }
   }, [isOpen]);
@@ -135,7 +137,7 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
       checkList = searchPlainList;
     }
 
-    if (preCheck) {
+    if (preCheck && checkList) {
       checkList.some((element) => {
         var name = element.name;
 
@@ -152,7 +154,7 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
     } else {
       isValidName = false;
     }
-    console.log(creationType);
+    console.log(creationType, checkList);
 
     allowCreation(isValidName);
   };

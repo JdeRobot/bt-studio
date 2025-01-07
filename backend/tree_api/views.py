@@ -654,10 +654,15 @@ def create_action(request):
     action_path = os.path.join(project_path, "code/actions")
     file_path = os.path.join(action_path, filename)
 
+    templates_folder_path = os.path.join(settings.BASE_DIR, "templates")
+    template_path = os.path.join(templates_folder_path, template)
+
     if not os.path.exists(file_path):
-        if templates.create_action_from_template(file_path, filename, template):
+        try:
+            with open(file_path, "w") as f:
+                f.write(templates.get_action_template(filename, template, template_path))
             return Response({"success": True})
-        else:
+        except:
             return Response(
                 {"success": False, "message": "Template does not exist"}, status=400
             )
