@@ -195,50 +195,6 @@ def translate_raw(content, raw_order):
     xml_string = prettify_xml(root)
     return xml_string
 
-def translate(content, tree_path, raw_order):
-
-    # Parse the JSON data
-    try:
-        parsed_json = json.loads(content)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON content: {e}")
-
-    try:
-        # Extract nodes and links information
-        node_models = parsed_json["layers"][1]["models"]
-        link_models = parsed_json["layers"][0]["models"]
-
-        # Get the tree structure
-        tree_structure = get_tree_structure(link_models, node_models)
-
-        # Get the order of bt: True = Ascendent; False = Descendent
-        order = raw_order == "bottom-to-top"
-
-        # Generate XML
-        root = Element("Root", name="Tree Root")
-        behavior_tree = SubElement(root, "BehaviorTree")
-        start_node_id = get_start_node_id(node_models, link_models)
-        build_xml(
-            node_models,
-            link_models,
-            tree_structure,
-            start_node_id,
-            behavior_tree,
-            order,
-        )
-    except Exception as e:
-        tree_name = os.path.splitext(os.path.basename(tree_path))[0]
-        raise RuntimeError(f"Failed to translate tree '{tree_name}': {e}")
-
-    # Save the xml in the specified route
-    xml_string = prettify_xml(root)
-    print(xml_string)
-    print(tree_path)
-    f = open(tree_path, "w")
-    f.write(xml_string)
-    f.close()
-
-
 def translate_tree_structure(content, raw_order):
     # Parse the JSON data
     parsed_json = content

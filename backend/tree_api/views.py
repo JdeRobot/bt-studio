@@ -390,9 +390,6 @@ def save_subtree(request):
             with open(json_path, "w") as f:
                 f.write(subtree_json)
 
-            # TOFIX: order hardcoded
-            # json_translator.translate(subtree_json, xml_path, "top-to-bottom")
-
             return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
         except Exception as e:
@@ -829,7 +826,8 @@ def translate_json(request):
             )
 
         # Pass the JSON content to the translate function
-        json_translator.translate(content, folder_path + "/tree.xml", bt_order)
+        with open(folder_path + "/tree.xml", "w") as f:
+            f.write(json_translator.translate_raw(content, bt_order))
 
         return Response({"success": True})
     except Exception as e:
