@@ -276,7 +276,7 @@ const getCustomUniverseZip = async (
 
 // App management
 
-const generateApp = async (
+const generateLocalApp = async (
   modelJson: Object,
   currentProjectname: string,
   btOrder: string
@@ -285,25 +285,9 @@ const generateApp = async (
   if (!currentProjectname) throw new Error("Current Project name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
 
-  console.log("The modelJson is: ", modelJson);
-
-  const apiUrl = "/bt_studio/generate_local_app/";
+  const apiUrl = `/bt_studio/generate_local_app?app_name=${currentProjectname}&tree_graph=${JSON.stringify(modelJson)}&bt_order=${btOrder}`;
   try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        app_name: currentProjectname,
-        tree_graph: JSON.stringify(modelJson),
-        bt_order: btOrder,
-      },
-      {
-        responseType: "blob", // Ensure the response is treated as a Blob
-        headers: {
-          //@ts-ignore Needed for compatibility with Unibotics
-          "X-CSRFToken": context.csrf,
-        },
-      }
-    );
+    const response = await axios.get(apiUrl);
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
@@ -460,7 +444,7 @@ export {
   saveBaseTree,
   loadProjectConfig,
   getProjectGraph,
-  generateApp,
+  generateLocalApp,
   generateDockerizedApp,
   getUniverseConfig,
   getRoboticsBackendUniversePath,

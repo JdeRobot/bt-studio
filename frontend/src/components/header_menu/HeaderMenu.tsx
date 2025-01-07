@@ -5,7 +5,7 @@ import Toolbar from "@mui/material/Toolbar";
 import {
   createProject,
   saveBaseTree,
-  generateApp,
+  generateLocalApp,
   generateDockerizedApp,
   getUniverseConfig,
   getCustomUniverseZip,
@@ -29,6 +29,9 @@ import ProjectModal from "./modals/ProjectModal";
 import UniversesModal from "./modals/UniverseModal";
 import SettingsModal from "../settings_popup/SettingsModal";
 import { OptionsContext } from "../options/Options";
+
+import RosTemplates from './../../templates/RosTemplates';
+import TreeGardener from './../../templates/TreeGardener';
 
 const HeaderMenu = ({
   currentProjectname,
@@ -195,21 +198,32 @@ const HeaderMenu = ({
   const onDownloadApp = async () => {
     try {
       // Get the blob from the API wrapper
-      const appBlob = await generateApp(
+      const appFiles = await generateLocalApp(
         modelJson,
         currentProjectname,
         settings.btOrder.value,
       );
 
-      // Create a download link and trigger download
-      const url = window.URL.createObjectURL(appBlob);
-      const a = document.createElement("a");
-      a.style.display = "none";
-      a.href = url;
-      a.download = `${currentProjectname}.zip`; // Set the downloaded file's name
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url); // Clean up after the download
+      // Create the zip with the files
+      const zip = new JSZip();
+
+      console.log(appFiles.dependencies)
+
+      TreeGardener.addLocalFiles(zip)
+      RosTemplates.addLocalFiles(zip, currentProjectname, appFiles.tree, appFiles.dependencies)
+
+      zip.generateAsync({type:"blob"}).then(function(content) {
+        // Create a download link and trigger download
+        const url = window.URL.createObjectURL(content);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = `${currentProjectname}.zip`; // Set the downloaded file's name
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url); // Clean up after the download
+      });
+
       console.log("App downloaded successfully");
     } catch (error) {
       if (error instanceof Error) {
@@ -239,13 +253,11 @@ const HeaderMenu = ({
         );
 
         // Create the zip with the files
-
         const zip = new JSZip();
 
         zip.file("self_contained_tree.xml", appFiles.tree);
-        zip.file("tree_factory.py", appFiles.factory);
-        zip.file("tree_tools.py", appFiles.tools);
-        zip.file("execute_docker.py", appFiles.entrypoint);
+        TreeGardener.addDockerFiles(zip)
+        RosTemplates.addDockerFiles(zip)
 
         // Convert the blob to base64 using FileReader
         const reader = new FileReader();

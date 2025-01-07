@@ -893,23 +893,13 @@ def download_data(request):
     else:
         return Response({"error": "app_name parameter is missing"}, status=500)
 
-@api_view(["POST"])
+@api_view(["GET"])
 def generate_local_app(request):
 
-    if (
-        "app_name" not in request.data
-        or "tree_graph" not in request.data
-        or "bt_order" not in request.data
-    ):
-        return Response(
-            {"error": "Incorrect request parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # Get the parameters
-    app_name = request.data.get("app_name")
-    main_tree_graph = request.data.get("tree_graph")
-    bt_order = request.data.get("bt_order")
+    # Get the request parameters
+    app_name = request.GET.get("app_name", None)
+    main_tree_graph = request.GET.get("tree_graph", None)
+    bt_order = request.GET.get("bt_order", None)
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -917,8 +907,6 @@ def generate_local_app(request):
     action_path = os.path.join(project_path, "code/actions")
 
     subtree_path = os.path.join(project_path, "code/trees/subtrees/json")
-    tree_gardener_src = os.path.join(settings.BASE_DIR, "tree_gardener")
-    template_path = os.path.join(settings.BASE_DIR, "ros_template")
 
     subtrees = []
     actions = []
@@ -958,36 +946,9 @@ def generate_local_app(request):
         # 4. Generate a self-contained tree
         final_tree = tree_generator.generate(main_tree, subtrees, actions)
 
-        # Using the self-contained tree, package the ROS 2 app
-        zip_file_path = app_generator.generate(
-            final_tree,
-            app_name,
-            template_path,
-            action_path,
-            tree_gardener_src,
-        )
+        unique_imports = app_generator.get_unique_imports(actions)
 
-        # Confirm ZIP file exists
-        if not os.path.exists(zip_file_path):
-            return Response(
-                {"success": False, "message": "ZIP file not found"}, status=400
-            )
-
-        # Return the zip file as a response
-        with open(zip_file_path, "rb") as zip_file:
-            response = HttpResponse(zip_file, content_type="application/zip")
-            response["Content-Disposition"] = (
-                f"attachment; filename={os.path.basename(zip_file_path)}"
-            )
-            return response
-
-        return response
-
-
-        # TODO: files needed
-        # Tree
-        # ros execute
-        # Change template in ros templates
+        return JsonResponse({"success": True, "tree": final_tree, "dependencies": unique_imports})
 
     except Exception as e:
         print(e)
@@ -1013,12 +974,6 @@ def generate_dockerized_app(request):
     action_path = os.path.join(project_path, "code/actions")
 
     subtree_path = os.path.join(project_path, "code/trees/subtrees/json")
-    tree_gardener_src = os.path.join(settings.BASE_DIR, "tree_gardener")
-    template_path = os.path.join(settings.BASE_DIR, "ros_template")
-
-    factory_location = tree_gardener_src + "/tree_gardener/tree_factory.py"
-    tools_location = tree_gardener_src + "/tree_gardener/tree_tools.py"
-    entrypoint_location = template_path + "/ros_template/execute_docker.py"
 
     subtrees = []
     actions = []
@@ -1058,16 +1013,8 @@ def generate_dockerized_app(request):
         # 4. Generate a self-contained tree
         final_tree = tree_generator.generate(main_tree, subtrees, actions)
 
-        # 5. Get necessary files to execute the app in the RB
-        with open(factory_location, "r+") as f:
-            factory_content = f.read()
-        with open(tools_location, "r+") as f:
-            tools_content = f.read()
-        with open(entrypoint_location, "r+") as f:
-            entrypoint_content = f.read()
-
         # 6. Return the files as a response
-        return JsonResponse({"success": True, "tree": final_tree, "factory":factory_content, "tools": tools_content, "entrypoint":entrypoint_content})
+        return JsonResponse({"success": True, "tree": final_tree})
 
     except Exception as e:
         print(e)
