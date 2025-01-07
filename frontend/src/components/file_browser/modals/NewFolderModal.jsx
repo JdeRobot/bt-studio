@@ -20,17 +20,19 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
       }, 0);
     }
 
-    if (isOpen && location) {
-      var path = location.split("/");
-
+    if (isOpen) {
       let search_list = fileList;
 
-      for (let index = 0; index < path.length; index++) {
-        search_list = search_list.find(
-          (entry) => entry.name === path[index] && entry.is_dir,
-        ).files;
-      }
+      if (location) {
+        var path = location.split("/");
 
+        for (let index = 0; index < path.length; index++) {
+          search_list = search_list.find(
+            (entry) => entry.name === path[index] && entry.is_dir,
+          ).files;
+        }
+      }
+      
       if (search_list) {
         setSearchList(search_list);
       } else {
