@@ -170,10 +170,6 @@ def generate(app_tree, app_name, template_path, action_path, tree_gardener_src):
     executor_path = app_path + "/" + app_name
     tree_gardener_dst = app_path + "/tree_gardener"
 
-    # Ensure the files exist
-    if not os.path.exists(app_tree):
-        raise FileNotFoundError(f"Tree path '{app_tree}' does not exist!")
-
     # 1. Copy the template to a temporary directory
     if os.path.exists(executor_path):
         shutil.rmtree(executor_path)  # Delete if it already exists
@@ -182,7 +178,8 @@ def generate(app_tree, app_name, template_path, action_path, tree_gardener_src):
 
     # 2. Copy the tree to the template directory
     tree_location = executor_path + "/resource/app_tree.xml"
-    shutil.copy(app_tree, tree_location)
+    with open(tree_location, "w") as file:
+        file.write(app_tree)
 
     # 3. Edit some files in the template
     user_data = {"app_name": app_name}

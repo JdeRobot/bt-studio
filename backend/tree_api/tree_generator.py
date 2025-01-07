@@ -81,26 +81,8 @@ def get_subtree_set(tree, possible_subtrees) -> set:
 
     return subtrees
 
-
 # Add the code of the different actions
-def add_actions_code(tree, actions, action_path):
-
-    code_section = ET.SubElement(tree, "Code")
-
-    # Add each actiion code to the tree
-    for action_name in actions:
-
-        # Get the action code
-        action_route = action_path + "/" + action_name + ".py"
-        action_file = open(action_route, "r")
-        action_code = action_file.read()
-
-        # Add a new subelement to the code_section
-        action_section = ET.SubElement(code_section, action_name)
-        action_section.text = "\n" + action_code + "\n"
-
-# Add the code of the different actions
-def add_actions_code_raw(tree, actions, all_actions):
+def add_actions_code_(tree, actions, all_actions):
 
     code_section = ET.SubElement(tree, "Code")
 
@@ -119,39 +101,8 @@ def add_actions_code_raw(tree, actions, all_actions):
         action_section = ET.SubElement(code_section, action_name)
         action_section.text = "\n" + action_code + "\n"
 
-
 # Replaces all the subtrees in a given tree depth
-def replace_subtrees_in_tree(tree, subtrees, tree_path):
-
-    for subtree_name in subtrees:
-        subtree_path = os.path.join(tree_path, f"{subtree_name}.xml")
-        if os.path.exists(subtree_path):
-            with open(subtree_path, "r") as sf:
-                subtree_xml = sf.read()
-            subtree_tree = ET.fromstring(subtree_xml)
-
-            # Find the content inside the <BehaviorTree> tag in the subtree
-            subtree_behavior_tree = subtree_tree.find(".//BehaviorTree")
-            if subtree_behavior_tree is not None:
-                # Locate tags in the main tree that refer to this subtree
-                subtree_parents = tree.findall(".//" + subtree_name + "/..")
-                for parent in subtree_parents:
-                    subtree_tags = parent.findall(subtree_name)
-                    for subtree_tag in subtree_tags:
-                        # Get the index of the original subtree tag
-                        index = list(parent).index(subtree_tag)
-
-                        # Insert new elements from the subtree at the correct position
-                        for i, subtree_elem in enumerate(subtree_behavior_tree):
-                            try:
-                                parent.insert(index + i, subtree_elem)
-                            except Exception as e:
-                                print(str(e))
-                        # Remove the original subtree tag
-                        parent.remove(subtree_tag)
-
-# Replaces all the subtrees in a given tree depth
-def replace_subtrees_in_tree_raw(tree, subtrees):
+def replace_subtrees_in_tree_(tree, subtrees):
 
     for subtree in subtrees:
         subtree_name = subtree["name"]
@@ -178,31 +129,8 @@ def replace_subtrees_in_tree_raw(tree, subtrees):
                     # Remove the original subtree tag
                     parent.remove(subtree_tag)
 
-
-
 # Recursively replace all subtrees in a given tree
-def replace_all_subtrees(tree, tree_path, depth=0, max_depth=15):
-
-    # Avoid infinite recursion
-    if depth > max_depth:
-        return
-
-    # Get the subtrees that are present in the tree
-    possible_trees = [file.split(".")[0] for file in os.listdir(tree_path)]
-    subtrees = get_subtree_set(tree, possible_trees)
-
-    # If no subtrees are found, stop the recursion
-    if not subtrees:
-        return
-
-    # Replace subtrees in the main tree
-    replace_subtrees_in_tree(tree, subtrees, tree_path)
-
-    # Recursively call the function to replace subtrees in the newly added subtrees
-    replace_all_subtrees(tree, tree_path, depth + 1, max_depth)
-
-# Recursively replace all subtrees in a given tree
-def replace_all_subtrees_raw(tree, all_subtrees, depth=0, max_depth=15):
+def replace_all_subtrees_(tree, all_subtrees, depth=0, max_depth=15):
 
     # Avoid infinite recursion
     if depth > max_depth:
@@ -217,52 +145,24 @@ def replace_all_subtrees_raw(tree, all_subtrees, depth=0, max_depth=15):
         return
 
     # Replace subtrees in the main tree
-    replace_subtrees_in_tree_raw(tree, all_subtrees)
+    replace_subtrees_in_tree_(tree, all_subtrees)
 
     # Recursively call the function to replace subtrees in the newly added subtrees
-    replace_all_subtrees_raw(tree, all_subtrees, depth + 1, max_depth)
+    replace_all_subtrees_(tree, all_subtrees, depth + 1, max_depth)
 
-
-# Read the tree and the actions and generate a formatted tree string
-def parse_tree(tree_path, action_path):
-
-    # Get the tree main XML file and read its content
-    main_tree_path = os.path.join(tree_path, "main.xml")
-    f = open(main_tree_path, "r")
-    tree_xml = f.read()
-
+def parse_tree_(tree_xml, subtrees, all_actions):
     # Parse the tree file
     tree = get_bt_structure(tree_xml)
 
     # Obtain the defined subtrees recursively
-    replace_all_subtrees(tree, tree_path)
-
-    # Obtain the defined actions
-    possible_actions = [file.split(".")[0] for file in os.listdir(action_path)]
-    actions = get_action_set(tree, possible_actions)
-
-    # Add subsections for the action code
-    add_actions_code(tree, actions, action_path)
-
-    # Serialize the modified XML to a properly formatted string
-    formatted_tree = prettify_xml(tree)
-    formatted_tree = fix_indentation(formatted_tree, actions)
-
-    return formatted_tree
-
-def parse_tree_raw(tree_xml, subtrees, all_actions):
-    # Parse the tree file
-    tree = get_bt_structure(tree_xml)
-
-    # Obtain the defined subtrees recursively
-    replace_all_subtrees_raw(tree, subtrees)
+    replace_all_subtrees_(tree, subtrees)
 
     # Obtain the defined actions
     possible_actions = [x["name"] for x in all_actions] 
     actions = get_action_set(tree, possible_actions)
 
     # Add subsections for the action code
-    add_actions_code_raw(tree, actions, all_actions)
+    add_actions_code_(tree, actions, all_actions)
 
     # Serialize the modified XML to a properly formatted string
     formatted_tree = prettify_xml(tree)
@@ -275,20 +175,10 @@ def parse_tree_raw(tree_xml, subtrees, all_actions):
 ##############################################################################
 
 
-def generate(tree_path, action_path, result_path):
-
-    # Ensure the provided tree and action paths exist
-    if not os.path.exists(tree_path):
-        raise FileNotFoundError(f"Tree path '{tree_path}' does not exist!")
-    if not os.path.exists(action_path):
-        raise FileNotFoundError(f"Action path '{action_path}' does not exist!")
+def generate(tree_xml, subtrees, actions):
 
     # Get a formatted self-contained tree string
-    formatted_xml = parse_tree(tree_path, action_path)
+    formatted_xml = parse_tree_(tree_xml, subtrees, actions)
 
-    # Store the string in a temp xml file
-    with open(result_path, "w") as result_file:
-        result_file.write(formatted_xml)
-
-    # Return the xml string for debugging purposes
+    # Return the xml string
     return formatted_xml

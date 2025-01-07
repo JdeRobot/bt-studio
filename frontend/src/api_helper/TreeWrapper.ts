@@ -287,7 +287,7 @@ const generateApp = async (
 
   console.log("The modelJson is: ", modelJson);
 
-  const apiUrl = "/bt_studio/generate_app/";
+  const apiUrl = "/bt_studio/generate_local_app/";
   try {
     const response = await axios.post(
       apiUrl,

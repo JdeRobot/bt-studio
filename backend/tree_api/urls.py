@@ -11,7 +11,7 @@ urlpatterns = [
     path("delete_universe/", views.delete_universe, name="delete_universe"),
     path("add_docker_universe/", views.add_docker_universe, name="add_docker_universe"),
     path("get_universes_list/", views.get_universes_list, name="get_universes_list"),
-    path("get_universe_zip/", views.get_universe_zip, name="generate_app"),
+    path("get_universe_zip/", views.get_universe_zip, name="get_universe_zip"),
     path(
         "get_universe_configuration/",
         views.get_universe_configuration,
@@ -59,7 +59,7 @@ urlpatterns = [
     path("create_action/", views.create_action, name="create_action"),
     # Other
     path("translate_json/", views.translate_json, name="translate_json"),
-    path("generate_app/", views.generate_app, name="generate_app"),
+    path("generate_local_app/", views.generate_local_app, name="generate_local_app"),
     path(
         "generate_dockerized_app/",
         views.generate_dockerized_app,
