@@ -687,12 +687,9 @@ def create_file(request):
     file_path = os.path.join(create_path, filename)
 
     if not os.path.exists(file_path):
-        if templates.create_action_from_template(file_path, filename, "empty"):
-            return Response({"success": True})
-        else:
-            return Response(
-                {"success": False, "message": "Template does not exist"}, status=400
-            )
+        with open(file_path, "w") as f:
+            f.write("")
+        return Response({"success": True})
     else:
         return Response(
             {"success": False, "message": "File already exists"}, status=400
