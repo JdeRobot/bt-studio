@@ -815,28 +815,6 @@ def save_file(request):
 
 
 @api_view(["POST"])
-def translate_json(request):
-
-    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
-    bt_order = request.data.get("bt_order")
-
-    try:
-        content = request.data.get("content")
-        if content is None:
-            return Response(
-                {"success": False, "message": "Content is missing"}, status=400
-            )
-
-        # Pass the JSON content to the translate function
-        with open(folder_path + "/tree.xml", "w") as f:
-            f.write(json_translator.translate_raw(content, bt_order))
-
-        return Response({"success": True})
-    except Exception as e:
-        return Response({"success": False, "message": str(e)}, status=400)
-
-
-@api_view(["POST"])
 def download_data(request):
 
     # Check if 'name' and 'zipfile' are in the request data

@@ -58,7 +58,6 @@ urlpatterns = [
     path("get_actions_list/", views.get_actions_list, name="get_actions_list"),
     path("create_action/", views.create_action, name="create_action"),
     # Other
-    path("translate_json/", views.translate_json, name="translate_json"),
     path("generate_local_app/", views.generate_local_app, name="generate_local_app"),
     path(
         "generate_dockerized_app/",
