@@ -81,9 +81,7 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
 
     if (isOpen) {
       //NOTE: One for actions and one for location
-      if (location) {
-        createValidNamesList(location, setSearchPlainList);
-      }
+      createValidNamesList(location, setSearchPlainList);
       createValidNamesList("actions", setSearchActionsList);
     }
   }, [isOpen]);
@@ -93,13 +91,16 @@ const NewFileModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
   }, [creationType]);
 
   const createValidNamesList = (orig_path, callback) => {
-    var path = orig_path.split("/");
     let search_list = fileList;
 
-    for (let index = 0; index < path.length; index++) {
-      search_list = search_list.find(
-        (entry) => entry.name === path[index] && entry.is_dir,
-      ).files;
+    if (orig_path) {
+      var path = orig_path.split("/");
+
+      for (let index = 0; index < path.length; index++) {
+        search_list = search_list.find(
+          (entry) => entry.name === path[index] && entry.is_dir,
+        ).files;
+      }
     }
 
     console.log(search_list);
