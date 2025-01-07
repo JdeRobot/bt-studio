@@ -198,7 +198,7 @@ const HeaderMenu = ({
       const appBlob = await generateApp(
         modelJson,
         currentProjectname,
-        "top-to-bottom",
+        settings.btOrder.value,
       );
 
       // Create a download link and trigger download
@@ -262,7 +262,6 @@ const HeaderMenu = ({
         zip.generateAsync({type:"blob"}).then(function(content) {
           reader.readAsDataURL(content);
         });
-
 
         setAppRunning(true);
         console.log("App started successfully");

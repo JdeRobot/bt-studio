@@ -994,118 +994,6 @@ def generate_app(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-
-# @api_view(["POST"])
-# def generate_dockerized_app(request):
-
-#     if (
-#         "app_name" not in request.data
-#         or "tree_graph" not in request.data
-#         or "bt_order" not in request.data
-#     ):
-#         return Response(
-#             {"error": "Incorrect request parameters"},
-#             status=status.HTTP_400_BAD_REQUEST,
-#         )
-
-#     # Get the request parameters
-#     app_name = request.data.get("app_name")
-#     main_tree_graph = request.data.get("tree_graph")
-#     bt_order = request.data.get("bt_order")
-#     print("Dockerized bt order: ", bt_order)
-
-#     # Make folder path relative to Django app
-#     base_path = os.path.join(settings.BASE_DIR, "filesystem")
-#     project_path = os.path.join(base_path, app_name)
-#     action_path = os.path.join(project_path, "code/actions")
-
-#     working_folder = "/tmp/wf"
-#     subtree_path = os.path.join(project_path, "code/trees/subtrees/json")
-#     result_trees_tmp_path = os.path.join("/tmp/trees/")
-#     self_contained_tree_path = os.path.join(working_folder, "self_contained_tree.xml")
-#     tree_gardener_src = os.path.join(settings.BASE_DIR, "tree_gardener")
-#     template_path = os.path.join(settings.BASE_DIR, "ros_template")
-
-#     try:
-#         # Init the trees temp folder
-#         if os.path.exists(result_trees_tmp_path):
-#             shutil.rmtree(result_trees_tmp_path)
-#         os.makedirs(result_trees_tmp_path)
-
-#         # 1. Create the working folder
-#         if os.path.exists(working_folder):
-#             shutil.rmtree(working_folder)
-#         os.mkdir(working_folder)
-
-#         # 2. Generate a basic tree from the JSON definition
-#         main_tree_tmp_path = os.path.join(result_trees_tmp_path, "main.xml")
-#         json_translator.translate(main_tree_graph, main_tree_tmp_path, bt_order)
-
-#         # 3. Copy all the subtrees to the temp folder
-#         try:
-#             for subtree_file in os.listdir(subtree_path):
-#                 if subtree_file.endswith(".json"):
-#                     subtree_name = base = os.path.splitext(
-#                         os.path.basename(subtree_file)
-#                     )[0]
-#                     print(os.path.join(subtree_path, subtree_file))
-
-#                     xml_path = os.path.join(
-#                         project_path, "code", "trees", "subtrees", f"{subtree_name}.xml"
-#                     )
-
-#                     with open(os.path.join(subtree_path, subtree_file), "r+") as f:
-#                         # Reading from a file
-#                         subtree_json = f.read()
-
-#                     json_translator.translate(subtree_json, xml_path, bt_order)
-
-#                     shutil.copy(xml_path, result_trees_tmp_path)
-#         except:
-#             print("No subtrees")
-
-#         # 4. Generate a self-contained tree
-#         tree_generator.generate(
-#             result_trees_tmp_path, action_path, self_contained_tree_path
-#         )
-
-#         # 5. Copy necessary files to execute the app in the RB
-#         factory_location = tree_gardener_src + "/tree_gardener/tree_factory.py"
-#         tools_location = tree_gardener_src + "/tree_gardener/tree_tools.py"
-#         entrypoint_location = template_path + "/ros_template/execute_docker.py"
-#         shutil.copy(factory_location, working_folder)
-#         shutil.copy(tools_location, working_folder)
-#         shutil.copy(entrypoint_location, working_folder)
-
-#         # 6. Generate the zip
-#         zip_path = working_folder + ".zip"
-#         with zipfile.ZipFile(zip_path, "w") as zipf:
-#             for root, dirs, files in os.walk(working_folder):
-#                 for file in files:
-#                     zipf.write(
-#                         os.path.join(root, file),
-#                         os.path.relpath(os.path.join(root, file), working_folder),
-#                     )
-
-#         # 6. Return the zip file as a response
-#         with open(zip_path, "rb") as zip_file:
-#             response = HttpResponse(zip_file, content_type="application/zip")
-#             response["Content-Disposition"] = (
-#                 f"attachment; filename={os.path.basename(zip_path)}"
-#             )
-#             return response
-
-#     except Exception as e:
-#         print(e)
-#         import traceback
-
-#         traceback.print_exc()
-#         return Response(
-#             {"success": False, "message": str(e)},
-#             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#         )
-
-
 @api_view(["GET"])
 def generate_dockerized_app(request):
 
@@ -1156,7 +1044,6 @@ def generate_dockerized_app(request):
         for action_file in os.listdir(action_path):
             if action_file.endswith(".py"):
                 action_name = base = os.path.splitext(os.path.basename(action_file))[0]
-                print(os.path.join(action_path, action_file))
 
                 with open(os.path.join(action_path, action_file), "r+") as f:
                     action_content = f.read()
@@ -1324,7 +1211,7 @@ def upload_universe(request):
 @api_view(["POST"])
 def add_docker_universe(request):
 
-    # Check if 'name' and 'zipfile' are in the request data
+    # Check if 'universe_name', 'app_name' and 'id' are in the request data
     if (
         "universe_name" not in request.data
         or "app_name" not in request.data
@@ -1335,7 +1222,7 @@ def add_docker_universe(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    # Get the name and the zip file from the request
+    # Get the name and the id file from the request
     universe_name = request.data["universe_name"]
     app_name = request.data["app_name"]
     id = request.data["id"]
@@ -1351,7 +1238,6 @@ def add_docker_universe(request):
         os.makedirs(universe_path)
 
     # Fill the config dictionary of the universe
-    ram_launch_path = "/workspace/worlds/" + universe_name + "/universe.launch.py"
     universe_config = {"name": universe_name, "id": id, "type": "robotics_backend"}
 
     # Generate the json config
