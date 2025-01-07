@@ -30,8 +30,8 @@ import UniversesModal from "./modals/UniverseModal";
 import SettingsModal from "../settings_popup/SettingsModal";
 import { OptionsContext } from "../options/Options";
 
-import RosTemplates from './../../templates/RosTemplates';
-import TreeGardener from './../../templates/TreeGardener';
+import RosTemplates from "./../../templates/RosTemplates";
+import TreeGardener from "./../../templates/TreeGardener";
 
 const HeaderMenu = ({
   currentProjectname,
@@ -207,12 +207,17 @@ const HeaderMenu = ({
       // Create the zip with the files
       const zip = new JSZip();
 
-      console.log(appFiles.dependencies)
+      console.log(appFiles.dependencies);
 
-      TreeGardener.addLocalFiles(zip)
-      RosTemplates.addLocalFiles(zip, currentProjectname, appFiles.tree, appFiles.dependencies)
+      TreeGardener.addLocalFiles(zip);
+      RosTemplates.addLocalFiles(
+        zip,
+        currentProjectname,
+        appFiles.tree,
+        appFiles.dependencies,
+      );
 
-      zip.generateAsync({type:"blob"}).then(function(content) {
+      zip.generateAsync({ type: "blob" }).then(function (content) {
         // Create a download link and trigger download
         const url = window.URL.createObjectURL(content);
         const a = document.createElement("a");
@@ -256,8 +261,8 @@ const HeaderMenu = ({
         const zip = new JSZip();
 
         zip.file("self_contained_tree.xml", appFiles.tree);
-        TreeGardener.addDockerFiles(zip)
-        RosTemplates.addDockerFiles(zip)
+        TreeGardener.addDockerFiles(zip);
+        RosTemplates.addDockerFiles(zip);
 
         // Convert the blob to base64 using FileReader
         const reader = new FileReader();
@@ -271,7 +276,7 @@ const HeaderMenu = ({
           console.log("Dockerized app started successfully");
         };
 
-        zip.generateAsync({type:"blob"}).then(function(content) {
+        zip.generateAsync({ type: "blob" }).then(function (content) {
           reader.readAsDataURL(content);
         });
 

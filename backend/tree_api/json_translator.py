@@ -195,6 +195,7 @@ def translate_raw(content, raw_order):
     xml_string = prettify_xml(root)
     return xml_string
 
+
 def translate_tree_structure(content, raw_order):
     # Parse the JSON data
     parsed_json = content

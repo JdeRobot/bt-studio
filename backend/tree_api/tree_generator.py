@@ -81,6 +81,7 @@ def get_subtree_set(tree, possible_subtrees) -> set:
 
     return subtrees
 
+
 # Add the code of the different actions
 def add_actions_code_(tree, actions, all_actions):
 
@@ -100,6 +101,7 @@ def add_actions_code_(tree, actions, all_actions):
         # Add a new subelement to the code_section
         action_section = ET.SubElement(code_section, action_name)
         action_section.text = "\n" + action_code + "\n"
+
 
 # Replaces all the subtrees in a given tree depth
 def replace_subtrees_in_tree_(tree, subtrees):
@@ -129,6 +131,7 @@ def replace_subtrees_in_tree_(tree, subtrees):
                     # Remove the original subtree tag
                     parent.remove(subtree_tag)
 
+
 # Recursively replace all subtrees in a given tree
 def replace_all_subtrees_(tree, all_subtrees, depth=0, max_depth=15):
 
@@ -137,7 +140,7 @@ def replace_all_subtrees_(tree, all_subtrees, depth=0, max_depth=15):
         return
 
     # Get the subtrees that are present in the tree
-    possible_trees = [x["name"] for x in all_subtrees] 
+    possible_trees = [x["name"] for x in all_subtrees]
     subtrees = get_subtree_set(tree, possible_trees)
 
     # If no subtrees are found, stop the recursion
@@ -150,6 +153,7 @@ def replace_all_subtrees_(tree, all_subtrees, depth=0, max_depth=15):
     # Recursively call the function to replace subtrees in the newly added subtrees
     replace_all_subtrees_(tree, all_subtrees, depth + 1, max_depth)
 
+
 def parse_tree_(tree_xml, subtrees, all_actions):
     # Parse the tree file
     tree = get_bt_structure(tree_xml)
@@ -158,7 +162,7 @@ def parse_tree_(tree_xml, subtrees, all_actions):
     replace_all_subtrees_(tree, subtrees)
 
     # Obtain the defined actions
-    possible_actions = [x["name"] for x in all_actions] 
+    possible_actions = [x["name"] for x in all_actions]
     actions = get_action_set(tree, possible_actions)
 
     # Add subsections for the action code
@@ -169,6 +173,7 @@ def parse_tree_(tree_xml, subtrees, all_actions):
     formatted_tree = fix_indentation(formatted_tree, actions)
 
     return formatted_tree
+
 
 ##############################################################################
 # Main section

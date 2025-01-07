@@ -657,7 +657,9 @@ def create_action(request):
     if not os.path.exists(file_path):
         try:
             with open(file_path, "w") as f:
-                f.write(templates.get_action_template(filename, template, template_path))
+                f.write(
+                    templates.get_action_template(filename, template, template_path)
+                )
             return Response({"success": True})
         except:
             return Response(
@@ -893,6 +895,7 @@ def download_data(request):
     else:
         return Response({"error": "app_name parameter is missing"}, status=500)
 
+
 @api_view(["GET"])
 def generate_local_app(request):
 
@@ -948,7 +951,9 @@ def generate_local_app(request):
 
         unique_imports = app_generator.get_unique_imports(actions)
 
-        return JsonResponse({"success": True, "tree": final_tree, "dependencies": unique_imports})
+        return JsonResponse(
+            {"success": True, "tree": final_tree, "dependencies": unique_imports}
+        )
 
     except Exception as e:
         print(e)
@@ -959,6 +964,7 @@ def generate_local_app(request):
             {"success": False, "message": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
 
 @api_view(["GET"])
 def generate_dockerized_app(request):
