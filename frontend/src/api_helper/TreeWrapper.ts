@@ -47,6 +47,38 @@ const getActionsList = async (projectName: string) => {
   }
 };
 
+const saveFile = async (projectName: string, fileName: string, content: string) => {
+  if (!projectName) throw new Error("Current Project name is not set");
+  if (!fileName) throw new Error("Current File name is not set");
+  if (!content) throw new Error("Content does not exist");
+
+  const apiUrl = "/bt_studio/save_file/";
+
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        project_name: projectName,
+        filename: fileName,
+        content: content,
+      },
+      {
+        headers: {
+          //@ts-ignore Needed for compatibility with Unibotics
+          "X-CSRFToken": context.csrf,
+        },
+      },
+    );
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to create project."); // Response error
+    }
+  } catch (error) {
+    throw error; // Rethrow
+  }
+};
+
 // Project management
 
 const createProject = async (projectName: string) => {
@@ -442,6 +474,7 @@ const saveSubtree = async (
 export {
   createProject,
   saveBaseTree,
+  saveFile,
   loadProjectConfig,
   getProjectGraph,
   generateLocalApp,

@@ -21,6 +21,8 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
   const [editorWidth, setEditorWidth] = useState<number>(800);
   const [currentFilename, setCurrentFilename] = useState<string>("");
+  const [autosaveEnabled, setAutosave] = useState<boolean>(true);
+  const [forceSaveCurrent, setForcedSaveCurrent] = useState<boolean>(false);
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
@@ -191,6 +193,9 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
                 actionNodesData={actionNodesData}
                 showAccentColor={"editorShowAccentColors"}
                 diagramEditorReady={diagramEditorReady}
+                setAutosave={setAutosave}
+                forceSaveCurrent={forceSaveCurrent}
+                setForcedSaveCurrent={setForcedSaveCurrent}
               />
             </div>
           </div>
@@ -217,6 +222,9 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
               currentProjectname={currentProjectname}
               setProjectChanges={setProjectChanges}
               isUnibotics={isUnibotics}
+              autosaveEnabled={autosaveEnabled}
+              setAutosave={setAutosave}
+              forceSaveCurrent={forceSaveCurrent}
             />
             {showTerminal && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
           </div>

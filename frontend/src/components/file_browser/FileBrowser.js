@@ -32,6 +32,9 @@ const FileBrowser = ({
   actionNodesData,
   showAccentColor,
   diagramEditorReady,
+  setAutosave,
+  forceSaveCurrent,
+  setForcedSaveCurrent,
 }) => {
   const [fileList, setFileList] = useState(null);
   const [isNewFileModalOpen, setNewFileModalOpen] = useState(false);
@@ -179,6 +182,7 @@ const FileBrowser = ({
     //currentFilename === Absolute File path
     if (currentFilename) {
       handleDeleteModal(currentFilename, false);
+      setAutosave(false);
     } else {
       alert("No file is currently selected.");
     }
@@ -223,6 +227,10 @@ const FileBrowser = ({
     } else {
       alert("No file is currently selected.");
     }
+
+    if (currentFilename === file.path) {
+      setForcedSaveCurrent(!forceSaveCurrent);
+    }
   };
 
   const handleCloseRenameModal = () => {
@@ -233,11 +241,11 @@ const FileBrowser = ({
     if (renameEntry) {
       try {
         var response;
-        console.log(renameEntry)
+        console.log(renameEntry);
         if (renameEntry.is_dir) {
           response = await axios.get(
             `/bt_studio/rename_folder?project_name=${currentProjectname}&path=${renameEntry.path}&rename_to=${new_path}`,
-          );     
+          );
         } else {
           response = await axios.get(
             `/bt_studio/rename_file?project_name=${currentProjectname}&path=${renameEntry.path}&rename_to=${new_path}`,
@@ -247,6 +255,7 @@ const FileBrowser = ({
           setProjectChanges(true);
           fetchFileList(); // Update the file list
           if (currentFilename === renameEntry.path) {
+            setAutosave(false);
             setCurrentFilename(new_path); // Unset the current file
           }
         } else {
@@ -261,10 +270,19 @@ const FileBrowser = ({
     handleCloseRenameModal();
   };
 
-  const handleRenameCurrentFile = () => {
+  const handleRenameCurrentFile = async () => {
     if (currentFilename) {
-      const name = currentFilename.substring(currentFilename.lastIndexOf('/') + 1)
-      handleRename({is_dir: false, name:name , path: currentFilename, files: []});
+      setForcedSaveCurrent(!forceSaveCurrent);
+      const name = currentFilename.substring(
+        currentFilename.lastIndexOf("/") + 1,
+      );
+      handleRename({
+        is_dir: false,
+        name: name,
+        path: currentFilename,
+        files: [],
+      });
+      setAutosave(false);
     } else {
       alert("No file is currently selected.");
     }
