@@ -755,6 +755,36 @@ def rename_file(request):
 
 
 @api_view(["GET"])
+def rename_folder(request):
+
+    # Get the folder info
+    project_name = request.GET.get("project_name", None)
+    path = request.GET.get("path", None)
+    rename_path = request.GET.get("rename_to", None)
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, "code")
+    file_path = os.path.join(action_path, path)
+    new_path = os.path.join(action_path, rename_path)
+
+    if os.path.exists(file_path):
+        try:
+            os.rename(file_path, new_path)
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse(
+                {"success": False, "message": f"Error deleting file: {str(e)}"},
+                status=500,
+            )
+    else:
+        return JsonResponse(
+            {"success": False, "message": "File does not exist"}, status=404
+        )
+
+
+@api_view(["GET"])
 def delete_file(request):
 
     # Get the file info
@@ -780,7 +810,8 @@ def delete_file(request):
         return JsonResponse(
             {"success": False, "message": "File does not exist"}, status=404
         )
-    
+
+
 @api_view(["GET"])
 def delete_folder(request):
 

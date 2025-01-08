@@ -51,6 +51,7 @@ urlpatterns = [
     path("create_file/", views.create_file, name="create_file"),
     path("create_folder/", views.create_folder, name="create_folder"),
     path("rename_file/", views.rename_file, name="rename_file"),
+    path("rename_folder/", views.rename_folder, name="rename_folder"),
     path("delete_file/", views.delete_file, name="delete_file"),
     path("delete_folder/", views.delete_folder, name="delete_folder"),
     path("save_file/", views.save_file, name="save_file"),

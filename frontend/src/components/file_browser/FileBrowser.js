@@ -20,7 +20,7 @@ function getParentDir(file) {
     return file.path;
   }
 
-  var split_path = file.path.split("/"); // TODO: add for windows
+  var split_path = file.path.split("/");
   return split_path.slice(0, split_path.length - 1).join("/");
 }
 
@@ -232,14 +232,21 @@ const FileBrowser = ({
   const handleSubmitRenameModal = async (new_path) => {
     if (renameEntry) {
       try {
-        const response = await axios.get(
-          `/bt_studio/rename_file?project_name=${currentProjectname}&path=${renameEntry.path}&rename_to=${new_path}`,
-        );
+        var response;
+        console.log(renameEntry)
+        if (renameEntry.is_dir) {
+          response = await axios.get(
+            `/bt_studio/rename_folder?project_name=${currentProjectname}&path=${renameEntry.path}&rename_to=${new_path}`,
+          );     
+        } else {
+          response = await axios.get(
+            `/bt_studio/rename_file?project_name=${currentProjectname}&path=${renameEntry.path}&rename_to=${new_path}`,
+          );
+        }
         if (response.data.success) {
           setProjectChanges(true);
           fetchFileList(); // Update the file list
-          //TODO: if is a file what was renamed may need to change the path
-          if (currentFilename === renameEntry.name) {
+          if (currentFilename === renameEntry.path) {
             setCurrentFilename(new_path); // Unset the current file
           }
         } else {
@@ -255,10 +262,9 @@ const FileBrowser = ({
   };
 
   const handleRenameCurrentFile = () => {
-    //TODO: need to obtain all file data to do this
-    return;
     if (currentFilename) {
-      handleRename(currentFilename);
+      const name = currentFilename.substring(currentFilename.lastIndexOf('/') + 1)
+      handleRename({is_dir: false, name:name , path: currentFilename, files: []});
     } else {
       alert("No file is currently selected.");
     }
