@@ -37,9 +37,9 @@ urlpatterns = [
         name="get_subtree_structure",
     ),
     path(
-        "save_base_tree_configuration/",
-        views.save_base_tree_configuration,
-        name="save_base_tree_configuration",
+        "save_project_configuration/",
+        views.save_project_configuration,
+        name="save_project_configuration",
     ),
     path("get_subtree_list/", views.get_subtree_list, name="get_subtree_list"),
     path("create_subtree/", views.create_subtree, name="create_subtree"),

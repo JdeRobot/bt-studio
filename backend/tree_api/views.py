@@ -263,16 +263,16 @@ def get_subtree_structure(request):
 
 
 @api_view(["POST"])
-def save_base_tree_configuration(request):
+def save_project_configuration(request):
 
     project_name = request.data.get("project_name")
+    content = request.data.get("settings")
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     config_path = os.path.join(project_path, "config.json")
 
     try:
-        content = request.data.get("settings")
         if content is None:
             return Response(
                 {"success": False, "message": "Settings are missing"}, status=400
