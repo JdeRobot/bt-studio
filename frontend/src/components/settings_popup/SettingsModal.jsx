@@ -14,7 +14,7 @@ import Checkbox from "./options/Checkbox";
 
 import { OptionsContext } from "../options/Options";
 
-import {saveProjectConfig} from "./../../api_helper/TreeWrapper";
+import { saveProjectConfig } from "./../../api_helper/TreeWrapper";
 
 const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
   const [color, setColor] = useColor("rgb(128 0 128)");
@@ -40,7 +40,10 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
     });
 
     try {
-      await saveProjectConfig(currentProjectname, JSON.stringify(json_settings));
+      await saveProjectConfig(
+        currentProjectname,
+        JSON.stringify(json_settings),
+      );
     } catch (error) {
       console.error("Error saving config:", error);
     }
@@ -57,7 +60,9 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
       >
         <form
           onSubmit={onSubmit}
-          onReset={() => {handleCancel(settings)}}
+          onReset={() => {
+            handleCancel(settings);
+          }}
           style={{ display: "flex", flexDirection: "column", flexGrow: "1" }}
         >
           <div className="bt-modal-titlebar">
