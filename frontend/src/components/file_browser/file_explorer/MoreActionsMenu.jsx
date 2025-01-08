@@ -65,7 +65,7 @@ function MoreActionsMenu({
         <div
           className="bt-more-actions-menu-entry"
           onClick={() => {
-            onDelete(menuProps.file.path);
+            onDelete(menuProps.file.path, menuProps.file.is_dir);
             closeMenu();
           }}
         >

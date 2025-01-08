@@ -767,12 +767,36 @@ def delete_file(request):
     action_path = os.path.join(project_path, "code")
     file_path = os.path.join(action_path, path)
 
-    if os.path.exists(file_path):
+    if os.path.exists(file_path) and not os.path.isdir(file_path):
         try:
-            if os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-            else:
-                os.remove(file_path)
+            os.remove(file_path)
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse(
+                {"success": False, "message": f"Error deleting file: {str(e)}"},
+                status=500,
+            )
+    else:
+        return JsonResponse(
+            {"success": False, "message": "File does not exist"}, status=404
+        )
+    
+@api_view(["GET"])
+def delete_folder(request):
+
+    # Get the folder info
+    project_name = request.GET.get("project_name", None)
+    path = request.GET.get("path", None)
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, "code")
+    file_path = os.path.join(action_path, path)
+
+    if os.path.exists(file_path) and os.path.isdir(file_path):
+        try:
+            shutil.rmtree(file_path)
             return JsonResponse({"success": True})
         except Exception as e:
             return JsonResponse(

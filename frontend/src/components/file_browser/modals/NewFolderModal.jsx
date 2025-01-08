@@ -32,7 +32,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
           ).files;
         }
       }
-      
+
       if (search_list) {
         setSearchList(search_list);
       } else {

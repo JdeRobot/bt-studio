@@ -41,6 +41,7 @@ const FileBrowser = ({
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [deleteEntry, setDeleteEntry] = useState(null);
+  const [deleteType, setDeleteType] = useState(false);
   const [renameEntry, setRenameEntry] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState("");
 
@@ -123,9 +124,10 @@ const FileBrowser = ({
 
   ///////////////// DELETE FILES AND FOLDERS ///////////////////////////////////
 
-  const handleDeleteModal = (file_path) => {
+  const handleDeleteModal = (file_path, is_dir) => {
     if (file_path) {
       setDeleteEntry(file_path);
+      setDeleteType(is_dir);
       setDeleteModalOpen(true);
     } else {
       alert("No file is currently selected.");
@@ -135,15 +137,23 @@ const FileBrowser = ({
   const handleCloseDeleteModal = () => {
     setDeleteModalOpen(false);
     setDeleteEntry("");
+    setDeleteType(false);
   };
 
   const handleSubmitDeleteModal = async () => {
     //currentFilename === Absolute File path
     if (deleteEntry) {
       try {
-        const response = await axios.get(
-          `/bt_studio/delete_file?project_name=${currentProjectname}&path=${deleteEntry}`,
-        );
+        var response;
+        if (deleteType) {
+          response = await axios.get(
+            `/bt_studio/delete_folder?project_name=${currentProjectname}&path=${deleteEntry}`,
+          );
+        } else {
+          response = await axios.get(
+            `/bt_studio/delete_file?project_name=${currentProjectname}&path=${deleteEntry}`,
+          );
+        }
         if (response.data.success) {
           setProjectChanges(true);
           fetchFileList(); // Update the file list
@@ -168,7 +178,7 @@ const FileBrowser = ({
   const handleDeleteCurrentFile = () => {
     //currentFilename === Absolute File path
     if (currentFilename) {
-      handleDeleteModal(currentFilename);
+      handleDeleteModal(currentFilename, false);
     } else {
       alert("No file is currently selected.");
     }

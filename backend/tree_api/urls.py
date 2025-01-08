@@ -52,6 +52,7 @@ urlpatterns = [
     path("create_folder/", views.create_folder, name="create_folder"),
     path("rename_file/", views.rename_file, name="rename_file"),
     path("delete_file/", views.delete_file, name="delete_file"),
+    path("delete_folder/", views.delete_folder, name="delete_folder"),
     path("save_file/", views.save_file, name="save_file"),
     path("upload_code/", views.upload_code, name="upload_code"),
     # Actions Management
