@@ -166,6 +166,35 @@ const loadProjectConfig = async (
   }
 };
 
+const saveProjectConfig = async (currentProjectname: string, settings:string) => {
+  if (!currentProjectname) throw new Error("Current Project name is not set");
+  if (!settings) throw new Error("Settings content is null");
+
+  const apiUrl = "/bt_studio/save_project_configuration/";
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        project_name: currentProjectname,
+        settings: settings,
+      },
+      {
+        headers: {
+          //@ts-ignore Needed for compatibility with Unibotics
+          "X-CSRFToken": context.csrf,
+        },
+      }
+    );
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to create project."); // Response error
+    }
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 const getProjectGraph = async (currentProjectname: string) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
@@ -489,4 +518,5 @@ export {
   getActionsList,
   saveSubtree,
   createRoboticsBackendUniverse,
+  saveProjectConfig,
 };
