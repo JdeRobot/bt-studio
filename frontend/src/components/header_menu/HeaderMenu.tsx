@@ -248,6 +248,8 @@ const HeaderMenu = ({
       return;
     }
 
+    await onSaveProject();
+
     if (!appRunning) {
       try {
         // Get the blob from the API wrapper
