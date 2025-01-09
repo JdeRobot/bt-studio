@@ -6,6 +6,7 @@ import createEngine, {
   DefaultNodeModel,
   DiagramEngine,
   DiagramModel,
+  DiagramModelGenerics,
   NodeModel,
   ZoomCanvasAction,
 } from "@projectstorm/react-diagrams";
@@ -377,7 +378,7 @@ const DiagramEditor = memo(
     };
 
     // Link listener
-    const attachLinkListener = (model: any) => {
+    const attachLinkListener = (model: DiagramModel<DiagramModelGenerics>) => {
       model.registerListener({
         linksUpdated: (event: any) => {
           const { link, isCreated } = event;
@@ -406,8 +407,19 @@ const DiagramEditor = memo(
                   model.clearSelection();
                 }
               }
+              updateJsonState();
+              setDiagramEdited(true);
             },
           });
+          updateJsonState();
+          setDiagramEdited(true);
+        },
+      });
+    };
+
+    const attachNodesListener = (model: DiagramModel<DiagramModelGenerics>) => {
+      model.registerListener({
+        nodesUpdated: (event: any) => {
           updateJsonState();
           setDiagramEdited(true);
         },
@@ -523,6 +535,7 @@ const DiagramEditor = memo(
     // Deserialize and load the model
     model.current.deserializeModel(modelJson, engine.current);
     attachLinkListener(model.current);
+    attachNodesListener(model.current);
     engine.current.setModel(model.current);
 
     // After deserialization, attach listeners to each node
