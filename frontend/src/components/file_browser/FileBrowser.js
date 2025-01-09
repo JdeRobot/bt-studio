@@ -48,7 +48,7 @@ const FileBrowser = ({
   forceSaveCurrent,
   setForcedSaveCurrent,
   forceUpdate,
-  setSaveCurrentDiagram
+  setSaveCurrentDiagram,
 }) => {
   const [fileList, setFileList] = useState(null);
   const [isNewFileModalOpen, setNewFileModalOpen] = useState(false);
@@ -69,7 +69,7 @@ const FileBrowser = ({
   useEffect(() => {
     if (forceUpdate.value) {
       forceUpdate.callback(false);
-      fetchFileList()
+      fetchFileList();
     }
   }, [forceUpdate.value]);
 

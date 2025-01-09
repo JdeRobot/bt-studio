@@ -1,4 +1,4 @@
-import React, { MouseEventHandler} from "react";
+import React, { MouseEventHandler } from "react";
 import "./NodeMenu.css";
 
 import { ReactComponent as HelpIcon } from "./img/help.svg";
@@ -52,8 +52,8 @@ const NodeMenuMinimal = ({
             onClick={() => {
               openInNewTab(
                 new URL(
-                  "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
-                )
+                  "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
+                ),
               );
             }}
             title="Help"
@@ -67,7 +67,7 @@ const NodeMenuMinimal = ({
               changeView(
                 view === TreeViewType.Editor
                   ? TreeViewType.Visualizer
-                  : TreeViewType.Editor
+                  : TreeViewType.Editor,
               )
             }
             title="Change view"

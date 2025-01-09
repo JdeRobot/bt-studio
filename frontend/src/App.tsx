@@ -26,7 +26,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
-    {}
+    {},
   );
   const [saveCurrentDiagram, setSaveCurrentDiagram] = useState<boolean>(false);
   const [updateFileExplorer, setUpdateFileExplorer] = useState<boolean>(false);

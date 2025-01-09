@@ -81,7 +81,7 @@ const NodeMenu = ({
   changeView,
   setGoBack,
   subTreeName,
-  updateFileExplorer
+  updateFileExplorer,
 }: {
   projectName: string;
   onAddNode: Function;
@@ -111,7 +111,7 @@ const NodeMenu = ({
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
-    label: string
+    label: string,
   ) => {
     setAnchorEl(event.currentTarget);
     setMenuLabel(label);
@@ -125,7 +125,7 @@ const NodeMenu = ({
   const handleSelect = (nodeName: string) => {
     console.log("Selected: " + nodeName);
     const nodeType = Object.keys(NODE_MENU_ITEMS).find((key) =>
-      NODE_MENU_ITEMS[key].includes(nodeName)
+      NODE_MENU_ITEMS[key].includes(nodeName),
     );
     if (nodeType) {
       console.log("Node Type: " + nodeType);
@@ -152,7 +152,7 @@ const NodeMenu = ({
   const handleCloseCreateFolder = () => {
     setNewSubtreeModalOpen(false);
     var subtree_input = document.getElementById(
-      "subTreeName"
+      "subTreeName",
     ) as HTMLInputElement;
     if (subtree_input) {
       subtree_input.value = "";
@@ -259,8 +259,8 @@ const NodeMenu = ({
             onClick={() => {
               openInNewTab(
                 new URL(
-                  "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
-                )
+                  "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
+                ),
               );
             }}
             title="Help"
@@ -274,7 +274,7 @@ const NodeMenu = ({
               changeView(
                 view === TreeViewType.Editor
                   ? TreeViewType.Visualizer
-                  : TreeViewType.Editor
+                  : TreeViewType.Editor,
               )
             }
             title="Change view"

@@ -51,7 +51,7 @@ const TreeEditor = memo(
     subTreeName,
     setGoBack,
     subTreeStructure,
-    updateFileExplorer
+    updateFileExplorer,
   }: {
     modelJson: any;
     setResultJson: Function;

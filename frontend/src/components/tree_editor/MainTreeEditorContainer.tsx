@@ -52,7 +52,7 @@ const MainTreeEditorContainer = ({
     if (!json) {
       return;
     }
-    
+
     // If in subtree save subtree, else save base tree
     if (subtree) {
       await saveSubtree(json, projectName, subtree);
