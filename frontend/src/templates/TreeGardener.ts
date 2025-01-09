@@ -1,5 +1,7 @@
 import JSZip from "jszip";
 
+// NOTE: Make sure to escape \ character
+
 const treeTools =
 `import re
 import py_trees
@@ -77,7 +79,7 @@ def ascii_tree_to_json(tree):
     json_str = '"tree":{'
 
     # Remove escape chars
-    ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+    ansi_escape = re.compile(r"\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])")
     tree = ansi_escape.sub("", tree)
 
     for line in iter(tree.splitlines()):
@@ -109,7 +111,7 @@ def ascii_blackboard_to_json(blackboard):
     json_str = '"blackboard":{'
     do_append_coma = False
 
-    ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+    ansi_escape = re.compile(r"\\\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])")
     blackboard = ansi_escape.sub("", blackboard)
 
     for line in iter(blackboard.splitlines()):
