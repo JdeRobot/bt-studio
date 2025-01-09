@@ -946,11 +946,7 @@ def save_file(request):
 @api_view(["POST"])
 def generate_local_app(request):
     # Check if 'app_name', 'main_tree_graph', and 'bt_order' are in the request data
-    if (
-        "app_name" not in request.data
-        or "tree_graph" not in request.data
-        or "bt_order" not in request.data
-    ):
+    if "app_name" not in request.data or "bt_order" not in request.data:
         return Response(
             {"success": False, "message": "Missing required parameters"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -958,22 +954,31 @@ def generate_local_app(request):
 
     # Get the request parameters
     app_name = request.data.get("app_name")
-    main_tree_graph = request.data.get("tree_graph")
     bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, app_name)
     action_path = os.path.join(project_path, "code/actions")
-
+    tree_path = os.path.join(project_path, "code/trees/main.json")
     subtree_path = os.path.join(project_path, "code/trees/subtrees/json")
 
     subtrees = []
     actions = []
 
     try:
+
+        # Check if the project exists
+        if os.path.exists(tree_path):
+            with open(tree_path, "r") as f:
+                graph_data = f.read()
+        else:
+            return Response(
+                {"success": False, "message": "Main tree not found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         # 1. Generate a basic tree from the JSON definition
-        main_tree = json_translator.translate_raw(main_tree_graph, bt_order)
+        main_tree = json_translator.translate_raw(graph_data, bt_order)
 
         # 2. Get all possible subtrees name and content
         try:
@@ -1028,7 +1033,6 @@ def generate_dockerized_app(request):
     # Check if 'app_name', 'tree_graph', and 'bt_order' are in the request data
     if (
         "app_name" not in request.data
-        or "tree_graph" not in request.data
         or "bt_order" not in request.data
     ):
         return Response(
@@ -1038,22 +1042,31 @@ def generate_dockerized_app(request):
 
     # Get the request parameters
     app_name = request.data.get("app_name")
-    main_tree_graph = request.data.get("tree_graph")
     bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, app_name)
     action_path = os.path.join(project_path, "code/actions")
-
+    tree_path = os.path.join(project_path, "code/trees/main.json")
     subtree_path = os.path.join(project_path, "code/trees/subtrees/json")
 
     subtrees = []
     actions = []
 
     try:
+
+        # Check if the project exists
+        if os.path.exists(tree_path):
+            with open(tree_path, "r") as f:
+                graph_data = f.read()
+        else:
+            return Response(
+                {"success": False, "message": "Main tree not found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         # 1. Generate a basic tree from the JSON definition
-        main_tree = json_translator.translate_raw(main_tree_graph, bt_order)
+        main_tree = json_translator.translate_raw(graph_data, bt_order)
 
         # 2. Get all possible subtrees name and content
         try:

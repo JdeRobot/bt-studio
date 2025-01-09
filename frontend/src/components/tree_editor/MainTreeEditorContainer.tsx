@@ -15,13 +15,13 @@ import { OptionsContext } from "../options/Options";
 const MainTreeEditorContainer = ({
   projectName,
   setProjectEdited,
-  setGlobalJson,
-  modelJson,
+  saveCurrentDiagram,
+  setSaveCurrentDiagram,
 }: {
   projectName: string;
   setProjectEdited: React.Dispatch<React.SetStateAction<boolean>>;
-  setGlobalJson: Function;
-  modelJson: any;
+  saveCurrentDiagram: boolean;
+  setSaveCurrentDiagram: Function;
 }) => {
   const settings = React.useContext(OptionsContext);
 
@@ -55,6 +55,7 @@ const MainTreeEditorContainer = ({
     }
     setProjectEdited(false);
   };
+
   // Load
   const load = async () => {
     try {
@@ -122,15 +123,18 @@ const MainTreeEditorContainer = ({
   // EFFECTS
 
   useEffect(() => {
-    // When no subtree is selected, set the global json
-    if (!subTreeName) {
-      setGlobalJson(resultJson);
+    if (saveCurrentDiagram) {
+      save(resultJson, subTreeName);
+      setSaveCurrentDiagram(false);
     }
-  }, [resultJson]);
+  }, [saveCurrentDiagram]);
 
   useEffect(() => {
-    // We can go back again now
+    // Reset everything
     setWentBack(false);
+    setGoBack(false);
+    setTreeHierarchy([]);
+    setSubTreeName("");
 
     // Fetch the new subtree or project graph
     load();

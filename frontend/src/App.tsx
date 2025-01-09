@@ -28,7 +28,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
     {},
   );
-  const [modelJson, setModelJson] = useState<string>("");
+  const [saveCurrentDiagram, setSaveCurrentDiagram] = useState<boolean>(false);
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
   const [projectChanges, setProjectChanges] = useState<boolean>(false);
   const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
@@ -158,12 +158,11 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         setCurrentProjectname={setCurrentProjectname}
         currentUniverseName={currentUniverseName}
         setCurrentUniverseName={setCurrentUniverseName}
-        modelJson={modelJson}
+        setSaveCurrentDiagram={setSaveCurrentDiagram}
         projectChanges={projectChanges}
         setProjectChanges={setProjectChanges}
         gazeboEnabled={gazeboEnabled}
         setGazeboEnabled={setGazeboEnabled}
-        // onSetShowExecStatus={onSetShowExecStatus}
         manager={manager}
         showVNCViewer={showVNCViewer}
         isUnibotics={isUnibotics}
@@ -244,8 +243,8 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
             <MainTreeEditorContainer
               projectName={currentProjectname}
               setProjectEdited={setProjectChanges}
-              setGlobalJson={setModelJson}
-              modelJson={modelJson}
+              saveCurrentDiagram={saveCurrentDiagram}
+              setSaveCurrentDiagram={setSaveCurrentDiagram}
             />
           ) : (
             <p>Loading...</p>

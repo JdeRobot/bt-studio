@@ -405,11 +405,9 @@ const getCustomUniverseZip = async (
 // App management
 
 const generateLocalApp = async (
-  modelJson: Object,
   currentProjectname: string,
   btOrder: string
 ) => {
-  if (!modelJson) throw new Error("Tree JSON is empty!");
   if (!currentProjectname) throw new Error("Current Project name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
 
@@ -419,7 +417,6 @@ const generateLocalApp = async (
       apiUrl,
       {
         app_name: currentProjectname,
-        tree_graph: JSON.stringify(modelJson),
         bt_order: btOrder,
       },
       axiosExtra
@@ -437,11 +434,9 @@ const generateLocalApp = async (
 };
 
 const generateDockerizedApp = async (
-  modelJson: Object,
   currentProjectname: string,
   btOrder: string
 ) => {
-  if (!modelJson) throw new Error("Tree JSON is empty!");
   if (!currentProjectname) throw new Error("Current Project name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
 
@@ -451,7 +446,6 @@ const generateDockerizedApp = async (
       apiUrl,
       {
         app_name: currentProjectname,
-        tree_graph: JSON.stringify(modelJson),
         bt_order: btOrder,
       },
       axiosExtra
@@ -945,39 +939,39 @@ const getSubtreeStructure = async (projectName:string, subtreeName:string,  btOr
 
 // Named export
 export {
-  createProject,
-  deleteProject,
-  saveBaseTree,
-  saveFile,
-  getFile,
-  loadProjectConfig,
-  getProjectGraph,
-  generateLocalApp,
-  generateDockerizedApp,
-  getUniverseConfig,
-  getRoboticsBackendUniversePath,
-  getCustomUniverseZip,
-  createSubtree,
-  getSubtreeList,
-  getSubtree,
-  getFileList,
-  getActionsList,
-  saveSubtree,
-  createRoboticsBackendUniverse,
-  deleteUniverse,
-  saveProjectConfig,
-  uploadFile,
   createAction,
   createFile,
   createFolder,
-  renameFile,
-  renameFolder,
+  createProject,
+  createRoboticsBackendUniverse,
+  createSubtree,
   deleteFile,
   deleteFolder,
-  uploadUniverse,
+  deleteProject,
+  deleteUniverse,
+  generateDockerizedApp,
+  generateLocalApp,
+  getActionsList,
+  getCustomUniverseZip,
+  getFile,
+  getFileList,
+  getProjectGraph,
+  getRoboticsBackendUniversePath,
+  getSubtree,
+  getSubtreeList,
+  getSubtreeStructure,
+  getTreeStructure,
+  getUniverseConfig,
   listDockerUniverses,
   listProjects,
   listUniverses,
-  getSubtreeStructure,
-  getTreeStructure
+  loadProjectConfig,
+  renameFile,
+  renameFolder,
+  saveBaseTree,
+  saveFile,
+  saveProjectConfig,
+  saveSubtree,
+  uploadFile,
+  uploadUniverse,
 };

@@ -38,12 +38,11 @@ const HeaderMenu = ({
   setCurrentProjectname,
   currentUniverseName,
   setCurrentUniverseName,
-  modelJson,
+  setSaveCurrentDiagram,
   projectChanges,
   setProjectChanges,
   gazeboEnabled,
   setGazeboEnabled,
-  // onSetShowExecStatus,
   manager,
   showVNCViewer,
   isUnibotics,
@@ -52,7 +51,7 @@ const HeaderMenu = ({
   setCurrentProjectname: Function;
   currentUniverseName: string;
   setCurrentUniverseName: Function;
-  modelJson: string;
+  setSaveCurrentDiagram: Function;
   projectChanges: boolean;
   setProjectChanges: Function;
   gazeboEnabled: boolean;
@@ -183,7 +182,8 @@ const HeaderMenu = ({
       return;
     }
     try {
-      await saveBaseTree(modelJson, currentProjectname);
+      //TODO: check if possible consurrency problems
+      setSaveCurrentDiagram(true);
       setProjectChanges(false);
       console.log("Project saved");
     } catch (error) {
@@ -197,9 +197,10 @@ const HeaderMenu = ({
 
   const onDownloadApp = async () => {
     try {
+      await onSaveProject();
+
       // Get the blob from the API wrapper
       const appFiles = await generateLocalApp(
-        modelJson,
         currentProjectname,
         settings.btOrder.value,
       );
@@ -254,7 +255,6 @@ const HeaderMenu = ({
       try {
         // Get the blob from the API wrapper
         const appFiles = await generateDockerizedApp(
-          modelJson,
           currentProjectname,
           settings.btOrder.value,
         );
