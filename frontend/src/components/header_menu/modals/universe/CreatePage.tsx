@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef, FormEventHandler } from "react";
 import "./CreatePage.css";
 import { ReactComponent as BackIcon } from "../../../Modal/img/back.svg";
 import { ReactComponent as CloseIcon } from "../../../Modal/img/close.svg";
-import axios from "axios";
-import { createRoboticsBackendUniverse } from "../../../../api_helper/TreeWrapper";
+import {
+  createRoboticsBackendUniverse,
+  listDockerUniverses,
+} from "../../../../api_helper/TreeWrapper";
 
 const initialUniverseData = {
   universeName: "",
@@ -31,9 +33,8 @@ const CreatePage = ({
 
   const loadUniverseList = async () => {
     try {
-      const listApiUrl = `/bt_studio/list_docker_universes`;
-      const response = await axios.get(listApiUrl);
-      setUniversesDocker(response.data.universes);
+      const response = await listDockerUniverses();
+      setUniversesDocker(response);
     } catch (error) {
       console.error("Error while fetching universes list:", error);
       openError(`An error occurred while fetching the universes list`);

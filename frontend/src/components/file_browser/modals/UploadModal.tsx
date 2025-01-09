@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
-import JSZip from "jszip";
 
 import "./UploadModal.css";
 import Modal from "../../Modal/Modal";

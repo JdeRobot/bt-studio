@@ -25,10 +25,15 @@ import xml.etree.ElementTree as ET
 # PROJECT MANAGEMENT
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def create_project(request):
+    if "project_name" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    project_name = request.GET.get("project_name")
+    project_name = request.data.get("project_name")
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     action_path = os.path.join(project_path, "code/actions")
@@ -77,9 +82,14 @@ def create_project(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def delete_project(request):
-    project_name = request.GET.get("project_name")
+    if "project_name" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    project_name = request.data.get("project_name")
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
 
@@ -114,7 +124,11 @@ def get_project_list(request):
 
 @api_view(["POST"])
 def save_base_tree(request):
-
+    if "project_name" not in request.data or "graph_json" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     # Get the app name and the graph
     project_name = request.data.get("project_name")
     graph_json = request.data.get("graph_json")
@@ -264,6 +278,11 @@ def get_subtree_structure(request):
 
 @api_view(["POST"])
 def save_project_configuration(request):
+    if "project_name" not in request.data or "settings" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.data.get("project_name")
     content = request.data.get("settings")
@@ -293,6 +312,11 @@ def save_project_configuration(request):
 
 @api_view(["POST"])
 def create_subtree(request):
+    if "project_name" not in request.data or "subtree_name" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.data.get("project_name")
     subtree_name = request.data.get("subtree_name")
@@ -472,10 +496,15 @@ def get_subtree_list(request):
 # UNIVERSE MANAGEMENT
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def delete_universe(request):
-    project_name = request.GET.get("project_name")
-    universe_name = request.GET.get("universe_name")
+    if "project_name" not in request.data or "universe_name" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    project_name = request.data.get("project_name")
+    universe_name = request.data.get("universe_name")
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
@@ -552,17 +581,6 @@ def get_universe_configuration(request):
         return Response({"success": False, "message": "File not found"}, status=404)
 
 
-@api_view(["GET"])
-def import_universe_from_zip(request):
-
-    project_name = request.GET.get("project_name")
-    zip_file = request.GET.get("zip_file")
-
-    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
-    project_path = os.path.join(folder_path, project_name)
-    universes_path = os.path.join(project_path, "universes/")
-
-
 # FILE MANAGEMENT
 
 
@@ -637,13 +655,21 @@ def get_file(request):
         return Response({"error": "Filename parameter is missing"}, status=400)
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def create_action(request):
-
+    if (
+        "project_name" not in request.data
+        or "template" not in request.data
+        or "filename" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     # Get the file info
-    project_name = request.GET.get("project_name", None)
-    filename = request.GET.get("filename", None)
-    template = request.GET.get("template", None)
+    project_name = request.data.get("project_name")
+    filename = request.data.get("filename")
+    template = request.data.get("template")
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -671,13 +697,21 @@ def create_action(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def create_file(request):
-
+    if (
+        "project_name" not in request.data
+        or "location" not in request.data
+        or "file_name" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     # Get the file info
-    project_name = request.GET.get("project_name", None)
-    location = request.GET.get("location", None)
-    filename = request.GET.get("file_name", None)
+    project_name = request.data.get("project_name")
+    location = request.data.get("location")
+    filename = request.data.get("file_name")
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -696,13 +730,21 @@ def create_file(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def create_folder(request):
-
+    if (
+        "project_name" not in request.data
+        or "location" not in request.data
+        or "folder_name" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     # Get the file info
-    project_name = request.GET.get("project_name", None)
-    location = request.GET.get("location", None)
-    folder_name = request.GET.get("folder_name", None)
+    project_name = request.data.get("project_name")
+    location = request.data.get("location")
+    folder_name = request.data.get("folder_name")
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -724,13 +766,21 @@ def create_folder(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def rename_file(request):
-
+    if (
+        "project_name" not in request.data
+        or "path" not in request.data
+        or "rename_to" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     # Get the file info
-    project_name = request.GET.get("project_name", None)
-    path = request.GET.get("path", None)
-    rename_path = request.GET.get("rename_to", None)
+    project_name = request.data.get("project_name")
+    path = request.data.get("path")
+    rename_path = request.data.get("rename_to")
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -754,13 +804,21 @@ def rename_file(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def rename_folder(request):
-
+    if (
+        "project_name" not in request.data
+        or "path" not in request.data
+        or "rename_to" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     # Get the folder info
-    project_name = request.GET.get("project_name", None)
-    path = request.GET.get("path", None)
-    rename_path = request.GET.get("rename_to", None)
+    project_name = request.data.get("project_name")
+    path = request.data.get("path")
+    rename_path = request.data.get("rename_to")
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -784,12 +842,17 @@ def rename_folder(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def delete_file(request):
+    if "project_name" not in request.data or "path" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     # Get the file info
-    project_name = request.GET.get("project_name", None)
-    path = request.GET.get("path", None)
+    project_name = request.data.get("project_name")
+    path = request.data.get("path")
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -812,12 +875,17 @@ def delete_file(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def delete_folder(request):
+    if "project_name" not in request.data or "path" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     # Get the folder info
-    project_name = request.GET.get("project_name", None)
-    path = request.GET.get("path", None)
+    project_name = request.data.get("project_name")
+    path = request.data.get("path")
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -842,6 +910,15 @@ def delete_folder(request):
 
 @api_view(["POST"])
 def save_file(request):
+    if (
+        "project_name" not in request.data
+        or "filename" not in request.data
+        or "content" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.data.get("project_name")
     filename = request.data.get("filename")
@@ -866,13 +943,23 @@ def save_file(request):
         return Response({"success": False, "message": str(e)}, status=400)
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def generate_local_app(request):
+    # Check if 'app_name', 'main_tree_graph', and 'bt_order' are in the request data
+    if (
+        "app_name" not in request.data
+        or "tree_graph" not in request.data
+        or "bt_order" not in request.data
+    ):
+        return Response(
+            {"success": False, "message": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     # Get the request parameters
-    app_name = request.GET.get("app_name", None)
-    main_tree_graph = request.GET.get("tree_graph", None)
-    bt_order = request.GET.get("bt_order", None)
+    app_name = request.data.get("app_name")
+    main_tree_graph = request.data.get("tree_graph")
+    bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -936,13 +1023,23 @@ def generate_local_app(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def generate_dockerized_app(request):
+    # Check if 'app_name', 'tree_graph', and 'bt_order' are in the request data
+    if (
+        "app_name" not in request.data
+        or "tree_graph" not in request.data
+        or "bt_order" not in request.data
+    ):
+        return Response(
+            {"success": False, "message": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     # Get the request parameters
-    app_name = request.GET.get("app_name", None)
-    main_tree_graph = request.GET.get("tree_graph", None)
-    bt_order = request.GET.get("bt_order", None)
+    app_name = request.data.get("app_name")
+    main_tree_graph = request.data.get("tree_graph")
+    bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -1074,9 +1171,9 @@ def upload_universe(request):
         )
 
     # Get the name and the zip file from the request
-    universe_name = request.data["universe_name"]
-    app_name = request.data["app_name"]
-    zip_file = request.data["zip_file"]
+    universe_name = request.data.get("universe_name")
+    app_name = request.data.get("app_name")
+    zip_file = request.data.get("zip_file")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -1151,9 +1248,9 @@ def add_docker_universe(request):
         )
 
     # Get the name and the id file from the request
-    universe_name = request.data["universe_name"]
-    app_name = request.data["app_name"]
-    id = request.data["id"]
+    universe_name = request.data.get("universe_name")
+    app_name = request.data.get("app_name")
+    id = request.data.get("id")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -1195,10 +1292,10 @@ def upload_code(request):
         )
 
     # Get the name and the zip file from the request
-    project_name = request.data["project_name"]
-    file_name = request.data["file_name"]
-    location = request.data["location"]
-    content = request.data["content"]
+    project_name = request.data.get("project_name")
+    file_name = request.data.get("file_name")
+    location = request.data.get("location")
+    content = request.data.get("content")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")

@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import axios from "axios";
 import { useState, useEffect } from "react";
 import TreeEditor from "./TreeEditor";
 import {
@@ -7,6 +6,8 @@ import {
   getSubtree,
   saveSubtree,
   saveBaseTree,
+  getSubtreeStructure,
+  getTreeStructure,
 } from "../../api_helper/TreeWrapper";
 import { TreeViewType, findSubtree } from "../helper/TreeEditorHelper";
 import { OptionsContext } from "../options/Options";
@@ -80,50 +81,32 @@ const MainTreeEditorContainer = ({
 
   // HELPERS
 
-  const getSubtreeStructure = async (name: string) => {
-    try {
-      const response = await axios.get("/bt_studio/get_subtree_structure/", {
-        params: {
-          project_name: projectName,
-          subtree_name: name,
-          bt_order: settings.btOrder.value,
-        },
-      });
-      if (response.data.success) {
-        return response.data.tree_structure;
-      }
-    } catch (error) {
-      console.error("Error fetching graph:", error);
-    }
-  };
-
   const getBTTree = async () => {
     try {
-      const response = await axios.get("/bt_studio/get_tree_structure/", {
-        params: {
-          project_name: projectName,
-          bt_order: settings.btOrder.value,
-        },
-      });
-      if (response.data.success) {
-        // Navigate until root using baseTree
-        var path: number[] = [];
-        var tree_structure = response.data.tree_structure;
-        for (let index = 0; index < treeHierarchy.length; index++) {
-          var nextSubtree = treeHierarchy[index];
-          if (nextSubtree) {
-            var new_path = findSubtree(tree_structure, nextSubtree);
-            if (new_path) {
-              path = path.concat(new_path); //TODO: check if its not new_path.concat(path)
-            }
-            tree_structure = await getSubtreeStructure(nextSubtree);
+      var tree_structure = await getTreeStructure(
+        projectName,
+        settings.btOrder.value,
+      );
+      // Navigate until root using baseTree
+      var path: number[] = [];
+      for (let index = 0; index < treeHierarchy.length; index++) {
+        var nextSubtree = treeHierarchy[index];
+        if (nextSubtree) {
+          var new_path = findSubtree(tree_structure, nextSubtree);
+          if (new_path) {
+            path = path.concat(new_path); //TODO: check if its not new_path.concat(path)
           }
-          console.log("TreePath", path);
+          tree_structure = await getSubtreeStructure(
+            projectName,
+            nextSubtree,
+            settings.btOrder.value,
+          );
         }
-
-        setTreeStructure(tree_structure);
-        setSubTreeStructure(path);
+        console.log("TreePath", path);
       }
+
+      setTreeStructure(tree_structure);
+      setSubTreeStructure(path);
     } catch (error) {
       console.error("Error fetching graph:", error);
     }

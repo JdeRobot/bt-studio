@@ -4,7 +4,7 @@ import Modal from "../../Modal/Modal";
 import { ReactComponent as BackIcon } from "../../Modal/img/back.svg";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 import { ReactComponent as DeleteIcon } from "../../tree_editor/img/delete.svg";
-import axios from "axios";
+import { deleteProject, listProjects } from "../../../api_helper/TreeWrapper";
 
 const initialProjectData = {
   projectName: "",
@@ -34,10 +34,9 @@ const ProjectModal = ({
   const [formState, setFormState] = useState(initialProjectData);
 
   const getProjects = async () => {
-    const listApiUrl = `/bt_studio/get_project_list`;
     try {
-      const response = await axios.get(listApiUrl);
-      setExistingProjects(response.data.project_list);
+      const response = await listProjects();
+      setExistingProjects(response);
       setFormState(initialProjectData);
     } catch (error) {
       console.error("Error while fetching project list:", error);
@@ -79,20 +78,16 @@ const ProjectModal = ({
     onClose();
   };
 
-  const deleteProject = async (project: string) => {
+  const deleteProjectFunc = async (project: string) => {
     if (currentProject === project) {
       //TODO: change this to change project before deleting
       return;
     }
-    const apiUrl = `/bt_studio/delete_project?project_name=${encodeURIComponent(project)}`;
-    const listApiUrl = `/bt_studio/get_project_list`;
 
     // Delete and update
-    const response = await axios.get(apiUrl);
     try {
-      if (response.data.success) {
-        await getProjects();
-      }
+      await deleteProject(project);
+      await getProjects();
       console.log("Project deleted successfully");
     } catch (error) {
       console.error("Error while fetching project list:", error);
@@ -141,7 +136,7 @@ const ProjectModal = ({
                         className="bt-project-entry-delete bt-icon"
                         title="Delete"
                         onClick={(e) => {
-                          deleteProject(project[1]);
+                          deleteProjectFunc(project[1]);
                           e.stopPropagation();
                         }}
                         fill={"var(--icon)"}

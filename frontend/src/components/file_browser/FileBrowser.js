@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import JSZip from "jszip";
-import axios from "axios";
 import "./FileBrowser.css";
 import NewFileModal from "./modals/NewFileModal.jsx";
 import RenameModal from "./modals/RenameModal.jsx";
@@ -9,7 +8,17 @@ import UploadModal from "./modals/UploadModal.tsx";
 import DeleteModal from "./modals/DeleteModal.jsx";
 import FileExplorer from "./file_explorer/FileExplorer.jsx";
 
-import { getFile, getFileList } from "./../../api_helper/TreeWrapper";
+import {
+  getFile,
+  getFileList,
+  createAction,
+  createFile,
+  createFolder,
+  renameFile,
+  renameFolder,
+  deleteFile,
+  deleteFolder,
+} from "./../../api_helper/TreeWrapper";
 
 import { ReactComponent as AddIcon } from "./img/add.svg";
 import { ReactComponent as AddFolderIcon } from "./img/add_folder.svg";
@@ -100,22 +109,18 @@ const FileBrowser = ({
         let response;
         switch (data.fileType) {
           case "actions":
-            response = await axios.get(
-              `/bt_studio/create_action?project_name=${currentProjectname}&filename=${data.fileName}.py&template=${data.templateType}`,
+            await createAction(
+              currentProjectname,
+              data.fileName,
+              data.templateType,
             );
             break;
           default:
-            response = await axios.get(
-              `/bt_studio/create_file?project_name=${currentProjectname}&location=${location}&file_name=${data.fileName}`,
-            );
+            await createFile(currentProjectname, data.fileName, location);
             break;
         }
-        if (response.data.success) {
-          setProjectChanges(true);
-          fetchFileList(); // Update the file list
-        } else {
-          alert(response.data.message);
-        }
+        setProjectChanges(true);
+        fetchFileList(); // Update the file list
       } catch (error) {
         console.error("Error creating file:", error);
       }
@@ -144,27 +149,20 @@ const FileBrowser = ({
     //currentFilename === Absolute File path
     if (deleteEntry) {
       try {
-        var response;
         if (deleteType) {
-          response = await axios.get(
-            `/bt_studio/delete_folder?project_name=${currentProjectname}&path=${deleteEntry}`,
-          );
+          await deleteFolder(currentProjectname, deleteEntry);
         } else {
-          response = await axios.get(
-            `/bt_studio/delete_file?project_name=${currentProjectname}&path=${deleteEntry}`,
-          );
+          await deleteFile(currentProjectname, deleteEntry);
         }
-        if (response.data.success) {
-          setProjectChanges(true);
-          fetchFileList(); // Update the file list
-          if (currentFilename === deleteEntry) {
-            setCurrentFilename(""); // Unset the current file
-          }
-          if (selectedEntry.path === deleteEntry) {
-            setSelectedEntry(null);
-          }
-        } else {
-          alert(response.data.message);
+
+        setProjectChanges(true);
+        fetchFileList(); // Update the file list
+
+        if (currentFilename === deleteEntry) {
+          setCurrentFilename(""); // Unset the current file
+        }
+        if (selectedEntry.path === deleteEntry) {
+          setSelectedEntry(null);
         }
       } catch (error) {
         console.error("Error deleting file:", error);
@@ -200,15 +198,9 @@ const FileBrowser = ({
   const handleCreateFolderSubmit = async (location, folder_name) => {
     if (folder_name !== "") {
       try {
-        const response = await axios.get(
-          `/bt_studio/create_folder?project_name=${currentProjectname}&location=${location}&folder_name=${folder_name}`,
-        );
-        if (response.data.success) {
-          setProjectChanges(true);
-          fetchFileList(); // Update the file list
-        } else {
-          alert(response.data.message);
-        }
+        await createFolder(currentProjectname, folder_name, location);
+        setProjectChanges(true);
+        fetchFileList(); // Update the file list
       } catch (error) {
         console.error("Error creating folder:", error);
       }
@@ -237,26 +229,19 @@ const FileBrowser = ({
   const handleSubmitRenameModal = async (new_path) => {
     if (renameEntry) {
       try {
-        var response;
         console.log(renameEntry);
         if (renameEntry.is_dir) {
-          response = await axios.get(
-            `/bt_studio/rename_folder?project_name=${currentProjectname}&path=${renameEntry.path}&rename_to=${new_path}`,
-          );
+          await renameFolder(currentProjectname, renameEntry.path, new_path);
         } else {
-          response = await axios.get(
-            `/bt_studio/rename_file?project_name=${currentProjectname}&path=${renameEntry.path}&rename_to=${new_path}`,
-          );
+          await renameFile(currentProjectname, renameEntry.path, new_path);
         }
-        if (response.data.success) {
-          setProjectChanges(true);
-          fetchFileList(); // Update the file list
-          if (currentFilename === renameEntry.path) {
-            setAutosave(false);
-            setCurrentFilename(new_path); // Unset the current file
-          }
-        } else {
-          alert(response.data.message);
+
+        setProjectChanges(true);
+        fetchFileList(); // Update the file list
+
+        if (currentFilename === renameEntry.path) {
+          setAutosave(false);
+          setCurrentFilename(new_path); // Unset the current file
         }
       } catch (error) {
         console.error("Error deleting file:", error);

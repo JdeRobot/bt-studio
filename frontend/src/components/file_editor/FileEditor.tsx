@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import AceEditor from "react-ace";
-import axios from "axios";
 import "ace-builds/src-noconflict/mode-python";
 import "ace-builds/src-noconflict/theme-monokai";
 import "./FileEditor.css";

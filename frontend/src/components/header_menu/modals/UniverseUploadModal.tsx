@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./UniverseUploadModal.css";
 import Modal from "../../Modal/Modal";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
-import axios from "axios";
+import { uploadUniverse } from "../../../api_helper/TreeWrapper";
 
 const initialProjectData = {
   projectName: "",
@@ -79,24 +79,9 @@ const UniverseUploadModal = ({
     }
 
     try {
-      const response = await axios.post(
-        "/bt_studio/upload_universe/",
-        {
-          universe_name: universeName,
-          zip_file: uploadedUniverse,
-          app_name: currentProject,
-        },
-        {
-          headers: {
-            //@ts-ignore Needed for compatibility with Unibotics
-            "X-CSRFToken": context.csrf,
-          },
-        },
-      );
-      if (response.data.success) {
-        console.log("Universe saved successfully.");
-        setUniverseAdded(true);
-      }
+      await uploadUniverse(currentProject, universeName, uploadedUniverse);
+      console.log("Universe saved successfully.");
+      setUniverseAdded(true);
     } catch (error) {
       console.error("Axios Error:", error);
     }

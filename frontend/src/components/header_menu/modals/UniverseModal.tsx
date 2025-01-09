@@ -4,8 +4,8 @@ import Modal from "../../Modal/Modal";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 import { ReactComponent as DeleteIcon } from "../../tree_editor/img/delete.svg";
 import CreatePage from "./universe/CreatePage";
-import axios from "axios";
 import UniverseUploadModal from "./UniverseUploadModal";
+import { deleteUniverse, listUniverses } from "../../../api_helper/TreeWrapper";
 
 const UniverseModal = ({
   onSubmit,
@@ -28,9 +28,8 @@ const UniverseModal = ({
 
   const loadUniverseList = async () => {
     try {
-      const listApiUrl = `/bt_studio/get_universes_list?project_name=${currentProject}`;
-      const response = await axios.get(listApiUrl);
-      setUniversesProjects(response.data.universes_list);
+      const response = await listUniverses(currentProject);
+      setUniversesProjects(response);
       setUniverseAdded(false);
     } catch (error) {
       console.error("Error while fetching universes list:", error);
@@ -59,14 +58,11 @@ const UniverseModal = ({
     }
   };
 
-  const deleteUniverse = async (universe_name: string) => {
+  const deleteUniverseFunc = async (universe_name: string) => {
     try {
-      const apiUrl = `/bt_studio/delete_universe?project_name=${currentProject}&universe_name=${universe_name}`;
-      const response = await axios.get(apiUrl);
-      if (response.data.success) {
-        loadUniverseList();
-        console.log("Universe deleted successfully");
-      }
+      await deleteUniverse(currentProject, universe_name);
+      loadUniverseList();
+      console.log("Universe deleted successfully");
     } catch (error: any) {
       if (error.response) {
         // The request was made and the server responded with a status code
@@ -148,7 +144,7 @@ const UniverseModal = ({
                         className="bt-project-entry-delete bt-icon"
                         title="Delete"
                         onClick={(e) => {
-                          deleteUniverse(project[1]);
+                          deleteUniverseFunc(project[1]);
                           e.stopPropagation();
                         }}
                         fill={"var(--icon)"}
