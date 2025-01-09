@@ -50,6 +50,7 @@ const TreeEditor = memo(
     subTreeName,
     setGoBack,
     subTreeStructure,
+    updateFileExplorer
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -63,6 +64,7 @@ const TreeEditor = memo(
     subTreeName: string;
     setGoBack: Function;
     subTreeStructure: number[];
+    updateFileExplorer: Function;
   }) => {
     const settings = React.useContext(OptionsContext);
 
@@ -159,6 +161,7 @@ const TreeEditor = memo(
             setCurrentNode={setCurrentNode}
             setGoBack={setGoBack}
             subTreeName={subTreeName}
+            updateFileExplorer={updateFileExplorer}
           />
         )}
         <button className="bt-order-indicator" title={"BT Order: " + btOrder}>
@@ -212,6 +215,7 @@ const DiagramEditor = memo(
     setCurrentNode,
     setGoBack,
     subTreeName,
+    updateFileExplorer,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -228,6 +232,7 @@ const DiagramEditor = memo(
     setCurrentNode: Function;
     setGoBack: Function;
     subTreeName: string;
+    updateFileExplorer: Function;
   }) => {
     // VARS
 
@@ -550,6 +555,7 @@ const DiagramEditor = memo(
           changeView={changeViewExpanded}
           setGoBack={setGoBack}
           subTreeName={subTreeName}
+          updateFileExplorer={updateFileExplorer}
         />
         {engine.current && (
           <CanvasWidget className="bt-canvas" engine={engine.current} />

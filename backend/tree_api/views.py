@@ -675,7 +675,7 @@ def create_action(request):
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     action_path = os.path.join(project_path, "code/actions")
-    file_path = os.path.join(action_path, filename)
+    file_path = os.path.join(action_path, filename + ".py")
 
     templates_folder_path = os.path.join(settings.BASE_DIR, "templates")
     template_path = os.path.join(templates_folder_path, template)

@@ -58,6 +58,7 @@ const fetchSubtreeList = async (project_name: string) => {
     console.log("Subtree list:", subtreeList);
     if (Array.isArray(subtreeList)) {
       NODE_MENU_ITEMS["Subtrees"] = subtreeList;
+      return;
     } else {
       console.error("API response is not an array:", subtreeList);
     }
@@ -66,6 +67,7 @@ const fetchSubtreeList = async (project_name: string) => {
       console.error("Error fetching subtrees:", error.message);
     }
   }
+  NODE_MENU_ITEMS["Subtrees"] = [];
 };
 
 const NodeMenu = ({
@@ -79,6 +81,7 @@ const NodeMenu = ({
   changeView,
   setGoBack,
   subTreeName,
+  updateFileExplorer
 }: {
   projectName: string;
   onAddNode: Function;
@@ -90,6 +93,7 @@ const NodeMenu = ({
   changeView: Function;
   setGoBack: Function;
   subTreeName: string;
+  updateFileExplorer: Function;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>("");
@@ -107,10 +111,13 @@ const NodeMenu = ({
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
-    label: string,
+    label: string
   ) => {
     setAnchorEl(event.currentTarget);
     setMenuLabel(label);
+    if (label === "Actions") {
+      fetchActionList(projectName);
+    }
   };
 
   const handleClose = () => setAnchorEl(null);
@@ -118,7 +125,7 @@ const NodeMenu = ({
   const handleSelect = (nodeName: string) => {
     console.log("Selected: " + nodeName);
     const nodeType = Object.keys(NODE_MENU_ITEMS).find((key) =>
-      NODE_MENU_ITEMS[key].includes(nodeName),
+      NODE_MENU_ITEMS[key].includes(nodeName)
     );
     if (nodeType) {
       console.log("Node Type: " + nodeType);
@@ -138,19 +145,6 @@ const NodeMenu = ({
     }
   };
 
-  const onCreateSubtree = async () => {
-    try {
-      const subtreeName = prompt("Enter subtree name:");
-      if (subtreeName) {
-        const subtreeId = await createSubtree(subtreeName, projectName);
-        console.log("Created subtree:", subtreeId);
-        fetchSubtreeList(projectName);
-      }
-    } catch (error) {
-      console.error("Failed to create subtree:", error);
-    }
-  };
-
   const handleCreateSubtree = () => {
     setNewSubtreeModalOpen(true);
   };
@@ -158,7 +152,7 @@ const NodeMenu = ({
   const handleCloseCreateFolder = () => {
     setNewSubtreeModalOpen(false);
     var subtree_input = document.getElementById(
-      "subTreeName",
+      "subTreeName"
     ) as HTMLInputElement;
     if (subtree_input) {
       subtree_input.value = "";
@@ -171,6 +165,7 @@ const NodeMenu = ({
         const subtreeId = await createSubtree(subtreeName, projectName);
         console.log("Created subtree:", subtreeId);
         fetchSubtreeList(projectName);
+        updateFileExplorer(true);
       } catch (error) {
         console.error("Failed to create subtree:", error);
       }
@@ -264,8 +259,8 @@ const NodeMenu = ({
             onClick={() => {
               openInNewTab(
                 new URL(
-                  "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
-                ),
+                  "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
+                )
               );
             }}
             title="Help"
@@ -279,7 +274,7 @@ const NodeMenu = ({
               changeView(
                 view === TreeViewType.Editor
                   ? TreeViewType.Visualizer
-                  : TreeViewType.Editor,
+                  : TreeViewType.Editor
               )
             }
             title="Change view"

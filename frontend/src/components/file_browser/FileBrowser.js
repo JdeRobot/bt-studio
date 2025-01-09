@@ -47,6 +47,8 @@ const FileBrowser = ({
   setAutosave,
   forceSaveCurrent,
   setForcedSaveCurrent,
+  forceUpdate,
+  setSaveCurrentDiagram
 }) => {
   const [fileList, setFileList] = useState(null);
   const [isNewFileModalOpen, setNewFileModalOpen] = useState(false);
@@ -63,6 +65,13 @@ const FileBrowser = ({
   useEffect(() => {
     updateSelectedLocation(null);
   }, [selectedEntry]);
+
+  useEffect(() => {
+    if (forceUpdate.value) {
+      forceUpdate.callback(false);
+      fetchFileList()
+    }
+  }, [forceUpdate.value]);
 
   const updateSelectedLocation = (file) => {
     if (file) {
@@ -94,6 +103,7 @@ const FileBrowser = ({
   const handleCreateFile = (file) => {
     updateSelectedLocation(file);
     setNewFileModalOpen(true);
+    setSaveCurrentDiagram(true);
   };
 
   const handleCloseNewFileModal = () => {
@@ -134,6 +144,7 @@ const FileBrowser = ({
       setDeleteEntry(file_path);
       setDeleteType(is_dir);
       setDeleteModalOpen(true);
+      setSaveCurrentDiagram(true);
     } else {
       alert("No file is currently selected.");
     }
@@ -188,6 +199,7 @@ const FileBrowser = ({
   const handleCreateFolder = (file) => {
     updateSelectedLocation(file);
     setNewFolderModalOpen(true);
+    setSaveCurrentDiagram(true);
   };
 
   const handleCloseCreateFolder = () => {
@@ -213,6 +225,7 @@ const FileBrowser = ({
     if (file) {
       setRenameEntry(file);
       setRenameModalOpen(true);
+      setSaveCurrentDiagram(true);
     } else {
       alert("No file is currently selected.");
     }
@@ -275,6 +288,7 @@ const FileBrowser = ({
   const handleUpload = (file) => {
     updateSelectedLocation(file);
     setUploadModalOpen(true);
+    setSaveCurrentDiagram(true);
   };
 
   const handleCloseUploadModal = () => {

@@ -26,9 +26,10 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
-    {},
+    {}
   );
   const [saveCurrentDiagram, setSaveCurrentDiagram] = useState<boolean>(false);
+  const [updateFileExplorer, setUpdateFileExplorer] = useState<boolean>(false);
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
   const [projectChanges, setProjectChanges] = useState<boolean>(false);
   const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
@@ -195,6 +196,11 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
                 setAutosave={setAutosave}
                 forceSaveCurrent={forceSaveCurrent}
                 setForcedSaveCurrent={setForcedSaveCurrent}
+                forceUpdate={{
+                  value: updateFileExplorer,
+                  callback: setUpdateFileExplorer,
+                }}
+                setSaveCurrentDiagram={setSaveCurrentDiagram}
               />
             </div>
           </div>
@@ -245,6 +251,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
               setProjectEdited={setProjectChanges}
               saveCurrentDiagram={saveCurrentDiagram}
               setSaveCurrentDiagram={setSaveCurrentDiagram}
+              updateFileExplorer={setUpdateFileExplorer}
             />
           ) : (
             <p>Loading...</p>

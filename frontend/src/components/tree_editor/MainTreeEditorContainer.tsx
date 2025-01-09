@@ -17,11 +17,13 @@ const MainTreeEditorContainer = ({
   setProjectEdited,
   saveCurrentDiagram,
   setSaveCurrentDiagram,
+  updateFileExplorer,
 }: {
   projectName: string;
   setProjectEdited: React.Dispatch<React.SetStateAction<boolean>>;
   saveCurrentDiagram: boolean;
   setSaveCurrentDiagram: Function;
+  updateFileExplorer: Function;
 }) => {
   const settings = React.useContext(OptionsContext);
 
@@ -46,6 +48,11 @@ const MainTreeEditorContainer = ({
     if (currentView.current !== TreeViewType.Editor) {
       return;
     }
+
+    if (!json) {
+      return;
+    }
+    
     // If in subtree save subtree, else save base tree
     if (subtree) {
       await saveSubtree(json, projectName, subtree);
@@ -229,6 +236,7 @@ const MainTreeEditorContainer = ({
           subTreeName={subTreeName}
           setGoBack={setGoBack}
           subTreeStructure={subTreeStructure}
+          updateFileExplorer={updateFileExplorer}
         />
       ) : (
         <p>Loading...</p> // Display a loading message until the graph is fetched
