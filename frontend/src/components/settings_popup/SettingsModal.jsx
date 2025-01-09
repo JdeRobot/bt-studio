@@ -14,6 +14,8 @@ import Checkbox from "./options/Checkbox";
 
 import { OptionsContext } from "../options/Options";
 
+import { saveProjectConfig } from "./../../api_helper/TreeWrapper";
+
 const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
   const [color, setColor] = useColor("rgb(128 0 128)");
   const [open, setOpen] = useState(false);
@@ -29,7 +31,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
   //   document.documentElement.style.setProperty("--header", "rgb("+Math.round(color.rgb.r)+","+Math.round(color.rgb.g)+","+Math.round(color.rgb.b)+")");
   // }, [color]);
 
-  const handleCancel = async () => {
+  const handleCancel = async (settings) => {
     // Save settings
     let json_settings = { name: currentProjectname, config: {} };
 
@@ -37,21 +39,11 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
       json_settings.config[key] = setting.value;
     });
 
-    const str = JSON.stringify(json_settings);
-
-    console.log(str);
-
     try {
-      const response = await fetch("/bt_studio/save_base_tree_configuration/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          project_name: currentProjectname,
-          settings: str,
-        }),
-      });
+      await saveProjectConfig(
+        currentProjectname,
+        JSON.stringify(json_settings),
+      );
     } catch (error) {
       console.error("Error saving config:", error);
     }
@@ -68,7 +60,9 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
       >
         <form
           onSubmit={onSubmit}
-          onReset={handleCancel}
+          onReset={() => {
+            handleCancel(settings);
+          }}
           style={{ display: "flex", flexDirection: "column", flexGrow: "1" }}
         >
           <div className="bt-modal-titlebar">
@@ -82,7 +76,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
             <CloseIcon
               className="bt-modal-titlebar-close icon"
               onClick={() => {
-                handleCancel();
+                handleCancel(settings);
               }}
               fill={"var(--icon)"}
             />

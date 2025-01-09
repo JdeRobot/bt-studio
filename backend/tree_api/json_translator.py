@@ -157,7 +157,7 @@ def get_start_node_id(node_models, link_models):
     return start_node_id
 
 
-def translate(content, tree_path, raw_order):
+def translate_raw(content, raw_order):
 
     # Parse the JSON data
     try:
@@ -189,16 +189,11 @@ def translate(content, tree_path, raw_order):
             order,
         )
     except Exception as e:
-        tree_name = os.path.splitext(os.path.basename(tree_path))[0]
-        raise RuntimeError(f"Failed to translate tree '{tree_name}': {e}")
+        raise RuntimeError(f"Failed to translate tree: {e}")
 
     # Save the xml in the specified route
     xml_string = prettify_xml(root)
-    print(xml_string)
-    print(tree_path)
-    f = open(tree_path, "w")
-    f.write(xml_string)
-    f.close()
+    return xml_string
 
 
 def translate_tree_structure(content, raw_order):

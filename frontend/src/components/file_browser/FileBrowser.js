@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import JSZip from "jszip";
 import "./FileBrowser.css";
 import NewFileModal from "./modals/NewFileModal.jsx";
 import RenameModal from "./modals/RenameModal.jsx";
-import NewFolderModal from "./modals/NewFolderModal.jsx";
+import NewFolderModal from "./modals/NewFolderModal";
 import UploadModal from "./modals/UploadModal.tsx";
 import DeleteModal from "./modals/DeleteModal.jsx";
 import FileExplorer from "./file_explorer/FileExplorer.jsx";
+
+import {
+  getFile,
+  getFileList,
+  createAction,
+  createFile,
+  createFolder,
+  renameFile,
+  renameFolder,
+  deleteFile,
+  deleteFolder,
+} from "./../../api_helper/TreeWrapper";
 
 import { ReactComponent as AddIcon } from "./img/add.svg";
 import { ReactComponent as AddFolderIcon } from "./img/add_folder.svg";
@@ -20,7 +32,7 @@ function getParentDir(file) {
     return file.path;
   }
 
-  var split_path = file.path.split("/"); // TODO: add for windows
+  var split_path = file.path.split("/");
   return split_path.slice(0, split_path.length - 1).join("/");
 }
 
@@ -32,6 +44,11 @@ const FileBrowser = ({
   actionNodesData,
   showAccentColor,
   diagramEditorReady,
+  setAutosave,
+  forceSaveCurrent,
+  setForcedSaveCurrent,
+  forceUpdate,
+  setSaveCurrentDiagram,
 }) => {
   const [fileList, setFileList] = useState(null);
   const [isNewFileModalOpen, setNewFileModalOpen] = useState(false);
@@ -41,12 +58,20 @@ const FileBrowser = ({
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [deleteEntry, setDeleteEntry] = useState(null);
+  const [deleteType, setDeleteType] = useState(false);
   const [renameEntry, setRenameEntry] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState("");
 
   useEffect(() => {
     updateSelectedLocation(null);
   }, [selectedEntry]);
+
+  useEffect(() => {
+    if (forceUpdate.value) {
+      forceUpdate.callback(false);
+      fetchFileList();
+    }
+  }, [forceUpdate.value]);
 
   const updateSelectedLocation = (file) => {
     if (file) {
@@ -64,15 +89,9 @@ const FileBrowser = ({
     console.log("Fecthing file list, the project name is:", currentProjectname);
     if (currentProjectname !== "") {
       try {
-        const response = await axios.get(
-          `/bt_studio/get_file_list?project_name=${currentProjectname}`,
-        );
-        const files = JSON.parse(response.data.file_list);
+        const file_list = await getFileList(currentProjectname);
+        const files = JSON.parse(file_list);
         setFileList(files);
-        // if (Array.isArray(files)) {
-        // } else {
-        //   console.error("API response is not an array:", files);
-        // }
       } catch (error) {
         console.error("Error fetching files:", error);
       }
@@ -84,6 +103,7 @@ const FileBrowser = ({
   const handleCreateFile = (file) => {
     updateSelectedLocation(file);
     setNewFileModalOpen(true);
+    setSaveCurrentDiagram(true);
   };
 
   const handleCloseNewFileModal = () => {
@@ -99,22 +119,18 @@ const FileBrowser = ({
         let response;
         switch (data.fileType) {
           case "actions":
-            response = await axios.get(
-              `/bt_studio/create_action?project_name=${currentProjectname}&filename=${data.fileName}.py&template=${data.templateType}`,
+            await createAction(
+              currentProjectname,
+              data.fileName,
+              data.templateType,
             );
             break;
           default:
-            response = await axios.get(
-              `/bt_studio/create_file?project_name=${currentProjectname}&location=${location}&file_name=${data.fileName}`,
-            );
+            await createFile(currentProjectname, data.fileName, location);
             break;
         }
-        if (response.data.success) {
-          setProjectChanges(true);
-          fetchFileList(); // Update the file list
-        } else {
-          alert(response.data.message);
-        }
+        setProjectChanges(true);
+        fetchFileList(); // Update the file list
       } catch (error) {
         console.error("Error creating file:", error);
       }
@@ -123,10 +139,12 @@ const FileBrowser = ({
 
   ///////////////// DELETE FILES AND FOLDERS ///////////////////////////////////
 
-  const handleDeleteModal = (file_path) => {
+  const handleDeleteModal = (file_path, is_dir) => {
     if (file_path) {
       setDeleteEntry(file_path);
+      setDeleteType(is_dir);
       setDeleteModalOpen(true);
+      setSaveCurrentDiagram(true);
     } else {
       alert("No file is currently selected.");
     }
@@ -135,26 +153,27 @@ const FileBrowser = ({
   const handleCloseDeleteModal = () => {
     setDeleteModalOpen(false);
     setDeleteEntry("");
+    setDeleteType(false);
   };
 
   const handleSubmitDeleteModal = async () => {
     //currentFilename === Absolute File path
     if (deleteEntry) {
       try {
-        const response = await axios.get(
-          `/bt_studio/delete_file?project_name=${currentProjectname}&path=${deleteEntry}`,
-        );
-        if (response.data.success) {
-          setProjectChanges(true);
-          fetchFileList(); // Update the file list
-          if (currentFilename === deleteEntry) {
-            setCurrentFilename(""); // Unset the current file
-          }
-          if (selectedEntry.path === deleteEntry) {
-            setSelectedEntry(null);
-          }
+        if (deleteType) {
+          await deleteFolder(currentProjectname, deleteEntry);
         } else {
-          alert(response.data.message);
+          await deleteFile(currentProjectname, deleteEntry);
+        }
+
+        setProjectChanges(true);
+        fetchFileList(); // Update the file list
+
+        if (currentFilename === deleteEntry) {
+          setCurrentFilename(""); // Unset the current file
+        }
+        if (selectedEntry.path === deleteEntry) {
+          setSelectedEntry(null);
         }
       } catch (error) {
         console.error("Error deleting file:", error);
@@ -168,7 +187,8 @@ const FileBrowser = ({
   const handleDeleteCurrentFile = () => {
     //currentFilename === Absolute File path
     if (currentFilename) {
-      handleDeleteModal(currentFilename);
+      handleDeleteModal(currentFilename, false);
+      setAutosave(false);
     } else {
       alert("No file is currently selected.");
     }
@@ -179,6 +199,7 @@ const FileBrowser = ({
   const handleCreateFolder = (file) => {
     updateSelectedLocation(file);
     setNewFolderModalOpen(true);
+    setSaveCurrentDiagram(true);
   };
 
   const handleCloseCreateFolder = () => {
@@ -189,15 +210,9 @@ const FileBrowser = ({
   const handleCreateFolderSubmit = async (location, folder_name) => {
     if (folder_name !== "") {
       try {
-        const response = await axios.get(
-          `/bt_studio/create_folder?project_name=${currentProjectname}&location=${location}&folder_name=${folder_name}`,
-        );
-        if (response.data.success) {
-          setProjectChanges(true);
-          fetchFileList(); // Update the file list
-        } else {
-          alert(response.data.message);
-        }
+        await createFolder(currentProjectname, folder_name, location);
+        setProjectChanges(true);
+        fetchFileList(); // Update the file list
       } catch (error) {
         console.error("Error creating folder:", error);
       }
@@ -210,8 +225,13 @@ const FileBrowser = ({
     if (file) {
       setRenameEntry(file);
       setRenameModalOpen(true);
+      setSaveCurrentDiagram(true);
     } else {
       alert("No file is currently selected.");
+    }
+
+    if (currentFilename === file.path) {
+      setForcedSaveCurrent(!forceSaveCurrent);
     }
   };
 
@@ -222,18 +242,19 @@ const FileBrowser = ({
   const handleSubmitRenameModal = async (new_path) => {
     if (renameEntry) {
       try {
-        const response = await axios.get(
-          `/bt_studio/rename_file?project_name=${currentProjectname}&path=${renameEntry.path}&rename_to=${new_path}`,
-        );
-        if (response.data.success) {
-          setProjectChanges(true);
-          fetchFileList(); // Update the file list
-          //TODO: if is a file what was renamed may need to change the path
-          if (currentFilename === renameEntry.name) {
-            setCurrentFilename(new_path); // Unset the current file
-          }
+        console.log(renameEntry);
+        if (renameEntry.is_dir) {
+          await renameFolder(currentProjectname, renameEntry.path, new_path);
         } else {
-          alert(response.data.message);
+          await renameFile(currentProjectname, renameEntry.path, new_path);
+        }
+
+        setProjectChanges(true);
+        fetchFileList(); // Update the file list
+
+        if (currentFilename === renameEntry.path) {
+          setAutosave(false);
+          setCurrentFilename(new_path); // Unset the current file
         }
       } catch (error) {
         console.error("Error deleting file:", error);
@@ -244,11 +265,19 @@ const FileBrowser = ({
     handleCloseRenameModal();
   };
 
-  const handleRenameCurrentFile = () => {
-    //TODO: need to obtain all file data to do this
-    return;
+  const handleRenameCurrentFile = async () => {
     if (currentFilename) {
-      handleRename(currentFilename);
+      setForcedSaveCurrent(!forceSaveCurrent);
+      const name = currentFilename.substring(
+        currentFilename.lastIndexOf("/") + 1,
+      );
+      handleRename({
+        is_dir: false,
+        name: name,
+        path: currentFilename,
+        files: [],
+      });
+      setAutosave(false);
     } else {
       alert("No file is currently selected.");
     }
@@ -259,6 +288,7 @@ const FileBrowser = ({
   const handleUpload = (file) => {
     updateSelectedLocation(file);
     setUploadModalOpen(true);
+    setSaveCurrentDiagram(true);
   };
 
   const handleCloseUploadModal = () => {
@@ -267,42 +297,50 @@ const FileBrowser = ({
   };
 
   ///////////////// DOWNLOAD ///////////////////////////////////////////////////
-  const fetchDownloadData = async (file_path) => {
-    const api_response = await fetch("/bt_studio/download_data/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        app_name: currentProjectname,
-        path: file_path,
-      }),
-    });
+  const zipFile = async (zip, file_path, file_name) => {
+    var content = await getFile(currentProjectname, file_path);
+    zip.file(file_name, content);
+  };
 
-    if (!api_response.ok) {
-      var json_response = await api_response.json();
-      throw new Error(json_response.message || "An error occurred.");
+  const zipFolder = async (zip, file) => {
+    const folder = zip.folder(file.name);
+
+    for (let index = 0; index < file.files.length; index++) {
+      const element = file.files[index];
+      console.log(element);
+      if (element.is_dir) {
+        await zipFolder(folder, element);
+      } else {
+        await zipFile(folder, element.path, element.name);
+      }
     }
-
-    return api_response.blob();
   };
 
   const handleDownload = async (file) => {
     if (file) {
-      // Get the data as a base64 blob object
-      const app_blob = await fetchDownloadData(file.path);
-
       try {
-        const url = window.URL.createObjectURL(app_blob);
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-        a.download = `${file.name}.zip`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
+        // Create the zip with the files
+        const zip = new JSZip();
+
+        if (file.is_dir) {
+          await zipFolder(zip, file);
+        } else {
+          await zipFile(zip, file.path, file.name);
+        }
+
+        zip.generateAsync({ type: "blob" }).then(function (content) {
+          // Create a download link and trigger download
+          const url = window.URL.createObjectURL(content);
+          const a = document.createElement("a");
+          a.style.display = "none";
+          a.href = url;
+          a.download = `${file.name.split(".")[0]}.zip`; // Set the downloaded file's name
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url); // Clean up after the download
+        });
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error downloading file: " + error);
       }
     }
   };

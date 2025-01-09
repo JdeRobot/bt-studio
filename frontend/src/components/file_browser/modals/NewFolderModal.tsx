@@ -7,11 +7,30 @@ const initialNewFolderModalData = {
   folderName: "",
 };
 
-const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
-  const focusInputRef = useRef(null);
+interface Entry {
+  name: string;
+  is_dir: boolean;
+  path: string;
+  files: Entry[];
+}
+
+const NewFolderModal = ({
+  onSubmit,
+  isOpen,
+  onClose,
+  fileList,
+  location,
+}: {
+  onSubmit: Function;
+  isOpen: boolean;
+  onClose: Function;
+  fileList: any;
+  location: string;
+}) => {
+  const focusInputRef = useRef<any>(null);
   const [formState, setFormState] = useState(initialNewFolderModalData);
   const [isCreationAllowed, allowCreation] = useState(false);
-  const [searchList, setSearchList] = useState(null);
+  const [searchList, setSearchList] = useState<Entry[]>([]);
 
   useEffect(() => {
     if (isOpen && focusInputRef.current) {
@@ -20,15 +39,17 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
       }, 0);
     }
 
-    if (isOpen && location) {
-      var path = location.split("/");
-
+    if (isOpen) {
       let search_list = fileList;
 
-      for (let index = 0; index < path.length; index++) {
-        search_list = search_list.find(
-          (entry) => entry.name === path[index] && entry.is_dir,
-        ).files;
+      if (location) {
+        var path = location.split("/");
+
+        for (let index = 0; index < path.length; index++) {
+          search_list = search_list.find(
+            (entry: Entry) => entry.name === path[index] && entry.is_dir,
+          ).files;
+        }
       }
 
       if (search_list) {
@@ -39,7 +60,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
     }
   }, [isOpen]);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     var isValidName = true;
 
@@ -65,7 +86,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     onSubmit(location, formState.folderName);
     setFormState(initialNewFolderModalData);
@@ -73,7 +94,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
     onClose();
   };
 
-  const handleCancel = (event) => {
+  const handleCancel = (event: React.FormEvent<HTMLFormElement> | null) => {
     if (event) {
       event.preventDefault();
     }
@@ -101,7 +122,7 @@ const NewFolderModal = ({ onSubmit, isOpen, onClose, fileList, location }) => {
           <CloseIcon
             className="bt-modal-titlebar-close bt-icon"
             onClick={() => {
-              handleCancel();
+              handleCancel(null);
             }}
             fill={"var(--icon)"}
           />

@@ -6,6 +6,7 @@ import createEngine, {
   DefaultNodeModel,
   DiagramEngine,
   DiagramModel,
+  DiagramModelGenerics,
   NodeModel,
   ZoomCanvasAction,
 } from "@projectstorm/react-diagrams";
@@ -50,6 +51,7 @@ const TreeEditor = memo(
     subTreeName,
     setGoBack,
     subTreeStructure,
+    updateFileExplorer,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -63,6 +65,7 @@ const TreeEditor = memo(
     subTreeName: string;
     setGoBack: Function;
     subTreeStructure: number[];
+    updateFileExplorer: Function;
   }) => {
     const settings = React.useContext(OptionsContext);
 
@@ -159,6 +162,7 @@ const TreeEditor = memo(
             setCurrentNode={setCurrentNode}
             setGoBack={setGoBack}
             subTreeName={subTreeName}
+            updateFileExplorer={updateFileExplorer}
           />
         )}
         <button className="bt-order-indicator" title={"BT Order: " + btOrder}>
@@ -212,6 +216,7 @@ const DiagramEditor = memo(
     setCurrentNode,
     setGoBack,
     subTreeName,
+    updateFileExplorer,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -228,6 +233,7 @@ const DiagramEditor = memo(
     setCurrentNode: Function;
     setGoBack: Function;
     subTreeName: string;
+    updateFileExplorer: Function;
   }) => {
     // VARS
 
@@ -372,7 +378,7 @@ const DiagramEditor = memo(
     };
 
     // Link listener
-    const attachLinkListener = (model: any) => {
+    const attachLinkListener = (model: DiagramModel<DiagramModelGenerics>) => {
       model.registerListener({
         linksUpdated: (event: any) => {
           const { link, isCreated } = event;
@@ -401,8 +407,19 @@ const DiagramEditor = memo(
                   model.clearSelection();
                 }
               }
+              updateJsonState();
+              setDiagramEdited(true);
             },
           });
+          updateJsonState();
+          setDiagramEdited(true);
+        },
+      });
+    };
+
+    const attachNodesListener = (model: DiagramModel<DiagramModelGenerics>) => {
+      model.registerListener({
+        nodesUpdated: (event: any) => {
           updateJsonState();
           setDiagramEdited(true);
         },
@@ -518,6 +535,7 @@ const DiagramEditor = memo(
     // Deserialize and load the model
     model.current.deserializeModel(modelJson, engine.current);
     attachLinkListener(model.current);
+    attachNodesListener(model.current);
     engine.current.setModel(model.current);
 
     // After deserialization, attach listeners to each node
@@ -550,6 +568,7 @@ const DiagramEditor = memo(
           changeView={changeViewExpanded}
           setGoBack={setGoBack}
           subTreeName={subTreeName}
+          updateFileExplorer={updateFileExplorer}
         />
         {engine.current && (
           <CanvasWidget className="bt-canvas" engine={engine.current} />

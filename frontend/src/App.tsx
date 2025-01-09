@@ -21,12 +21,15 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
   const [editorWidth, setEditorWidth] = useState<number>(800);
   const [currentFilename, setCurrentFilename] = useState<string>("");
+  const [autosaveEnabled, setAutosave] = useState<boolean>(true);
+  const [forceSaveCurrent, setForcedSaveCurrent] = useState<boolean>(false);
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
     {},
   );
-  const [modelJson, setModelJson] = useState<string>("");
+  const [saveCurrentDiagram, setSaveCurrentDiagram] = useState<boolean>(false);
+  const [updateFileExplorer, setUpdateFileExplorer] = useState<boolean>(false);
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
   const [projectChanges, setProjectChanges] = useState<boolean>(false);
   const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
@@ -156,12 +159,11 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         setCurrentProjectname={setCurrentProjectname}
         currentUniverseName={currentUniverseName}
         setCurrentUniverseName={setCurrentUniverseName}
-        modelJson={modelJson}
+        setSaveCurrentDiagram={setSaveCurrentDiagram}
         projectChanges={projectChanges}
         setProjectChanges={setProjectChanges}
         gazeboEnabled={gazeboEnabled}
         setGazeboEnabled={setGazeboEnabled}
-        // onSetShowExecStatus={onSetShowExecStatus}
         manager={manager}
         showVNCViewer={showVNCViewer}
         isUnibotics={isUnibotics}
@@ -191,6 +193,14 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
                 actionNodesData={actionNodesData}
                 showAccentColor={"editorShowAccentColors"}
                 diagramEditorReady={diagramEditorReady}
+                setAutosave={setAutosave}
+                forceSaveCurrent={forceSaveCurrent}
+                setForcedSaveCurrent={setForcedSaveCurrent}
+                forceUpdate={{
+                  value: updateFileExplorer,
+                  callback: setUpdateFileExplorer,
+                }}
+                setSaveCurrentDiagram={setSaveCurrentDiagram}
               />
             </div>
           </div>
@@ -217,6 +227,9 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
               currentProjectname={currentProjectname}
               setProjectChanges={setProjectChanges}
               isUnibotics={isUnibotics}
+              autosaveEnabled={autosaveEnabled}
+              setAutosave={setAutosave}
+              forceSaveCurrent={forceSaveCurrent}
             />
             {showTerminal && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
           </div>
@@ -236,8 +249,9 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
             <MainTreeEditorContainer
               projectName={currentProjectname}
               setProjectEdited={setProjectChanges}
-              setGlobalJson={setModelJson}
-              modelJson={modelJson}
+              saveCurrentDiagram={saveCurrentDiagram}
+              setSaveCurrentDiagram={setSaveCurrentDiagram}
+              updateFileExplorer={setUpdateFileExplorer}
             />
           ) : (
             <p>Loading...</p>

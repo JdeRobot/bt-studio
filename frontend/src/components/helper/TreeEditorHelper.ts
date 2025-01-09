@@ -255,7 +255,9 @@ export const configureEngine = (
 
   // Disable loose links
   const state: any = engine.current.getStateMachine().getCurrentState();
-  state.dragNewLink.config.allowLooseLinks = false;
+  if (state) {
+    state.dragNewLink.config.allowLooseLinks = false;
+  }
 
   engine.current
     .getActionEventBus()

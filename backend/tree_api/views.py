@@ -25,10 +25,15 @@ import xml.etree.ElementTree as ET
 # PROJECT MANAGEMENT
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def create_project(request):
+    if "project_name" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    project_name = request.GET.get("project_name")
+    project_name = request.data.get("project_name")
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     action_path = os.path.join(project_path, "code/actions")
@@ -77,9 +82,14 @@ def create_project(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def delete_project(request):
-    project_name = request.GET.get("project_name")
+    if "project_name" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    project_name = request.data.get("project_name")
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
 
@@ -114,7 +124,11 @@ def get_project_list(request):
 
 @api_view(["POST"])
 def save_base_tree(request):
-
+    if "project_name" not in request.data or "graph_json" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     # Get the app name and the graph
     project_name = request.data.get("project_name")
     graph_json = request.data.get("graph_json")
@@ -263,16 +277,21 @@ def get_subtree_structure(request):
 
 
 @api_view(["POST"])
-def save_base_tree_configuration(request):
+def save_project_configuration(request):
+    if "project_name" not in request.data or "settings" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.data.get("project_name")
+    content = request.data.get("settings")
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     config_path = os.path.join(project_path, "config.json")
 
     try:
-        content = request.data.get("settings")
         if content is None:
             return Response(
                 {"success": False, "message": "Settings are missing"}, status=400
@@ -293,6 +312,11 @@ def save_base_tree_configuration(request):
 
 @api_view(["POST"])
 def create_subtree(request):
+    if "project_name" not in request.data or "subtree_name" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.data.get("project_name")
     subtree_name = request.data.get("subtree_name")
@@ -390,9 +414,6 @@ def save_subtree(request):
             with open(json_path, "w") as f:
                 f.write(subtree_json)
 
-            # TOFIX: order hardcoded
-            # json_translator.translate(subtree_json, xml_path, "top-to-bottom")
-
             return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
         except Exception as e:
@@ -475,10 +496,15 @@ def get_subtree_list(request):
 # UNIVERSE MANAGEMENT
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def delete_universe(request):
-    project_name = request.GET.get("project_name")
-    universe_name = request.GET.get("universe_name")
+    if "project_name" not in request.data or "universe_name" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    project_name = request.data.get("project_name")
+    universe_name = request.data.get("universe_name")
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
@@ -555,17 +581,6 @@ def get_universe_configuration(request):
         return Response({"success": False, "message": "File not found"}, status=404)
 
 
-@api_view(["GET"])
-def import_universe_from_zip(request):
-
-    project_name = request.GET.get("project_name")
-    zip_file = request.GET.get("zip_file")
-
-    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
-    project_path = os.path.join(folder_path, project_name)
-    universes_path = os.path.join(project_path, "universes/")
-
-
 # FILE MANAGEMENT
 
 
@@ -640,24 +655,39 @@ def get_file(request):
         return Response({"error": "Filename parameter is missing"}, status=400)
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def create_action(request):
-
+    if (
+        "project_name" not in request.data
+        or "template" not in request.data
+        or "filename" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     # Get the file info
-    project_name = request.GET.get("project_name", None)
-    filename = request.GET.get("filename", None)
-    template = request.GET.get("template", None)
+    project_name = request.data.get("project_name")
+    filename = request.data.get("filename")
+    template = request.data.get("template")
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     action_path = os.path.join(project_path, "code/actions")
-    file_path = os.path.join(action_path, filename)
+    file_path = os.path.join(action_path, filename + ".py")
+
+    templates_folder_path = os.path.join(settings.BASE_DIR, "templates")
+    template_path = os.path.join(templates_folder_path, template)
 
     if not os.path.exists(file_path):
-        if templates.create_action_from_template(file_path, filename, template):
+        try:
+            with open(file_path, "w") as f:
+                f.write(
+                    templates.get_action_template(filename, template, template_path)
+                )
             return Response({"success": True})
-        else:
+        except:
             return Response(
                 {"success": False, "message": "Template does not exist"}, status=400
             )
@@ -667,13 +697,21 @@ def create_action(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def create_file(request):
-
+    if (
+        "project_name" not in request.data
+        or "location" not in request.data
+        or "file_name" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     # Get the file info
-    project_name = request.GET.get("project_name", None)
-    location = request.GET.get("location", None)
-    filename = request.GET.get("file_name", None)
+    project_name = request.data.get("project_name")
+    location = request.data.get("location")
+    filename = request.data.get("file_name")
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -683,25 +721,30 @@ def create_file(request):
     file_path = os.path.join(create_path, filename)
 
     if not os.path.exists(file_path):
-        if templates.create_action_from_template(file_path, filename, "empty"):
-            return Response({"success": True})
-        else:
-            return Response(
-                {"success": False, "message": "Template does not exist"}, status=400
-            )
+        with open(file_path, "w") as f:
+            f.write("")
+        return Response({"success": True})
     else:
         return Response(
             {"success": False, "message": "File already exists"}, status=400
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def create_folder(request):
-
+    if (
+        "project_name" not in request.data
+        or "location" not in request.data
+        or "folder_name" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     # Get the file info
-    project_name = request.GET.get("project_name", None)
-    location = request.GET.get("location", None)
-    folder_name = request.GET.get("folder_name", None)
+    project_name = request.data.get("project_name")
+    location = request.data.get("location")
+    folder_name = request.data.get("folder_name")
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -723,13 +766,21 @@ def create_folder(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def rename_file(request):
-
+    if (
+        "project_name" not in request.data
+        or "path" not in request.data
+        or "rename_to" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     # Get the file info
-    project_name = request.GET.get("project_name", None)
-    path = request.GET.get("path", None)
-    rename_path = request.GET.get("rename_to", None)
+    project_name = request.data.get("project_name")
+    path = request.data.get("path")
+    rename_path = request.data.get("rename_to")
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -753,12 +804,55 @@ def rename_file(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
+def rename_folder(request):
+    if (
+        "project_name" not in request.data
+        or "path" not in request.data
+        or "rename_to" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    # Get the folder info
+    project_name = request.data.get("project_name")
+    path = request.data.get("path")
+    rename_path = request.data.get("rename_to")
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, "code")
+    file_path = os.path.join(action_path, path)
+    new_path = os.path.join(action_path, rename_path)
+
+    if os.path.exists(file_path):
+        try:
+            os.rename(file_path, new_path)
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse(
+                {"success": False, "message": f"Error deleting file: {str(e)}"},
+                status=500,
+            )
+    else:
+        return JsonResponse(
+            {"success": False, "message": "File does not exist"}, status=404
+        )
+
+
+@api_view(["POST"])
 def delete_file(request):
+    if "project_name" not in request.data or "path" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     # Get the file info
-    project_name = request.GET.get("project_name", None)
-    path = request.GET.get("path", None)
+    project_name = request.data.get("project_name")
+    path = request.data.get("path")
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -766,12 +860,42 @@ def delete_file(request):
     action_path = os.path.join(project_path, "code")
     file_path = os.path.join(action_path, path)
 
-    if os.path.exists(file_path):
+    if os.path.exists(file_path) and not os.path.isdir(file_path):
         try:
-            if os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-            else:
-                os.remove(file_path)
+            os.remove(file_path)
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse(
+                {"success": False, "message": f"Error deleting file: {str(e)}"},
+                status=500,
+            )
+    else:
+        return JsonResponse(
+            {"success": False, "message": "File does not exist"}, status=404
+        )
+
+
+@api_view(["POST"])
+def delete_folder(request):
+    if "project_name" not in request.data or "path" not in request.data:
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get the folder info
+    project_name = request.data.get("project_name")
+    path = request.data.get("path")
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    action_path = os.path.join(project_path, "code")
+    file_path = os.path.join(action_path, path)
+
+    if os.path.exists(file_path) and os.path.isdir(file_path):
+        try:
+            shutil.rmtree(file_path)
             return JsonResponse({"success": True})
         except Exception as e:
             return JsonResponse(
@@ -786,6 +910,15 @@ def delete_file(request):
 
 @api_view(["POST"])
 def save_file(request):
+    if (
+        "project_name" not in request.data
+        or "filename" not in request.data
+        or "content" not in request.data
+    ):
+        return Response(
+            {"error": "Name and zip file are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.data.get("project_name")
     filename = request.data.get("filename")
@@ -811,126 +944,43 @@ def save_file(request):
 
 
 @api_view(["POST"])
-def translate_json(request):
-
-    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
-    bt_order = request.data.get("bt_order")
-
-    try:
-        content = request.data.get("content")
-        if content is None:
-            return Response(
-                {"success": False, "message": "Content is missing"}, status=400
-            )
-
-        # Pass the JSON content to the translate function
-        json_translator.translate(content, folder_path + "/tree.xml", bt_order)
-
-        return Response({"success": True})
-    except Exception as e:
-        return Response({"success": False, "message": str(e)}, status=400)
-
-
-@api_view(["POST"])
-def download_data(request):
-
-    # Check if 'name' and 'zipfile' are in the request data
-    if "app_name" not in request.data or "path" not in request.data:
+def generate_local_app(request):
+    # Check if 'app_name', 'main_tree_graph', and 'bt_order' are in the request data
+    if "app_name" not in request.data or "bt_order" not in request.data:
         return Response(
-            {"error": "Incorrect request parameters"},
+            {"success": False, "message": "Missing required parameters"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     # Get the request parameters
     app_name = request.data.get("app_name")
-    path = request.data.get("path")
+    bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
-    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
-    project_path = os.path.join(folder_path, app_name)
-    action_path = os.path.join(project_path, "code")
-    file_path = os.path.join(action_path, path)
-
-    working_folder = "/tmp/wf"
-
-    if app_name and path:
-        try:
-            # 1. Create the working folder
-            if os.path.exists(working_folder):
-                shutil.rmtree(working_folder)
-            os.mkdir(working_folder)
-
-            # 2. Copy files to temp folder
-            if os.path.isdir(file_path):
-                copy_tree(file_path, working_folder)
-            else:
-                shutil.copy(file_path, working_folder)
-
-            # 5. Generate the zip
-            zip_path = working_folder + ".zip"
-            with zipfile.ZipFile(zip_path, "w") as zipf:
-                for root, dirs, files in os.walk(working_folder):
-                    for file in files:
-                        zipf.write(
-                            os.path.join(root, file),
-                            os.path.relpath(os.path.join(root, file), working_folder),
-                        )
-
-            # 6. Return the zip
-            zip_file = open(zip_path, "rb")
-            mime_type, _ = mimetypes.guess_type(zip_path)
-            response = HttpResponse(zip_file, content_type=mime_type)
-            response["Content-Disposition"] = (
-                f"attachment; filename={os.path.basename(zip_path)}"
-            )
-
-            return response
-        except Exception as e:
-            return Response({"success": False, "message": str(e)}, status=400)
-    else:
-        return Response({"error": "app_name parameter is missing"}, status=500)
-
-
-@api_view(["POST"])
-def generate_app(request):
-
-    if (
-        "app_name" not in request.data
-        or "tree_graph" not in request.data
-        or "bt_order" not in request.data
-    ):
-        return Response(
-            {"error": "Incorrect request parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # Get the parameters
-    app_name = request.data.get("app_name")
-    main_tree_graph = request.data.get("tree_graph")
-    bt_order = request.data.get("bt_order")
-    print("bt order: ", bt_order)
-
-    # Make folder path relative  to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, app_name)
     action_path = os.path.join(project_path, "code/actions")
-    subtree_path = os.path.join(project_path, "code/trees/subtrees")
-    result_trees_tmp_path = os.path.join("/tmp/trees/")
-    self_contained_tree_path = os.path.join("/tmp/self_contained_tree.xml")
-    template_path = os.path.join(settings.BASE_DIR, "ros_template")
-    tree_gardener_src = os.path.join(settings.BASE_DIR, "tree_gardener")
+    tree_path = os.path.join(project_path, "code/trees/main.json")
+    subtree_path = os.path.join(project_path, "code/trees/subtrees/json")
+
+    subtrees = []
+    actions = []
 
     try:
-        # Init the trees temp folder
-        if os.path.exists(result_trees_tmp_path):
-            shutil.rmtree(result_trees_tmp_path)
-        os.makedirs(result_trees_tmp_path)
 
-        # Translate the received JSON
-        main_tree_tmp_path = os.path.join(result_trees_tmp_path, "main.xml")
-        json_translator.translate(main_tree_graph, main_tree_tmp_path, bt_order)
+        # Check if the project exists
+        if os.path.exists(tree_path):
+            with open(tree_path, "r") as f:
+                graph_data = f.read()
+        else:
+            return Response(
+                {"success": False, "message": "Main tree not found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # 1. Generate a basic tree from the JSON definition
+        main_tree = json_translator.translate_raw(graph_data, bt_order)
 
-        # Copy all the subtrees to the temp folder
+        # 2. Get all possible subtrees name and content
         try:
             for subtree_file in os.listdir(subtree_path):
                 if subtree_file.endswith(".json"):
@@ -939,53 +989,36 @@ def generate_app(request):
                     )[0]
                     print(os.path.join(subtree_path, subtree_file))
 
-                    xml_path = os.path.join(
-                        project_path, "code", "trees", "subtrees", f"{subtree_name}.xml"
-                    )
-
                     with open(os.path.join(subtree_path, subtree_file), "r+") as f:
                         # Reading from a file
                         subtree_json = f.read()
 
-                    json_translator.translate(subtree_json, xml_path, bt_order)
-
-                    shutil.copy(xml_path, result_trees_tmp_path)
+                    subtree = json_translator.translate_raw(subtree_json, bt_order)
+                    subtrees.append({"name": subtree_name, "content": subtree})
         except:
             print("No subtrees")
 
-        # Generate a self-contained tree
-        tree_generator.generate(
-            result_trees_tmp_path, action_path, self_contained_tree_path
+        # 3. Get all possible actions name and content
+        for action_file in os.listdir(action_path):
+            if action_file.endswith(".py"):
+                action_name = base = os.path.splitext(os.path.basename(action_file))[0]
+
+                with open(os.path.join(action_path, action_file), "r+") as f:
+                    action_content = f.read()
+
+                actions.append({"name": action_name, "content": action_content})
+
+        # 4. Generate a self-contained tree
+        final_tree = tree_generator.generate(main_tree, subtrees, actions)
+
+        unique_imports = app_generator.get_unique_imports(actions)
+
+        return JsonResponse(
+            {"success": True, "tree": final_tree, "dependencies": unique_imports}
         )
-
-        # Using the self-contained tree, package the ROS 2 app
-        zip_file_path = app_generator.generate(
-            self_contained_tree_path,
-            app_name,
-            template_path,
-            action_path,
-            tree_gardener_src,
-        )
-
-        # Confirm ZIP file exists
-        if not os.path.exists(zip_file_path):
-            return Response(
-                {"success": False, "message": "ZIP file not found"}, status=400
-            )
-
-        # Return the zip file as a response
-        with open(zip_file_path, "rb") as zip_file:
-            response = HttpResponse(zip_file, content_type="application/zip")
-            response["Content-Disposition"] = (
-                f"attachment; filename={os.path.basename(zip_file_path)}"
-            )
-            return response
-
-        return response
 
     except Exception as e:
         print(e)
-        # Also print the traceback
         import traceback
 
         traceback.print_exc()
@@ -997,51 +1030,42 @@ def generate_app(request):
 
 @api_view(["POST"])
 def generate_dockerized_app(request):
-
-    if (
-        "app_name" not in request.data
-        or "tree_graph" not in request.data
-        or "bt_order" not in request.data
-    ):
+    # Check if 'app_name', 'tree_graph', and 'bt_order' are in the request data
+    if "app_name" not in request.data or "bt_order" not in request.data:
         return Response(
-            {"error": "Incorrect request parameters"},
+            {"success": False, "message": "Missing required parameters"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     # Get the request parameters
     app_name = request.data.get("app_name")
-    main_tree_graph = request.data.get("tree_graph")
     bt_order = request.data.get("bt_order")
-    print("Dockerized bt order: ", bt_order)
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, app_name)
     action_path = os.path.join(project_path, "code/actions")
-
-    working_folder = "/tmp/wf"
+    tree_path = os.path.join(project_path, "code/trees/main.json")
     subtree_path = os.path.join(project_path, "code/trees/subtrees/json")
-    result_trees_tmp_path = os.path.join("/tmp/trees/")
-    self_contained_tree_path = os.path.join(working_folder, "self_contained_tree.xml")
-    tree_gardener_src = os.path.join(settings.BASE_DIR, "tree_gardener")
-    template_path = os.path.join(settings.BASE_DIR, "ros_template")
+
+    subtrees = []
+    actions = []
 
     try:
-        # Init the trees temp folder
-        if os.path.exists(result_trees_tmp_path):
-            shutil.rmtree(result_trees_tmp_path)
-        os.makedirs(result_trees_tmp_path)
 
-        # 1. Create the working folder
-        if os.path.exists(working_folder):
-            shutil.rmtree(working_folder)
-        os.mkdir(working_folder)
+        # Check if the project exists
+        if os.path.exists(tree_path):
+            with open(tree_path, "r") as f:
+                graph_data = f.read()
+        else:
+            return Response(
+                {"success": False, "message": "Main tree not found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # 1. Generate a basic tree from the JSON definition
+        main_tree = json_translator.translate_raw(graph_data, bt_order)
 
-        # 2. Generate a basic tree from the JSON definition
-        main_tree_tmp_path = os.path.join(result_trees_tmp_path, "main.xml")
-        json_translator.translate(main_tree_graph, main_tree_tmp_path, bt_order)
-
-        # 3. Copy all the subtrees to the temp folder
+        # 2. Get all possible subtrees name and content
         try:
             for subtree_file in os.listdir(subtree_path):
                 if subtree_file.endswith(".json"):
@@ -1050,50 +1074,30 @@ def generate_dockerized_app(request):
                     )[0]
                     print(os.path.join(subtree_path, subtree_file))
 
-                    xml_path = os.path.join(
-                        project_path, "code", "trees", "subtrees", f"{subtree_name}.xml"
-                    )
-
                     with open(os.path.join(subtree_path, subtree_file), "r+") as f:
                         # Reading from a file
                         subtree_json = f.read()
 
-                    json_translator.translate(subtree_json, xml_path, bt_order)
-
-                    shutil.copy(xml_path, result_trees_tmp_path)
+                    subtree = json_translator.translate_raw(subtree_json, bt_order)
+                    subtrees.append({"name": subtree_name, "content": subtree})
         except:
             print("No subtrees")
 
+        # 3. Get all possible actions name and content
+        for action_file in os.listdir(action_path):
+            if action_file.endswith(".py"):
+                action_name = base = os.path.splitext(os.path.basename(action_file))[0]
+
+                with open(os.path.join(action_path, action_file), "r+") as f:
+                    action_content = f.read()
+
+                actions.append({"name": action_name, "content": action_content})
+
         # 4. Generate a self-contained tree
-        tree_generator.generate(
-            result_trees_tmp_path, action_path, self_contained_tree_path
-        )
+        final_tree = tree_generator.generate(main_tree, subtrees, actions)
 
-        # 5. Copy necessary files to execute the app in the RB
-        factory_location = tree_gardener_src + "/tree_gardener/tree_factory.py"
-        tools_location = tree_gardener_src + "/tree_gardener/tree_tools.py"
-        entrypoint_location = template_path + "/ros_template/execute_docker.py"
-        shutil.copy(factory_location, working_folder)
-        shutil.copy(tools_location, working_folder)
-        shutil.copy(entrypoint_location, working_folder)
-
-        # 6. Generate the zip
-        zip_path = working_folder + ".zip"
-        with zipfile.ZipFile(zip_path, "w") as zipf:
-            for root, dirs, files in os.walk(working_folder):
-                for file in files:
-                    zipf.write(
-                        os.path.join(root, file),
-                        os.path.relpath(os.path.join(root, file), working_folder),
-                    )
-
-        # 6. Return the zip file as a response
-        with open(zip_path, "rb") as zip_file:
-            response = HttpResponse(zip_file, content_type="application/zip")
-            response["Content-Disposition"] = (
-                f"attachment; filename={os.path.basename(zip_path)}"
-            )
-            return response
+        # 6. Return the files as a response
+        return JsonResponse({"success": True, "tree": final_tree})
 
     except Exception as e:
         print(e)
@@ -1177,9 +1181,9 @@ def upload_universe(request):
         )
 
     # Get the name and the zip file from the request
-    universe_name = request.data["universe_name"]
-    app_name = request.data["app_name"]
-    zip_file = request.data["zip_file"]
+    universe_name = request.data.get("universe_name")
+    app_name = request.data.get("app_name")
+    zip_file = request.data.get("zip_file")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -1242,7 +1246,7 @@ def upload_universe(request):
 @api_view(["POST"])
 def add_docker_universe(request):
 
-    # Check if 'name' and 'zipfile' are in the request data
+    # Check if 'universe_name', 'app_name' and 'id' are in the request data
     if (
         "universe_name" not in request.data
         or "app_name" not in request.data
@@ -1253,10 +1257,10 @@ def add_docker_universe(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    # Get the name and the zip file from the request
-    universe_name = request.data["universe_name"]
-    app_name = request.data["app_name"]
-    id = request.data["id"]
+    # Get the name and the id file from the request
+    universe_name = request.data.get("universe_name")
+    app_name = request.data.get("app_name")
+    id = request.data.get("id")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -1269,7 +1273,6 @@ def add_docker_universe(request):
         os.makedirs(universe_path)
 
     # Fill the config dictionary of the universe
-    ram_launch_path = "/workspace/worlds/" + universe_name + "/universe.launch.py"
     universe_config = {"name": universe_name, "id": id, "type": "robotics_backend"}
 
     # Generate the json config
@@ -1289,8 +1292,9 @@ def upload_code(request):
     # Check if 'name' and 'zipfile' are in the request data
     if (
         "project_name" not in request.data
+        or "file_name" not in request.data
         or "location" not in request.data
-        or "zip_file" not in request.data
+        or "content" not in request.data
     ):
         return Response(
             {"error": "Name and zip file are required."},
@@ -1298,40 +1302,30 @@ def upload_code(request):
         )
 
     # Get the name and the zip file from the request
-    project_name = request.data["project_name"]
-    location = request.data["location"]
-    zip_file = request.data["zip_file"]
+    project_name = request.data.get("project_name")
+    file_name = request.data.get("file_name")
+    location = request.data.get("location")
+    content = request.data.get("content")
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, project_name)
     code_path = os.path.join(project_path, "code")
     create_path = os.path.join(code_path, location)
+    file_path = os.path.join(create_path, file_name)
 
-    try:
-        zip_file_data = base64.b64decode(zip_file)
-    except (TypeError, ValueError):
-        return Response(
-            {"error": "Invalid zip file data."}, status=status.HTTP_400_BAD_REQUEST
+    # If file exist simply return
+    if os.path.exists(file_path):
+        return JsonResponse(
+            {"success": False, "message": "File already exists"}, status=404
         )
 
-    # Save the zip file temporarily
-    temp_zip_path = os.path.join(create_path, "temp.zip")
-    with open(temp_zip_path, "wb") as temp_zip_file:
-        temp_zip_file.write(zip_file_data)
-
-    # Unzip the file
     try:
-        with zipfile.ZipFile(temp_zip_path, "r") as zip_ref:
-            zip_ref.extractall(create_path)
-    except zipfile.BadZipFile:
-        return Response(
-            {"error": "Invalid zip file."}, status=status.HTTP_400_BAD_REQUEST
-        )
-    finally:
-        # Clean up the temporary zip file
-        if os.path.exists(temp_zip_path):
-            os.remove(temp_zip_path)
+        with open(file_path, "wb") as f:
+            f.write(base64.b64decode(content))
+        return Response({"success": True})
+    except Exception as e:
+        return Response({"success": False, "message": str(e)}, status=400)
 
 
 @api_view(["GET"])

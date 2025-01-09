@@ -11,7 +11,7 @@ urlpatterns = [
     path("delete_universe/", views.delete_universe, name="delete_universe"),
     path("add_docker_universe/", views.add_docker_universe, name="add_docker_universe"),
     path("get_universes_list/", views.get_universes_list, name="get_universes_list"),
-    path("get_universe_zip/", views.get_universe_zip, name="generate_app"),
+    path("get_universe_zip/", views.get_universe_zip, name="get_universe_zip"),
     path(
         "get_universe_configuration/",
         views.get_universe_configuration,
@@ -37,9 +37,9 @@ urlpatterns = [
         name="get_subtree_structure",
     ),
     path(
-        "save_base_tree_configuration/",
-        views.save_base_tree_configuration,
-        name="save_base_tree_configuration",
+        "save_project_configuration/",
+        views.save_project_configuration,
+        name="save_project_configuration",
     ),
     path("get_subtree_list/", views.get_subtree_list, name="get_subtree_list"),
     path("create_subtree/", views.create_subtree, name="create_subtree"),
@@ -51,15 +51,16 @@ urlpatterns = [
     path("create_file/", views.create_file, name="create_file"),
     path("create_folder/", views.create_folder, name="create_folder"),
     path("rename_file/", views.rename_file, name="rename_file"),
+    path("rename_folder/", views.rename_folder, name="rename_folder"),
     path("delete_file/", views.delete_file, name="delete_file"),
+    path("delete_folder/", views.delete_folder, name="delete_folder"),
     path("save_file/", views.save_file, name="save_file"),
     path("upload_code/", views.upload_code, name="upload_code"),
     # Actions Management
     path("get_actions_list/", views.get_actions_list, name="get_actions_list"),
     path("create_action/", views.create_action, name="create_action"),
     # Other
-    path("translate_json/", views.translate_json, name="translate_json"),
-    path("generate_app/", views.generate_app, name="generate_app"),
+    path("generate_local_app/", views.generate_local_app, name="generate_local_app"),
     path(
         "generate_dockerized_app/",
         views.generate_dockerized_app,

@@ -12,6 +12,7 @@ import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
 import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
 
 import "./TreeEditor.css";
+import NodeMenuMinimal from "./NodeMenuMinimal";
 
 const setTreeStatus = (
   model: DiagramModel,
@@ -234,13 +235,8 @@ const DiagramVisualizer = memo(
 
     return (
       <>
-        <NodeMenu
-          projectName={"projectName"}
-          onAddNode={() => {}}
-          onDeleteNode={() => {}}
+        <NodeMenuMinimal
           onZoomToFit={zoomToFit}
-          onEditAction={() => {}}
-          hasSubtrees={false}
           view={view}
           changeView={changeView}
           setGoBack={setGoBack}

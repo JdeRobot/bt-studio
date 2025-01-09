@@ -1,10 +1,10 @@
 import { MouseEventHandler, useContext, useEffect, useState } from "react";
+import JSZip from "jszip";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import {
   createProject,
-  saveBaseTree,
-  generateApp,
+  generateLocalApp,
   generateDockerizedApp,
   getUniverseConfig,
   getCustomUniverseZip,
@@ -29,17 +29,19 @@ import UniversesModal from "./modals/UniverseModal";
 import SettingsModal from "../settings_popup/SettingsModal";
 import { OptionsContext } from "../options/Options";
 
+import RosTemplates from "./../../templates/RosTemplates";
+import TreeGardener from "./../../templates/TreeGardener";
+
 const HeaderMenu = ({
   currentProjectname,
   setCurrentProjectname,
   currentUniverseName,
   setCurrentUniverseName,
-  modelJson,
+  setSaveCurrentDiagram,
   projectChanges,
   setProjectChanges,
   gazeboEnabled,
   setGazeboEnabled,
-  // onSetShowExecStatus,
   manager,
   showVNCViewer,
   isUnibotics,
@@ -48,7 +50,7 @@ const HeaderMenu = ({
   setCurrentProjectname: Function;
   currentUniverseName: string;
   setCurrentUniverseName: Function;
-  modelJson: string;
+  setSaveCurrentDiagram: Function;
   projectChanges: boolean;
   setProjectChanges: Function;
   gazeboEnabled: boolean;
@@ -179,7 +181,8 @@ const HeaderMenu = ({
       return;
     }
     try {
-      await saveBaseTree(modelJson, currentProjectname);
+      //TODO: check if possible consurrency problems
+      setSaveCurrentDiagram(true);
       setProjectChanges(false);
       console.log("Project saved");
     } catch (error) {
@@ -193,22 +196,39 @@ const HeaderMenu = ({
 
   const onDownloadApp = async () => {
     try {
+      await onSaveProject();
+
       // Get the blob from the API wrapper
-      const appBlob = await generateApp(
-        modelJson,
+      const appFiles = await generateLocalApp(
         currentProjectname,
-        "top-to-bottom",
+        settings.btOrder.value,
       );
 
-      // Create a download link and trigger download
-      const url = window.URL.createObjectURL(appBlob);
-      const a = document.createElement("a");
-      a.style.display = "none";
-      a.href = url;
-      a.download = `${currentProjectname}.zip`; // Set the downloaded file's name
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url); // Clean up after the download
+      // Create the zip with the files
+      const zip = new JSZip();
+
+      console.log(appFiles.dependencies);
+
+      TreeGardener.addLocalFiles(zip);
+      RosTemplates.addLocalFiles(
+        zip,
+        currentProjectname,
+        appFiles.tree,
+        appFiles.dependencies,
+      );
+
+      zip.generateAsync({ type: "blob" }).then(function (content) {
+        // Create a download link and trigger download
+        const url = window.URL.createObjectURL(content);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = `${currentProjectname}.zip`; // Set the downloaded file's name
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url); // Clean up after the download
+      });
+
       console.log("App downloaded successfully");
     } catch (error) {
       if (error instanceof Error) {
@@ -228,29 +248,38 @@ const HeaderMenu = ({
       return;
     }
 
+    await onSaveProject();
+
     if (!appRunning) {
       try {
         // Get the blob from the API wrapper
-        const appBlob = await generateDockerizedApp(
-          modelJson,
+        const appFiles = await generateDockerizedApp(
           currentProjectname,
           settings.btOrder.value,
         );
+
+        // Create the zip with the files
+        const zip = new JSZip();
+
+        zip.file("self_contained_tree.xml", appFiles.tree);
+        TreeGardener.addDockerFiles(zip);
+        RosTemplates.addDockerFiles(zip);
 
         // Convert the blob to base64 using FileReader
         const reader = new FileReader();
         reader.onloadend = async () => {
           const base64data = reader.result; // Get the zip in base64
-
           // Send the base64 encoded blob
           await manager.run({
             type: "bt-studio",
             code: base64data,
           });
-
           console.log("Dockerized app started successfully");
         };
-        reader.readAsDataURL(appBlob);
+
+        zip.generateAsync({ type: "blob" }).then(function (content) {
+          reader.readAsDataURL(content);
+        });
 
         setAppRunning(true);
         console.log("App started successfully");
@@ -280,6 +309,7 @@ const HeaderMenu = ({
 
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
+      return;
     }
 
     await manager.terminateApplication();
