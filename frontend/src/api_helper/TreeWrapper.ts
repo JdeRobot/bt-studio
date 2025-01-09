@@ -387,13 +387,7 @@ const getCustomUniverseZip = async (
         app_name: currentProjectname,
         universe_name: universeName,
       },
-      {
-        responseType: "blob", // Ensure the response is treated as a Blob
-        headers: {
-          //@ts-ignore Needed for compatibility with Unibotics
-          "X-CSRFToken": context.csrf,
-        },
-      }
+      axiosExtra
     );
 
     // Handle unsuccessful response status (e.g., non-2xx status)
