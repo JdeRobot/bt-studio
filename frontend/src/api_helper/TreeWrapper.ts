@@ -28,6 +28,26 @@ const getFileList = async (projectName: string) => {
   }
 };
 
+const getFile = async (projectName: string, fileName:string) => {
+  if (!projectName) throw new Error("Project name is not set");
+  if (!fileName) throw new Error("File name is not set");
+
+  const apiUrl = `/bt_studio/get_file?project_name=${encodeURIComponent(projectName)}&filename=${encodeURIComponent(fileName)}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get file list."); // Response error
+    }
+
+    return response.data.content;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 const getActionsList = async (projectName: string) => {
   if (!projectName) throw new Error("Project name is not set");
 
@@ -545,11 +565,49 @@ const uploadFile = async (
   }
 };
 
+const downloadData = async (projectName: string, path: string) => {
+  // const api_response = await fetch("/bt_studio/download_data/", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     app_name: currentProjectname,
+  //     path: file_path,
+  //   }),
+  // });
+
+  // if (!api_response.ok) {
+  //   var json_response = await api_response.json();
+  //   throw new Error(json_response.message || "An error occurred.");
+  // }
+
+  // return api_response.blob();
+  if (!projectName) throw new Error("Project name is not set");
+  if (!path) throw new Error("Path is not set");
+
+  const apiUrl = `/bt_studio/download_data?app_name=${encodeURIComponent(projectName)}&path=${encodeURIComponent(path)}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get subtree."); // Response error
+    }
+
+    return response.data;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 // Named export
 export {
   createProject,
   saveBaseTree,
   saveFile,
+  getFile,
   loadProjectConfig,
   getProjectGraph,
   generateLocalApp,
@@ -566,4 +624,5 @@ export {
   createRoboticsBackendUniverse,
   saveProjectConfig,
   uploadFile,
+  downloadData
 };

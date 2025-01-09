@@ -8,7 +8,7 @@ import "./FileEditor.css";
 import { ReactComponent as SaveIcon } from "./img/save.svg";
 import { ReactComponent as SplashIcon } from "./img/logo_jderobot_monocolor.svg";
 import { ReactComponent as SplashIconUnibotics } from "./img/logo_unibotics_monocolor.svg";
-import { saveFile } from "../../api_helper/TreeWrapper";
+import { getFile, saveFile } from "../../api_helper/TreeWrapper";
 
 const FileEditor = ({
   currentFilename,
@@ -35,10 +35,7 @@ const FileEditor = ({
 
   const initFile = async () => {
     try {
-      const response = await axios.get(
-        `/bt_studio/get_file?project_name=${currentProjectname}&filename=${currentFilename}`,
-      );
-      const content = response.data.content;
+      const content = await getFile(currentProjectname, currentFilename);
       setFileContent(content);
       setHasUnsavedChanges(false); // Reset the unsaved changes flag when a new file is loaded
     } catch (error) {
