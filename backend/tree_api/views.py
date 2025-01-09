@@ -1031,10 +1031,7 @@ def generate_local_app(request):
 @api_view(["POST"])
 def generate_dockerized_app(request):
     # Check if 'app_name', 'tree_graph', and 'bt_order' are in the request data
-    if (
-        "app_name" not in request.data
-        or "bt_order" not in request.data
-    ):
+    if "app_name" not in request.data or "bt_order" not in request.data:
         return Response(
             {"success": False, "message": "Missing required parameters"},
             status=status.HTTP_400_BAD_REQUEST,
