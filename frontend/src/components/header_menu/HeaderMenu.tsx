@@ -310,6 +310,7 @@ const HeaderMenu = ({
 
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
+      return;
     }
 
     await manager.terminateApplication();
