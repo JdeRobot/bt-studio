@@ -7,6 +7,7 @@ import Modal from "../../Modal/Modal";
 import ProgressBar from "../../progress_bar/ProgressBar";
 
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
+import { uploadFile } from "../../../api_helper/TreeWrapper";
 
 const UploadModal = ({
   onSubmit,
@@ -43,10 +44,6 @@ const UploadModal = ({
     }
   };
 
-  const onZipUpdate = (metadata: any) => {
-    setUploadPercentage(metadata.percent);
-  };
-
   const handleAcceptedFiles = async (files: any) => {
     // TODO: Redo for directory
     handleZipFiles(Array.from(files));
@@ -54,48 +51,36 @@ const UploadModal = ({
 
   const handleZipFiles = async (file_array: any) => {
     // TODO: check if files are valid
-    const zip = new JSZip();
+    const n_files = file_array.lenght;
+    var n_files_uploaded = 0;
 
     file_array.forEach((file: any, index: any) => {
-      zip.file(file.name, file);
+      var reader = new FileReader();
+
+      reader.onprogress = (data) => {
+        if (data.lengthComputable) {
+          const progress = Math.round((data.loaded / data.total) * 100);
+          setUploadPercentage(progress * (n_files_uploaded / n_files));
+        }
+      };
+
+      reader.onload = (e: any) => {
+        const base64String = e.target.result.split(",")[1]; // Remove the data URL prefix
+        try {
+          uploadFile(currentProject, file.name, location, base64String);
+          console.log("Uploading file Completed");
+        } catch (error) {
+          console.log(error);
+          console.log("Error uploading file");
+        }
+
+        setUploadStatus("Uploaded");
+        setUploadPercentage(100 * (n_files_uploaded / n_files));
+      };
+
+      reader.readAsDataURL(file);
+      n_files_uploaded++;
     });
-
-    const zipContent = await zip.generateAsync({ type: "base64" }, onZipUpdate);
-
-    try {
-      uploadFileToBackend(zipContent);
-      console.log("Uploading file Completed");
-    } catch (error) {
-      console.log(error);
-      console.log("Error uploading file");
-    }
-  };
-
-  const uploadFileToBackend = async (uploadedData: any) => {
-    console.log("Calling the saving API");
-    console.log(currentProject);
-
-    try {
-      const response = await axios.post(
-        "/bt_studio/upload_code/",
-        {
-          project_name: currentProject,
-          zip_file: uploadedData,
-          location: location,
-        },
-        {
-          headers: {
-            //@ts-ignore Needed for compatibility with Unibotics
-            "X-CSRFToken": context.csrf,
-          },
-        },
-      );
-      if (response.data.success) {
-        console.log("Universe saved successfully.");
-      }
-    } catch (error) {
-      console.error("Axios Error:", error);
-    }
 
     onClose();
   };

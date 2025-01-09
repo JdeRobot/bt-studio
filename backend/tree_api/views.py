@@ -1245,8 +1245,9 @@ def upload_code(request):
     # Check if 'name' and 'zipfile' are in the request data
     if (
         "project_name" not in request.data
+        or "file_name" not in request.data
         or "location" not in request.data
-        or "zip_file" not in request.data
+        or "content" not in request.data
     ):
         return Response(
             {"error": "Name and zip file are required."},
@@ -1255,39 +1256,29 @@ def upload_code(request):
 
     # Get the name and the zip file from the request
     project_name = request.data["project_name"]
+    file_name = request.data["file_name"]
     location = request.data["location"]
-    zip_file = request.data["zip_file"]
+    content = request.data["content"]
 
     # Make folder path relative to Django app
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, project_name)
     code_path = os.path.join(project_path, "code")
     create_path = os.path.join(code_path, location)
+    file_path = os.path.join(create_path, file_name)
 
-    try:
-        zip_file_data = base64.b64decode(zip_file)
-    except (TypeError, ValueError):
-        return Response(
-            {"error": "Invalid zip file data."}, status=status.HTTP_400_BAD_REQUEST
+    # If file exist simply return
+    if os.path.exists(file_path):
+        return JsonResponse(
+            {"success": False, "message": "File already exists"}, status=404
         )
 
-    # Save the zip file temporarily
-    temp_zip_path = os.path.join(create_path, "temp.zip")
-    with open(temp_zip_path, "wb") as temp_zip_file:
-        temp_zip_file.write(zip_file_data)
-
-    # Unzip the file
     try:
-        with zipfile.ZipFile(temp_zip_path, "r") as zip_ref:
-            zip_ref.extractall(create_path)
-    except zipfile.BadZipFile:
-        return Response(
-            {"error": "Invalid zip file."}, status=status.HTTP_400_BAD_REQUEST
-        )
-    finally:
-        # Clean up the temporary zip file
-        if os.path.exists(temp_zip_path):
-            os.remove(temp_zip_path)
+        with open(file_path, "wb") as f:
+            f.write(base64.b64decode(content))
+        return Response({"success": True})
+    except Exception as e:
+        return Response({"success": False, "message": str(e)}, status=400)
 
 
 @api_view(["GET"])

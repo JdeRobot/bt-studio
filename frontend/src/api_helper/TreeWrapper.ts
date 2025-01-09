@@ -47,7 +47,11 @@ const getActionsList = async (projectName: string) => {
   }
 };
 
-const saveFile = async (projectName: string, fileName: string, content: string) => {
+const saveFile = async (
+  projectName: string,
+  fileName: string,
+  content: string
+) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("Current File name is not set");
   if (!content) throw new Error("Content does not exist");
@@ -67,7 +71,7 @@ const saveFile = async (projectName: string, fileName: string, content: string) 
           //@ts-ignore Needed for compatibility with Unibotics
           "X-CSRFToken": context.csrf,
         },
-      },
+      }
     );
 
     // Handle unsuccessful response status (e.g., non-2xx status)
@@ -166,7 +170,10 @@ const loadProjectConfig = async (
   }
 };
 
-const saveProjectConfig = async (currentProjectname: string, settings:string) => {
+const saveProjectConfig = async (
+  currentProjectname: string,
+  settings: string
+) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
   if (!settings) throw new Error("Settings content is null");
 
@@ -499,6 +506,45 @@ const saveSubtree = async (
   }
 };
 
+const uploadFile = async (
+  projectName: string,
+  fileName: string,
+  location: string,
+  content: string
+) => {
+  if (!projectName) throw new Error("Current Project name is not set");
+  if (!fileName) throw new Error("File name is not set");
+  if (!location) throw new Error("Location is not set");
+  if (!content) throw new Error("Content is not defined");
+
+  const apiUrl = "/bt_studio/upload_code/";
+
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        project_name: projectName,
+        file_name: fileName,
+        location: location,
+        content: content,
+      },
+      {
+        headers: {
+          //@ts-ignore Needed for compatibility with Unibotics
+          "X-CSRFToken": context.csrf,
+        },
+      }
+    );
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to upload file."); // Response error
+    }
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 // Named export
 export {
   createProject,
@@ -519,4 +565,5 @@ export {
   saveSubtree,
   createRoboticsBackendUniverse,
   saveProjectConfig,
+  uploadFile,
 };
