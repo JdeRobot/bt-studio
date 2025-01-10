@@ -55,7 +55,6 @@ const EditActionModal = ({
   const [formState, setFormState] = useState(initialEditActionModalData);
   const [update, setUpdate] = React.useState(false);
 
-
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
     setFormState((prevFormData) => ({
@@ -64,7 +63,7 @@ const EditActionModal = ({
     }));
     setAllowCreation(
       (name === "newInputName" && isInputNameValid(value)) ||
-        (name === "newOutputName" && isOutputNameValid(value))
+        (name === "newOutputName" && isOutputNameValid(value)),
     );
   };
 
@@ -88,7 +87,7 @@ const EditActionModal = ({
 
   useEffect(() => {
     if (update) {
-      setUpdate(false)
+      setUpdate(false);
     }
   }, [update]);
 
@@ -101,7 +100,7 @@ const EditActionModal = ({
       ];
 
       var actionFrame = getActionFrame(currentActionNode.getName());
-    
+
       changeColorNode(
         rgb,
         actionFrame,
@@ -109,7 +108,7 @@ const EditActionModal = ({
         engine,
         model,
         setDiagramEdited,
-        updateJsonState
+        updateJsonState,
       );
     }
   }, [color]);
@@ -154,11 +153,11 @@ const EditActionModal = ({
 
   const isInputNameValid = (name: string) => {
     var inputPorts = Object.entries(currentActionNode.getPorts()).filter(
-      (item) => item[1] instanceof InputPortModel
+      (item) => item[1] instanceof InputPortModel,
     );
     var merged = [].concat.apply(
       inputPorts.map((x) => x[0]),
-      []
+      [],
     );
     return (
       name !== "" && !name.includes(" ") && !merged.includes(name as never)
@@ -167,11 +166,11 @@ const EditActionModal = ({
 
   const isOutputNameValid = (name: string) => {
     var outputPorts = Object.entries(currentActionNode.getPorts()).filter(
-      (item) => item[1] instanceof OutputPortModel
+      (item) => item[1] instanceof OutputPortModel,
     );
     var merged = [].concat.apply(
       outputPorts.map((x) => x[0]),
-      []
+      [],
     );
     return (
       name !== "" && !name.includes(" ") && !merged.includes(name as never)
@@ -191,7 +190,7 @@ const EditActionModal = ({
         engine,
         model,
         setDiagramEdited,
-        updateJsonState
+        updateJsonState,
       );
     }
     setInputName(false);
@@ -211,7 +210,7 @@ const EditActionModal = ({
         engine,
         model,
         setDiagramEdited,
-        updateJsonState
+        updateJsonState,
       );
     }
     setOutputName(false);
@@ -228,7 +227,7 @@ const EditActionModal = ({
       engine,
       model,
       setDiagramEdited,
-      updateJsonState
+      updateJsonState,
     );
 
     setUpdate(true);
@@ -244,7 +243,7 @@ const EditActionModal = ({
       engine,
       model,
       setDiagramEdited,
-      updateJsonState
+      updateJsonState,
     );
 
     setUpdate(true);
@@ -344,7 +343,7 @@ const EditActionModal = ({
                         </div>
                       );
                     }
-                  }
+                  },
                 )}
                 {inputName ? (
                   <div className="bt-node-editor-io-name-entry-container">
@@ -476,7 +475,7 @@ const EditActionModal = ({
                         </div>
                       );
                     }
-                  }
+                  },
                 )}
                 {outputName ? (
                   <div className="bt-node-editor-io-name-entry-container">

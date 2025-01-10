@@ -83,10 +83,10 @@ const TreeEditor = memo(
 
     // Model and Engine for models use
     const [modalModel, setModalModel] = useState<DiagramModel | undefined>(
-      undefined
+      undefined,
     );
     const [modalEngine, setModalEngine] = useState<DiagramEngine | undefined>(
-      undefined
+      undefined,
     );
 
     useEffect(() => {
@@ -205,7 +205,7 @@ const TreeEditor = memo(
         </button>
       </>
     );
-  }
+  },
 );
 
 const DiagramEditor = memo(
@@ -294,7 +294,7 @@ const DiagramEditor = memo(
 
       var actionFrame = getActionFrame(nodeName);
 
-      if (! (node instanceof BasicNodeModel)) {
+      if (!(node instanceof BasicNodeModel)) {
         return;
       }
 
@@ -307,11 +307,11 @@ const DiagramEditor = memo(
 
       node.setColor(actionFrame.getColor());
 
-      actionFrame.getInputs().forEach(input => {
+      actionFrame.getInputs().forEach((input) => {
         node.addInputPort(input);
       });
 
-      actionFrame.getOutputs().forEach(output => {
+      actionFrame.getOutputs().forEach((output) => {
         node.addInputPort(output);
       });
     };
@@ -597,7 +597,7 @@ const DiagramEditor = memo(
         )}
       </>
     );
-  }
+  },
 );
 
 export default TreeEditor;
