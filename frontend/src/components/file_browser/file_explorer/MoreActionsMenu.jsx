@@ -4,7 +4,6 @@ import "./MoreActionsMenu.css";
 
 function MoreActionsMenu({
   menuProps,
-  actionNodesData,
   onDelete,
   onCreateFile,
   onCreateFolder,

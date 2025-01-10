@@ -1,22 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import { ReactComponent as ActionIcon } from "./img/action.svg";
 import FileIcon from "./FileIcon.jsx";
+import { OptionsContext } from "../../options/Options";
+import { ContextMenuProps } from "./MoreActionsMenu";
+import {
+  getActionFrame,
+} from "../../helper/TreeEditorHelper";
+
+interface Entry {
+  name: string;
+  is_dir: boolean;
+  path: string;
+  files: Entry[];
+}
 
 function TreeNode({
   node,
   depth,
   parentGroup,
   currentFilename,
-  showAccentColor,
-  diagramEditorReady,
-  actionNodesData,
   handleFileClick,
   handleFolderClick,
   menuProps,
+}: {
+  node: Entry;
+  depth: number;
+  parentGroup: string;
+  currentFilename: string;
+  handleFileClick: Function;
+  handleFolderClick: Function;
+  menuProps: ContextMenuProps;
 }) {
-  const [isCollapsed, setCollapsed] = useState(false);
-  const [group, setGroup] = useState(parentGroup);
+  const [isCollapsed, setCollapsed] = useState<boolean>(false);
+  const [group, setGroup] = useState<string>(parentGroup);
+  const settings = React.useContext(OptionsContext);
 
   useEffect(() => {
     if (node.is_dir) {
@@ -25,7 +43,7 @@ function TreeNode({
       }
     }
   }, []);
-
+  
   const handleClick = () => {
     if (node.is_dir) {
       setCollapsed(!isCollapsed);
@@ -61,17 +79,15 @@ function TreeNode({
               menuProps.showMoreActionsMenu(
                 e,
                 node,
-                parentGroup === "" ? group : parentGroup,
+                parentGroup === "" ? group : parentGroup
               );
             }}
           />
-          {showAccentColor && diagramEditorReady && (
+          {settings.editorShowAccentColors.value && (
             <div
               className="bt-accent-color"
               style={{
-                backgroundColor: actionNodesData[node.name.replace(".py", "")]
-                  ? actionNodesData[node.name.replace(".py", "")]["color"]
-                  : "none",
+                backgroundColor: getActionFrame(node.name.replace(".py", "")) ? getActionFrame(node.name.replace(".py", ""))?.getColor() : "none",
               }}
             />
           )}
@@ -84,9 +100,6 @@ function TreeNode({
             depth={depth + 1}
             parentGroup={group}
             currentFilename={currentFilename}
-            showAccentColor={showAccentColor}
-            diagramEditorReady={diagramEditorReady}
-            actionNodesData={actionNodesData}
             handleFileClick={handleFileClick}
             handleFolderClick={handleFolderClick}
             menuProps={menuProps}

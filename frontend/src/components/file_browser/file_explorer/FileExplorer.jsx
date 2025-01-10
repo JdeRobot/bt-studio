@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import "./FileExplorer.css";
-import TreeNode from "./TreeNode.jsx";
+import TreeNode from "./TreeNode";
 import MoreActionsMenu, { ContextMenuProps } from "./MoreActionsMenu.jsx";
 
 const FileExplorer = ({
@@ -9,9 +9,6 @@ const FileExplorer = ({
   currentFilename,
   currentProjectname,
   setSelectedEntry,
-  actionNodesData,
-  showAccentColor,
-  diagramEditorReady,
   fileList,
   fetchFileList,
   onDelete,
@@ -65,9 +62,6 @@ const FileExplorer = ({
             depth={0}
             parentGroup=""
             currentFilename={currentFilename}
-            showAccentColor={showAccentColor}
-            diagramEditorReady={diagramEditorReady}
-            actionNodesData={actionNodesData}
             handleFileClick={handleFileClick}
             handleFolderClick={handleFolderClick}
             menuProps={MenuProps}
@@ -76,7 +70,6 @@ const FileExplorer = ({
         {showMenu && (
           <MoreActionsMenu
             menuProps={MenuProps}
-            actionNodesData={actionNodesData}
             onDelete={onDelete}
             onCreateFile={onCreateFile}
             onCreateFolder={onCreateFolder}
