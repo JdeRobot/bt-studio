@@ -73,6 +73,10 @@ export class ActionFrame {
     this.color = color;
   }
 
+  public getColor() : string {
+    return this.color;
+  }
+
   public addInput(name: string) {
     if (!this.inputs.includes(name)) {
       this.inputs.push(name);
@@ -96,6 +100,14 @@ export class ActionFrame {
       this.outputs = this.outputs.filter((output) => output !== name);
     }
   }
+
+  public getInputs() : string[] {
+    return this.inputs;
+  }
+
+  public getOutputs() : string[] {
+    return this.outputs;
+  }
 }
 
 var actionFrames: ActionFrame[] = [];
@@ -104,7 +116,6 @@ export const getActionFrame = (name: string) => {
   for (let index = 0; index < actionFrames.length; index++) {
     const element = actionFrames[index];
     if (element.name === name) {
-      console.error(actionFrames);
       return element;
     }
   }

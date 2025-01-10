@@ -29,6 +29,7 @@ import {
   ActionFrame,
   resetActionFrames,
   addActionFrame,
+  getActionFrame,
 } from "../helper/TreeEditorHelper";
 
 import NodeMenu from "./NodeMenu";
@@ -291,21 +292,27 @@ const DiagramEditor = memo(
       else if (nodeName === "Repeat") node.addInputPort("num_cycles");
       else if (nodeName === "Delay") node.addInputPort("delay_ms");
 
-      model.current.getNodes().forEach((oldNode: NodeModel) => {
-        //TODO: add a function to retrieve stored data
-        if (oldNode instanceof BasicNodeModel) {
-          var convNode = oldNode as BasicNodeModel;
-          if (convNode.getName() === node.getName() && node !== convNode) {
-            node.setColor(convNode.getColor());
-            Object.values(convNode.getPorts()).forEach((element) => {
-              if (element instanceof InputPortModel) {
-                node.addInputPort(element.getName());
-              } else if (element instanceof OutputPortModel) {
-                node.addOutputPort(element.getName());
-              }
-            });
-          }
+      var actionFrame = getActionFrame(nodeName);
+
+      if (! (node instanceof BasicNodeModel)) {
+        return;
+      }
+
+      if (actionFrame === undefined) {
+        if (isActionNode(nodeName) && !node.getIsSubtree()) {
+          addActionFrame(nodeName, node.getColor(), node.getPorts());
         }
+        return;
+      }
+
+      node.setColor(actionFrame.getColor());
+
+      actionFrame.getInputs().forEach(input => {
+        node.addInputPort(input);
+      });
+
+      actionFrame.getOutputs().forEach(output => {
+        node.addInputPort(output);
       });
     };
 
@@ -557,7 +564,7 @@ const DiagramEditor = memo(
         isActionNode(node.getName()) &&
         !node.getIsSubtree()
       ) {
-        addActionFrame(node.getName(), node.getColor(), node.getPorts())
+        addActionFrame(node.getName(), node.getColor(), node.getPorts());
       }
     });
 
