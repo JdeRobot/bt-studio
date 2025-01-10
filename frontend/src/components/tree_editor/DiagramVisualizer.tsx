@@ -99,7 +99,7 @@ const setStatusNode = (
   }
 
   if (node) {
-    changeColorNode(rgb, node, engine, model);
+    changeColorNode(rgb, undefined, node, engine, model);
   }
 };
 

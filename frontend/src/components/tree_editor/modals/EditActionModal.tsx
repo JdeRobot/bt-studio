@@ -8,6 +8,7 @@ import {
   removePort,
   ActionNodePortType,
   changeColorNode,
+  ActionFrame,
 } from "../../helper/TreeEditorHelper";
 import { rgbToLuminance } from "../../helper/colorHelper";
 
@@ -32,6 +33,7 @@ const EditActionModal = ({
   isOpen,
   onClose,
   currentActionNode,
+  getActionFrame,
   model,
   engine,
   updateJsonState,
@@ -40,6 +42,7 @@ const EditActionModal = ({
   isOpen: boolean;
   onClose: Function;
   currentActionNode: BasicNodeModel;
+  getActionFrame: Function;
   model: DiagramModel;
   engine: DiagramEngine;
   updateJsonState: Function;
@@ -60,7 +63,7 @@ const EditActionModal = ({
     }));
     setAllowCreation(
       (name === "newInputName" && isInputNameValid(value)) ||
-        (name === "newOutputName" && isOutputNameValid(value)),
+        (name === "newOutputName" && isOutputNameValid(value))
     );
   };
 
@@ -89,13 +92,18 @@ const EditActionModal = ({
         color.rgb["g"],
         color.rgb["b"],
       ];
+
+      var actionFrame = getActionFrame(currentActionNode.getName());
+      console.log(actionFrame, currentActionNode.getName())
+
       changeColorNode(
         rgb,
+        actionFrame,
         currentActionNode,
         engine,
         model,
         setDiagramEdited,
-        updateJsonState,
+        updateJsonState
       );
     }
   }, [color]);
@@ -140,11 +148,11 @@ const EditActionModal = ({
 
   const isInputNameValid = (name: string) => {
     var inputPorts = Object.entries(currentActionNode.getPorts()).filter(
-      (item) => item[1] instanceof InputPortModel,
+      (item) => item[1] instanceof InputPortModel
     );
     var merged = [].concat.apply(
       inputPorts.map((x) => x[0]),
-      [],
+      []
     );
     return (
       name !== "" && !name.includes(" ") && !merged.includes(name as never)
@@ -153,11 +161,11 @@ const EditActionModal = ({
 
   const isOutputNameValid = (name: string) => {
     var outputPorts = Object.entries(currentActionNode.getPorts()).filter(
-      (item) => item[1] instanceof OutputPortModel,
+      (item) => item[1] instanceof OutputPortModel
     );
     var merged = [].concat.apply(
       outputPorts.map((x) => x[0]),
-      [],
+      []
     );
     return (
       name !== "" && !name.includes(" ") && !merged.includes(name as never)
@@ -167,14 +175,21 @@ const EditActionModal = ({
   const addInput = () => {
     //TODO: Maybe display some error message when the name is invalid
     if (isInputNameValid(formState["newInputName"])) {
+      var actionFrame = getActionFrame(currentActionNode.getName());
+
+      if (actionFrame === undefined) {
+        return;
+      }
+
       addPort(
         formState["newInputName"],
+        actionFrame,
         currentActionNode,
         ActionNodePortType.Input,
         engine,
         model,
         setDiagramEdited,
-        updateJsonState,
+        updateJsonState
       );
     }
     setInputName(false);
@@ -184,17 +199,64 @@ const EditActionModal = ({
   const addOutput = () => {
     //TODO: Maybe display some error message when the name is invalid
     if (isOutputNameValid(formState["newOutputName"])) {
+      var actionFrame = getActionFrame(currentActionNode.getName());
+
+      if (actionFrame === undefined) {
+        return;
+      }
+
       addPort(
         formState["newOutputName"],
+        actionFrame,
         currentActionNode,
         ActionNodePortType.Output,
         engine,
         model,
         setDiagramEdited,
-        updateJsonState,
+        updateJsonState
       );
     }
     setOutputName(false);
+    reRender();
+  };
+
+  const removeInput = (port: InputPortModel) => {
+    var actionFrame = getActionFrame(currentActionNode.getName());
+
+    if (actionFrame === undefined) {
+      return;
+    }
+
+    removePort(
+      port,
+      actionFrame,
+      currentActionNode,
+      engine,
+      model,
+      setDiagramEdited,
+      updateJsonState
+    );
+
+    reRender();
+  };
+
+  const removeOutput = (port: OutputPortModel) => {
+    var actionFrame = getActionFrame(currentActionNode.getName());
+
+    if (actionFrame === undefined) {
+      return;
+    }
+
+    removePort(
+      port,
+      actionFrame,
+      currentActionNode,
+      engine,
+      model,
+      setDiagramEdited,
+      updateJsonState
+    );
+
     reRender();
   };
 
@@ -276,15 +338,7 @@ const EditActionModal = ({
                             }}
                             title="Delete"
                             onClick={() => {
-                              removePort(
-                                port[1] as InputPortModel,
-                                currentActionNode,
-                                engine,
-                                model,
-                                setDiagramEdited,
-                                updateJsonState,
-                              );
-                              reRender();
+                              removeInput(port[1] as InputPortModel);
                             }}
                           >
                             <DeleteIcon
@@ -300,7 +354,7 @@ const EditActionModal = ({
                         </div>
                       );
                     }
-                  },
+                  }
                 )}
                 {inputName ? (
                   <div className="bt-node-editor-io-name-entry-container">
@@ -405,15 +459,7 @@ const EditActionModal = ({
                             }}
                             title="Delete"
                             onClick={() => {
-                              removePort(
-                                port[1] as OutputPortModel,
-                                currentActionNode,
-                                engine,
-                                model,
-                                setDiagramEdited,
-                                updateJsonState,
-                              );
-                              reRender();
+                              removeOutput(port[1] as OutputPortModel);
                             }}
                           >
                             <DeleteIcon
@@ -440,7 +486,7 @@ const EditActionModal = ({
                         </div>
                       );
                     }
-                  },
+                  }
                 )}
                 {outputName ? (
                   <div className="bt-node-editor-io-name-entry-container">

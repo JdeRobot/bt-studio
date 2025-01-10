@@ -50,14 +50,62 @@ export const isActionNode = (nodeName: string) => {
   ].includes(nodeName);
 };
 
+export class ActionFrame {
+  public name: string;
+  private color: string;
+  private inputs: string[];
+  private outputs: string[];
+
+  constructor(
+    name: string,
+    color: string,
+    inputs: string[],
+    outputs: string[]
+  ) {
+    this.name = name;
+    this.color = color;
+    this.inputs = inputs;
+    this.outputs = outputs;
+  }
+
+  public changeColor(color: string) {
+    this.color = color;
+  }
+
+  public addInput(name: string) {
+    if (!this.inputs.includes(name)) {
+      this.inputs.push(name);
+    }
+  }
+
+  public addOutput(name: string) {
+    if (!this.outputs.includes(name)) {
+      this.outputs.push(name);
+    }
+  }
+
+  public removeInput(name: string) {
+    if (this.inputs.includes(name)) {
+      this.inputs = this.inputs.filter((input) => input !== name);
+    }
+  }
+
+  public removeOutput(name: string) {
+    if (this.outputs.includes(name)) {
+      this.outputs = this.outputs.filter((output) => output !== name);
+    }
+  }
+}
+
 export const addPort = (
   portName: string,
+  action: ActionFrame,
   node: BasicNodeModel,
   type: ActionNodePortType,
   engine: DiagramEngine,
   model: DiagramModel,
   diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>>,
-  updateJsonState: Function,
+  updateJsonState: Function
 ) => {
   // Check that the user didn't cancel
   if (!node || !portName) {
@@ -66,8 +114,10 @@ export const addPort = (
 
   if (type === ActionNodePortType.Input) {
     node.addInputPort(portName);
+    action.addInput(portName);
   } else {
     node.addOutputPort(portName);
+    action.addOutput(portName);
   }
 
   model.getNodes().forEach((oldNode: NodeModel) => {
@@ -98,7 +148,7 @@ export const addPort = (
 const deletePortLink = (
   model: DiagramModel,
   portName: string,
-  node: BasicNodeModel,
+  node: BasicNodeModel
 ) => {
   // var link: LinkModel | undefined;
   var link: any;
@@ -114,11 +164,12 @@ const deletePortLink = (
 
 export const removePort = (
   port: OutputPortModel | InputPortModel,
+  action: ActionFrame,
   node: BasicNodeModel,
   engine: DiagramEngine,
   model: DiagramModel,
   diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>>,
-  updateJsonState: Function,
+  updateJsonState: Function
 ) => {
   //TODO: type should be an enum
   // Check that the user didn't cancel
@@ -132,8 +183,10 @@ export const removePort = (
 
   if (port instanceof InputPortModel) {
     node.removeInputPort(port);
+    action.removeInput(portName);
   } else {
     node.removeOutputPort(port);
+    action.removeOutput(portName);
   }
 
   model.getNodes().forEach((oldNode: NodeModel) => {
@@ -167,13 +220,14 @@ export const removePort = (
 
 export const changeColorNode = (
   rgb: [number, number, number],
+  action: ActionFrame | undefined,
   node: BasicNodeModel,
   engine: DiagramEngine,
   model: DiagramModel,
   diagramEditedCallback: React.Dispatch<
     React.SetStateAction<boolean>
   > = () => {},
-  updateJsonState: Function = () => {},
+  updateJsonState: Function = () => {}
 ) => {
   node.setColor(
     "rgb(" +
@@ -182,8 +236,20 @@ export const changeColorNode = (
       Math.round(rgb[1]) +
       "," +
       Math.round(rgb[2]) +
-      ")",
+      ")"
   );
+
+  if (action) {
+    action.changeColor(
+      "rgb(" +
+        Math.round(rgb[0]) +
+        "," +
+        Math.round(rgb[1]) +
+        "," +
+        Math.round(rgb[2]) +
+        ")"
+    );
+  }
 
   model.getNodes().forEach((oldNode: NodeModel) => {
     var convNode;
@@ -212,7 +278,7 @@ export const changeColorNode = (
 export const configureEngine = (
   engine: React.MutableRefObject<DiagramEngine>,
   basicNodeCallback: Function | null = null,
-  tagNodeCallback: Function | null = null,
+  tagNodeCallback: Function | null = null
 ) => {
   console.log("Configuring engine!");
   // Register factories
@@ -225,32 +291,32 @@ export const configureEngine = (
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("children", (config) => new ChildrenPortModel()),
+      new SimplePortFactory("children", (config) => new ChildrenPortModel())
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("parent", (config) => new ParentPortModel()),
+      new SimplePortFactory("parent", (config) => new ParentPortModel())
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("output", (config) => new OutputPortModel("")),
+      new SimplePortFactory("output", (config) => new OutputPortModel(""))
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("input", (config) => new InputPortModel("")),
+      new SimplePortFactory("input", (config) => new InputPortModel(""))
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("tag output", (config) => new TagOutputPortModel()),
+      new SimplePortFactory("tag output", (config) => new TagOutputPortModel())
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("tag input", (config) => new TagInputPortModel()),
+      new SimplePortFactory("tag input", (config) => new TagInputPortModel())
     );
 
   // Disable loose links
@@ -267,7 +333,7 @@ export const configureEngine = (
 export const findSubtree = (
   baseTree: any,
   subTree: string,
-  oldIndex: number = -1,
+  oldIndex: number = -1
 ): number[] | undefined => {
   var path: number[] = [];
   var nodeChilds;

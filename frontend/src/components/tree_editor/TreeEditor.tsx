@@ -8,6 +8,7 @@ import createEngine, {
   DiagramModel,
   DiagramModelGenerics,
   NodeModel,
+  PortModel,
   ZoomCanvasAction,
 } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
@@ -25,6 +26,7 @@ import {
   configureEngine,
   isActionNode,
   TreeViewType,
+  ActionFrame,
 } from "../helper/TreeEditorHelper";
 
 import NodeMenu from "./NodeMenu";
@@ -78,15 +80,20 @@ const TreeEditor = memo(
 
     // Model and Engine for models use
     const [modalModel, setModalModel] = useState<DiagramModel | undefined>(
-      undefined,
+      undefined
     );
     const [modalEngine, setModalEngine] = useState<DiagramEngine | undefined>(
-      undefined,
+      undefined
     );
+    const [actionFrames, setActionFrame] = useState<ActionFrame[]>([]);
 
     useEffect(() => {
       setBtOrder(settings.btOrder.value);
     }, [settings.btOrder.value]);
+
+    useEffect(() => {
+      setActionFrame([]);
+    }, [projectName]);
 
     const updateJsonState = () => {
       if (modalModel) {
@@ -104,6 +111,38 @@ const TreeEditor = memo(
       setCurrentNode(undefined);
     };
 
+    const getActionFrame = (name: string) => {
+      for (let index = 0; index < actionFrames.length; index++) {
+        const element = actionFrames[index];
+        if (element.name === name) {
+          console.error(actionFrames);
+          return element;
+        }
+      }
+      return undefined;
+    };
+
+    const addActionFrame = (name: string, color:string, ports:PortModel ) => {
+      if (getActionFrame(name) !== undefined) {
+        return; // Already exists
+      }
+
+      var inputs: string[] = [];
+      var outputs: string[] = [];
+
+      Object.values(ports).forEach((port) => {
+        if (port instanceof InputPortModel) {
+          inputs.push(port.getName())
+        } else if (port instanceof OutputPortModel) {
+          outputs.push(port.getName())
+        }
+      });
+
+      var newActionFrame = new ActionFrame(name, color, inputs, outputs);
+
+      setActionFrame([...actionFrames, newActionFrame]);
+    };
+
     return (
       <>
         {currentNode && modalModel && modalEngine && (
@@ -113,6 +152,7 @@ const TreeEditor = memo(
                 isOpen={editActionModalOpen}
                 onClose={onEditActionModalClose}
                 currentActionNode={currentNode}
+                getActionFrame={getActionFrame}
                 model={modalModel}
                 engine={modalEngine}
                 updateJsonState={updateJsonState}
@@ -163,6 +203,8 @@ const TreeEditor = memo(
             setGoBack={setGoBack}
             subTreeName={subTreeName}
             updateFileExplorer={updateFileExplorer}
+            getActionFrame={getActionFrame}
+            addActionFrame={addActionFrame}
           />
         )}
         <button className="bt-order-indicator" title={"BT Order: " + btOrder}>
@@ -196,7 +238,7 @@ const TreeEditor = memo(
         </button>
       </>
     );
-  },
+  }
 );
 
 const DiagramEditor = memo(
@@ -217,6 +259,8 @@ const DiagramEditor = memo(
     setGoBack,
     subTreeName,
     updateFileExplorer,
+    getActionFrame,
+    addActionFrame,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -234,6 +278,8 @@ const DiagramEditor = memo(
     setGoBack: Function;
     subTreeName: string;
     updateFileExplorer: Function;
+    getActionFrame: Function;
+    addActionFrame: Function;
   }) => {
     // VARS
 
@@ -284,7 +330,7 @@ const DiagramEditor = memo(
       else if (nodeName === "Delay") node.addInputPort("delay_ms");
 
       model.current.getNodes().forEach((oldNode: NodeModel) => {
-        //TODO: for the tags, this will never be called. Maybe have a common type
+        //TODO: add a function to retrieve stored data
         if (oldNode instanceof BasicNodeModel) {
           var convNode = oldNode as BasicNodeModel;
           if (convNode.getName() === node.getName() && node !== convNode) {
@@ -544,6 +590,13 @@ const DiagramEditor = memo(
       attachPositionListener(node);
       attachClickListener(node);
       node.setSelected(false);
+      if (
+        node instanceof BasicNodeModel &&
+        isActionNode(node.getName()) &&
+        !node.getIsSubtree()
+      ) {
+        addActionFrame(node.getName(), node.getColor(), node.getPorts())
+      }
     });
 
     setModalModel(model.current);
@@ -575,7 +628,7 @@ const DiagramEditor = memo(
         )}
       </>
     );
-  },
+  }
 );
 
 export default TreeEditor;
