@@ -94,7 +94,10 @@ const EditActionModal = ({
       ];
 
       var actionFrame = getActionFrame(currentActionNode.getName());
-      console.log(actionFrame, currentActionNode.getName())
+      
+      if (actionFrame === undefined) {
+        return;
+      }
 
       changeColorNode(
         rgb,
