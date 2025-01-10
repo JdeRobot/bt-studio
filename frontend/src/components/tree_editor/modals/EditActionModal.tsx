@@ -53,6 +53,8 @@ const EditActionModal = ({
   const [outputName, setOutputName] = React.useState(false);
   const [allowCreation, setAllowCreation] = React.useState(false);
   const [formState, setFormState] = useState(initialEditActionModalData);
+  const [update, setUpdate] = React.useState(false);
+
 
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
@@ -83,6 +85,12 @@ const EditActionModal = ({
       setColor(newColor);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (update) {
+      setUpdate(false)
+    }
+  }, [update]);
 
   useEffect(() => {
     if (currentActionNode && color) {
@@ -223,7 +231,7 @@ const EditActionModal = ({
       updateJsonState
     );
 
-    reRender();
+    setUpdate(true);
   };
 
   const removeOutput = (port: OutputPortModel) => {
@@ -239,7 +247,7 @@ const EditActionModal = ({
       updateJsonState
     );
 
-    reRender();
+    setUpdate(true);
   };
 
   const cancelCreation = () => {
