@@ -27,6 +27,8 @@ import {
   isActionNode,
   TreeViewType,
   ActionFrame,
+  resetActionFrames,
+  addActionFrame,
 } from "../helper/TreeEditorHelper";
 
 import NodeMenu from "./NodeMenu";
@@ -85,14 +87,13 @@ const TreeEditor = memo(
     const [modalEngine, setModalEngine] = useState<DiagramEngine | undefined>(
       undefined
     );
-    const [actionFrames, setActionFrame] = useState<ActionFrame[]>([]);
 
     useEffect(() => {
       setBtOrder(settings.btOrder.value);
     }, [settings.btOrder.value]);
 
     useEffect(() => {
-      setActionFrame([]);
+      resetActionFrames();
     }, [projectName]);
 
     const updateJsonState = () => {
@@ -111,38 +112,6 @@ const TreeEditor = memo(
       setCurrentNode(undefined);
     };
 
-    const getActionFrame = (name: string) => {
-      for (let index = 0; index < actionFrames.length; index++) {
-        const element = actionFrames[index];
-        if (element.name === name) {
-          console.error(actionFrames);
-          return element;
-        }
-      }
-      return undefined;
-    };
-
-    const addActionFrame = (name: string, color:string, ports:PortModel ) => {
-      if (getActionFrame(name) !== undefined) {
-        return; // Already exists
-      }
-
-      var inputs: string[] = [];
-      var outputs: string[] = [];
-
-      Object.values(ports).forEach((port) => {
-        if (port instanceof InputPortModel) {
-          inputs.push(port.getName())
-        } else if (port instanceof OutputPortModel) {
-          outputs.push(port.getName())
-        }
-      });
-
-      var newActionFrame = new ActionFrame(name, color, inputs, outputs);
-
-      setActionFrame([...actionFrames, newActionFrame]);
-    };
-
     return (
       <>
         {currentNode && modalModel && modalEngine && (
@@ -152,7 +121,6 @@ const TreeEditor = memo(
                 isOpen={editActionModalOpen}
                 onClose={onEditActionModalClose}
                 currentActionNode={currentNode}
-                getActionFrame={getActionFrame}
                 model={modalModel}
                 engine={modalEngine}
                 updateJsonState={updateJsonState}
@@ -203,8 +171,6 @@ const TreeEditor = memo(
             setGoBack={setGoBack}
             subTreeName={subTreeName}
             updateFileExplorer={updateFileExplorer}
-            getActionFrame={getActionFrame}
-            addActionFrame={addActionFrame}
           />
         )}
         <button className="bt-order-indicator" title={"BT Order: " + btOrder}>
@@ -259,8 +225,6 @@ const DiagramEditor = memo(
     setGoBack,
     subTreeName,
     updateFileExplorer,
-    getActionFrame,
-    addActionFrame,
   }: {
     modelJson: any;
     setResultJson: Function;
@@ -278,8 +242,6 @@ const DiagramEditor = memo(
     setGoBack: Function;
     subTreeName: string;
     updateFileExplorer: Function;
-    getActionFrame: Function;
-    addActionFrame: Function;
   }) => {
     // VARS
 

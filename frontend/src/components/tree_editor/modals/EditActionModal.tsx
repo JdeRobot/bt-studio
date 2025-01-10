@@ -9,6 +9,7 @@ import {
   ActionNodePortType,
   changeColorNode,
   ActionFrame,
+  getActionFrame,
 } from "../../helper/TreeEditorHelper";
 import { rgbToLuminance } from "../../helper/colorHelper";
 
@@ -33,7 +34,6 @@ const EditActionModal = ({
   isOpen,
   onClose,
   currentActionNode,
-  getActionFrame,
   model,
   engine,
   updateJsonState,
@@ -42,7 +42,6 @@ const EditActionModal = ({
   isOpen: boolean;
   onClose: Function;
   currentActionNode: BasicNodeModel;
-  getActionFrame: Function;
   model: DiagramModel;
   engine: DiagramEngine;
   updateJsonState: Function;
@@ -94,11 +93,7 @@ const EditActionModal = ({
       ];
 
       var actionFrame = getActionFrame(currentActionNode.getName());
-      
-      if (actionFrame === undefined) {
-        return;
-      }
-
+    
       changeColorNode(
         rgb,
         actionFrame,
@@ -180,10 +175,6 @@ const EditActionModal = ({
     if (isInputNameValid(formState["newInputName"])) {
       var actionFrame = getActionFrame(currentActionNode.getName());
 
-      if (actionFrame === undefined) {
-        return;
-      }
-
       addPort(
         formState["newInputName"],
         actionFrame,
@@ -204,10 +195,6 @@ const EditActionModal = ({
     if (isOutputNameValid(formState["newOutputName"])) {
       var actionFrame = getActionFrame(currentActionNode.getName());
 
-      if (actionFrame === undefined) {
-        return;
-      }
-
       addPort(
         formState["newOutputName"],
         actionFrame,
@@ -226,10 +213,6 @@ const EditActionModal = ({
   const removeInput = (port: InputPortModel) => {
     var actionFrame = getActionFrame(currentActionNode.getName());
 
-    if (actionFrame === undefined) {
-      return;
-    }
-
     removePort(
       port,
       actionFrame,
@@ -245,10 +228,6 @@ const EditActionModal = ({
 
   const removeOutput = (port: OutputPortModel) => {
     var actionFrame = getActionFrame(currentActionNode.getName());
-
-    if (actionFrame === undefined) {
-      return;
-    }
 
     removePort(
       port,

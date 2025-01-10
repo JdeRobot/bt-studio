@@ -3,6 +3,7 @@ import {
   DiagramModel,
   LinkModel,
   NodeModel,
+  PortModel,
   ZoomCanvasAction,
 } from "@projectstorm/react-diagrams";
 
@@ -97,9 +98,47 @@ export class ActionFrame {
   }
 }
 
+var actionFrames: ActionFrame[] = [];
+
+export const getActionFrame = (name: string) => {
+  for (let index = 0; index < actionFrames.length; index++) {
+    const element = actionFrames[index];
+    if (element.name === name) {
+      console.error(actionFrames);
+      return element;
+    }
+  }
+  return undefined;
+};
+
+export const resetActionFrames = () => {
+  actionFrames = [];
+};
+
+export const addActionFrame = (name: string, color:string, ports:{ [s: string]: PortModel; } ) => {
+  if (getActionFrame(name) !== undefined) {
+    return; // Already exists
+  }
+
+  var inputs: string[] = [];
+  var outputs: string[] = [];
+
+  Object.values(ports).forEach((port) => {
+    if (port instanceof InputPortModel) {
+      inputs.push(port.getName())
+    } else if (port instanceof OutputPortModel) {
+      outputs.push(port.getName())
+    }
+  });
+
+  var newActionFrame = new ActionFrame(name, color, inputs, outputs);
+
+  actionFrames.push(newActionFrame);
+};
+
 export const addPort = (
   portName: string,
-  action: ActionFrame,
+  action: ActionFrame | undefined,
   node: BasicNodeModel,
   type: ActionNodePortType,
   engine: DiagramEngine,
@@ -114,10 +153,14 @@ export const addPort = (
 
   if (type === ActionNodePortType.Input) {
     node.addInputPort(portName);
-    action.addInput(portName);
+    if (action) {
+      action.addInput(portName);
+    }
   } else {
     node.addOutputPort(portName);
-    action.addOutput(portName);
+    if (action) {
+      action.addOutput(portName);
+    }
   }
 
   model.getNodes().forEach((oldNode: NodeModel) => {
@@ -164,7 +207,7 @@ const deletePortLink = (
 
 export const removePort = (
   port: OutputPortModel | InputPortModel,
-  action: ActionFrame,
+  action: ActionFrame | undefined,
   node: BasicNodeModel,
   engine: DiagramEngine,
   model: DiagramModel,
@@ -183,10 +226,14 @@ export const removePort = (
 
   if (port instanceof InputPortModel) {
     node.removeInputPort(port);
-    action.removeInput(portName);
+    if (action) {
+      action.removeInput(portName);
+    }
   } else {
     node.removeOutputPort(port);
-    action.removeOutput(portName);
+    if (action) {
+      action.removeOutput(portName);
+    }
   }
 
   model.getNodes().forEach((oldNode: NodeModel) => {
