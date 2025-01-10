@@ -8,6 +8,8 @@ import {
   removePort,
   ActionNodePortType,
   changeColorNode,
+  ActionFrame,
+  getActionFrame,
 } from "../../helper/TreeEditorHelper";
 import { rgbToLuminance } from "../../helper/colorHelper";
 
@@ -51,6 +53,7 @@ const EditActionModal = ({
   const [outputName, setOutputName] = React.useState(false);
   const [allowCreation, setAllowCreation] = React.useState(false);
   const [formState, setFormState] = useState(initialEditActionModalData);
+  const [update, setUpdate] = React.useState(false);
 
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
@@ -83,14 +86,24 @@ const EditActionModal = ({
   }, [isOpen]);
 
   useEffect(() => {
+    if (update) {
+      setUpdate(false);
+    }
+  }, [update]);
+
+  useEffect(() => {
     if (currentActionNode && color) {
       var rgb: [number, number, number] = [
         color.rgb["r"],
         color.rgb["g"],
         color.rgb["b"],
       ];
+
+      var actionFrame = getActionFrame(currentActionNode.getName());
+
       changeColorNode(
         rgb,
+        actionFrame,
         currentActionNode,
         engine,
         model,
@@ -167,8 +180,11 @@ const EditActionModal = ({
   const addInput = () => {
     //TODO: Maybe display some error message when the name is invalid
     if (isInputNameValid(formState["newInputName"])) {
+      var actionFrame = getActionFrame(currentActionNode.getName());
+
       addPort(
         formState["newInputName"],
+        actionFrame,
         currentActionNode,
         ActionNodePortType.Input,
         engine,
@@ -184,8 +200,11 @@ const EditActionModal = ({
   const addOutput = () => {
     //TODO: Maybe display some error message when the name is invalid
     if (isOutputNameValid(formState["newOutputName"])) {
+      var actionFrame = getActionFrame(currentActionNode.getName());
+
       addPort(
         formState["newOutputName"],
+        actionFrame,
         currentActionNode,
         ActionNodePortType.Output,
         engine,
@@ -196,6 +215,38 @@ const EditActionModal = ({
     }
     setOutputName(false);
     reRender();
+  };
+
+  const removeInput = (port: InputPortModel) => {
+    var actionFrame = getActionFrame(currentActionNode.getName());
+
+    removePort(
+      port,
+      actionFrame,
+      currentActionNode,
+      engine,
+      model,
+      setDiagramEdited,
+      updateJsonState,
+    );
+
+    setUpdate(true);
+  };
+
+  const removeOutput = (port: OutputPortModel) => {
+    var actionFrame = getActionFrame(currentActionNode.getName());
+
+    removePort(
+      port,
+      actionFrame,
+      currentActionNode,
+      engine,
+      model,
+      setDiagramEdited,
+      updateJsonState,
+    );
+
+    setUpdate(true);
   };
 
   const cancelCreation = () => {
@@ -276,15 +327,7 @@ const EditActionModal = ({
                             }}
                             title="Delete"
                             onClick={() => {
-                              removePort(
-                                port[1] as InputPortModel,
-                                currentActionNode,
-                                engine,
-                                model,
-                                setDiagramEdited,
-                                updateJsonState,
-                              );
-                              reRender();
+                              removeInput(port[1] as InputPortModel);
                             }}
                           >
                             <DeleteIcon
@@ -405,15 +448,7 @@ const EditActionModal = ({
                             }}
                             title="Delete"
                             onClick={() => {
-                              removePort(
-                                port[1] as OutputPortModel,
-                                currentActionNode,
-                                engine,
-                                model,
-                                setDiagramEdited,
-                                updateJsonState,
-                              );
-                              reRender();
+                              removeOutput(port[1] as OutputPortModel);
                             }}
                           >
                             <DeleteIcon

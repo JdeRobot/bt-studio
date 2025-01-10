@@ -41,9 +41,6 @@ const FileBrowser = ({
   currentFilename,
   currentProjectname,
   setProjectChanges,
-  actionNodesData,
-  showAccentColor,
-  diagramEditorReady,
   setAutosave,
   forceSaveCurrent,
   setForcedSaveCurrent,
@@ -395,9 +392,6 @@ const FileBrowser = ({
           currentFilename={currentFilename}
           currentProjectname={currentProjectname}
           setSelectedEntry={setSelectedEntry}
-          actionNodesData={actionNodesData}
-          showAccentColor={showAccentColor}
-          diagramEditorReady={diagramEditorReady}
           fileList={fileList}
           fetchFileList={fetchFileList}
           onDelete={handleDeleteModal}

@@ -3,8 +3,8 @@ import { createContext, useState } from "react";
 const OptionsContext = createContext<SettingsData>({
   editorShowAccentColors: {
     setter: () => {},
-    value: true,
-    default_value: true,
+    value: false,
+    default_value: false,
   },
   theme: { setter: () => {}, value: "dark", default_value: "dark" },
   btOrder: {
@@ -30,7 +30,7 @@ export interface SettingsData {
 
 const OptionsProvider = ({ children }: { children: any }) => {
   // TODO: try to not repeat the default values
-  const [editorShowAccentColors, setEditorShowAccentColors] = useState(true);
+  const [editorShowAccentColors, setEditorShowAccentColors] = useState(false);
   const [theme, setTheme] = useState("dark");
   const [btOrder, setBtOrder] = useState("bottom-to-top");
 
@@ -39,7 +39,7 @@ const OptionsProvider = ({ children }: { children: any }) => {
     editorShowAccentColors: {
       setter: setEditorShowAccentColors,
       value: editorShowAccentColors,
-      default_value: true,
+      default_value: false,
     },
     theme: { setter: setTheme, value: theme, default_value: "dark" },
     btOrder: {

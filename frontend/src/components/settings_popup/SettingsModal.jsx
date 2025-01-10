@@ -17,14 +17,8 @@ import { OptionsContext } from "../options/Options";
 import { saveProjectConfig } from "./../../api_helper/TreeWrapper";
 
 const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
-  const [color, setColor] = useColor("rgb(128 0 128)");
-  const [open, setOpen] = useState(false);
-
+  // const [color, setColor] = useColor("rgb(128 0 128)");
   const settings = React.useContext(OptionsContext);
-
-  useEffect(() => {
-    // Load settings
-  }, [isOpen]);
 
   // useEffect(() => {
   //   console.log("rgb("+Math.round(color.rgb.r)+","+Math.round(color.rgb.g)+","+Math.round(color.rgb.b)+")")

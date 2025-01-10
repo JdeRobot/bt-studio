@@ -25,16 +25,12 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [forceSaveCurrent, setForcedSaveCurrent] = useState<boolean>(false);
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
-  const [actionNodesData, setActionNodesData] = useState<Record<string, any>>(
-    {},
-  );
   const [saveCurrentDiagram, setSaveCurrentDiagram] = useState<boolean>(false);
   const [updateFileExplorer, setUpdateFileExplorer] = useState<boolean>(false);
   const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
   const [projectChanges, setProjectChanges] = useState<boolean>(false);
   const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
   const [manager, setManager] = useState<CommsManager | null>(null);
-  const [diagramEditorReady, setDiagramEditorReady] = useState<boolean>(false);
   const [showSim, setSimVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
 
@@ -190,9 +186,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
                 currentFilename={currentFilename}
                 currentProjectname={currentProjectname}
                 setProjectChanges={setProjectChanges}
-                actionNodesData={actionNodesData}
-                showAccentColor={"editorShowAccentColors"}
-                diagramEditorReady={diagramEditorReady}
                 setAutosave={setAutosave}
                 forceSaveCurrent={forceSaveCurrent}
                 setForcedSaveCurrent={setForcedSaveCurrent}
