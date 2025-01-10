@@ -4,9 +4,7 @@ import { ReactComponent as ActionIcon } from "./img/action.svg";
 import FileIcon from "./FileIcon.jsx";
 import { OptionsContext } from "../../options/Options";
 import { ContextMenuProps } from "./MoreActionsMenu";
-import {
-  getActionFrame,
-} from "../../helper/TreeEditorHelper";
+import { getActionFrame } from "../../helper/TreeEditorHelper";
 
 interface Entry {
   name: string;
@@ -79,7 +77,7 @@ function TreeNode({
               menuProps.showMoreActionsMenu(
                 e,
                 node,
-                parentGroup === "" ? group : parentGroup
+                parentGroup === "" ? group : parentGroup,
               );
             }}
           />
