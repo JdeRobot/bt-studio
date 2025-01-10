@@ -43,7 +43,7 @@ function TreeNode({
       }
     }
   }, []);
-  
+
   const handleClick = () => {
     if (node.is_dir) {
       setCollapsed(!isCollapsed);
@@ -87,7 +87,8 @@ function TreeNode({
             <div
               className="bt-accent-color"
               style={{
-                backgroundColor: getActionFrame(node.name.replace(".py", "")) ? getActionFrame(node.name.replace(".py", ""))?.getColor() : "none",
+                // backgroundColor: getActionFrame(node.name.replace(".py", "")) ? getActionFrame(node.name.replace(".py", ""))?.getColor() : "none",
+                backgroundColor: "none",
               }}
             />
           )}
