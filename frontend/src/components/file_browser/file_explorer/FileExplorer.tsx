@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import "./FileExplorer.css";
 import TreeNode from "./TreeNode";
-import MoreActionsMenu, { ContextMenuProps } from "./MoreActionsMenu.jsx";
+import MoreActionsMenu, { ContextMenuProps } from "./MoreActionsMenu.js";
+import { Entry } from "../FileBrowser";
 
 const FileExplorer = ({
   setCurrentFilename,
@@ -17,10 +18,23 @@ const FileExplorer = ({
   onUpload,
   onDownload,
   onRename,
+} : {
+  setCurrentFilename: Function;
+  currentFilename: string;
+  currentProjectname: string;
+  setSelectedEntry: Function;
+  fileList: Entry[];
+  fetchFileList: Function;
+  onDelete: Function;
+  onCreateFile: Function;
+  onCreateFolder: Function;
+  onUpload: Function;
+  onDownload: Function;
+  onRename: Function;
 }) => {
-  const [showMenu, setShowMenu] = useState(false);
-  const [menuFile, setMenuFile] = useState(null);
-  const [menuGroupFile, setMenuGroupFile] = useState("");
+  const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [menuFile, setMenuFile] = useState<Entry|undefined>(undefined);
+  const [menuGroupFile, setMenuGroupFile] = useState<string>("");
   const [menuPosistion, setMenuPosistion] = React.useState({ x: 0, y: 0 });
 
   const MenuProps = new ContextMenuProps(
@@ -44,12 +58,12 @@ const FileExplorer = ({
     }
   }, [currentProjectname]);
 
-  const handleFileClick = (file) => {
+  const handleFileClick = (file: Entry) => {
     setCurrentFilename(file.path);
     setSelectedEntry(file);
   };
 
-  const handleFolderClick = (file) => {
+  const handleFolderClick = (file: Entry) => {
     setSelectedEntry(file);
   };
 
