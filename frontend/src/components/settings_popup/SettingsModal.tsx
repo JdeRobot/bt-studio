@@ -37,7 +37,10 @@ const SettingsModal = ({
 
   const handleCancel = async (settings: SettingsData) => {
     // Save settings
-    let json_settings: {name: string, config: {[id: string] : any;}} = { name: currentProjectname, config: {} };
+    let json_settings: { name: string; config: { [id: string]: any } } = {
+      name: currentProjectname,
+      config: {},
+    };
 
     Object.entries(settings).map(([key, setting]) => {
       json_settings.config[key] = setting.value;
@@ -46,7 +49,7 @@ const SettingsModal = ({
     try {
       await saveProjectConfig(
         currentProjectname,
-        JSON.stringify(json_settings)
+        JSON.stringify(json_settings),
       );
     } catch (e) {
       console.error("Error saving config:", e);

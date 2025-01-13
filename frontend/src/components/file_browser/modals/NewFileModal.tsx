@@ -32,13 +32,13 @@ const plain = new CardEntryProps(
   "plain",
   "plainType",
   <ActionTeplateIcon className="bt-icon" fill={"var(--icon)"} />,
-  "Plain File"
+  "Plain File",
 );
 const actions = new CardEntryProps(
   "actions",
   "actionsType",
   <IOTeplateIcon className="bt-icon" fill={"var(--icon)"} />,
-  "Action"
+  "Action",
 );
 
 ///////////////////////// ACTIONS //////////////////////////////////////////////
@@ -46,19 +46,19 @@ const empty = new CardEntryProps(
   "empty",
   "emptyTemplate",
   <EmptyTeplateIcon className="bt-icon" stroke={"var(--icon)"} />,
-  "Empty"
+  "Empty",
 );
 const action = new CardEntryProps(
   "action",
   "actionTemplate",
   <ActionTeplateIcon className="bt-icon" fill={"var(--icon)"} />,
-  "Action"
+  "Action",
 );
 const io = new CardEntryProps(
   "io",
   "ioTemplate",
   <IOTeplateIcon className="bt-icon" fill={"var(--icon)"} />,
-  "I/O"
+  "I/O",
 );
 
 const NewFileModal = ({
@@ -86,12 +86,12 @@ const NewFileModal = ({
   const typesCardEntryProps = [plain, actions];
   const actionsCardEntryProps = [empty, action, io];
 
-  const onOptionTypeChange = (e:any) => {
+  const onOptionTypeChange = (e: any) => {
     setCreationType(e.target.value);
     handleInputChange(e);
   };
 
-  const onOptionTemplateChange = (e:any) => {
+  const onOptionTemplateChange = (e: any) => {
     setTemplate(e.target.value);
     handleInputChange(e);
   };
@@ -116,7 +116,7 @@ const NewFileModal = ({
     updateCreation(formState["fileName"]);
   }, [creationType]);
 
-  const createValidNamesList = (orig_path:string, callback: Function) => {
+  const createValidNamesList = (orig_path: string, callback: Function) => {
     let search_list = fileList;
 
     if (orig_path) {
@@ -124,7 +124,7 @@ const NewFileModal = ({
 
       for (let index = 0; index < path.length; index++) {
         search_list = search_list.find(
-          (entry) => entry.name === path[index] && entry.is_dir
+          (entry) => entry.name === path[index] && entry.is_dir,
         )!.files;
       }
     }
@@ -138,7 +138,7 @@ const NewFileModal = ({
     }
   };
 
-  const handleInputChange = (event:any) => {
+  const handleInputChange = (event: any) => {
     const { name, value } = event.target;
 
     setFormState((prevFormData) => ({
@@ -186,14 +186,14 @@ const NewFileModal = ({
     allowCreation(isValidName);
   };
 
-  const handleSubmit = (event:any) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
     onSubmit(location, formState);
     setFormState(initialNewFileModalData);
     allowCreation(false);
   };
 
-  const handleCancel = (event:any) => {
+  const handleCancel = (event: any) => {
     if (event) {
       event.preventDefault();
     }
@@ -281,7 +281,7 @@ const CardSelector = ({
   name,
   checkedVariable,
   checkedCallback,
-}:{
+}: {
   contentArray: CardEntryProps[];
   title: string;
   id: string;
@@ -313,7 +313,7 @@ const CardEntry = ({
   name,
   checkedVariable,
   checkedCallback,
-}:{
+}: {
   cardEntryProp: CardEntryProps;
   name: string;
   checkedVariable: string;

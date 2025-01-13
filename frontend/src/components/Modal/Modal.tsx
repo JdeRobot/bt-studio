@@ -8,12 +8,12 @@ const Modal = ({
   hasCloseBtn = true,
   onClose,
   children,
-} : {
-id: string;
-isOpen: boolean;
-hasCloseBtn: boolean;
-onClose: Function;
-children: any;
+}: {
+  id: string;
+  isOpen: boolean;
+  hasCloseBtn: boolean;
+  onClose: Function;
+  children: any;
 }) => {
   const [isModalOpen, setModalOpen] = useState<boolean>(isOpen);
   const modalRef = useRef<HTMLDialogElement>(null);
@@ -62,7 +62,15 @@ children: any;
 
 export default Modal;
 
-export const ModalTitlebar = ({ title, htmlFor, handleCancel } : { title:string, htmlFor:string, handleCancel: Function }) => {
+export const ModalTitlebar = ({
+  title,
+  htmlFor,
+  handleCancel,
+}: {
+  title: string;
+  htmlFor: string;
+  handleCancel: Function;
+}) => {
   return (
     <div className="bt-modal-titlebar">
       <label

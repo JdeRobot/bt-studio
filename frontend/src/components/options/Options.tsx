@@ -14,7 +14,7 @@ const OptionsContext = createContext<SettingsData>({
   },
 });
 
-export interface SettingData<Type>{
+export interface SettingData<Type> {
   setter: Function;
   value: Type;
   default_value: Type;

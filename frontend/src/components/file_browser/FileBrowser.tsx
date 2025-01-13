@@ -63,7 +63,7 @@ const FileBrowser = ({
   setAutosave: Function;
   forceSaveCurrent: boolean;
   setForcedSaveCurrent: Function;
-  forceUpdate: { value: boolean, callback: Function};
+  forceUpdate: { value: boolean; callback: Function };
   setSaveCurrentDiagram: Function;
 }) => {
   const { warning, error } = useError();
@@ -74,10 +74,10 @@ const FileBrowser = ({
   const [isRenameModalOpen, setRenameModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState<Entry|null>(null);
-  const [deleteEntry, setDeleteEntry] = useState<string|null>(null);
+  const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
+  const [deleteEntry, setDeleteEntry] = useState<string | null>(null);
   const [deleteType, setDeleteType] = useState(false);
-  const [renameEntry, setRenameEntry] = useState<Entry|null>(null);
+  const [renameEntry, setRenameEntry] = useState<Entry | null>(null);
   const [selectedLocation, setSelectedLocation] = useState("");
 
   useEffect(() => {
@@ -136,7 +136,7 @@ const FileBrowser = ({
     }
   };
 
-  const handleNewActionSubmit = async (location:string, data:any) => {
+  const handleNewActionSubmit = async (location: string, data: any) => {
     handleCloseNewFileModal();
 
     if (data.fileName !== "") {
@@ -241,7 +241,10 @@ const FileBrowser = ({
     }
   };
 
-  const handleCreateFolderSubmit = async (location: string, folder_name:string) => {
+  const handleCreateFolderSubmit = async (
+    location: string,
+    folder_name: string,
+  ) => {
     if (folder_name !== "") {
       try {
         await createFolder(currentProjectname, folder_name, location);
@@ -342,11 +345,11 @@ const FileBrowser = ({
     zip.file(file_name, content);
   };
 
-  const zipFolder = async (zip: JSZip, file:Entry) => {
+  const zipFolder = async (zip: JSZip, file: Entry) => {
     const folder = zip.folder(file.name);
 
     if (folder === null) {
-      return
+      return;
     }
 
     for (let index = 0; index < file.files.length; index++) {

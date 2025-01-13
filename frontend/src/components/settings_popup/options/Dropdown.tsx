@@ -3,11 +3,17 @@ import { useRef, useState } from "react";
 import "./Dropdown.css";
 import { SettingData } from "../../options/Options";
 
-const Dropdown = ({ setting, possibleValues }: { setting: SettingData<any>, possibleValues: any[]}) => {
+const Dropdown = ({
+  setting,
+  possibleValues,
+}: {
+  setting: SettingData<any>;
+  possibleValues: any[];
+}) => {
   const [open, setOpen] = useState<boolean>(false);
   const dropdown = useRef<HTMLDivElement>(null);
 
-  const changeValue = (e:any , value:any) => {
+  const changeValue = (e: any, value: any) => {
     e.preventDefault();
     setting.setter(value);
   };

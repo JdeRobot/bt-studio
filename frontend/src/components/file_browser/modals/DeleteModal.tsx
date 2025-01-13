@@ -14,7 +14,7 @@ const DeleteModal = ({
   onSubmit: Function;
   isOpen: boolean;
   onClose: Function;
-  selectedEntry: string|null;
+  selectedEntry: string | null;
 }) => {
   //TODO: use relative path instead of absolute one
 
@@ -26,12 +26,12 @@ const DeleteModal = ({
     // }
   }, [isOpen]);
 
-  const handleSubmit = (event:any) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
     onSubmit();
   };
 
-  const handleCancel = (event:any) => {
+  const handleCancel = (event: any) => {
     if (event) {
       event.preventDefault();
     }

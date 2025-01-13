@@ -11,7 +11,7 @@ function MoreActionsMenu({
   onUpload,
   onDownload,
   onRename,
-} : {
+}: {
   menuProps: ContextMenuProps;
   onDelete: Function;
   onCreateFile: Function;
@@ -30,7 +30,7 @@ function MoreActionsMenu({
     }
   }, [menuProps.isShown]);
 
-  const handleClickOutside = (event:any) => {
+  const handleClickOutside = (event: any) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
       menuProps.showCallback(false);
     }
@@ -41,91 +41,91 @@ function MoreActionsMenu({
   };
 
   return (
+    <div
+      className="bt-menu-backdrop"
+      style={{ display: menuProps.isShown ? "inline-block" : "none" }}
+      ref={menuRef}
+    >
       <div
-        className="bt-menu-backdrop"
-        style={{ display: menuProps.isShown ? "inline-block" : "none" }}
-        ref={menuRef}
+        className="bt-more-actions-menu"
+        style={{ top: menuProps.position.y, left: menuProps.position.x }}
       >
         <div
-          className="bt-more-actions-menu"
-          style={{ top: menuProps.position.y, left: menuProps.position.x }}
+          className="bt-more-actions-menu-entry"
+          onClick={() => {
+            onRename(menuProps.file);
+            closeMenu();
+          }}
         >
+          <label>Rename</label>
+        </div>
+        {true && (
           <div
             className="bt-more-actions-menu-entry"
             onClick={() => {
-              onRename(menuProps.file);
+              onDownload(menuProps.file);
               closeMenu();
             }}
           >
-            <label>Rename</label>
+            <label>Download</label>
           </div>
-          {true && (
-            <div
-              className="bt-more-actions-menu-entry"
-              onClick={() => {
-                onDownload(menuProps.file);
-                closeMenu();
-              }}
-            >
-              <label>Download</label>
-            </div>
+        )}
+        <div
+          className="bt-more-actions-menu-entry"
+          onClick={() => {
+            onDelete(menuProps.file!.path, menuProps.file!.is_dir);
+            closeMenu();
+          }}
+        >
+          <label>Delete</label>
+        </div>
+        {!menuProps.file!.is_dir &&
+          menuProps.fileGroup === "Action" &&
+          false && ( // TODO: disabled
+            <>
+              <div className="bt-more-actions-menu-divider" />
+              <div
+                className="bt-more-actions-menu-entry"
+                onClick={() => {
+                  // TODO open the same menu that in the diagram
+                  console.log("Edit Action");
+                  closeMenu();
+                }}
+              >
+                <label>Edit Action</label>
+              </div>
+            </>
           )}
-          <div
-            className="bt-more-actions-menu-entry"
-            onClick={() => {
-              onDelete(menuProps.file!.path, menuProps.file!.is_dir);
-              closeMenu();
-            }}
-          >
-            <label>Delete</label>
-          </div>
-          {!menuProps.file!.is_dir &&
-            menuProps.fileGroup === "Action" &&
-            false && ( // TODO: disabled
-              <>
-                <div className="bt-more-actions-menu-divider" />
-                <div
-                  className="bt-more-actions-menu-entry"
-                  onClick={() => {
-                    // TODO open the same menu that in the diagram
-                    console.log("Edit Action");
-                    closeMenu();
-                  }}
-                >
-                  <label>Edit Action</label>
-                </div>
-              </>
-            )}
-          <div className="bt-more-actions-menu-divider" />
-          <div
-            className="bt-more-actions-menu-entry"
-            onClick={() => {
-              onCreateFile(menuProps.file);
-              closeMenu();
-            }}
-          >
-            <label>New File</label>
-          </div>
-          <div
-            className="bt-more-actions-menu-entry"
-            onClick={() => {
-              onCreateFolder(menuProps.file);
-              closeMenu();
-            }}
-          >
-            <label>New Folder</label>
-          </div>
-          <div
-            className="bt-more-actions-menu-entry"
-            onClick={() => {
-              onUpload(menuProps.file);
-              closeMenu();
-            }}
-          >
-            <label>Upload</label>
-          </div>
+        <div className="bt-more-actions-menu-divider" />
+        <div
+          className="bt-more-actions-menu-entry"
+          onClick={() => {
+            onCreateFile(menuProps.file);
+            closeMenu();
+          }}
+        >
+          <label>New File</label>
+        </div>
+        <div
+          className="bt-more-actions-menu-entry"
+          onClick={() => {
+            onCreateFolder(menuProps.file);
+            closeMenu();
+          }}
+        >
+          <label>New Folder</label>
+        </div>
+        <div
+          className="bt-more-actions-menu-entry"
+          onClick={() => {
+            onUpload(menuProps.file);
+            closeMenu();
+          }}
+        >
+          <label>Upload</label>
         </div>
       </div>
+    </div>
   );
 }
 
@@ -134,9 +134,9 @@ export default MoreActionsMenu;
 export class ContextMenuProps {
   public isShown: boolean;
   public showCallback: Function;
-  public position: {x: number, y: number};
+  public position: { x: number; y: number };
   public setPositionCallback: Function;
-  public file: Entry|undefined;
+  public file: Entry | undefined;
   public setFile: Function;
   public fileGroup: string;
   public setFileGroup: Function;
@@ -144,9 +144,9 @@ export class ContextMenuProps {
   constructor(
     isShown: boolean,
     showCallback: Function,
-    position: {x: number, y: number},
+    position: { x: number; y: number },
     setPositionCallback: Function,
-    file: Entry|undefined,
+    file: Entry | undefined,
     setFile: Function,
     fileGroup: string,
     setFileGroup: Function,
@@ -161,7 +161,7 @@ export class ContextMenuProps {
     this.setFileGroup = setFileGroup;
   }
 
-  showMoreActionsMenu(event:any , file: Entry, fileGroup:string) {
+  showMoreActionsMenu(event: any, file: Entry, fileGroup: string) {
     event.preventDefault();
     event.stopPropagation();
     this.showCallback(false);

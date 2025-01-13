@@ -18,7 +18,7 @@ const FileExplorer = ({
   onUpload,
   onDownload,
   onRename,
-} : {
+}: {
   setCurrentFilename: Function;
   currentFilename: string;
   currentProjectname: string;
@@ -33,7 +33,7 @@ const FileExplorer = ({
   onRename: Function;
 }) => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
-  const [menuFile, setMenuFile] = useState<Entry|undefined>(undefined);
+  const [menuFile, setMenuFile] = useState<Entry | undefined>(undefined);
   const [menuGroupFile, setMenuGroupFile] = useState<string>("");
   const [menuPosistion, setMenuPosistion] = React.useState({ x: 0, y: 0 });
 

@@ -14,7 +14,7 @@ const RenameModal = ({
   onClose,
   fileList,
   selectedEntry,
-} : {
+}: {
   onSubmit: Function;
   isOpen: boolean;
   onClose: Function;
