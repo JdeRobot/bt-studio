@@ -6,20 +6,21 @@ import { ReactComponent as DeleteIcon } from "../../tree_editor/img/delete.svg";
 import CreatePage from "./universe/CreatePage";
 import UniverseUploadModal from "./UniverseUploadModal";
 import { deleteUniverse, listUniverses } from "../../../api_helper/TreeWrapper";
+import { useError } from "../../error_popup/ErrorModal";
 
 const UniverseModal = ({
   onSubmit,
   isOpen,
   onClose,
   currentProject,
-  openError,
 }: {
   onSubmit: FormEventHandler<HTMLFormElement>;
   isOpen: boolean;
   onClose: Function;
   currentProject: string;
-  openError: Function;
 }) => {
+  const { error } = useError();
+
   const focusInputRef = useRef<any>(null);
   const [existingUniverses, setUniversesProjects] = useState([]);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
@@ -31,9 +32,11 @@ const UniverseModal = ({
       const response = await listUniverses(currentProject);
       setUniversesProjects(response);
       setUniverseAdded(false);
-    } catch (error) {
-      console.error("Error while fetching universes list:", error);
-      openError(`An error occurred while fetching the universes list`);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Error while fetching universes list: " + e.message);
+        error("Error while fetching universes list: " + e.message);
+      }
     }
   };
 
@@ -63,15 +66,15 @@ const UniverseModal = ({
       await deleteUniverse(currentProject, universe_name);
       loadUniverseList();
       console.log("Universe deleted successfully");
-    } catch (error: any) {
-      if (error.response) {
+    } catch (e: any) {
+      if (e.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
-        if (error.response.status === 409) {
-          openError(`The universe ${universe_name} does not exist`);
+        if (e.response.status === 409) {
+          error(`The universe ${universe_name} does not exist`);
         } else {
           // Handle other statuses or general API errors
-          openError(
+          error(
             "Unable to connect with the backend server. Please check the backend status.",
           );
         }
@@ -107,7 +110,6 @@ const UniverseModal = ({
         onSubmit={handleFormSubmit}
         onClose={handleCloseUploadUniverseModal}
         currentProject={currentProject}
-        openError={openError}
         setUniverseAdded={setUniverseAdded}
       />
       <form onSubmit={onSubmit} onReset={handleCancel}>
@@ -183,7 +185,6 @@ const UniverseModal = ({
               visible={creationMenu}
               onClose={onClose}
               currentProject={currentProject}
-              openError={openError}
             />
           </>
         )}

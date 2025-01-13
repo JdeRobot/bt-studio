@@ -1,4 +1,4 @@
-import React, { useRef, memo, useState } from "react";
+import { useRef, memo } from "react";
 import createEngine, {
   DiagramModel,
   NodeModel,
@@ -7,7 +7,6 @@ import createEngine, {
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
 import { changeColorNode, configureEngine } from "../helper/TreeEditorHelper";
-import NodeMenu from "./NodeMenu";
 import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
 import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
 
@@ -72,11 +71,11 @@ const setStatusNode = (
 
   var node = model.getNode(nodeId) as BasicNodeModel;
 
-  var index = 1;
+  var newIndex = 1;
   // console.trace(nodeChilds)
   nodeChilds.forEach((element: any) => {
-    setStatusNode(model, engine, updateTree[nodeName], element, index);
-    index += 1;
+    setStatusNode(model, engine, updateTree[nodeName], element, newIndex);
+    newIndex += 1;
   });
 
   // node.setExecStatus(nodeStatus);

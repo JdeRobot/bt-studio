@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Saturation, Hue, useColor } from "react-color-palette";
+import { useContext } from "react";
 import "react-color-palette/css";
 import "./SettingsModal.css";
 import Modal from "../Modal/Modal";
@@ -10,15 +9,16 @@ import SubSection from "./sections/SubSection";
 import Setting from "./sections/Setting";
 
 import Dropdown from "./options/Dropdown";
-import Checkbox from "./options/Checkbox";
 
 import { OptionsContext } from "../options/Options";
+import { useError } from "./../error_popup/ErrorModal";
 
 import { saveProjectConfig } from "./../../api_helper/TreeWrapper";
 
 const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
   // const [color, setColor] = useColor("rgb(128 0 128)");
-  const settings = React.useContext(OptionsContext);
+  const settings = useContext(OptionsContext);
+  const { error } = useError();
 
   // useEffect(() => {
   //   console.log("rgb("+Math.round(color.rgb.r)+","+Math.round(color.rgb.g)+","+Math.round(color.rgb.b)+")")
@@ -38,8 +38,9 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
         currentProjectname,
         JSON.stringify(json_settings),
       );
-    } catch (error) {
-      console.error("Error saving config:", error);
+    } catch (e) {
+      console.error("Error saving config:", e);
+      error("Error saving config: " + error);
     }
     onClose();
   };
@@ -68,7 +69,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
               Settings
             </label>
             <CloseIcon
-              className="bt-modal-titlebar-close icon"
+              className="bt-modal-titlebar-close bt-icon"
               onClick={() => {
                 handleCancel(settings);
               }}

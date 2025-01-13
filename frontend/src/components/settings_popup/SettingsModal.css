@@ -6,6 +6,9 @@
   flex-grow: 1;
 }
 
+.icon {
+}
+
 .bt-settings-entry-list {
   width: 100%;
   display: flex;

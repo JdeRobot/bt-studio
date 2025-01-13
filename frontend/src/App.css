@@ -140,6 +140,32 @@ h3 {
   --accent-800: #353a2c;
   --accent-900: #1a1d16;
   --accent-950: #0d0f0b;
+
+  --error: #802626;
+  --error-50: #140606;
+  --error-100: #280b0b;
+  --error-200: #4f1717;
+  --error-300: #772222;
+  --error-400: #9e2e2e;
+  --error-500: #c63939;
+  --error-600: #d16161;
+  --error-700: #dd8888;
+  --error-800: #e8b0b0;
+  --error-900: #f4d7d7;
+  --error-950: #f9ebeb;
+
+  --warning: #f9e86d;
+  --warning-50: #fffce5;
+  --warning-100: #fff9cc;
+  --warning-200: #fff399;
+  --warning-300: #ffed66;
+  --warning-400: #ffe733;
+  --warning-500: #ffe100;
+  --warning-600: #ccb400;
+  --warning-700: #998700;
+  --warning-800: #665a00;
+  --warning-900: #332d00;
+  --warning-950: #1a1700;
 }
 
 :root,
@@ -221,6 +247,19 @@ h3 {
   --error-800: #e8b0b0;
   --error-900: #f4d7d7;
   --error-950: #f9ebeb;
+
+  --warning: #f9e86d;
+  --warning-50: #fffce5;
+  --warning-100: #fff9cc;
+  --warning-200: #fff399;
+  --warning-300: #ffed66;
+  --warning-400: #ffe733;
+  --warning-500: #ffe100;
+  --warning-600: #ccb400;
+  --warning-700: #998700;
+  --warning-800: #665a00;
+  --warning-900: #332d00;
+  --warning-950: #1a1700;
 }
 
 :root,
@@ -247,6 +286,11 @@ h3 {
   --error-border: var(--error-300);
   --error-button: var(--error-400);
   --error-button-hover: var(--error-500);
+
+  --warning-bg: var(--warning);
+  --warning-border: var(--warning-500);
+  --warning-button: var(--warning-500);
+  --warning-button-hover: var(--warning-600);
 
   --create-button: hsla(93, 100%, 49%, 0.5);
 

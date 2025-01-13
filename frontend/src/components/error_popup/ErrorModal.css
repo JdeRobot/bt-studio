@@ -3,6 +3,16 @@
   border-color: var(--error-border) !important;
 }
 
+#warning-modal {
+  background-color: var(--warning-bg) !important;
+  border-color: var(--warning-border) !important;
+  & .bt-modal-contents {
+    & .bt-modal-titlebar {
+      color: var(--bt-dark-text) !important;
+    }
+  }
+}
+
 .bt-error-modal-buttons-container {
   display: flex;
   flex-direction: row;
@@ -21,14 +31,36 @@
   font-weight: 600;
   text-align: center;
   user-select: none;
+
+  &:hover {
+    background-color: var(--error-button-hover) !important;
+  }
 }
 
-.bt-error-modal-button:hover {
-  background-color: var(--error-button-hover) !important;
+.bt-warning-modal-button {
+  height: 45px;
+  width: 175px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: var(--warning-button);
+  color: var(--bt-dark-text);
+  font-weight: 600;
+  text-align: center;
+  user-select: none;
+
+  &:hover {
+    background-color: var(--warning-button-hover) !important;
+  }
 }
 
 .bt-modal-error-label {
   color: var(--text);
+  font-weight: 600;
+  text-align: center;
+}
+
+.bt-modal-warning-label {
+  color: var(--bt-dark-text);
   font-weight: 600;
   text-align: center;
 }

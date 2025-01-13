@@ -1,9 +1,6 @@
 import {
-  DefaultNodeModel,
-  DefaultPortModel,
   NodeModel,
   NodeModelGenerics,
-  PortModelAlignment,
 } from "@projectstorm/react-diagrams";
 import { ParentPortModel } from "./ports/parent_port/ParentPortModel";
 import { ChildrenPortModel } from "./ports/children_port/ChildrenPortModel";

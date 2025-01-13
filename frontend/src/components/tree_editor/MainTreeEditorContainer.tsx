@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { useState, useEffect } from "react";
 import TreeEditor from "./TreeEditor";
 import {
@@ -11,6 +11,7 @@ import {
 } from "../../api_helper/TreeWrapper";
 import { TreeViewType, findSubtree } from "../helper/TreeEditorHelper";
 import { OptionsContext } from "../options/Options";
+import { useError } from "../error_popup/ErrorModal";
 
 const MainTreeEditorContainer = ({
   projectName,
@@ -25,7 +26,8 @@ const MainTreeEditorContainer = ({
   setSaveCurrentDiagram: Function;
   updateFileExplorer: Function;
 }) => {
-  const settings = React.useContext(OptionsContext);
+  const settings = useContext(OptionsContext);
+  const { error } = useError();
 
   // STATES
 
@@ -70,9 +72,10 @@ const MainTreeEditorContainer = ({
         ? await getSubtree(subTreeName, projectName)
         : await getProjectGraph(projectName);
       setInitialJson(graph_json);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(error);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.error(e);
+        error(e.message);
       }
     }
   };
@@ -115,8 +118,11 @@ const MainTreeEditorContainer = ({
 
       setTreeStructure(tree_structure);
       setSubTreeStructure(path);
-    } catch (error) {
-      console.error("Error fetching graph:", error);
+    } catch (e: unknown) {
+      console.error("Error fetching graph:", e);
+      if (e instanceof Error) {
+        error(e.message);
+      }
     }
   };
 

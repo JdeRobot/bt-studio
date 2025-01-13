@@ -6,6 +6,7 @@ const VncViewer = ({ gazeboEnabled }: { gazeboEnabled: boolean }) => {
     <div className="bt-viewer">
       {gazeboEnabled ? (
         <iframe
+          title="Gazebo"
           id={"iframe"}
           style={{
             width: "100%",

@@ -1,9 +1,6 @@
 import {
-  DefaultNodeModel,
-  DefaultPortModel,
   NodeModel,
   NodeModelGenerics,
-  PortModelAlignment,
 } from "@projectstorm/react-diagrams";
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { TagInputPortModel } from "./ports/input_port/TagInputPortModel";

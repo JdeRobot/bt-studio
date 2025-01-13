@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
 
 import Modal from "../../Modal/Modal";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 
 import { TagNodeModel } from "../nodes/tag_node/TagNodeModel";
-import { BasicNodeModel } from "../nodes/basic_node/BasicNodeModel";
 
 const initialEditTagModalData = {
   tagName: "",
@@ -57,15 +56,15 @@ const EditTagModal = ({
     }
   }, [isOpen]);
 
-  const horizontalScrolling = (e: any) => {
-    e.preventDefault();
-    var containerScrollPosition = e.target.scrollLeft;
-    e.target.scrollBy({
-      top: 0,
-      left: e.deltaY,
-      behaviour: "smooth",
-    });
-  };
+  // const horizontalScrolling = (e: any) => {
+  //   e.preventDefault();
+  //   var containerScrollPosition = e.target.scrollLeft;
+  //   e.target.scrollBy({
+  //     top: 0,
+  //     left: e.deltaY,
+  //     behaviour: "smooth",
+  //   });
+  // };
 
   return (
     <Modal

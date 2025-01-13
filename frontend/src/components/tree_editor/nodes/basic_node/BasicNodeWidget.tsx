@@ -1,5 +1,4 @@
 import React from "react";
-import { DefaultPortLabel } from "@projectstorm/react-diagrams";
 import { ChildrenPortWidget } from "./ports/children_port/ChildrenPortWidget";
 import { ParentPortWidget } from "./ports/parent_port/ParentPortWidget";
 import { InputPortWidget } from "./ports/input_port/InputPortWidget";

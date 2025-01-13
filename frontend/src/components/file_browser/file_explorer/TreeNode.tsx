@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ReactComponent as ActionIcon } from "./img/action.svg";
 import FileIcon from "./FileIcon.jsx";
 import { OptionsContext } from "../../options/Options";
 import { ContextMenuProps } from "./MoreActionsMenu";
-import { getActionFrame } from "../../helper/TreeEditorHelper";
 
 interface Entry {
   name: string;

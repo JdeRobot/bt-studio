@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useEffect } from "react";
 import "./DeleteModal.css";
 import Modal from "../../Modal/Modal";
 

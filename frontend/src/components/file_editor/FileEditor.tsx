@@ -8,6 +8,7 @@ import { ReactComponent as SaveIcon } from "./img/save.svg";
 import { ReactComponent as SplashIcon } from "./img/logo_jderobot_monocolor.svg";
 import { ReactComponent as SplashIconUnibotics } from "./img/logo_unibotics_monocolor.svg";
 import { getFile, saveFile } from "../../api_helper/TreeWrapper";
+import { useError } from "../error_popup/ErrorModal";
 
 const FileEditor = ({
   currentFilename,
@@ -26,6 +27,8 @@ const FileEditor = ({
   setAutosave: Function;
   forceSaveCurrent: boolean;
 }) => {
+  const { error } = useError();
+
   const [fileContent, setFileContent] = useState(null);
   const [fontSize, setFontSize] = useState(14);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -37,8 +40,11 @@ const FileEditor = ({
       const content = await getFile(currentProjectname, currentFilename);
       setFileContent(content);
       setHasUnsavedChanges(false); // Reset the unsaved changes flag when a new file is loaded
-    } catch (error) {
-      console.error("Error fetching file content:", error);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Error fetching file content: " + e.message);
+        error("Error fetching file content: " + e.message);
+      }
     }
   };
 
@@ -55,13 +61,16 @@ const FileEditor = ({
       setHasUnsavedChanges(false); // Reset the unsaved changes flag
       setProjectChanges(false);
       console.log("Auto save completed");
-    } catch (error) {
-      console.error("Error saving file:", error);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Error saving file: " + e.message);
+        error("Error saving file: " + e.message);
+      }
     }
   };
 
   useEffect(() => {
-    if (currentFilename != "") {
+    if (currentFilename !== "") {
       initFile();
       if (filenameToSave && autosaveEnabled) {
         autoSave();
@@ -103,8 +112,11 @@ const FileEditor = ({
       await saveFile(projectToSave, currentFilename, fileContent);
       setHasUnsavedChanges(false); // Reset the unsaved changes flag
       setProjectChanges(false);
-    } catch (error) {
-      console.error("Error saving file:", error);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Error saving file: " + e.message);
+        error("Error saving file: " + e.message);
+      }
     }
   };
 

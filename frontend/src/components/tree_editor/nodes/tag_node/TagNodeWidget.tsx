@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { DefaultPortLabel } from "@projectstorm/react-diagrams";
+import React from "react";
 import { InputPortWidget } from "./ports/input_port/TagInputPortWidget";
 import { OutputPortWidget } from "./ports/output_port/TagOutputPortWidget";
 

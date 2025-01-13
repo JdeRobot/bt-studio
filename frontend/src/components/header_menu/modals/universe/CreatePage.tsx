@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, FormEventHandler } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./CreatePage.css";
 import { ReactComponent as BackIcon } from "../../../Modal/img/back.svg";
 import { ReactComponent as CloseIcon } from "../../../Modal/img/close.svg";
@@ -6,6 +6,7 @@ import {
   createRoboticsBackendUniverse,
   listDockerUniverses,
 } from "../../../../api_helper/TreeWrapper";
+import { useError } from "../../../error_popup/ErrorModal";
 
 const initialUniverseData = {
   universeName: "",
@@ -17,14 +18,14 @@ const CreatePage = ({
   visible,
   onClose,
   currentProject,
-  openError,
 }: {
   setVisible: Function;
   visible: boolean;
   onClose: Function;
   currentProject: string;
-  openError: Function;
 }) => {
+  const { error } = useError();
+
   const focusInputRef = useRef<any>(null);
   const dropdown = useRef<any>(null);
   const [formState, setFormState] = useState(initialUniverseData);
@@ -35,9 +36,11 @@ const CreatePage = ({
     try {
       const response = await listDockerUniverses();
       setUniversesDocker(response);
-    } catch (error) {
-      console.error("Error while fetching universes list:", error);
-      openError(`An error occurred while fetching the universes list`);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Error while fetching universes list: " + e.message);
+        error("Error while fetching universes list: " + e.message);
+      }
     }
   };
 

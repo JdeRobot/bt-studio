@@ -8,7 +8,6 @@ import {
   removePort,
   ActionNodePortType,
   changeColorNode,
-  ActionFrame,
   getActionFrame,
 } from "../../helper/TreeEditorHelper";
 import { rgbToLuminance } from "../../helper/colorHelper";
@@ -129,7 +128,7 @@ const EditActionModal = ({
 
   const horizontalScrolling = (e: any) => {
     e.preventDefault();
-    var containerScrollPosition = e.target.scrollLeft;
+    // var containerScrollPosition = e.target.scrollLeft;
     e.target.scrollBy({
       top: 0,
       left: e.deltaY,
@@ -271,7 +270,7 @@ const EditActionModal = ({
           Edit action value
         </label>
         <CloseIcon
-          className="bt-modal-titlebar-close icon"
+          className="bt-modal-titlebar-close bt-icon"
           onClick={() => {
             onClose();
           }}
@@ -343,6 +342,7 @@ const EditActionModal = ({
                         </div>
                       );
                     }
+                    return <></>;
                   },
                 )}
                 {inputName ? (
@@ -419,7 +419,7 @@ const EditActionModal = ({
                     title="Add input"
                   >
                     <AddIcon
-                      className="bt-icon action-icon"
+                      className="bt-icon bt-action-icon"
                       fill={"var(--icon)"}
                       style={{
                         filter: isBackgroundDark() ? "invert(0)" : "invert(1)",
@@ -475,6 +475,7 @@ const EditActionModal = ({
                         </div>
                       );
                     }
+                    return <></>;
                   },
                 )}
                 {outputName ? (

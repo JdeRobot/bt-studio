@@ -1,6 +1,3 @@
-import { useContext, useEffect } from "react";
-import { OptionsContext } from "../options/Options";
-
 import "./StatusBar.css";
 
 import { ReactComponent as TerminalIcon } from "./img/terminal.svg";
@@ -26,9 +23,6 @@ const StatusBar = ({
     ros_version: string;
   } | null;
 }) => {
-  // Settings
-  const settings = useContext(OptionsContext);
-
   return (
     <div className="bt-status-bar-container">
       <button

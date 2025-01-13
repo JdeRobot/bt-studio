@@ -26,6 +26,8 @@ import { ReactComponent as DeleteIcon } from "./img/delete.svg";
 import { ReactComponent as RefreshIcon } from "./img/refresh.svg";
 import { ReactComponent as RenameIcon } from "./img/rename.svg";
 
+import { useError } from "./../error_popup/ErrorModal";
+
 function getParentDir(file) {
   // Check if is a directory and if not get the parent directory of the file
   if (file.is_dir) {
@@ -47,6 +49,8 @@ const FileBrowser = ({
   forceUpdate,
   setSaveCurrentDiagram,
 }) => {
+  const { warning, error } = useError();
+
   const [fileList, setFileList] = useState(null);
   const [isNewFileModalOpen, setNewFileModalOpen] = useState(false);
   const [isNewFolderModalOpen, setNewFolderModalOpen] = useState(false);
@@ -89,8 +93,9 @@ const FileBrowser = ({
         const file_list = await getFileList(currentProjectname);
         const files = JSON.parse(file_list);
         setFileList(files);
-      } catch (error) {
-        console.error("Error fetching files:", error);
+      } catch (e) {
+        console.error("Error fetching files:", e);
+        error("Error fetching files: " + e.message);
       }
     }
   };
@@ -113,7 +118,6 @@ const FileBrowser = ({
 
     if (data.fileName !== "") {
       try {
-        let response;
         switch (data.fileType) {
           case "actions":
             await createAction(
@@ -128,8 +132,9 @@ const FileBrowser = ({
         }
         setProjectChanges(true);
         fetchFileList(); // Update the file list
-      } catch (error) {
-        console.error("Error creating file:", error);
+      } catch (e) {
+        console.error("Error creating file:", e);
+        error("Error creating file" + e.message);
       }
     }
   };
@@ -143,7 +148,7 @@ const FileBrowser = ({
       setDeleteModalOpen(true);
       setSaveCurrentDiagram(true);
     } else {
-      alert("No file is currently selected.");
+      warning("No file is currently selected.");
     }
   };
 
@@ -172,11 +177,12 @@ const FileBrowser = ({
         if (selectedEntry.path === deleteEntry) {
           setSelectedEntry(null);
         }
-      } catch (error) {
-        console.error("Error deleting file:", error);
+      } catch (e) {
+        console.error("Error deleting file:", e);
+        error("Error deleting file" + e.message);
       }
     } else {
-      alert("No file is currently selected.");
+      warning("No file is currently selected.");
     }
     handleCloseDeleteModal();
   };
@@ -187,7 +193,7 @@ const FileBrowser = ({
       handleDeleteModal(currentFilename, false);
       setAutosave(false);
     } else {
-      alert("No file is currently selected.");
+      warning("No file is currently selected.");
     }
   };
 
@@ -210,8 +216,9 @@ const FileBrowser = ({
         await createFolder(currentProjectname, folder_name, location);
         setProjectChanges(true);
         fetchFileList(); // Update the file list
-      } catch (error) {
-        console.error("Error creating folder:", error);
+      } catch (e) {
+        console.error("Error creating folder:", e);
+        error("Error creating folder: " + e.message);
       }
     }
   };
@@ -224,7 +231,7 @@ const FileBrowser = ({
       setRenameModalOpen(true);
       setSaveCurrentDiagram(true);
     } else {
-      alert("No file is currently selected.");
+      warning("No file is currently selected.");
     }
 
     if (currentFilename === file.path) {
@@ -253,11 +260,12 @@ const FileBrowser = ({
           setAutosave(false);
           setCurrentFilename(new_path); // Unset the current file
         }
-      } catch (error) {
-        console.error("Error deleting file:", error);
+      } catch (e) {
+        console.error("Error deleting file:", e);
+        error("Error deleting file: " + e.message);
       }
     } else {
-      alert("No file is currently selected.");
+      warning("No file is currently selected.");
     }
     handleCloseRenameModal();
   };
@@ -276,7 +284,7 @@ const FileBrowser = ({
       });
       setAutosave(false);
     } else {
-      alert("No file is currently selected.");
+      warning("No file is currently selected.");
     }
   };
 
@@ -336,8 +344,9 @@ const FileBrowser = ({
           a.click();
           window.URL.revokeObjectURL(url); // Clean up after the download
         });
-      } catch (error) {
-        console.error("Error downloading file: " + error);
+      } catch (e) {
+        console.error("Error downloading file: " + e);
+        error("Error downloading file: " + e.message);
       }
     }
   };

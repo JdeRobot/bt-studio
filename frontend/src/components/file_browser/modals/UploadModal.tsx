@@ -6,6 +6,7 @@ import ProgressBar from "../../progress_bar/ProgressBar";
 
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 import { uploadFile } from "../../../api_helper/TreeWrapper";
+import { useError } from "../../error_popup/ErrorModal";
 
 const UploadModal = ({
   onSubmit,
@@ -20,6 +21,8 @@ const UploadModal = ({
   location: any;
   currentProject: any;
 }) => {
+  const { error } = useError();
+
   const [uploadStatus, setUploadStatus] = useState("");
   const [uploadPercentage, setUploadPercentage] = useState(0);
 
@@ -67,9 +70,11 @@ const UploadModal = ({
         try {
           uploadFile(currentProject, file.name, location, base64String);
           console.log("Uploading file Completed");
-        } catch (error) {
-          console.log(error);
-          console.log("Error uploading file");
+        } catch (e) {
+          if (e instanceof Error) {
+            console.error("Error uploading file" + e.message);
+            error("Error uploading file" + e.message);
+          }
         }
 
         setUploadStatus("Uploaded");
