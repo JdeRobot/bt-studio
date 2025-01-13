@@ -4,7 +4,7 @@ import "./FileBrowser.css";
 import NewFileModal from "./modals/NewFileModal.jsx";
 import RenameModal from "./modals/RenameModal.jsx";
 import NewFolderModal from "./modals/NewFolderModal";
-import UploadModal from "./modals/UploadModal.tsx";
+import UploadModal from "./modals/UploadModal";
 import DeleteModal from "./modals/DeleteModal.jsx";
 import FileExplorer from "./file_explorer/FileExplorer.jsx";
 
@@ -18,7 +18,7 @@ import {
   renameFolder,
   deleteFile,
   deleteFolder,
-} from "./../../api_helper/TreeWrapper";
+} from "../../api_helper/TreeWrapper";
 
 import { ReactComponent as AddIcon } from "./img/add.svg";
 import { ReactComponent as AddFolderIcon } from "./img/add_folder.svg";
@@ -26,9 +26,16 @@ import { ReactComponent as DeleteIcon } from "./img/delete.svg";
 import { ReactComponent as RefreshIcon } from "./img/refresh.svg";
 import { ReactComponent as RenameIcon } from "./img/rename.svg";
 
-import { useError } from "./../error_popup/ErrorModal";
+import { useError } from "../error_popup/ErrorModal";
 
-function getParentDir(file) {
+export interface Entry {
+  name: string;
+  is_dir: boolean;
+  path: string;
+  files: Entry[];
+}
+
+function getParentDir(file: Entry) {
   // Check if is a directory and if not get the parent directory of the file
   if (file.is_dir) {
     return file.path;
@@ -48,23 +55,33 @@ const FileBrowser = ({
   setForcedSaveCurrent,
   forceUpdate,
   setSaveCurrentDiagram,
+}: {
+  setCurrentFilename: Function;
+  currentFilename: string;
+  currentProjectname: string;
+  setProjectChanges: Function;
+  setAutosave: Function;
+  forceSaveCurrent: Function;
+  setForcedSaveCurrent: Function;
+  forceUpdate: { value: boolean, callback: Function};
+  setSaveCurrentDiagram: Function;
 }) => {
   const { warning, error } = useError();
 
-  const [fileList, setFileList] = useState(null);
+  const [fileList, setFileList] = useState<Entry[]>([]);
   const [isNewFileModalOpen, setNewFileModalOpen] = useState(false);
   const [isNewFolderModalOpen, setNewFolderModalOpen] = useState(false);
   const [isRenameModalOpen, setRenameModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState(null);
-  const [deleteEntry, setDeleteEntry] = useState(null);
+  const [selectedEntry, setSelectedEntry] = useState<Entry|null>(null);
+  const [deleteEntry, setDeleteEntry] = useState<string|null>(null);
   const [deleteType, setDeleteType] = useState(false);
-  const [renameEntry, setRenameEntry] = useState(null);
+  const [renameEntry, setRenameEntry] = useState<Entry|null>(null);
   const [selectedLocation, setSelectedLocation] = useState("");
 
   useEffect(() => {
-    updateSelectedLocation(null);
+    updateSelectedLocation(undefined);
   }, [selectedEntry]);
 
   useEffect(() => {
@@ -74,7 +91,7 @@ const FileBrowser = ({
     }
   }, [forceUpdate.value]);
 
-  const updateSelectedLocation = (file) => {
+  const updateSelectedLocation = (file: Entry | undefined) => {
     if (file) {
       setSelectedLocation(getParentDir(file));
     } else {
@@ -94,15 +111,17 @@ const FileBrowser = ({
         const files = JSON.parse(file_list);
         setFileList(files);
       } catch (e) {
-        console.error("Error fetching files:", e);
-        error("Error fetching files: " + e.message);
+        if (e instanceof Error) {
+          console.error("Error fetching files:", e);
+          error("Error fetching files: " + e.message);
+        }
       }
     }
   };
 
   ///////////////// CREATE FILES ///////////////////////////////////////////////
 
-  const handleCreateFile = (file) => {
+  const handleCreateFile = (file: Entry | undefined) => {
     updateSelectedLocation(file);
     setNewFileModalOpen(true);
     setSaveCurrentDiagram(true);
@@ -110,10 +129,14 @@ const FileBrowser = ({
 
   const handleCloseNewFileModal = () => {
     setNewFileModalOpen(false);
-    document.getElementById("fileName").value = "";
+    const file = document.getElementById("fileName");
+
+    if (file) {
+      (file as HTMLFormElement).value = "";
+    }
   };
 
-  const handleNewActionSubmit = async (location, data) => {
+  const handleNewActionSubmit = async (location:string, data:any) => {
     handleCloseNewFileModal();
 
     if (data.fileName !== "") {
@@ -133,15 +156,17 @@ const FileBrowser = ({
         setProjectChanges(true);
         fetchFileList(); // Update the file list
       } catch (e) {
-        console.error("Error creating file:", e);
-        error("Error creating file" + e.message);
+        if (e instanceof Error) {
+          console.error("Error creating file:", e);
+          error("Error creating file" + e.message);
+        }
       }
     }
   };
 
   ///////////////// DELETE FILES AND FOLDERS ///////////////////////////////////
 
-  const handleDeleteModal = (file_path, is_dir) => {
+  const handleDeleteModal = (file_path: string, is_dir: boolean) => {
     if (file_path) {
       setDeleteEntry(file_path);
       setDeleteType(is_dir);
@@ -174,12 +199,14 @@ const FileBrowser = ({
         if (currentFilename === deleteEntry) {
           setCurrentFilename(""); // Unset the current file
         }
-        if (selectedEntry.path === deleteEntry) {
+        if (selectedEntry && selectedEntry.path === deleteEntry) {
           setSelectedEntry(null);
         }
       } catch (e) {
-        console.error("Error deleting file:", e);
-        error("Error deleting file" + e.message);
+        if (e instanceof Error) {
+          console.error("Error deleting file:", e);
+          error("Error deleting file" + e.message);
+        }
       }
     } else {
       warning("No file is currently selected.");
@@ -199,7 +226,7 @@ const FileBrowser = ({
 
   ///////////////// CREATE FOLDER //////////////////////////////////////////////
 
-  const handleCreateFolder = (file) => {
+  const handleCreateFolder = (file: Entry | undefined) => {
     updateSelectedLocation(file);
     setNewFolderModalOpen(true);
     setSaveCurrentDiagram(true);
@@ -207,25 +234,31 @@ const FileBrowser = ({
 
   const handleCloseCreateFolder = () => {
     setNewFolderModalOpen(false);
-    document.getElementById("folderName").value = "";
+    const folder = document.getElementById("folderName");
+
+    if (folder) {
+      (folder as HTMLFormElement).value = "";
+    }
   };
 
-  const handleCreateFolderSubmit = async (location, folder_name) => {
+  const handleCreateFolderSubmit = async (location: string, folder_name:string) => {
     if (folder_name !== "") {
       try {
         await createFolder(currentProjectname, folder_name, location);
         setProjectChanges(true);
         fetchFileList(); // Update the file list
       } catch (e) {
-        console.error("Error creating folder:", e);
-        error("Error creating folder: " + e.message);
+        if (e instanceof Error) {
+          console.error("Error creating folder:", e.message);
+          error("Error creating folder: " + e.message);
+        }
       }
     }
   };
 
   ///////////////// RENAME /////////////////////////////////////////////////////
 
-  const handleRename = (file) => {
+  const handleRename = (file: Entry) => {
     if (file) {
       setRenameEntry(file);
       setRenameModalOpen(true);
@@ -243,7 +276,7 @@ const FileBrowser = ({
     setRenameModalOpen(false);
   };
 
-  const handleSubmitRenameModal = async (new_path) => {
+  const handleSubmitRenameModal = async (new_path: string) => {
     if (renameEntry) {
       try {
         console.log(renameEntry);
@@ -261,8 +294,10 @@ const FileBrowser = ({
           setCurrentFilename(new_path); // Unset the current file
         }
       } catch (e) {
-        console.error("Error deleting file:", e);
-        error("Error deleting file: " + e.message);
+        if (e instanceof Error) {
+          console.error("Error deleting file:", e);
+          error("Error deleting file: " + e.message);
+        }
       }
     } else {
       warning("No file is currently selected.");
@@ -290,7 +325,7 @@ const FileBrowser = ({
 
   ///////////////// UPLOAD /////////////////////////////////////////////////////
 
-  const handleUpload = (file) => {
+  const handleUpload = (file: Entry) => {
     updateSelectedLocation(file);
     setUploadModalOpen(true);
     setSaveCurrentDiagram(true);
@@ -302,13 +337,17 @@ const FileBrowser = ({
   };
 
   ///////////////// DOWNLOAD ///////////////////////////////////////////////////
-  const zipFile = async (zip, file_path, file_name) => {
+  const zipFile = async (zip: JSZip, file_path: string, file_name: string) => {
     var content = await getFile(currentProjectname, file_path);
     zip.file(file_name, content);
   };
 
-  const zipFolder = async (zip, file) => {
+  const zipFolder = async (zip: JSZip, file:Entry) => {
     const folder = zip.folder(file.name);
+
+    if (folder === null) {
+      return
+    }
 
     for (let index = 0; index < file.files.length; index++) {
       const element = file.files[index];
@@ -321,7 +360,7 @@ const FileBrowser = ({
     }
   };
 
-  const handleDownload = async (file) => {
+  const handleDownload = async (file: Entry) => {
     if (file) {
       try {
         // Create the zip with the files
@@ -345,8 +384,10 @@ const FileBrowser = ({
           window.URL.revokeObjectURL(url); // Clean up after the download
         });
       } catch (e) {
-        console.error("Error downloading file: " + e);
-        error("Error downloading file: " + e.message);
+        if (e instanceof Error) {
+          console.error("Error downloading file: " + e);
+          error("Error downloading file: " + e.message);
+        }
       }
     }
   };
@@ -357,14 +398,14 @@ const FileBrowser = ({
         <div className="bt-sidebar-entry-menu">
           <button
             className="bt-sidebar-button"
-            onClick={() => handleCreateFile(null)}
+            onClick={() => handleCreateFile(undefined)}
             title="Create a new file"
           >
             <AddIcon className="bt-icon" fill={"var(--icon)"} />
           </button>
           <button
             className="bt-sidebar-button"
-            onClick={() => handleCreateFolder(null)}
+            onClick={() => handleCreateFolder(undefined)}
             title="Create a new folder"
           >
             <AddFolderIcon className="bt-icon" stroke={"var(--icon)"} />
