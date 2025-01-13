@@ -42,7 +42,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
       );
     } catch (e) {
       console.error("Error saving config:", e);
-      error("Error saving config: " + error)
+      error("Error saving config: " + error);
     }
     onClose();
   };

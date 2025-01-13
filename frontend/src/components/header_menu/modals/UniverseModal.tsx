@@ -20,7 +20,7 @@ const UniverseModal = ({
   currentProject: string;
 }) => {
   const { error } = useError();
-  
+
   const focusInputRef = useRef<any>(null);
   const [existingUniverses, setUniversesProjects] = useState([]);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
@@ -74,7 +74,9 @@ const UniverseModal = ({
           error(`The universe ${universe_name} does not exist`);
         } else {
           // Handle other statuses or general API errors
-          error("Unable to connect with the backend server. Please check the backend status.");
+          error(
+            "Unable to connect with the backend server. Please check the backend status.",
+          );
         }
       }
     }

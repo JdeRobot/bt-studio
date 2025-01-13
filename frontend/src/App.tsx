@@ -144,7 +144,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       style={{ display: "flex" }}
     >
       <ErrorProvider>
-        <ErrorModal/>
+        <ErrorModal />
         <HeaderMenu
           currentProjectname={currentProjectname}
           setCurrentProjectname={setCurrentProjectname}

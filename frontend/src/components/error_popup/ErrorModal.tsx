@@ -29,7 +29,12 @@ const ErrorModal = () => {
   const { isOpen, msg, type, close } = useError();
 
   return (
-    <Modal id={`${type === ErrorType.ERROR ? "error" : "warning"}-modal`} hasCloseBtn={true} isOpen={isOpen} onClose={close}>
+    <Modal
+      id={`${type === ErrorType.ERROR ? "error" : "warning"}-modal`}
+      hasCloseBtn={true}
+      isOpen={isOpen}
+      onClose={close}
+    >
       <div className="bt-modal-titlebar">
         <label
           className="bt-modal-titlebar-title"
@@ -51,7 +56,10 @@ const ErrorModal = () => {
       </div>
       <div className="bt-form-row">
         <div className="bt-error-modal-buttons-container">
-          <div className={`bt-${type === ErrorType.ERROR ? "error" : "warning"}-modal-button`} onClick={() => close()}>
+          <div
+            className={`bt-${type === ErrorType.ERROR ? "error" : "warning"}-modal-button`}
+            onClick={() => close()}
+          >
             Close
           </div>
         </div>

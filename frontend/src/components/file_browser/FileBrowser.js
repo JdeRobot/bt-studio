@@ -26,7 +26,7 @@ import { ReactComponent as DeleteIcon } from "./img/delete.svg";
 import { ReactComponent as RefreshIcon } from "./img/refresh.svg";
 import { ReactComponent as RenameIcon } from "./img/rename.svg";
 
-import { useError } from "./../error_popup/ErrorModal"
+import { useError } from "./../error_popup/ErrorModal";
 
 function getParentDir(file) {
   // Check if is a directory and if not get the parent directory of the file

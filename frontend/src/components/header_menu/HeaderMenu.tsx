@@ -61,7 +61,7 @@ const HeaderMenu = ({
   isUnibotics: boolean;
 }) => {
   const { warning, error } = useError();
-  
+
   // Settings
   const settings = useContext(OptionsContext);
 
@@ -80,7 +80,9 @@ const HeaderMenu = ({
 
   const terminateUniverse = async () => {
     if (!manager) {
-      warning("Failed to connect with the Robotics Backend docker. Please make sure it is connected.");
+      warning(
+        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
+      );
       return;
     }
     // Down the RB ladder
@@ -91,7 +93,9 @@ const HeaderMenu = ({
 
   const launchUniverse = async (universeConfig: string) => {
     if (!manager) {
-      warning("Failed to connect with the Robotics Backend docker. Please make sure it is connected.");
+      warning(
+        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
+      );
       return;
     }
 
@@ -249,13 +253,17 @@ const HeaderMenu = ({
   const onAppStateChange = async () => {
     if (!manager) {
       console.error("Manager is not running");
-      warning("Failed to connect with the Robotics Backend docker. Please make sure it is connected.");
+      warning(
+        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
+      );
       return;
     }
 
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
-      warning("Failed to found a running simulation. Please make sure an universe is selected.");
+      warning(
+        "Failed to found a running simulation. Please make sure an universe is selected.",
+      );
       return;
     }
 
@@ -297,7 +305,7 @@ const HeaderMenu = ({
       } catch (e: unknown) {
         if (e instanceof Error) {
           console.error("Error running app: " + e.message);
-          error("Error running app: " + e.message)
+          error("Error running app: " + e.message);
         }
       }
     } else {
@@ -308,7 +316,7 @@ const HeaderMenu = ({
       } catch (e: unknown) {
         if (e instanceof Error) {
           console.error("Error pausing app: " + e.message);
-          error("Error pausing app: " + e.message)
+          error("Error pausing app: " + e.message);
         }
       }
     }
@@ -317,13 +325,17 @@ const HeaderMenu = ({
   const onResetApp = async () => {
     if (!manager) {
       console.error("Manager is not running");
-      warning("Failed to connect with the Robotics Backend docker. Please make sure it is connected.");
+      warning(
+        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
+      );
       return;
     }
 
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
-      warning("Failed to found a running simulation. Please make sure an universe is selected.");
+      warning(
+        "Failed to found a running simulation. Please make sure an universe is selected.",
+      );
       return;
     }
 

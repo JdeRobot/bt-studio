@@ -25,7 +25,7 @@ const CreatePage = ({
   currentProject: string;
 }) => {
   const { error } = useError();
-  
+
   const focusInputRef = useRef<any>(null);
   const dropdown = useRef<any>(null);
   const [formState, setFormState] = useState(initialUniverseData);
