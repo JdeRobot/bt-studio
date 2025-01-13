@@ -1,4 +1,4 @@
-const Setting = ({ title, children }) => {
+const Setting = ({ title, children }: { title:string, children:any }) => {
   return (
     <div className="bt-setting-setting">
       <label className="bt-setting-setting-title">{title}</label>

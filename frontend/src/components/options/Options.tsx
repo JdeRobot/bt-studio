@@ -14,18 +14,16 @@ const OptionsContext = createContext<SettingsData>({
   },
 });
 
+export interface SettingData<Type>{
+  setter: Function;
+  value: Type;
+  default_value: Type;
+}
+
 export interface SettingsData {
-  editorShowAccentColors: {
-    setter: Function;
-    value: boolean;
-    default_value: boolean;
-  };
-  theme: { setter: Function; value: string; default_value: string };
-  btOrder: {
-    setter: Function;
-    value: string;
-    default_value: string;
-  };
+  editorShowAccentColors: SettingData<boolean>;
+  theme: SettingData<string>;
+  btOrder: SettingData<string>;
 }
 
 const OptionsProvider = ({ children }: { children: any }) => {

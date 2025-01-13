@@ -1,17 +1,18 @@
 import { useRef, useState } from "react";
 
 import "./Dropdown.css";
+import { SettingData } from "../../options/Options";
 
-const Dropdown = ({ setting, possibleValues }) => {
-  const [open, setOpen] = useState(false);
-  const dropdown = useRef(null);
+const Dropdown = ({ setting, possibleValues }: { setting: SettingData<any>, possibleValues: any[]}) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const dropdown = useRef<HTMLDivElement>(null);
 
-  const changeValue = (e, value) => {
+  const changeValue = (e:any , value:any) => {
     e.preventDefault();
     setting.setter(value);
   };
 
-  const closeOpenMenus = (e) => {
+  const closeOpenMenus = (e: any) => {
     if (open && !dropdown.current?.contains(e.target)) {
       setOpen(false);
     }
@@ -35,7 +36,7 @@ const Dropdown = ({ setting, possibleValues }) => {
           {possibleValues.map((name, index) => (
             <button
               className="bt-settings-dropdown-item"
-              onClick={(e) => changeValue(e, name)}
+              onClick={(e: any) => changeValue(e, name)}
             >
               {name}
             </button>

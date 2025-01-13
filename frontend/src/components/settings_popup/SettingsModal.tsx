@@ -10,12 +10,22 @@ import Setting from "./sections/Setting";
 
 import Dropdown from "./options/Dropdown";
 
-import { OptionsContext } from "../options/Options";
-import { useError } from "./../error_popup/ErrorModal";
+import { OptionsContext, SettingsData } from "../options/Options";
+import { useError } from "../error_popup/ErrorModal";
 
-import { saveProjectConfig } from "./../../api_helper/TreeWrapper";
+import { saveProjectConfig } from "../../api_helper/TreeWrapper";
 
-const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
+const SettingsModal = ({
+  onSubmit,
+  isOpen,
+  onClose,
+  currentProjectname,
+}: {
+  onSubmit: () => {};
+  isOpen: boolean;
+  onClose: Function;
+  currentProjectname: string;
+}) => {
   // const [color, setColor] = useColor("rgb(128 0 128)");
   const settings = useContext(OptionsContext);
   const { error } = useError();
@@ -25,9 +35,9 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
   //   document.documentElement.style.setProperty("--header", "rgb("+Math.round(color.rgb.r)+","+Math.round(color.rgb.g)+","+Math.round(color.rgb.b)+")");
   // }, [color]);
 
-  const handleCancel = async (settings) => {
+  const handleCancel = async (settings: SettingsData) => {
     // Save settings
-    let json_settings = { name: currentProjectname, config: {} };
+    let json_settings: {name: string, config: {[id: string] : any;}} = { name: currentProjectname, config: {} };
 
     Object.entries(settings).map(([key, setting]) => {
       json_settings.config[key] = setting.value;
@@ -36,7 +46,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
     try {
       await saveProjectConfig(
         currentProjectname,
-        JSON.stringify(json_settings),
+        JSON.stringify(json_settings)
       );
     } catch (e) {
       console.error("Error saving config:", e);
