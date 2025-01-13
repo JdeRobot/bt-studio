@@ -8,7 +8,7 @@ import FileBrowser from "./components/file_browser/FileBrowser";
 import FileEditor from "./components/file_editor/FileEditor";
 import "./App.css";
 import VncViewer from "./components/vnc_viewer/VncViewer";
-import ErrorModal from "./components/error_popup/ErrorModal";
+import ErrorModal, { ErrorProvider } from "./components/error_popup/ErrorModal";
 import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
 import CommsManager from "./api_helper/CommsManager";
 import { loadProjectConfig } from "./api_helper/TreeWrapper";
@@ -27,7 +27,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [saveCurrentDiagram, setSaveCurrentDiagram] = useState<boolean>(false);
   const [updateFileExplorer, setUpdateFileExplorer] = useState<boolean>(false);
-  const [isErrorModalOpen, setErrorModalOpen] = useState<boolean>(false);
   const [projectChanges, setProjectChanges] = useState<boolean>(false);
   const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
   const [manager, setManager] = useState<CommsManager | null>(null);
@@ -112,17 +111,13 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   };
 
   // Error modal
-  const openError = (err: unknown) => {
-    if (err instanceof Error) {
-      (document.getElementById("errorMsg") as HTMLElement).innerText =
-        err.message;
-      setErrorModalOpen(true);
-    }
-  };
-
-  const closeError = () => {
-    setErrorModalOpen(false);
-  };
+  // const openError = (err: unknown) => {
+  //   if (err instanceof Error) {
+  //     (document.getElementById("errorMsg") as HTMLElement).innerText =
+  //       err.message;
+  //     setErrorModalOpen(true);
+  //   }
+  // };
 
   // Show VNC viewers
   const showVNCViewer = () => {
@@ -148,118 +143,119 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       data-theme={settings.theme.value}
       style={{ display: "flex" }}
     >
-      {/* <ErrorModal isOpen={isErrorModalOpen} onClose={closeError} /> */}
+      <ErrorProvider>
+        <ErrorModal/>
+        <HeaderMenu
+          currentProjectname={currentProjectname}
+          setCurrentProjectname={setCurrentProjectname}
+          currentUniverseName={currentUniverseName}
+          setCurrentUniverseName={setCurrentUniverseName}
+          setSaveCurrentDiagram={setSaveCurrentDiagram}
+          projectChanges={projectChanges}
+          setProjectChanges={setProjectChanges}
+          gazeboEnabled={gazeboEnabled}
+          setGazeboEnabled={setGazeboEnabled}
+          manager={manager}
+          showVNCViewer={showVNCViewer}
+          isUnibotics={isUnibotics}
+        />
 
-      <HeaderMenu
-        currentProjectname={currentProjectname}
-        setCurrentProjectname={setCurrentProjectname}
-        currentUniverseName={currentUniverseName}
-        setCurrentUniverseName={setCurrentUniverseName}
-        setSaveCurrentDiagram={setSaveCurrentDiagram}
-        projectChanges={projectChanges}
-        setProjectChanges={setProjectChanges}
-        gazeboEnabled={gazeboEnabled}
-        setGazeboEnabled={setGazeboEnabled}
-        manager={manager}
-        showVNCViewer={showVNCViewer}
-        isUnibotics={isUnibotics}
-      />
-
-      <div className="bt-App-main">
-        <Resizable
-          width={fileBrowserWidth}
-          height={0}
-          onResize={(e, { size }) => onResize("fileBrowserWidth", size)}
-          minConstraints={[200, 200]}
-          maxConstraints={[400, 400]}
-        >
-          <div
-            style={{
-              width: `${fileBrowserWidth}px`,
-              display: "flex",
-              flexDirection: "column",
-            }}
+        <div className="bt-App-main">
+          <Resizable
+            width={fileBrowserWidth}
+            height={0}
+            onResize={(e, { size }) => onResize("fileBrowserWidth", size)}
+            minConstraints={[200, 200]}
+            maxConstraints={[400, 400]}
           >
-            <div className="bt-sideBar">
-              <FileBrowser
-                setCurrentFilename={setCurrentFilename}
+            <div
+              style={{
+                width: `${fileBrowserWidth}px`,
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <div className="bt-sideBar">
+                <FileBrowser
+                  setCurrentFilename={setCurrentFilename}
+                  currentFilename={currentFilename}
+                  currentProjectname={currentProjectname}
+                  setProjectChanges={setProjectChanges}
+                  setAutosave={setAutosave}
+                  forceSaveCurrent={forceSaveCurrent}
+                  setForcedSaveCurrent={setForcedSaveCurrent}
+                  forceUpdate={{
+                    value: updateFileExplorer,
+                    callback: setUpdateFileExplorer,
+                  }}
+                  setSaveCurrentDiagram={setSaveCurrentDiagram}
+                />
+              </div>
+            </div>
+          </Resizable>
+
+          <Resizable
+            width={editorWidth}
+            height={0}
+            onResize={(e, { size }) => onResize("editorWidth", size)}
+            minConstraints={[400, 400]}
+            maxConstraints={[800, 900]}
+          >
+            <div
+              style={{
+                width: `${editorWidth}px`,
+                display: "flex",
+                flexDirection: "column",
+                gap: "5px",
+                backgroundColor: "var(--control-bar)",
+              }}
+            >
+              <FileEditor
                 currentFilename={currentFilename}
                 currentProjectname={currentProjectname}
                 setProjectChanges={setProjectChanges}
+                isUnibotics={isUnibotics}
+                autosaveEnabled={autosaveEnabled}
                 setAutosave={setAutosave}
                 forceSaveCurrent={forceSaveCurrent}
-                setForcedSaveCurrent={setForcedSaveCurrent}
-                forceUpdate={{
-                  value: updateFileExplorer,
-                  callback: setUpdateFileExplorer,
-                }}
-                setSaveCurrentDiagram={setSaveCurrentDiagram}
               />
+              {showTerminal && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
             </div>
-          </div>
-        </Resizable>
+          </Resizable>
 
-        <Resizable
-          width={editorWidth}
-          height={0}
-          onResize={(e, { size }) => onResize("editorWidth", size)}
-          minConstraints={[400, 400]}
-          maxConstraints={[800, 900]}
-        >
           <div
             style={{
-              width: `${editorWidth}px`,
+              flex: "1 1 0%",
               display: "flex",
               flexDirection: "column",
+              flexWrap: "nowrap",
               gap: "5px",
               backgroundColor: "var(--control-bar)",
             }}
           >
-            <FileEditor
-              currentFilename={currentFilename}
-              currentProjectname={currentProjectname}
-              setProjectChanges={setProjectChanges}
-              isUnibotics={isUnibotics}
-              autosaveEnabled={autosaveEnabled}
-              setAutosave={setAutosave}
-              forceSaveCurrent={forceSaveCurrent}
-            />
-            {showTerminal && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
+            {currentProjectname ? (
+              <MainTreeEditorContainer
+                projectName={currentProjectname}
+                setProjectEdited={setProjectChanges}
+                saveCurrentDiagram={saveCurrentDiagram}
+                setSaveCurrentDiagram={setSaveCurrentDiagram}
+                updateFileExplorer={setUpdateFileExplorer}
+              />
+            ) : (
+              <p>Loading...</p>
+            )}
+            {showSim && <VncViewer gazeboEnabled={gazeboEnabled} />}
           </div>
-        </Resizable>
-
-        <div
-          style={{
-            flex: "1 1 0%",
-            display: "flex",
-            flexDirection: "column",
-            flexWrap: "nowrap",
-            gap: "5px",
-            backgroundColor: "var(--control-bar)",
-          }}
-        >
-          {currentProjectname ? (
-            <MainTreeEditorContainer
-              projectName={currentProjectname}
-              setProjectEdited={setProjectChanges}
-              saveCurrentDiagram={saveCurrentDiagram}
-              setSaveCurrentDiagram={setSaveCurrentDiagram}
-              updateFileExplorer={setUpdateFileExplorer}
-            />
-          ) : (
-            <p>Loading...</p>
-          )}
-          {showSim && <VncViewer gazeboEnabled={gazeboEnabled} />}
         </div>
-      </div>
-      <StatusBar
-        showSim={showSim}
-        setSimVisible={showVNCSim}
-        showTerminal={showTerminal}
-        setTerminalVisible={showVNCTerminal}
-        dockerData={dockerData}
-        resetManager={resetManager}
-      />
+        <StatusBar
+          showSim={showSim}
+          setSimVisible={showVNCSim}
+          showTerminal={showTerminal}
+          setTerminalVisible={showVNCTerminal}
+          dockerData={dockerData}
+          resetManager={resetManager}
+        />
+      </ErrorProvider>
     </div>
   );
 };

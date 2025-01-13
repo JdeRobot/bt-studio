@@ -5,6 +5,7 @@ import { ReactComponent as BackIcon } from "../../Modal/img/back.svg";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 import { ReactComponent as DeleteIcon } from "../../tree_editor/img/delete.svg";
 import { deleteProject, listProjects } from "../../../api_helper/TreeWrapper";
+import { useError } from "../../error_popup/ErrorModal";
 
 const initialProjectData = {
   projectName: "",
@@ -18,7 +19,6 @@ const ProjectModal = ({
   existingProjects,
   setExistingProjects,
   createProject,
-  openError,
 }: {
   onSubmit: FormEventHandler<HTMLFormElement>;
   isOpen: boolean;
@@ -27,8 +27,9 @@ const ProjectModal = ({
   existingProjects: string[];
   setExistingProjects: Function;
   createProject: Function;
-  openError: Function;
 }) => {
+  const { warning, error } = useError();
+
   const focusInputRef = useRef<any>(null);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
   const [formState, setFormState] = useState(initialProjectData);
@@ -38,9 +39,11 @@ const ProjectModal = ({
       const response = await listProjects();
       setExistingProjects(response);
       setFormState(initialProjectData);
-    } catch (error) {
-      console.error("Error while fetching project list:", error);
-      openError(`An error occurred while fetching the project list`);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Error while fetching project list: " + e.message);
+        error("Error while fetching project list: " + e.message);
+      }
     }
   };
 
@@ -89,9 +92,11 @@ const ProjectModal = ({
       await deleteProject(project);
       await getProjects();
       console.log("Project deleted successfully");
-    } catch (error) {
-      console.error("Error while fetching project list:", error);
-      openError(`An error occurred while fetching the project list`);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Error while fetching project list: " + e.message);
+        error("Error while fetching project list: " + e.message);
+      }
     }
   };
 

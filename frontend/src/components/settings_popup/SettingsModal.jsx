@@ -13,12 +13,14 @@ import Dropdown from "./options/Dropdown";
 import Checkbox from "./options/Checkbox";
 
 import { OptionsContext } from "../options/Options";
+import { useError } from "./../error_popup/ErrorModal";
 
 import { saveProjectConfig } from "./../../api_helper/TreeWrapper";
 
 const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
   // const [color, setColor] = useColor("rgb(128 0 128)");
   const settings = React.useContext(OptionsContext);
+  const { error } = useError();
 
   // useEffect(() => {
   //   console.log("rgb("+Math.round(color.rgb.r)+","+Math.round(color.rgb.g)+","+Math.round(color.rgb.b)+")")
@@ -38,8 +40,9 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
         currentProjectname,
         JSON.stringify(json_settings),
       );
-    } catch (error) {
-      console.error("Error saving config:", error);
+    } catch (e) {
+      console.error("Error saving config:", e);
+      error("Error saving config: " + error)
     }
     onClose();
   };

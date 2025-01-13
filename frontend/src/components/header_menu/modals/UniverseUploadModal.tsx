@@ -3,6 +3,7 @@ import "./UniverseUploadModal.css";
 import Modal from "../../Modal/Modal";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 import { uploadUniverse } from "../../../api_helper/TreeWrapper";
+import { useError } from "../../error_popup/ErrorModal";
 
 const initialProjectData = {
   projectName: "",
@@ -13,16 +14,16 @@ const UniverseUploadModal = ({
   isOpen,
   onClose,
   currentProject,
-  openError,
   setUniverseAdded,
 }: {
   onSubmit: any;
   isOpen: any;
   onClose: any;
   currentProject: any;
-  openError: any;
   setUniverseAdded: any;
 }) => {
+  const { error } = useError();
+
   const [formState, setFormState] = useState(initialProjectData);
   const [uploadedUniverse, setUploadedUniverse] = useState("");
   const [uploadStatus, setUploadStatus] = useState("");
@@ -82,8 +83,11 @@ const UniverseUploadModal = ({
       await uploadUniverse(currentProject, universeName, uploadedUniverse);
       console.log("Universe saved successfully.");
       setUniverseAdded(true);
-    } catch (error) {
-      console.error("Axios Error:", error);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Axios Error: " + e.message);
+        error("Axios Error: " + e.message);
+      }
     }
 
     onClose();

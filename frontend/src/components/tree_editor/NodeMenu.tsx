@@ -18,6 +18,7 @@ import {
 } from "../../api_helper/TreeWrapper";
 import { TreeViewType } from "../helper/TreeEditorHelper";
 import AddSubtreeModal from "./modals/AddSubtreeModal";
+import { useError } from "../error_popup/ErrorModal";
 
 var NODE_MENU_ITEMS: Record<string, string[]> = {
   Sequences: ["Sequence", "ReactiveSequence", "SequenceWithMemory"],
@@ -95,6 +96,8 @@ const NodeMenu = ({
   subTreeName: string;
   updateFileExplorer: Function;
 }) => {
+  const { error } = useError();
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>("");
   const [isNewSubtreeModalOpen, setNewSubtreeModalOpen] =
@@ -166,8 +169,11 @@ const NodeMenu = ({
         console.log("Created subtree:", subtreeId);
         fetchSubtreeList(projectName);
         updateFileExplorer(true);
-      } catch (error) {
-        console.error("Failed to create subtree:", error);
+      } catch (e) {
+        if (e instanceof Error) {
+          console.error("Failed to create subtree: " + e.message);
+          error("Failed to create subtree: " + e.message);
+        }
       }
     }
   };

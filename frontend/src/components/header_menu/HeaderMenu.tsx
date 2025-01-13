@@ -31,6 +31,7 @@ import { OptionsContext } from "../options/Options";
 
 import RosTemplates from "./../../templates/RosTemplates";
 import TreeGardener from "./../../templates/TreeGardener";
+import { useError } from "../error_popup/ErrorModal";
 
 const HeaderMenu = ({
   currentProjectname,
@@ -59,6 +60,8 @@ const HeaderMenu = ({
   showVNCViewer: Function;
   isUnibotics: boolean;
 }) => {
+  const { warning, error } = useError();
+  
   // Settings
   const settings = useContext(OptionsContext);
 
@@ -77,6 +80,7 @@ const HeaderMenu = ({
 
   const terminateUniverse = async () => {
     if (!manager) {
+      warning("Failed to connect with the Robotics Backend docker. Please make sure it is connected.");
       return;
     }
     // Down the RB ladder
@@ -87,6 +91,7 @@ const HeaderMenu = ({
 
   const launchUniverse = async (universeConfig: string) => {
     if (!manager) {
+      warning("Failed to connect with the Robotics Backend docker. Please make sure it is connected.");
       return;
     }
 
@@ -137,8 +142,8 @@ const HeaderMenu = ({
           console.log("Viz ready!");
         };
       }
-    } catch (error: unknown) {
-      throw error; // rethrow
+    } catch (e: unknown) {
+      throw e; // rethrow
     }
   };
 
@@ -149,9 +154,10 @@ const HeaderMenu = ({
       await createProject(projectName);
       setCurrentProjectname(projectName);
       console.log("Project created successfully");
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Error creating project: " + error.message);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.error("Error creating project: " + e.message);
+        error("Error creating project: " + e.message);
       }
     }
   };
@@ -173,6 +179,7 @@ const HeaderMenu = ({
       console.log("Universe terminated!");
     } else {
       console.error(`The project ${projectName} does not exist`);
+      error(`The project ${projectName} does not exist`);
     }
   };
 
@@ -185,9 +192,10 @@ const HeaderMenu = ({
       setSaveCurrentDiagram(true);
       setProjectChanges(false);
       console.log("Project saved");
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error saving project: " + error.message);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Error saving project: " + e.message);
+        error(e.message);
       }
     }
   };
@@ -230,9 +238,10 @@ const HeaderMenu = ({
       });
 
       console.log("App downloaded successfully");
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error downloading app: " + error.message);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Error downloading app: " + e.message);
+        error("Error downloading app: " + e.message);
       }
     }
   };
@@ -240,11 +249,13 @@ const HeaderMenu = ({
   const onAppStateChange = async () => {
     if (!manager) {
       console.error("Manager is not running");
+      warning("Failed to connect with the Robotics Backend docker. Please make sure it is connected.");
       return;
     }
 
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
+      warning("Failed to found a running simulation. Please make sure an universe is selected.");
       return;
     }
 
@@ -283,9 +294,10 @@ const HeaderMenu = ({
 
         setAppRunning(true);
         console.log("App started successfully");
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error("Error running app: " + error.message);
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          console.error("Error running app: " + e.message);
+          error("Error running app: " + e.message)
         }
       }
     } else {
@@ -293,9 +305,10 @@ const HeaderMenu = ({
         await manager.pause();
         setAppRunning(false);
         console.log("App paused correctly!");
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error("Error pausing app: " + error.message);
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          console.error("Error pausing app: " + e.message);
+          error("Error pausing app: " + e.message)
         }
       }
     }
@@ -304,11 +317,13 @@ const HeaderMenu = ({
   const onResetApp = async () => {
     if (!manager) {
       console.error("Manager is not running");
+      warning("Failed to connect with the Robotics Backend docker. Please make sure it is connected.");
       return;
     }
 
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
+      warning("Failed to found a running simulation. Please make sure an universe is selected.");
       return;
     }
 
@@ -358,14 +373,16 @@ const HeaderMenu = ({
           setCurrentUniverseName(universeName);
           showVNCViewer();
         }
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error("Unable launch selected universe: " + error.message);
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          console.error("Unable launch selected universe: " + e.message);
+          error("Unable launch selected universe: " + e.message);
         }
       }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Unable to retrieve universe config: " + error.message);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.error("Unable to retrieve universe config: " + e.message);
+        error("Unable to retrieve universe config: " + e.message);
       }
     }
   };
@@ -380,10 +397,6 @@ const HeaderMenu = ({
   };
 
   const onSubmit = (data: unknown) => {};
-
-  const openError = (err: unknown) => {
-    console.log("Modal error!");
-  };
 
   return (
     <AppBar position="static">
@@ -404,14 +417,12 @@ const HeaderMenu = ({
           existingProjects={existingProjects}
           setExistingProjects={setExistingProjects}
           createProject={onCreateProject}
-          openError={openError}
         />
         <UniversesModal
           isOpen={isUniversesModalOpen}
           onSubmit={onSubmit}
           onClose={onCloseUniverseModal}
           currentProject={currentProjectname}
-          openError={openError}
         />
 
         <SettingsModal
