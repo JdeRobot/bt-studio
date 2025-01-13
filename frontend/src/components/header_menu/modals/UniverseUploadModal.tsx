@@ -16,19 +16,19 @@ const UniverseUploadModal = ({
   currentProject,
   setUniverseAdded,
 }: {
-  onSubmit: any;
-  isOpen: any;
-  onClose: any;
-  currentProject: any;
-  setUniverseAdded: any;
+  onSubmit: (data: any) => void;
+  isOpen: boolean;
+  onClose: Function;
+  currentProject: string;
+  setUniverseAdded: Function;
 }) => {
   const { error } = useError();
 
   const [formState, setFormState] = useState(initialProjectData);
-  const [uploadedUniverse, setUploadedUniverse] = useState("");
-  const [uploadStatus, setUploadStatus] = useState("");
-  const [uploadPercentage, setUploadPercentage] = useState(0);
-  const [universeName, setUniverseName] = useState("");
+  const [uploadedUniverse, setUploadedUniverse] = useState<string>("");
+  const [uploadStatus, setUploadStatus] = useState<string>("");
+  const [uploadPercentage, setUploadPercentage] = useState<number>(0);
+  const [universeName, setUniverseName] = useState<string>("");
 
   const handleCancel = () => {
     if (currentProject !== "") {

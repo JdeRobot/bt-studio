@@ -5,6 +5,7 @@ import createEngine, {
   DiagramEngine,
   DiagramModel,
   DiagramModelGenerics,
+  NodeModel,
 } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
@@ -276,7 +277,7 @@ const DiagramEditor = memo(
     // HELPERS
 
     // Add the nodes default ports
-    const addDefaultPorts = (node: any) => {
+    const addDefaultPorts = (node: BasicNodeModel | TagNodeModel) => {
       console.log("Adding default ports");
 
       var nodeName = node.getName();
@@ -317,7 +318,7 @@ const DiagramEditor = memo(
     // Deletes the last clicked node
     const deleteLastClickedNode = () => {
       if (model.current && lastClickedNodeId) {
-        const node: any = model.current.getNode(lastClickedNodeId);
+        const node: NodeModel = model.current.getNode(lastClickedNodeId);
         if (node) {
           node.remove();
           setDiagramEdited(true);
@@ -361,7 +362,7 @@ const DiagramEditor = memo(
     // LISTENERS
 
     // Position listener
-    const attachPositionListener = (node: any) => {
+    const attachPositionListener = (node: BasicNodeModel | TagNodeModel) => {
       node.registerListener({
         positionChanged: (event: any) => {
           lastMovedNodePosition = event.entity.getPosition();
@@ -372,7 +373,7 @@ const DiagramEditor = memo(
     };
 
     // Click listener
-    const attachClickListener = (node: any) => {
+    const attachClickListener = (node: BasicNodeModel | TagNodeModel) => {
       node.registerListener({
         selectionChanged: (event: any) => {
           if (event.isSelected) {
@@ -549,15 +550,17 @@ const DiagramEditor = memo(
     // After deserialization, attach listeners to each node
     const nodes = model.current.getNodes();
     nodes.forEach((node) => {
-      attachPositionListener(node);
-      attachClickListener(node);
-      node.setSelected(false);
-      if (
-        node instanceof BasicNodeModel &&
-        isActionNode(node.getName()) &&
-        !node.getIsSubtree()
-      ) {
-        addActionFrame(node.getName(), node.getColor(), node.getPorts());
+      if (node instanceof BasicNodeModel || node instanceof TagNodeModel) {
+        attachPositionListener(node);
+        attachClickListener(node);
+        node.setSelected(false);
+        if (
+          node instanceof BasicNodeModel &&
+          isActionNode(node.getName()) &&
+          !node.getIsSubtree()
+        ) {
+          addActionFrame(node.getName(), node.getColor(), node.getPorts());
+        }
       }
     });
 

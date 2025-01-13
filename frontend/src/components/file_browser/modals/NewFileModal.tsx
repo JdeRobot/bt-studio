@@ -7,6 +7,12 @@ import { ReactComponent as ActionTeplateIcon } from "../img/action_template.svg"
 import { ReactComponent as IOTeplateIcon } from "../img/io_template.svg";
 import { Entry } from "../FileBrowser";
 
+export interface newFileModalData {
+  fileType: string;
+  fileName: string;
+  templateType: string;
+}
+
 const initialNewFileModalData = {
   fileType: "plain",
   fileName: "",

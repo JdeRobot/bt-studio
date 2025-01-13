@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import JSZip from "jszip";
 import "./FileBrowser.css";
-import NewFileModal from "./modals/NewFileModal";
+import NewFileModal, { newFileModalData } from "./modals/NewFileModal";
 import RenameModal from "./modals/RenameModal";
 import NewFolderModal from "./modals/NewFolderModal";
 import UploadModal from "./modals/UploadModal";
@@ -136,7 +136,10 @@ const FileBrowser = ({
     }
   };
 
-  const handleNewActionSubmit = async (location: string, data: any) => {
+  const handleNewActionSubmit = async (
+    location: string,
+    data: newFileModalData,
+  ) => {
     handleCloseNewFileModal();
 
     if (data.fileName !== "") {

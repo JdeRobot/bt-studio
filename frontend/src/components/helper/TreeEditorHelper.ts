@@ -1,6 +1,7 @@
 import {
   DiagramEngine,
   DiagramModel,
+  LinkModel,
   NodeModel,
   PortModel,
   ZoomCanvasAction,
@@ -202,8 +203,7 @@ const deletePortLink = (
   portName: string,
   node: BasicNodeModel
 ) => {
-  // var link: LinkModel | undefined;
-  var link: any;
+  var link: LinkModel | undefined;
   const nodePort = node.getPort(portName);
 
   if (nodePort) {
