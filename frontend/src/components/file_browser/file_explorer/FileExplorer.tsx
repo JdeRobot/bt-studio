@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import "./FileExplorer.css";
 import TreeNode from "./TreeNode";
-import MoreActionsMenu, { ContextMenuProps } from "./MoreActionsMenu.js";
+import MoreActionsMenu, { ContextMenuProps } from "./MoreActionsMenu";
 import { Entry } from "../FileBrowser";
 
 const FileExplorer = ({

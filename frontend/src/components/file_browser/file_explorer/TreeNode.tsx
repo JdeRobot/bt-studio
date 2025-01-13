@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { ReactComponent as ActionIcon } from "./img/action.svg";
-import FileIcon from "./FileIcon.jsx";
+import FileIcon from "./FileIcon";
 import { OptionsContext } from "../../options/Options";
 import { ContextMenuProps } from "./MoreActionsMenu";
 

@@ -1,4 +1,3 @@
-// App.js
 import React, { useState, useEffect, useRef } from "react";
 // import useLocalStorage from 'use-local-storage'
 import { useUnload } from "./hooks/useUnload";

@@ -21,7 +21,7 @@ const SettingsModal = ({
   onClose,
   currentProjectname,
 }: {
-  onSubmit: () => {};
+  onSubmit: (data: unknown) => void;
   isOpen: boolean;
   onClose: Function;
   currentProjectname: string;

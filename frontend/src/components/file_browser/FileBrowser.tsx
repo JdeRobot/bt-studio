@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import JSZip from "jszip";
 import "./FileBrowser.css";
-import NewFileModal from "./modals/NewFileModal.jsx";
-import RenameModal from "./modals/RenameModal.jsx";
+import NewFileModal from "./modals/NewFileModal";
+import RenameModal from "./modals/RenameModal";
 import NewFolderModal from "./modals/NewFolderModal";
 import UploadModal from "./modals/UploadModal";
-import DeleteModal from "./modals/DeleteModal.jsx";
-import FileExplorer from "./file_explorer/FileExplorer.jsx";
+import DeleteModal from "./modals/DeleteModal";
+import FileExplorer from "./file_explorer/FileExplorer";
 
 import {
   getFile,
@@ -61,7 +61,7 @@ const FileBrowser = ({
   currentProjectname: string;
   setProjectChanges: Function;
   setAutosave: Function;
-  forceSaveCurrent: Function;
+  forceSaveCurrent: boolean;
   setForcedSaveCurrent: Function;
   forceUpdate: { value: boolean, callback: Function};
   setSaveCurrentDiagram: Function;
