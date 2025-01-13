@@ -271,7 +271,7 @@ const EditActionModal = ({
           Edit action value
         </label>
         <CloseIcon
-          className="bt-modal-titlebar-close icon"
+          className="bt-modal-titlebar-close bt-icon"
           onClick={() => {
             onClose();
           }}
@@ -419,7 +419,7 @@ const EditActionModal = ({
                     title="Add input"
                   >
                     <AddIcon
-                      className="bt-icon action-icon"
+                      className="bt-icon bt-action-icon"
                       fill={"var(--icon)"}
                       style={{
                         filter: isBackgroundDark() ? "invert(0)" : "invert(1)",

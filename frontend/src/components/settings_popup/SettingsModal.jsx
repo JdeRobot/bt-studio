@@ -71,7 +71,7 @@ const SettingsModal = ({ onSubmit, isOpen, onClose, currentProjectname }) => {
               Settings
             </label>
             <CloseIcon
-              className="bt-modal-titlebar-close icon"
+              className="bt-modal-titlebar-close bt-icon"
               onClick={() => {
                 handleCancel(settings);
               }}
