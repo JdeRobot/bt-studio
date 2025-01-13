@@ -813,7 +813,7 @@ const deleteFolder = async (
 const uploadUniverse = async (
   projectName: string,
   universeName: string,
-  uploadedUniverse: any,
+  uploadedUniverse: string,
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!universeName) throw new Error("Universe name is not set");

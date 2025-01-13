@@ -3,9 +3,16 @@ import { InputPortWidget } from "./ports/input_port/TagInputPortWidget";
 import { OutputPortWidget } from "./ports/output_port/TagOutputPortWidget";
 
 import "./TagNode.css";
+import { DiagramEngine } from "@projectstorm/react-diagrams";
 
 // The node widget controls the visualization of the custom node
-export const TagNodeWidget = ({ engine, node }: { engine: any; node: any }) => {
+export const TagNodeWidget = ({
+  engine,
+  node,
+}: {
+  engine: DiagramEngine;
+  node: any;
+}) => {
   // Tag style
   let tagStyle: React.CSSProperties = {
     background: node.getColor(),

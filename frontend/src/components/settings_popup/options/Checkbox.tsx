@@ -1,6 +1,7 @@
+import { SettingData } from "../../options/Options";
 import "./Checkbox.css";
 
-const Checkbox = ({ setting }) => {
+const Checkbox = ({ setting }: { setting: SettingData<any> }) => {
   return (
     <div className="bt-setting-checkbox-wrapper">
       <input

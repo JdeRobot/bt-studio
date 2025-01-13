@@ -96,8 +96,6 @@ const UniverseModal = ({
     setUploadModalOpen(false);
   };
 
-  const handleFormSubmit = (data: any) => {};
-
   return (
     <Modal
       id="universes-modal"
@@ -107,7 +105,7 @@ const UniverseModal = ({
     >
       <UniverseUploadModal
         isOpen={uploadModalOpen}
-        onSubmit={handleFormSubmit}
+        onSubmit={(data: any) => {}}
         onClose={handleCloseUploadUniverseModal}
         currentProject={currentProject}
         setUniverseAdded={setUniverseAdded}

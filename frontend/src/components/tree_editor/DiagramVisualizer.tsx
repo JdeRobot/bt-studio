@@ -1,21 +1,27 @@
 import { useRef, memo } from "react";
 import createEngine, {
+  DiagramEngine,
   DiagramModel,
   NodeModel,
   NodeModelGenerics,
 } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
-import { changeColorNode, configureEngine } from "../helper/TreeEditorHelper";
+import {
+  changeColorNode,
+  configureEngine,
+  TreeViewType,
+} from "../helper/TreeEditorHelper";
 import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
 import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
 
 import "./TreeEditor.css";
 import NodeMenuMinimal from "./NodeMenuMinimal";
+import CommsManager from "../../api_helper/CommsManager";
 
 const setTreeStatus = (
   model: DiagramModel,
-  engine: any,
+  engine: DiagramEngine,
   updateTree: any,
   baseTree: any,
   subtreeHierarchy: number[],
@@ -42,7 +48,7 @@ const setTreeStatus = (
 
 const setStatusNode = (
   model: DiagramModel,
-  engine: any,
+  engine: DiagramEngine,
   updateTree: any,
   baseTree: any,
   index: number = 0,
@@ -104,7 +110,7 @@ const setStatusNode = (
 
 const updateBlackboardValues = (
   model: DiagramModel,
-  engine: any,
+  engine: DiagramEngine,
   blackboard: any,
 ) => {
   const blackboardRegex = /^\{[^}]*\}/i;
@@ -149,10 +155,10 @@ const DiagramVisualizer = memo(
   }: {
     modelJson: any;
     setResultJson: Function;
-    manager: any;
+    manager: CommsManager;
     treeStructure: any;
-    view: any;
-    changeView: any;
+    view: TreeViewType;
+    changeView: Function;
     setGoBack: Function;
     subTreeName: string;
     subTreeStructure: number[];
@@ -197,7 +203,7 @@ const DiagramVisualizer = memo(
     };
 
     // Click listener
-    const attachClickListener = (node: any) => {
+    const attachClickListener = (node: NodeModel) => {
       node.registerListener({
         selectionChanged: (event: any) => {
           if (event.isSelected) {
