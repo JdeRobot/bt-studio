@@ -1,5 +1,5 @@
 // App.js
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // import useLocalStorage from 'use-local-storage'
 import { useUnload } from "./hooks/useUnload";
 import { Resizable } from "react-resizable";

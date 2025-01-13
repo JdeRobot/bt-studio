@@ -70,7 +70,7 @@ const FileEditor = ({
   };
 
   useEffect(() => {
-    if (currentFilename != "") {
+    if (currentFilename !== "") {
       initFile();
       if (filenameToSave && autosaveEnabled) {
         autoSave();

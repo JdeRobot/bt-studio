@@ -28,7 +28,7 @@ const ProjectModal = ({
   setExistingProjects: Function;
   createProject: Function;
 }) => {
-  const { warning, error } = useError();
+  const { error } = useError();
 
   const focusInputRef = useRef<any>(null);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);

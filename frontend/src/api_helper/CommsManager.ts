@@ -181,9 +181,9 @@ export default class CommsManager {
   }
 }
 
-  const events = {
-    RESPONSES: ["ack", "error"],
-    UPDATE: "update",
-    STATE_CHANGED: "state-changed",
-    INTROSPECTION: "introspection",
-  };
+  // const events = {
+  //   RESPONSES: ["ack", "error"],
+  //   UPDATE: "update",
+  //   STATE_CHANGED: "state-changed",
+  //   INTROSPECTION: "introspection",
+  // };

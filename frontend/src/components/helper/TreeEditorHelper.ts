@@ -1,7 +1,6 @@
 import {
   DiagramEngine,
   DiagramModel,
-  LinkModel,
   NodeModel,
   PortModel,
   ZoomCanvasAction,
@@ -10,7 +9,6 @@ import {
 import { BasicNodeFactory } from "../tree_editor/nodes/basic_node/BasicNodeFactory";
 import { BasicNodeModel } from "../tree_editor/nodes/basic_node/BasicNodeModel";
 import { TagNodeFactory } from "../tree_editor/nodes/tag_node/TagNodeFactory";
-import { TagNodeModel } from "../tree_editor/nodes/tag_node/TagNodeModel";
 import { SimplePortFactory } from "../tree_editor/nodes/SimplePortFactory";
 import { ChildrenPortModel } from "../tree_editor/nodes/basic_node/ports/children_port/ChildrenPortModel";
 import { ParentPortModel } from "../tree_editor/nodes/basic_node/ports/parent_port/ParentPortModel";

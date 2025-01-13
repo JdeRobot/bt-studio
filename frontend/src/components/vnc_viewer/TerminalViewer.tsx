@@ -6,6 +6,7 @@ const TerminalViewer = ({ gazeboEnabled }: { gazeboEnabled: boolean }) => {
     <div className="bt-terminal">
       {gazeboEnabled ? (
         <iframe
+          title="Terminal"
           id={"iframe"}
           style={{
             width: "100%",

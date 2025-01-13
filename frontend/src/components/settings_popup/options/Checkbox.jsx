@@ -1,5 +1,3 @@
-import React, { useMemo, useState, useEffect } from "react";
-
 import "./Checkbox.css";
 
 const Checkbox = ({ setting }) => {

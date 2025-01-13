@@ -2,14 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useRef, memo } from "react";
 
 import createEngine, {
-  DefaultLinkModel,
-  DefaultNodeModel,
   DiagramEngine,
   DiagramModel,
   DiagramModelGenerics,
-  NodeModel,
-  PortModel,
-  ZoomCanvasAction,
 } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
@@ -18,7 +13,6 @@ import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
 import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
 import { ChildrenPortModel } from "./nodes/basic_node/ports/children_port/ChildrenPortModel";
 import { ParentPortModel } from "./nodes/basic_node/ports/parent_port/ParentPortModel";
-import { OutputPortModel } from "./nodes/basic_node/ports/output_port/OutputPortModel";
 import { InputPortModel } from "./nodes/basic_node/ports/input_port/InputPortModel";
 import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutputPortModel";
 
@@ -26,7 +20,6 @@ import {
   configureEngine,
   isActionNode,
   TreeViewType,
-  ActionFrame,
   resetActionFrames,
   addActionFrame,
   getActionFrame,

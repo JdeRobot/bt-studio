@@ -1,5 +1,3 @@
-import React, { useEffect, useState } from "react";
-
 import { ReactComponent as ClosedArrowIcon } from "./img/arrowSide.svg";
 import { ReactComponent as OpenArrowIcon } from "./img/arrowDown.svg";
 import { ReactComponent as ClosedFolderIcon } from "./img/closedFolder.svg";

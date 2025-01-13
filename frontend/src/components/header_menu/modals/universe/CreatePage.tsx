@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, FormEventHandler } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./CreatePage.css";
 import { ReactComponent as BackIcon } from "../../../Modal/img/back.svg";
 import { ReactComponent as CloseIcon } from "../../../Modal/img/close.svg";

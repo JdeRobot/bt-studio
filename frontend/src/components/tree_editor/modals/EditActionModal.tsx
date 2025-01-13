@@ -8,7 +8,6 @@ import {
   removePort,
   ActionNodePortType,
   changeColorNode,
-  ActionFrame,
   getActionFrame,
 } from "../../helper/TreeEditorHelper";
 import { rgbToLuminance } from "../../helper/colorHelper";
@@ -129,7 +128,7 @@ const EditActionModal = ({
 
   const horizontalScrolling = (e: any) => {
     e.preventDefault();
-    var containerScrollPosition = e.target.scrollLeft;
+    // var containerScrollPosition = e.target.scrollLeft;
     e.target.scrollBy({
       top: 0,
       left: e.deltaY,
@@ -343,6 +342,7 @@ const EditActionModal = ({
                         </div>
                       );
                     }
+                    return <></>;
                   },
                 )}
                 {inputName ? (
@@ -475,6 +475,7 @@ const EditActionModal = ({
                         </div>
                       );
                     }
+                    return <></>;
                   },
                 )}
                 {outputName ? (

@@ -118,7 +118,6 @@ const FileBrowser = ({
 
     if (data.fileName !== "") {
       try {
-        let response;
         switch (data.fileType) {
           case "actions":
             await createAction(

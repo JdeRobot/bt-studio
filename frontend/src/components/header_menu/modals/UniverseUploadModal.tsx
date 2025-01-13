@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import "./UniverseUploadModal.css";
 import Modal from "../../Modal/Modal";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
@@ -74,7 +74,7 @@ const UniverseUploadModal = ({
   const saveZipUniverse = async () => {
     console.log("Calling the saving API");
 
-    if (uploadPercentage != 100) {
+    if (uploadPercentage !== 100) {
       console.warn("Not yet uploaded!");
       return;
     }

@@ -239,6 +239,7 @@ namespace RosTemplates {
     loc.file("package.xml", packageInfo(project_name, depend));
     loc.file("setup.cfg", setupConfig(project_name));
     loc.file("setup.py", setupPython(project_name));
+    loc.file("thirdparty.repos", thirdparty);
   }
 }
 

@@ -35,7 +35,7 @@ const RenameModal = ({
 
       var path = selectedEntry.path.split("/");
 
-      if (path.length == 1) {
+      if (path.length === 1) {
         return setSearchList(fileList);
       }
 
