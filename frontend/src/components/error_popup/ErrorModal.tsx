@@ -5,7 +5,6 @@ import Modal from "../Modal/Modal";
 enum ErrorType {
   ERROR,
   WARNING,
-  TMP_WARNING,
 }
 
 const ErrorContext = createContext<ErrorData>({
@@ -14,7 +13,6 @@ const ErrorContext = createContext<ErrorData>({
   type: ErrorType.ERROR,
   error: (msg: string) => {},
   warning: (msg: string) => {},
-  warningTmp: (msg: string, time: number) => {},
   close: () => {},
 });
 
@@ -24,7 +22,6 @@ interface ErrorData {
   type: ErrorType;
   error: (msg: string) => void;
   warning: (msg: string) => void;
-  warningTmp: (msg: string, time: number) => void;
   close: () => void;
 }
 
@@ -80,23 +77,16 @@ export const ErrorProvider = ({ children }: { children: any }) => {
     open(true);
   };
 
-  const showWarningTmp = (msg: string, time: number) => {
-    setMsg(msg);
-    setType(ErrorType.TMP_WARNING);
-    open(true);
-  };
-
   const close = () => {
     open(false);
   };
 
-  const context = {
+  const context: ErrorData = {
     isOpen: isOpen,
     msg: msg,
     type: type,
     error: (msg: string) => showError(msg),
     warning: (msg: string) => showWarning(msg),
-    warningTmp: (msg: string, time: number) => showWarningTmp(msg, time),
     close: () => close(),
   };
 
