@@ -597,3 +597,7 @@ const DiagramEditor = memo(
 );
 
 export default TreeEditor;
+function publish(arg0: string) {
+  throw new Error("Function not implemented.");
+}
+
