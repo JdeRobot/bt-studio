@@ -4,7 +4,12 @@ import { ReactComponent as ActionIcon } from "./img/action.svg";
 import FileIcon from "./FileIcon";
 import { OptionsContext } from "../../options/Options";
 import { ContextMenuProps } from "./MoreActionsMenu";
-import { ActionFrame, getActionFrame, subscribe, unsubscribe } from "../../helper/TreeEditorHelper";
+import {
+  ActionFrame,
+  getActionFrame,
+  subscribe,
+  unsubscribe,
+} from "../../helper/TreeEditorHelper";
 
 interface Entry {
   name: string;
@@ -33,13 +38,15 @@ function TreeNode({
   const [isCollapsed, setCollapsed] = useState<boolean>(false);
   const [group, setGroup] = useState<string>(parentGroup);
   const [update, setUpdate] = useState<boolean>(false);
-  const [actionFrame, setActionFrame] = useState<ActionFrame | undefined>(getActionFrame(node.name.replace(".py", "")));
+  const [actionFrame, setActionFrame] = useState<ActionFrame | undefined>(
+    getActionFrame(node.name.replace(".py", "")),
+  );
   const settings = React.useContext(OptionsContext);
 
   const callback = () => {
-    setActionFrame(getActionFrame(node.name.replace(".py", "")))
-    setUpdate(true)
-  }
+    setActionFrame(getActionFrame(node.name.replace(".py", "")));
+    setUpdate(true);
+  };
 
   useEffect(() => {
     if (node.is_dir) {
@@ -51,16 +58,16 @@ function TreeNode({
 
     return () => {
       unsubscribe("updateAccentColor", () => {});
-    }
+    };
   }, []);
 
   useEffect(() => {
-    setActionFrame(getActionFrame(node.name.replace(".py", "")))
+    setActionFrame(getActionFrame(node.name.replace(".py", "")));
   }, [getActionFrame(node.name.replace(".py", ""))]);
 
   useEffect(() => {
     if (update) {
-      setUpdate(false)
+      setUpdate(false);
     }
   }, [update]);
 
