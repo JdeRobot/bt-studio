@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import AceEditor from "react-ace";
-import "ace-builds/src-noconflict/mode-python";
-import "ace-builds/src-noconflict/theme-monokai";
+import Editor, { Monaco } from "@monaco-editor/react";
 import "./FileEditor.css";
 
 import { ReactComponent as SaveIcon } from "./img/save.svg";
@@ -9,6 +7,16 @@ import { ReactComponent as SplashIcon } from "./img/logo_jderobot_monocolor.svg"
 import { ReactComponent as SplashIconUnibotics } from "./img/logo_unibotics_monocolor.svg";
 import { getFile, saveFile } from "../../api_helper/TreeWrapper";
 import { useError } from "../error_popup/ErrorModal";
+import { OptionsContext } from "../options/Options";
+
+const fileTypes = {
+    json: 'json',
+    md: 'markdown',
+    py: 'python',
+    xml: 'xml',
+    sdf: 'xml',
+    yaml: 'yaml',
+}
 
 const FileEditor = ({
   currentFilename,
@@ -28,17 +36,81 @@ const FileEditor = ({
   forceSaveCurrent: boolean;
 }) => {
   const { error } = useError();
+  const settings = React.useContext(OptionsContext);
 
   const [fileContent, setFileContent] = useState(null);
   const [fontSize, setFontSize] = useState(14);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [filenameToSave, setFilenameToSave] = useState("");
+  const [languaage, setLanguage] = useState("python");
   const [projectToSave, setProjectToSave] = useState(currentProjectname);
+
+  const handleEditorDidMount = (monaco: Monaco) => {
+    monaco.editor.defineTheme('dark-theme', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editor.background': '#16161d',
+      },
+    });
+    monaco.editor.defineTheme('light-theme', {
+      base: 'vs',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editor.background': '#e2e2e9',
+      },
+    });
+  };
+
+  const editorOptions = {
+    //
+    fontSize: fontSize,
+    lineNumbers: "on",
+    roundedSelection: false,
+    scrollBeyondLastLine: true,
+    // word warp
+    wordWrap: "wordWrapColumn",
+    wordWrapColumn: 80,
+    wrappingIndent: "indent",
+    //
+    minimap: { enabled: false },
+    automaticLayout: true,
+    tabSize: 4,
+    rulers: [80],
+    suggestOnTriggerCharacters: true,
+    quickSuggestions: true,
+    wordBasedSuggestions: true,
+    //
+    hover: true,
+    glyphMargin: true,
+    lineNumbersMinChars: 3,
+    // scroll
+    smoothScrolling: true,
+    scrollbar: {
+      vertical: "auto",
+      horizontal: "auto",
+      verticalScrollbarSize: 8,
+      horizontalScrollbarSize: 8,
+    },
+  };
 
   const initFile = async () => {
     try {
       const content = await getFile(currentProjectname, currentFilename);
       setFileContent(content);
+      const extension = currentFilename.split('.').pop();
+      var fileType = "textplain"
+      if (extension) {
+        for (const key in fileTypes) {
+          if (key === extension) {
+            fileType = fileTypes[key as keyof typeof fileTypes];
+            break;
+          }
+        }
+      }
+      setLanguage(fileType)
       setHasUnsavedChanges(false); // Reset the unsaved changes flag when a new file is loaded
     } catch (e) {
       if (e instanceof Error) {
@@ -150,22 +222,39 @@ const FileEditor = ({
         </div>
       )}
       {fileContent !== null ? (
-        <AceEditor
-          mode="python"
-          theme="monokai"
-          name="fileEditor"
+        // <AceEditor
+        //   mode="python"
+        //   theme="monokai"
+        //   name="fileEditor"
+        //   width="100%"
+        //   height="calc(100% - 50px)"
+        //   value={fileContent}
+        //   fontSize={fontSize}
+        //   onChange={(newContent: any) => {
+        //     setProjectChanges(true);
+        //     setFileContent(newContent);
+        //     setHasUnsavedChanges(true); // Set the unsaved changes flag
+        //   }}
+        //   setOptions={{
+        //     scrollPastEnd: true,
+        //   }}
+        // />
+        <Editor
+          className="fileEditor"
           width="100%"
           height="calc(100% - 50px)"
+          defaultLanguage="python"
+          defaultValue=""
+          language={languaage}
           value={fileContent}
-          fontSize={fontSize}
+          theme={`${settings.theme.value}-theme`}
           onChange={(newContent: any) => {
             setProjectChanges(true);
             setFileContent(newContent);
             setHasUnsavedChanges(true); // Set the unsaved changes flag
           }}
-          setOptions={{
-            scrollPastEnd: true,
-          }}
+          options={editorOptions}
+          beforeMount={handleEditorDidMount}
         />
       ) : (
         <>
@@ -184,3 +273,4 @@ const FileEditor = ({
 };
 
 export default FileEditor;
+
