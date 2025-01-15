@@ -102,18 +102,18 @@ h3 {
   --background-900: #16161d;
   --background-950: #0b0b0e;
 
-  --primary: #b5ebee;
-  --primary-50: #eaf9fa;
-  --primary-100: #d5f4f6;
-  --primary-200: #ace9ec;
-  --primary-300: #82dee3;
-  --primary-400: #59d3d9;
-  --primary-500: #2fc8d0;
-  --primary-600: #26a0a6;
-  --primary-700: #1c787d;
-  --primary-800: #135053;
-  --primary-900: #09282a;
-  --primary-950: #051415;
+  --primary: #12494c;
+  --primary-50: #051415;
+  --primary-100: #9fafc7;
+  --primary-200: #759bd5;
+  --primary-300: #1d777c;
+  --primary-400: #279fa5;
+  --primary-500: #30c7cf;
+  --primary-600: #5ad2d8;
+  --primary-700: #83dde2;
+  --primary-800: #ace8ec;
+  --primary-900: #d6f4f5;
+  --primary-950: #eaf9fa;
 
   --secondary: #bdb4a8;
   --secondary-50: #f4f2f0;

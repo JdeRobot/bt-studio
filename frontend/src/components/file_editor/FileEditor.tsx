@@ -10,17 +10,17 @@ import { useError } from "../error_popup/ErrorModal";
 import { OptionsContext } from "../options/Options";
 
 const fileTypes = {
-    json: 'json',
-    md: 'markdown',
-    py: 'python',
-    config: 'xml',
-    cfg: 'xml',
-    xml: 'xml',
-    sdf: 'xml',
-    urdf: 'xml',
-    yaml: 'yaml',
-    repos: 'yaml',
-}
+  json: "json",
+  md: "markdown",
+  py: "python",
+  config: "xml",
+  cfg: "xml",
+  xml: "xml",
+  sdf: "xml",
+  urdf: "xml",
+  yaml: "yaml",
+  repos: "yaml",
+};
 
 const FileEditor = ({
   currentFilename,
@@ -50,20 +50,20 @@ const FileEditor = ({
   const [projectToSave, setProjectToSave] = useState(currentProjectname);
 
   const handleEditorDidMount = (monaco: Monaco) => {
-    monaco.editor.defineTheme('dark-theme', {
-      base: 'vs-dark',
+    monaco.editor.defineTheme("dark-theme", {
+      base: "vs-dark",
       inherit: true,
       rules: [],
       colors: {
-        'editor.background': '#16161d',
+        "editor.background": "#16161d",
       },
     });
-    monaco.editor.defineTheme('light-theme', {
-      base: 'vs',
+    monaco.editor.defineTheme("light-theme", {
+      base: "vs",
       inherit: true,
       rules: [],
       colors: {
-        'editor.background': '#e2e2e9',
+        "editor.background": "#e2e2e9",
       },
     });
   };
@@ -104,8 +104,8 @@ const FileEditor = ({
     try {
       const content = await getFile(currentProjectname, currentFilename);
       setFileContent(content);
-      const extension = currentFilename.split('.').pop();
-      var fileType = "textplain"
+      const extension = currentFilename.split(".").pop();
+      var fileType = "textplain";
       if (extension) {
         for (const key in fileTypes) {
           if (key === extension) {
@@ -114,7 +114,7 @@ const FileEditor = ({
           }
         }
       }
-      setLanguage(fileType)
+      setLanguage(fileType);
       setHasUnsavedChanges(false); // Reset the unsaved changes flag when a new file is loaded
     } catch (e) {
       if (e instanceof Error) {
@@ -260,4 +260,3 @@ const FileEditor = ({
 };
 
 export default FileEditor;
-
