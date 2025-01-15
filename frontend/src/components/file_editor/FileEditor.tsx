@@ -226,23 +226,6 @@ const FileEditor = ({
         </div>
       )}
       {fileContent !== null ? (
-        // <AceEditor
-        //   mode="python"
-        //   theme="monokai"
-        //   name="fileEditor"
-        //   width="100%"
-        //   height="calc(100% - 50px)"
-        //   value={fileContent}
-        //   fontSize={fontSize}
-        //   onChange={(newContent: any) => {
-        //     setProjectChanges(true);
-        //     setFileContent(newContent);
-        //     setHasUnsavedChanges(true); // Set the unsaved changes flag
-        //   }}
-        //   setOptions={{
-        //     scrollPastEnd: true,
-        //   }}
-        // />
         <Editor
           className="fileEditor"
           width="100%"
