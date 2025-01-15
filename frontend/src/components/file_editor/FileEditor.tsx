@@ -13,9 +13,13 @@ const fileTypes = {
     json: 'json',
     md: 'markdown',
     py: 'python',
+    config: 'xml',
+    cfg: 'xml',
     xml: 'xml',
     sdf: 'xml',
+    urdf: 'xml',
     yaml: 'yaml',
+    repos: 'yaml',
 }
 
 const FileEditor = ({
