@@ -647,7 +647,7 @@ const createFile = async (
       {
         project_name: projectName,
         location: location,
-        filename: fileName,
+        file_name: fileName,
       },
       axiosExtra
     );
