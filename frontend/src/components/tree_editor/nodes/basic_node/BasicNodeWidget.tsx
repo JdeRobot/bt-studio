@@ -7,13 +7,14 @@ import { OutputPortWidget } from "./ports/output_port/OutputPortWidget";
 import { strRGBToLuminance } from "../../../helper/colorHelper";
 
 import "./BasicNode.css";
+import { DiagramEngine } from "@projectstorm/react-diagrams";
 
 // The node widget controls the visualization of the custom node
 export const BasicNodeWidget = ({
   engine,
   node,
 }: {
-  engine: any;
+  engine: DiagramEngine;
   node: any;
 }) => {
   // Choose the font color

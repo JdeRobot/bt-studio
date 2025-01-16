@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 
 import "./MoreActionsMenu.css";
+import { Entry } from "../FileBrowser";
 
 function MoreActionsMenu({
   menuProps,
@@ -10,8 +11,16 @@ function MoreActionsMenu({
   onUpload,
   onDownload,
   onRename,
+}: {
+  menuProps: ContextMenuProps;
+  onDelete: Function;
+  onCreateFile: Function;
+  onCreateFolder: Function;
+  onUpload: Function;
+  onDownload: Function;
+  onRename: Function;
 }) {
-  const menuRef = useRef(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (menuProps.isShown) {
@@ -21,7 +30,7 @@ function MoreActionsMenu({
     }
   }, [menuProps.isShown]);
 
-  const handleClickOutside = (event) => {
+  const handleClickOutside = (event: any) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
       menuProps.showCallback(false);
     }
@@ -64,13 +73,13 @@ function MoreActionsMenu({
         <div
           className="bt-more-actions-menu-entry"
           onClick={() => {
-            onDelete(menuProps.file.path, menuProps.file.is_dir);
+            onDelete(menuProps.file!.path, menuProps.file!.is_dir);
             closeMenu();
           }}
         >
           <label>Delete</label>
         </div>
-        {!menuProps.file.is_dir &&
+        {!menuProps.file!.is_dir &&
           menuProps.fileGroup === "Action" &&
           false && ( // TODO: disabled
             <>
@@ -123,15 +132,24 @@ function MoreActionsMenu({
 export default MoreActionsMenu;
 
 export class ContextMenuProps {
+  public isShown: boolean;
+  public showCallback: Function;
+  public position: { x: number; y: number };
+  public setPositionCallback: Function;
+  public file: Entry | undefined;
+  public setFile: Function;
+  public fileGroup: string;
+  public setFileGroup: Function;
+
   constructor(
-    isShown,
-    showCallback,
-    position,
-    setPositionCallback,
-    file,
-    setFile,
-    fileGroup,
-    setFileGroup,
+    isShown: boolean,
+    showCallback: Function,
+    position: { x: number; y: number },
+    setPositionCallback: Function,
+    file: Entry | undefined,
+    setFile: Function,
+    fileGroup: string,
+    setFileGroup: Function,
   ) {
     this.isShown = isShown;
     this.showCallback = showCallback;
@@ -143,7 +161,7 @@ export class ContextMenuProps {
     this.setFileGroup = setFileGroup;
   }
 
-  showMoreActionsMenu(event, file, fileGroup) {
+  showMoreActionsMenu(event: any, file: Entry, fileGroup: string) {
     event.preventDefault();
     event.stopPropagation();
     this.showCallback(false);

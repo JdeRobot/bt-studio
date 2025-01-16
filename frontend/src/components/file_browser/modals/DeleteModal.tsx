@@ -5,7 +5,17 @@ import Modal from "../../Modal/Modal";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 
 // TODO add a way to select if plain text file
-const DeleteModal = ({ onSubmit, isOpen, onClose, selectedEntry }) => {
+const DeleteModal = ({
+  onSubmit,
+  isOpen,
+  onClose,
+  selectedEntry,
+}: {
+  onSubmit: Function;
+  isOpen: boolean;
+  onClose: Function;
+  selectedEntry: string | null;
+}) => {
   //TODO: use relative path instead of absolute one
 
   useEffect(() => {
@@ -16,12 +26,12 @@ const DeleteModal = ({ onSubmit, isOpen, onClose, selectedEntry }) => {
     // }
   }, [isOpen]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
     onSubmit();
   };
 
-  const handleCancel = (event) => {
+  const handleCancel = (event: any) => {
     if (event) {
       event.preventDefault();
     }
@@ -46,7 +56,7 @@ const DeleteModal = ({ onSubmit, isOpen, onClose, selectedEntry }) => {
           <CloseIcon
             className="bt-modal-titlebar-close bt-icon"
             onClick={() => {
-              handleCancel();
+              handleCancel(undefined);
             }}
             fill={"var(--icon)"}
           />

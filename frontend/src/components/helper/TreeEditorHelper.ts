@@ -1,6 +1,7 @@
 import {
   DiagramEngine,
   DiagramModel,
+  LinkModel,
   NodeModel,
   PortModel,
   ZoomCanvasAction,
@@ -121,6 +122,7 @@ export const getActionFrame = (name: string) => {
 };
 
 export const resetActionFrames = () => {
+  publish("updateAccentColor");
   actionFrames = [];
 };
 
@@ -142,8 +144,22 @@ export const addActionFrame = (name: string, color:string, ports:{ [s: string]: 
 
   var newActionFrame = new ActionFrame(name, color, inputs, outputs);
 
+  publish("updateAccentColor");
   actionFrames.push(newActionFrame);
 };
+
+export function subscribe(eventName: string, listener: () => void) {
+  document.addEventListener(eventName, listener);
+}
+
+export function unsubscribe(eventName: string, listener: () => void) {
+  document.removeEventListener(eventName, listener);
+}
+
+function publish(eventName: string) {
+  const event = new CustomEvent(eventName);
+  document.dispatchEvent(event);
+}
 
 export const addPort = (
   portName: string,
@@ -202,8 +218,7 @@ const deletePortLink = (
   portName: string,
   node: BasicNodeModel
 ) => {
-  // var link: LinkModel | undefined;
-  var link: any;
+  var link: LinkModel | undefined;
   const nodePort = node.getPort(portName);
 
   if (nodePort) {
@@ -305,6 +320,7 @@ export const changeColorNode = (
         Math.round(rgb[2]) +
         ")"
     );
+    publish("updateAccentColor");
   }
 
   model.getNodes().forEach((oldNode: NodeModel) => {

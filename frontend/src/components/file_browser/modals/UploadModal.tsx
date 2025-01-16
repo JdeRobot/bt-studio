@@ -7,6 +7,7 @@ import ProgressBar from "../../progress_bar/ProgressBar";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 import { uploadFile } from "../../../api_helper/TreeWrapper";
 import { useError } from "../../error_popup/ErrorModal";
+import { Entry } from "../FileBrowser";
 
 const UploadModal = ({
   onSubmit,
@@ -15,11 +16,11 @@ const UploadModal = ({
   location,
   currentProject,
 }: {
-  onSubmit: any;
-  isOpen: any;
-  onClose: any;
-  location: any;
-  currentProject: any;
+  onSubmit: () => void;
+  isOpen: boolean;
+  onClose: Function;
+  location: string;
+  currentProject: string;
 }) => {
   const { error } = useError();
 
@@ -45,17 +46,19 @@ const UploadModal = ({
     }
   };
 
-  const handleAcceptedFiles = async (files: any) => {
+  const handleAcceptedFiles = async (files: FileList | null) => {
     // TODO: Redo for directory
-    handleZipFiles(Array.from(files));
+    if (files) {
+      handleZipFiles(Array.from(files));
+    }
   };
 
-  const handleZipFiles = async (file_array: any) => {
+  const handleZipFiles = async (file_array: File[]) => {
     // TODO: check if files are valid
-    const n_files = file_array.lenght;
+    const n_files = file_array.length;
     var n_files_uploaded = 0;
 
-    file_array.forEach((file: any, index: any) => {
+    file_array.forEach((file: File, index: number) => {
       var reader = new FileReader();
 
       reader.onprogress = (data) => {

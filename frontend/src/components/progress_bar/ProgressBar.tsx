@@ -1,6 +1,6 @@
 import "./ProgressBar.css";
 
-const ProgressBar = ({ completed }) => {
+const ProgressBar = ({ completed }: { completed: number }) => {
   return (
     <div className="bt-progress-bar-container">
       <div

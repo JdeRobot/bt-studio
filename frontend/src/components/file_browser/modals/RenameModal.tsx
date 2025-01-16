@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Modal from "../../Modal/Modal";
 
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
+import { Entry } from "../FileBrowser";
 
 const initialNewFolderModalData = {
   renameData: "",
@@ -13,16 +14,22 @@ const RenameModal = ({
   onClose,
   fileList,
   selectedEntry,
+}: {
+  onSubmit: Function;
+  isOpen: boolean;
+  onClose: Function;
+  fileList: Entry[];
+  selectedEntry: Entry | null;
 }) => {
-  const focusInputRef = useRef(null);
+  const focusInputRef = useRef<HTMLInputElement>(null);
   const [formState, setFormState] = useState(initialNewFolderModalData);
   const [isCreationAllowed, allowCreation] = useState(false);
-  const [searchList, setSearchList] = useState(null);
+  const [searchList, setSearchList] = useState<Entry[]>([]);
 
   useEffect(() => {
     if (isOpen && focusInputRef.current) {
       setTimeout(() => {
-        focusInputRef.current.focus();
+        focusInputRef.current!.focus();
       }, 0);
     }
 
@@ -31,7 +38,12 @@ const RenameModal = ({
         ...prevFormData,
         renameData: selectedEntry.name,
       }));
-      document.getElementById("renameData").value = selectedEntry.name;
+
+      const rename = document.getElementById("renameData");
+
+      if (rename) {
+        (rename as HTMLFormElement).value = selectedEntry.name;
+      }
 
       var path = selectedEntry.path.split("/");
 
@@ -44,7 +56,7 @@ const RenameModal = ({
       for (let index = 0; index < path.length - 1; index++) {
         search_list = search_list.find(
           (entry) => entry.name === path[index] && entry.is_dir,
-        ).files;
+        )!.files;
       }
 
       if (search_list) {
@@ -55,7 +67,7 @@ const RenameModal = ({
     }
   }, [isOpen]);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: any) => {
     const { name, value } = event.target;
     var isValidName = true;
 
@@ -67,7 +79,7 @@ const RenameModal = ({
     if (name === "renameData") {
       //TODO: improve check
       var preCheck;
-      if (selectedEntry.is_dir) {
+      if (selectedEntry && selectedEntry.is_dir) {
         preCheck = value !== "" && !value.includes(".");
       } else {
         preCheck = value !== "";
@@ -89,13 +101,15 @@ const RenameModal = ({
     }
   };
 
-  const getNewPath = (new_name) => {
-    var split_path = selectedEntry.path.split("/"); // TODO: add for windows
-    var parent_path = split_path.slice(0, split_path.length - 1).join("/");
-    return parent_path + "/" + new_name;
+  const getNewPath = (new_name: string) => {
+    if (selectedEntry) {
+      var split_path = selectedEntry.path.split("/"); // TODO: add for windows
+      var parent_path = split_path.slice(0, split_path.length - 1).join("/");
+      return parent_path + "/" + new_name;
+    }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
     onSubmit(getNewPath(formState.renameData));
     setFormState(initialNewFolderModalData);
@@ -103,7 +117,7 @@ const RenameModal = ({
     onClose();
   };
 
-  const handleCancel = (event) => {
+  const handleCancel = (event: any) => {
     if (event) {
       event.preventDefault();
     }
@@ -135,7 +149,7 @@ const RenameModal = ({
           <CloseIcon
             className="bt-modal-titlebar-close bt-icon"
             onClick={() => {
-              handleCancel();
+              handleCancel(undefined);
             }}
             fill={"var(--icon)"}
           />

@@ -1,12 +1,12 @@
 import React from "react";
-import { PortWidget } from "@projectstorm/react-diagrams";
+import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams";
 import "./TagOutputPort.css";
 
 export const OutputPortWidget = ({
   engine,
   port,
 }: {
-  engine: any;
+  engine: DiagramEngine;
   port: any;
 }) => {
   return (
