@@ -155,7 +155,7 @@ export class ContextMenuProps {
     file: Entry | undefined,
     setFile: Function,
     fileGroup: string,
-    setFileGroup: Function
+    setFileGroup: Function,
   ) {
     this.isShown = isShown;
     this.showCallback = showCallback;

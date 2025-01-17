@@ -51,7 +51,7 @@ function TreeNode({
   useEffect(() => {
     if (node.is_dir) {
       if (parentGroup !== "") {
-        setGroup(parentGroup)
+        setGroup(parentGroup);
       }
 
       if (node.name === "actions") {
@@ -79,7 +79,7 @@ function TreeNode({
 
   useEffect(() => {
     if (parentGroup !== "") {
-      setGroup(parentGroup)
+      setGroup(parentGroup);
     }
   }, [parentGroup]);
 
@@ -115,12 +115,8 @@ function TreeNode({
             stroke={"var(--icon)"}
             title={"More"}
             onClick={(e) => {
-              console.log(group)
-              menuProps.showMoreActionsMenu(
-                e,
-                node,
-                group,
-              );
+              console.log(group);
+              menuProps.showMoreActionsMenu(e, node, group);
             }}
           />
           {settings.editorShowAccentColors.value && (
