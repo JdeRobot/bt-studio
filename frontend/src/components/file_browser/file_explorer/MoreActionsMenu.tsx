@@ -96,34 +96,38 @@ function MoreActionsMenu({
               </div>
             </>
           )}
-        <div className="bt-more-actions-menu-divider" />
-        <div
-          className="bt-more-actions-menu-entry"
-          onClick={() => {
-            onCreateFile(menuProps.file);
-            closeMenu();
-          }}
-        >
-          <label>New File</label>
-        </div>
-        <div
-          className="bt-more-actions-menu-entry"
-          onClick={() => {
-            onCreateFolder(menuProps.file);
-            closeMenu();
-          }}
-        >
-          <label>New Folder</label>
-        </div>
-        <div
-          className="bt-more-actions-menu-entry"
-          onClick={() => {
-            onUpload(menuProps.file);
-            closeMenu();
-          }}
-        >
-          <label>Upload</label>
-        </div>
+        {menuProps.fileGroup !== "Trees" && (
+          <>
+            <div className="bt-more-actions-menu-divider" />
+            <div
+              className="bt-more-actions-menu-entry"
+              onClick={() => {
+                onCreateFile(menuProps.file);
+                closeMenu();
+              }}
+            >
+              <label>New File</label>
+            </div>
+            <div
+              className="bt-more-actions-menu-entry"
+              onClick={() => {
+                onCreateFolder(menuProps.file);
+                closeMenu();
+              }}
+            >
+              <label>New Folder</label>
+            </div>
+            <div
+              className="bt-more-actions-menu-entry"
+              onClick={() => {
+                onUpload(menuProps.file);
+                closeMenu();
+              }}
+            >
+              <label>Upload</label>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -149,7 +153,7 @@ export class ContextMenuProps {
     file: Entry | undefined,
     setFile: Function,
     fileGroup: string,
-    setFileGroup: Function,
+    setFileGroup: Function
   ) {
     this.isShown = isShown;
     this.showCallback = showCallback;
