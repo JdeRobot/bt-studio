@@ -50,15 +50,17 @@ function MoreActionsMenu({
         className="bt-more-actions-menu"
         style={{ top: menuProps.position.y, left: menuProps.position.x }}
       >
-        <div
-          className="bt-more-actions-menu-entry"
-          onClick={() => {
-            onRename(menuProps.file);
-            closeMenu();
-          }}
-        >
-          <label>Rename</label>
-        </div>
+        {menuProps.fileGroup !== "Trees" && (
+          <div
+            className="bt-more-actions-menu-entry"
+            onClick={() => {
+              onRename(menuProps.file);
+              closeMenu();
+            }}
+          >
+            <label>Rename</label>
+          </div>
+        )}
         {true && (
           <div
             className="bt-more-actions-menu-entry"
