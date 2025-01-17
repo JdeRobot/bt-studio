@@ -293,7 +293,7 @@ const CardSelector = ({
   id: string;
   name: string;
   checkedVariable: string;
-  checkedCallback: Function;
+  checkedCallback: (e:any) => void;
 }) => {
   return (
     <div className="bt-form-row" id={id}>
@@ -323,7 +323,7 @@ const CardEntry = ({
   cardEntryProp: CardEntryProps;
   name: string;
   checkedVariable: string;
-  checkedCallback: Function;
+  checkedCallback: (e:any) => void;
 }) => {
   return (
     <div className="bt-templates-col">
@@ -334,7 +334,7 @@ const CardEntry = ({
           value={cardEntryProp.value}
           id={cardEntryProp.id}
           checked={checkedVariable === cardEntryProp.value}
-          onChange={() => checkedCallback}
+          onChange={checkedCallback}
         />
         <div>
           {cardEntryProp.icon}
