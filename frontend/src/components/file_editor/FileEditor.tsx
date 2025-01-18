@@ -128,7 +128,7 @@ const FileEditor = ({
   const handleKeyDown = async (event: any) => {
     if (event.ctrlKey && event.key === "s") {
       event.preventDefault();
-      autoSave()
+      autoSave();
     }
   };
 
@@ -179,14 +179,18 @@ const FileEditor = ({
 
     editorRef.current.getDomNode().addEventListener("keydown", handleKeyDown);
 
-    editorRef.current.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyI, function () {
-      if (language !== "python") //TODO: only format for python. We could add more later
-        return;
+    editorRef.current.addCommand(
+      monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyI,
+      function () {
+        if (language !== "python")
+          //TODO: only format for python. We could add more later
+          return;
 
-      if (manager && fileContent) {
-        manager.code_format(fileContent);
-      }
-    });
+        if (manager && fileContent) {
+          manager.code_format(fileContent);
+        }
+      },
+    );
 
     return () => {
       editorRef.current
@@ -336,17 +340,22 @@ const FileEditor = ({
     if (!editorRef.current || !monacoRef.current || !fileContent || !manager)
       return;
 
-    editorRef.current.addCommand(monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyMod.Shift | monacoRef.current.KeyCode.KeyI, function () {
-      if (language !== "python") //TODO: only format for python. We could add more later
-        return;
+    editorRef.current.addCommand(
+      monacoRef.current.KeyMod.CtrlCmd |
+        monacoRef.current.KeyMod.Shift |
+        monacoRef.current.KeyCode.KeyI,
+      function () {
+        if (language !== "python")
+          //TODO: only format for python. We could add more later
+          return;
 
-      if (manager && fileContent) {
-        manager.code_format(fileContent);
-      }
-    });
-    
-    if (language !== "python")
-      return;
+        if (manager && fileContent) {
+          manager.code_format(fileContent);
+        }
+      },
+    );
+
+    if (language !== "python") return;
 
     manager.code_analysis(fileContent, [
       ...pylint_error,
@@ -355,7 +364,6 @@ const FileEditor = ({
       ...pylint_refactor,
       ...pylint_fatal,
     ]);
-
   }, [fileContent]);
 
   return (
