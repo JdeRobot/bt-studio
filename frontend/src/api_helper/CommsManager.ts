@@ -49,7 +49,7 @@ export default class CommsManager {
     this.ws.onclose = (e) => {
       if (e.wasClean) {
         console.log(
-          `Connection with ${address} closed, all suscribers cleared`,
+          `Connection with ${address} closed, all suscribers cleared`
         );
       } else {
         console.log(`Connection with ${address} interrupted`);
@@ -96,7 +96,7 @@ export default class CommsManager {
     for (let i = 0, length = events.length; i < length; i++) {
       this.observers[events[i]] = this.observers[events[i]] || [];
       this.observers[events[i]].splice(
-        this.observers[events[i]].indexOf(callback),
+        this.observers[events[i]].indexOf(callback)
       );
     }
   };
@@ -179,11 +179,24 @@ export default class CommsManager {
   public disconnect() {
     return this.send("disconnect");
   }
+
+  public code_format(code: string) {
+    return this.send("code_format", {code: code});
+  }
+
+  public code_analysis(code: string, disable_errors: string[]) {
+    return this.send("code_analysis", {
+      code: code,
+      disable_errors: disable_errors,
+    });
+  }
 }
 
-  // const events = {
-  //   RESPONSES: ["ack", "error"],
-  //   UPDATE: "update",
-  //   STATE_CHANGED: "state-changed",
-  //   INTROSPECTION: "introspection",
-  // };
+// const events = {
+//   RESPONSES: ["ack", "error"],
+//   UPDATE: "update",
+//   STATE_CHANGED: "state-changed",
+//   INTROSPECTION: "introspection",
+//   CODE_FORMAT: "code-format",
+//   CODE_ANALYSIS: "code-analysis",
+// };
