@@ -9,9 +9,17 @@ classes: wide
 
 sidebar:
   nav: "docs"
+
+zoomgif:
+  - url: /assets/gifs/zoom.gif
+    image_path: /assets/gifs/zoom.gif
+    alt: "Zoom gif"
+    title: "Zoom gif"
 ---
 
 # How to use the BT editor
+
+{% include gallery id="zoomgif" caption="Zoom gif" %}
 
 ## Create a new project
 
@@ -27,7 +35,7 @@ Only available for port values and actions
 Two options:
 
 - Double click on the node
-- Select the node, then click on the edit button)
+- Select the node, then click on the edit button
 
 ## Delete node
 

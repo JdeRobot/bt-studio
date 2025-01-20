@@ -7,23 +7,6 @@ sidebar:
   nav: "docs"
 ---
 
-
-## ROS Noetic related dependencies
-
-
-To program robotics applications, BT Studio requires the following dependencies.
-
-Installation over Ubuntu 22.04 LTS:
-
-- ROS Humble: Desktop-Full Install recommended, includes Gazebo. [Link](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html).
-- Gazebo 11
-
-Full ROS package:
-
-```
- sudo apt install ros-noetic-desktop-full
-```
-
 ## Current Dependencies
 
 ##### Python 3.8 and above, pip3 and NPM:
