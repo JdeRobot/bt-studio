@@ -68,9 +68,11 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       return;
     }
 
-    try {
+      try {
+      console.log("Current number of users connected: " + currentUsers);
       currentUsers += 1;
-        if (currentUsers > maxUsers) {
+      console.log("Is currents users equal or less to maximum?" + (currentUsers <= maxUsers))
+        if (currentUsers <= maxUsers) {
             await manager.connect();
             console.log("Connected!");
             connected.current = true;
@@ -94,7 +96,8 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   }, [manager]);
 
   useUnload(() => {
-    if (manager) {
+      if (manager) {
+      currentUsers -= 1;
       manager.disconnect();
       connected.current = false;
     }
