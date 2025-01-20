@@ -32,6 +32,10 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [showSim, setSimVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
 
+  //Only needed in Unibotics
+  var currentUsers = 0;
+  var maxUsers = 1;
+
   const [dockerData, setDockerData] = useState<{
     gpu_avaliable: string;
     robotics_backend_version: string;
@@ -65,9 +69,15 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     }
 
     try {
-      await manager.connect();
-      console.log("Connected!");
-      connected.current = true;
+      currentUsers += 1;
+        if (currentUsers > maxUsers) {
+            await manager.connect();
+            console.log("Connected!");
+            connected.current = true;
+        }
+        else {
+          console.log("Exceeded users capacity.")
+        }
     } catch (error) {
       // Connection failed, try again after a delay
       console.log("Connection failed, trying again!");
