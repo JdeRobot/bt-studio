@@ -77,13 +77,15 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
             console.log("Connected!");
             connected.current = true;
         }
-        else {
-          console.log("Exceeded users capacity.")
-        }
-    } catch (error) {
-      // Connection failed, try again after a delay
-      console.log("Connection failed, trying again!");
-      setTimeout(connectWithRetry, 1000);
+      } catch (error) {
+          if (currentUsers <= maxUsers) {
+              console.log("User maximum exceeded.")
+              return;
+          } else {
+              // Connection failed, try again after a delay
+              console.log("Connection failed, trying again!");
+              setTimeout(connectWithRetry, 1000);
+          }
     }
   };
 
