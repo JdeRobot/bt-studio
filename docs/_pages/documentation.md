@@ -588,14 +588,14 @@ Select the color in the color picker at the bottom
 
 The only available action in this menu is to edit the content of the tag.
 
-{% include gallery id="edittagvaluecropped" caption="Image" %}
+{% include gallery id="edittagvaluecropped" caption="Edit tag menu" %}
 <!-- {% include gallery id="edittagvalue" caption="Image" %} -->
 
 If the tag content is surrounded by curly brackets "{}" then it is a blackboard tag, this is also indicated in the canvas with an alternative color.
 
 A blackboard node allows you to connect different input and output ports from different parts of the diagram.
 
-{% include gallery id="edittagblackboardcropped" caption="Image" %}
+{% include gallery id="edittagblackboardcropped" %}
 <!-- {% include gallery id="edittagblackboard" caption="Image" %} -->
 
 #### Reset Zoom
@@ -615,17 +615,17 @@ It redirects to [this page](https://github.com/JdeRobot/bt-studio/tree/unibotics
 
 #### Behavior tree monitor toggle
 
-{% include gallery id="monitorswitchgif" caption="Gif" %}
+{% include gallery id="monitorswitchgif" %}
 
 #### Go back to parent tree
 
 If you are inside of a subtree you can go back to the parent tree.
 
-{% include gallery id="exitsubtreegif" caption="Gif" %}
+{% include gallery id="exitsubtreegif" %}
 
 To enter inside a subtree you need to click inside the subtree node in the canvas.
 
-{% include gallery id="entersubtreegif" caption="Gif" %}
+{% include gallery id="entersubtreegif" %}
 
 ### Error and Warning popups
 
