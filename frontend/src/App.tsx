@@ -34,7 +34,8 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
 
   //Only needed in Unibotics
   var currentUsers = 0;
-  var maxUsers = 1;
+  var UsersAtMaxCapacity = false;
+  const maxUsers = 1;
 
   const [dockerData, setDockerData] = useState<{
     gpu_avaliable: string;
@@ -63,7 +64,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     setDockerData(msg.data);
   };
 
-  const checkOverUsersCapacity = async (currentUserCount: number) => {
+    const checkOverUsersCapacity = (currentUserCount: number) => {
         console.log("Entering UsersCapacity function")
         if (currentUserCount > maxUsers) {
             console.log("Too much users!");
@@ -78,18 +79,18 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     if (!manager || connected.current) {
       return;
     }
-
       try {
       console.log("Current number of users connected: " + currentUsers);
       currentUsers += 1;
+      UsersAtMaxCapacity = checkOverUsersCapacity(currentUsers);
       console.log("Is currents users equal or less to maximum?" + (currentUsers <= maxUsers))
-        if (!checkOverUsersCapacity) {
+        if (!UsersAtMaxCapacity) {
             await manager.connect();
             console.log("Connected!");
             connected.current = true;
         }
       } catch (error) {
-          if (!checkOverUsersCapacity) {
+          if (UsersAtMaxCapacity) {
               console.log("User maximum exceeded.")
               return;
           } else {
