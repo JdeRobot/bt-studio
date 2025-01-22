@@ -466,6 +466,45 @@ The structure of a project is the divided into 2 main folders:
 
 A menu with actions for each entry (file or folder) can be shown after right clicking the entry.
 
+Here is a closer look at the available actions:
+
+#### Create a folder
+
+1. Write the name in the input field
+2. Press the "Create" button
+
+{% include gallery id="newfoldercropped" caption="Create a folder" %}
+<!-- {% include gallery id="newfolder" caption="Image" %} -->
+
+#### Create a normal file
+
+1. Write the name in the input field
+2. Select the "Plain File" file type
+3. Press the "Create" button
+
+{% include gallery id="newfilecropped" caption="Create a normal file" %}
+<!-- {% include gallery id="newfile" caption="Image" %} -->
+
+#### Create an action
+
+1. Write the name in the input field without .py
+2. Select the "Action" file type
+3. Select the template type
+4. Press the "Create" button
+
+{% include gallery id="newactioncropped" caption="Create an action" %}
+<!-- {% include gallery id="newaction" caption="Image" %} -->
+
+If the action name is valid:
+
+{% include gallery id="newactionvalidcropped" %}
+<!-- {% include gallery id="newactionvalid" caption="Image" %} -->
+
+If it is invalid:
+
+{% include gallery id="newactioninvalidcropped" %}
+<!-- {% include gallery id="newactioninvalid" caption="Image" %} -->
+
 ### File Editor
 
 ### Behavior Tree Editor
@@ -479,8 +518,6 @@ A menu with actions for each entry (file or folder) can be shown after right cli
 
 ## Images
 
-{% include gallery id="btdark" caption="Image" %}
-{% include gallery id="btlight" caption="Image" %}
 {% include gallery id="editactioncropped" caption="Image" %}
 {% include gallery id="editaction" caption="Image" %}
 {% include gallery id="edittagblackboardcropped" caption="Image" %}
@@ -490,21 +527,6 @@ A menu with actions for each entry (file or folder) can be shown after right cli
 {% include gallery id="errorcropped" caption="Image" %}
 {% include gallery id="error" caption="Image" %}
 {% include gallery id="executionready" caption="Image" %}
-{% include gallery id="generaldarkcode" caption="Image" %}
-{% include gallery id="generaldarknocode" caption="Image" %}
-{% include gallery id="generallightcode" caption="Image" %}
-{% include gallery id="generallightnocode" caption="Image" %}
-{% include gallery id="newactioncropped" caption="Image" %}
-{% include gallery id="newaction" caption="Image" %}
-{% include gallery id="newactioninvalidcropped" caption="Image" %}
-{% include gallery id="newactioninvalid" caption="Image" %}
-{% include gallery id="newactionvalidcropped" caption="Image" %}
-{% include gallery id="newactionvalid" caption="Image" %}
-{% include gallery id="newfilecropped" caption="Image" %}
-{% include gallery id="newfile" caption="Image" %}
-{% include gallery id="newfoldercropped" caption="Image" %}
-{% include gallery id="newfolder" caption="Image" %}
-{% include gallery id="reconnectdocker" caption="Image" %}
 {% include gallery id="warningcropped" caption="Image" %}
 {% include gallery id="warning" caption="Image" %}
 
@@ -553,10 +575,6 @@ Only available for actions
 
 * Scroll up = Zoom in
 * Scroll down = Zoom out
-
-## Download project
-
-Press on the download button found at the right of the help button.
 
 ## Blackboard port values
 
