@@ -421,23 +421,37 @@ Saves the Behaviour Tree diagram, not the code in the File Editor.
 
 Downloads the project as a ROS2 package prepared for execution locally.
 
-#### Play/Pause execution Button
+#### Play/Pause simulation Button
 
-Plays or pauses the execution. For it to work an universe needs to be selected and the simulation working.
-
-Do not spam the button repeatedily because it can malfunction.
-
-{% include gallery id="playmonitorgif" caption="Gif" %}
-
-#### Reset execution Button
-
-Restarts the execution to the start state. For it to work an universe needs to be selected and the simulation working.
+Plays or pauses the simulation. For it to work an universe needs to be selected and the simulation working.
 
 Do not spam the button repeatedily because it can malfunction.
 
-{% include gallery id="restartgif" caption="Gif" %}
+{% include gallery id="playmonitorgif" caption="Play/Pause simulation" %}
+
+#### Reset simulation Button
+
+Restarts the simulation to the start state. For it to work an universe needs to be selected and the simulation working.
+
+Do not spam the button repeatedily because it can malfunction.
+
+{% include gallery id="restartgif" caption="Restart simulation" %}
 
 ### Status Bar
+
+The status bar is where you can manage the connection with the Robotics Backend.
+
+It has the next structure when it is not connected with the Robotics Backend:
+
+{% include gallery id="framestatusreconnectdark" caption="Image with explanation" %}
+<!-- {% include gallery id="framestatusreconnectlight" caption="Image with explanation" %} -->
+
+And after connecting it displays the following information:
+
+{% include gallery id="framestatusdark" caption="Image with explanation" %}
+<!-- {% include gallery id="framestatuslight" caption="Image with explanation" %} -->
+
+If the Robotics BAckend is not connected make sure that the Robotics Backend docker is launched (TODO link here) and if it is, press the button and wait a couple of seconds 
 
 ### File Browser
 
@@ -485,10 +499,6 @@ Do not spam the button repeatedily because it can malfunction.
 
 ## Images with explanations
 
-{% include gallery id="framestatusdark" caption="Image with explanation" %}
-{% include gallery id="framestatuslight" caption="Image with explanation" %}
-{% include gallery id="framestatusreconnectdark" caption="Image with explanation" %}
-{% include gallery id="framestatusreconnectlight" caption="Image with explanation" %}
 {% include gallery id="framebteditordark" caption="Image with explanation" %}
 {% include gallery id="framebteditorlight" caption="Image with explanation" %}
 
