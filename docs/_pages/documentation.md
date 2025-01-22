@@ -311,9 +311,76 @@ framebteditorlight:
     title: "Frame Bt editor in light mode"
 ---
 
-# How to use the BT editor
+## Structure of Bt Studio
 
-Order images and gifs. Work in pprogress
+Bt Studio can be separated into 5 sections:
+
+<!-- {% include gallery id="framefulllight" caption="Sections of Bt Studio" %} -->
+{% include gallery id="framefulldark" caption="Sections of Bt Studio" %}
+
+* Header menu
+* Status Bar
+* File Browser
+* File Editor
+* Behavior Tree Editor
+
+We will dive into each section functionality in the next sections.
+
+### Header Menu
+
+The header menu is where you control the projects, the universes and the execution.
+
+It can also be separated into 3 main parts:
+
+<!-- {% include gallery id="frameheaderlight" caption="Image with explanation" %} -->
+{% include gallery id="frameheaderdark" caption="Sections of the Header Menu" %}
+
+* Project Name: indicates the name of the project
+* Universe Name: indicates the name of the selected universe, if one is not selected it will display the message: "No Universe selected"
+* Action Buttons: buttons for the different available actions, more detail in the following subsections, they appear from left to right order.
+
+#### Project Menu
+
+Opens the project menu where you can switch, delete or create projects.
+
+##### Create a new project
+
+1. Click on the create "Create New Project" button at the bottom of the project menu
+2. Write the name in the input field
+3. Press the "Create Project" button
+
+<!-- {% include gallery id="newproject" caption="Image" %} -->
+{% include gallery id="newprojectcropped" caption="Create a new project" %}
+
+##### Delete a project
+
+1. Click on the create "Create New Project" button at the bottom of the project menu
+2. Write the name in the input field
+3. Press the "Create Project" button
+
+##### Switch projects
+
+To switch projects it is only required to click on top of the desired one.
+
+#### Universe Menu
+
+#### Settings Menu
+
+#### Save project Button
+
+#### Download project Button
+
+#### Play/Pause execution Button
+
+#### Reset execution Button
+
+### Status Bar
+
+### File Browser
+
+### File Editor
+
+### Behavior Tree Editor
 
 ## Gifs
 
@@ -353,8 +420,6 @@ Order images and gifs. Work in pprogress
 {% include gallery id="newfile" caption="Image" %}
 {% include gallery id="newfoldercropped" caption="Image" %}
 {% include gallery id="newfolder" caption="Image" %}
-{% include gallery id="newprojectcropped" caption="Image" %}
-{% include gallery id="newproject" caption="Image" %}
 {% include gallery id="reconnectdocker" caption="Image" %}
 {% include gallery id="universelistcropped" caption="Image" %}
 {% include gallery id="universelist" caption="Image" %}
@@ -363,10 +428,6 @@ Order images and gifs. Work in pprogress
 
 ## Images with explanations
 
-{% include gallery id="framefulldark" caption="Image with explanation" %}
-{% include gallery id="framefulllight" caption="Image with explanation" %}
-{% include gallery id="frameheaderdark" caption="Image with explanation" %}
-{% include gallery id="frameheaderlight" caption="Image with explanation" %}
 {% include gallery id="framestatusdark" caption="Image with explanation" %}
 {% include gallery id="framestatuslight" caption="Image with explanation" %}
 {% include gallery id="framestatusreconnectdark" caption="Image with explanation" %}
@@ -374,28 +435,21 @@ Order images and gifs. Work in pprogress
 {% include gallery id="framebteditordark" caption="Image with explanation" %}
 {% include gallery id="framebteditorlight" caption="Image with explanation" %}
 
-## Create a new project
-
-1. Click on the switch icon at the top right of the screen
-2. Click on the create "Create New Project" button at the bottom of the project manager popup
-3. Write the name in the input field
-4. Press the "Create Project" button
-
 ## Edit node
 
 Only available for port values and actions
 
 Two options:
 
-- Double click on the node
-- Select the node, then click on the edit button
+* Double click on the node
+* Select the node, then click on the edit button
 
 ## Delete node
 
 Two options:
 
-- Select the node, then press Backspace or Delete keys
-- Select the node, then click on the delete button
+* Select the node, then press Backspace or Delete keys
+* Select the node, then click on the delete button
 
 ## Add input/output to node
 
@@ -419,8 +473,8 @@ Only available for actions
 
 ## Zoom
 
-- Scroll up = Zoom in
-- Scroll down = Zoom out
+* Scroll up = Zoom in
+* Scroll down = Zoom out
 
 ## Download project
 
