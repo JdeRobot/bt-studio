@@ -63,21 +63,21 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     setDockerData(msg.data);
   };
 
+  const checkOverUsersCapacity = async (currentUserCount: number) => {
+        console.log("Entering UsersCapacity function")
+        if (currentUserCount > maxUsers) {
+            console.log("Too much users!");
+            return true;
+        } else {
+            console.log("There's enough room. You can go in");
+            return false;
+        }
+  };
+
   const connectWithRetry = async () => {
     if (!manager || connected.current) {
       return;
     }
-
-  const checkOverUsersCapacity = async (currentUserCount: number) => {
-      console.log("Entering UsersCapacity function")
-      if (currentUserCount > maxUsers) {
-          console.log("Too much users!");
-          return true;
-      } else {
-          console.log("There's enough room. You can go in");
-          return false;
-      }
-  }
 
       try {
       console.log("Current number of users connected: " + currentUsers);
