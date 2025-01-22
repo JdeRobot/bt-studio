@@ -529,7 +529,20 @@ It can also be separated into 4 main parts:
 * Canvas: where the behavior tree diagram is edited
 * Behavior Tree execution order: indicates the execution order of the behavior tree
 
-## Edit node
+#### Create subtree
+
+Create a new subtree.
+
+A subtree can be used to contain repetitive groups of action nodes
+
+#### Delete node
+
+Two options:
+
+* Select the node, then press Backspace or Delete keys
+* Select the node, then click on the delete button
+
+#### Edit node
 
 Only available for port values and actions
 
@@ -538,14 +551,7 @@ Two options:
 * Double click on the node
 * Select the node, then click on the edit button
 
-## Delete node
-
-Two options:
-
-* Select the node, then press Backspace or Delete keys
-* Select the node, then click on the delete button
-
-## Add input/output to node
+##### Add input/output to node
 
 Only available for actions
 
@@ -556,7 +562,7 @@ Only available for actions
 5. If the name is valid a green button will be shown to the right of the cancel button. If not then the name is not valid and will need to be changed.
 6. Press the green button
 
-## Remove input/ouput to node
+##### Remove input/ouput to node
 
 Only available for actions
 
@@ -565,26 +571,12 @@ Only available for actions
 3. Hover over the one you want to delete and a red button will appear
 4. Press the red button
 
-## Zoom
-
-* Scroll up = Zoom in
-* Scroll down = Zoom out
-
-## Blackboard port values
+##### Blackboard port values
 
 When a port value is named enclosed in curly brackets: {example}; then this port will be part of the blackboard instead of just a value.
 This will be indicated in the diagram by the port turning to black.
 
 The blackboard allows you to connect different input and output ports from different parts of the diagram.
-
-## Gifs
-
-{% include gallery id="entersubtreegif" caption="Gif" %}
-{% include gallery id="exitsubtreegif" caption="Gif" %}
-{% include gallery id="monitorswitchgif" caption="Gif" %}
-{% include gallery id="zoomgif" caption="Gif" %}
-
-## Images
 
 {% include gallery id="editactioncropped" caption="Image" %}
 {% include gallery id="editaction" caption="Image" %}
@@ -592,6 +584,24 @@ The blackboard allows you to connect different input and output ports from diffe
 {% include gallery id="edittagblackboard" caption="Image" %}
 {% include gallery id="edittagvaluecropped" caption="Image" %}
 {% include gallery id="edittagvalue" caption="Image" %}
+
+#### Zoom
+
+* Scroll up = Zoom in
+* Scroll down = Zoom out
+
+{% include gallery id="zoomgif" %}
+
+#### Help button
+
+#### Behavior tree monitor toggle
+
+{% include gallery id="monitorswitchgif" caption="Gif" %}
+
+#### Go back to parent tree
+
+{% include gallery id="entersubtreegif" caption="Gif" %}
+{% include gallery id="exitsubtreegif" caption="Gif" %}
 
 ### Error and Warning popups
 
