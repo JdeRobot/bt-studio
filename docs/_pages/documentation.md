@@ -415,7 +415,7 @@ Opens the settings menu. These settings are applied and stored per project.
 
 #### Save project Button
 
-Saves the Behaviour Tree diagram, not the code in the File Editor.
+Saves the Behavior Tree diagram, not the code in the File Editor.
 
 #### Download project Button
 
@@ -451,7 +451,11 @@ And after connecting it displays the following information:
 {% include gallery id="framestatusdark" caption="Image with explanation" %}
 <!-- {% include gallery id="framestatuslight" caption="Image with explanation" %} -->
 
-If the Robotics BAckend is not connected make sure that the Robotics Backend docker is launched (TODO link here) and if it is, press the button and wait a couple of seconds 
+If the Robotics BAckend is not connected make sure that the Robotics Backend docker is launched (TODO link here) and if it is, press the button and wait a couple of seconds.
+
+When being connected and a universe is selected it should appear as:
+
+{% include gallery id="executionready" caption="Simulation Ready" %}
 
 ### File Browser
 
@@ -507,33 +511,23 @@ If it is invalid:
 
 ### File Editor
 
+The file editor is where you can edit the files.
+
+To have all features such as formatting and code highlighting it is necessary to be connected to the Robotics Backend.
+
 ### Behavior Tree Editor
 
-## Gifs
+The Behavior Tree Editor is where you edit and monitor the behavior trees.
 
-{% include gallery id="entersubtreegif" caption="Gif" %}
-{% include gallery id="exitsubtreegif" caption="Gif" %}
-{% include gallery id="monitorswitchgif" caption="Gif" %}
-{% include gallery id="zoomgif" caption="Gif" %}
+It can also be separated into 4 main parts:
 
-## Images
+{% include gallery id="framebteditordark" caption="Behavior Tree Editor" %}
+<!-- {% include gallery id="framebteditorlight" caption="Image with explanation" %} -->
 
-{% include gallery id="editactioncropped" caption="Image" %}
-{% include gallery id="editaction" caption="Image" %}
-{% include gallery id="edittagblackboardcropped" caption="Image" %}
-{% include gallery id="edittagblackboard" caption="Image" %}
-{% include gallery id="edittagvaluecropped" caption="Image" %}
-{% include gallery id="edittagvalue" caption="Image" %}
-{% include gallery id="errorcropped" caption="Image" %}
-{% include gallery id="error" caption="Image" %}
-{% include gallery id="executionready" caption="Image" %}
-{% include gallery id="warningcropped" caption="Image" %}
-{% include gallery id="warning" caption="Image" %}
-
-## Images with explanations
-
-{% include gallery id="framebteditordark" caption="Image with explanation" %}
-{% include gallery id="framebteditorlight" caption="Image with explanation" %}
+* Action Menus: dropdown menu for all the possible actions to add to the behavior tree
+* Action Buttons: buttons for the different available actions, more detail in the following subsections, they appear from left to right order.
+* Canvas: where the behavior tree diagram is edited
+* Behavior Tree execution order: indicates the execution order of the behavior tree
 
 ## Edit node
 
@@ -582,3 +576,29 @@ When a port value is named enclosed in curly brackets: {example}; then this port
 This will be indicated in the diagram by the port turning to black.
 
 The blackboard allows you to connect different input and output ports from different parts of the diagram.
+
+## Gifs
+
+{% include gallery id="entersubtreegif" caption="Gif" %}
+{% include gallery id="exitsubtreegif" caption="Gif" %}
+{% include gallery id="monitorswitchgif" caption="Gif" %}
+{% include gallery id="zoomgif" caption="Gif" %}
+
+## Images
+
+{% include gallery id="editactioncropped" caption="Image" %}
+{% include gallery id="editaction" caption="Image" %}
+{% include gallery id="edittagblackboardcropped" caption="Image" %}
+{% include gallery id="edittagblackboard" caption="Image" %}
+{% include gallery id="edittagvaluecropped" caption="Image" %}
+{% include gallery id="edittagvalue" caption="Image" %}
+
+### Error and Warning popups
+
+If they show up, please read the message before closing them.
+
+{% include gallery id="errorcropped" caption="Error popup" %}
+<!-- {% include gallery id="error" caption="Image" %} -->
+
+{% include gallery id="warningcropped" caption="Warning popup" %}
+<!-- {% include gallery id="warning" caption="Image" %} -->
