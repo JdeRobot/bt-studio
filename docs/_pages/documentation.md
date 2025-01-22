@@ -455,6 +455,17 @@ If the Robotics BAckend is not connected make sure that the Robotics Backend doc
 
 ### File Browser
 
+The file browser is where all non universe files can be managed.
+
+You can create, delete or rename files and folders. Also in the local version it is also possible to upload files. Another actions is to download the selected folder or file.
+
+The structure of a project is the divided into 2 main folders:
+
+* actions: inside is the code related to the actions. Each .py file is considered an action
+* trees: inside is the code related to the behavior tree diagrams. It is read-only.
+
+A menu with actions for each entry (file or folder) can be shown after right clicking the entry.
+
 ### File Editor
 
 ### Behavior Tree Editor
