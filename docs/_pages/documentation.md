@@ -545,55 +545,58 @@ A subtree can be used to contain repetitive groups of action nodes
 
 #### Delete node
 
-Two options:
+Deletes the selected node.
 
-* Select the node, then press Backspace or Delete keys
-* Select the node, then click on the delete button
+You can also delete a node pressing the Backspace or Delete keys after clicking on one.
 
 #### Edit node
 
-Only available for port values and actions
+Edits the selected action or tag node.
 
-Two options:
+The edit menu can be open double clicking on an action or tag node or selecting an action or tag node and clicking in the edit button.
 
-* Double click on the node
-* Select the node, then click on the edit button
+It opens 2 different edit menus depending if it is an action node or a tag node.
 
-{% include gallery id="editactioncropped" caption="Image" %}
+##### Action edit menu
+
+The available actions available in this menu are:
+
+* Add inputs or outputs: the inputs are on the left and the outputs on the right
+* Remove inputs or outputs
+* Change the action color
+
+{% include gallery id="editactioncropped" caption="Action edit menu" %}
 <!-- {% include gallery id="editaction" caption="Image" %} -->
 
-##### Add input/output to node
+###### Add input/output to node
 
-Only available for actions
+1. Click the + sign in the correct column
+2. Write the name of the input/output
+3. If the name is valid a green button will be shown to the right of the cancel button. If not then the name is not valid and will need to be changed.
+4. Press the green button
 
-1. Enter the edit menu
-2. The inputs are in the left and the outputs are in the right
-3. Click the add input/output button
-4. Write the name of the input/output
-5. If the name is valid a green button will be shown to the right of the cancel button. If not then the name is not valid and will need to be changed.
-6. Press the green button
+###### Remove input/ouput to node
 
-##### Remove input/ouput to node
+1. Hover over the one you want to delete and a red button will appear
+2. Press the red button
 
-Only available for actions
+###### Change the action color
 
-1. Enter the edit menu
-2. The inputs are in the left and the outputs are in the right
-3. Hover over the one you want to delete and a red button will appear
-4. Press the red button
+Select the color in the color picker at the bottom
 
-##### Blackboard port values
+##### Tag edit menu
 
-When a port value is named enclosed in curly brackets: {example}; then this port will be part of the blackboard instead of just a value.
-This will be indicated in the diagram by the port turning to black.
-
-The blackboard allows you to connect different input and output ports from different parts of the diagram.
-
-{% include gallery id="edittagblackboardcropped" caption="Image" %}
-<!-- {% include gallery id="edittagblackboard" caption="Image" %} -->
+The only available action in this menu is to edit the content of the tag.
 
 {% include gallery id="edittagvaluecropped" caption="Image" %}
 <!-- {% include gallery id="edittagvalue" caption="Image" %} -->
+
+If the tag content is surrounded by curly brackets "{}" then it is a blackboard tag, this is also indicated in the canvas with an alternative color.
+
+A blackboard node allows you to connect different input and output ports from different parts of the diagram.
+
+{% include gallery id="edittagblackboardcropped" caption="Image" %}
+<!-- {% include gallery id="edittagblackboard" caption="Image" %} -->
 
 #### Reset Zoom
 
