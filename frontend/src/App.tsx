@@ -69,10 +69,13 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     }
 
   const checkOverUsersCapacity = async (currentUserCount: number) => {
+      console.log("Entering UsersCapacity function")
       if (currentUserCount > maxUsers) {
-          return false;
-      } else {
+          console.log("Too much users!");
           return true;
+      } else {
+          console.log("There's enough room. You can go in");
+          return false;
       }
   }
 
