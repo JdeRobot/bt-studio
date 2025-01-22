@@ -68,17 +68,25 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       return;
     }
 
+  const checkOverUsersCapacity = async (currentUserCount: number) => {
+      if (currentUserCount > maxUsers) {
+          return false;
+      } else {
+          return true;
+      }
+  }
+
       try {
       console.log("Current number of users connected: " + currentUsers);
       currentUsers += 1;
       console.log("Is currents users equal or less to maximum?" + (currentUsers <= maxUsers))
-        if (currentUsers <= maxUsers) {
+        if (!checkOverUsersCapacity) {
             await manager.connect();
             console.log("Connected!");
             connected.current = true;
         }
       } catch (error) {
-          if (currentUsers <= maxUsers) {
+          if (!checkOverUsersCapacity) {
               console.log("User maximum exceeded.")
               return;
           } else {
