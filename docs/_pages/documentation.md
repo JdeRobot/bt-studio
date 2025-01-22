@@ -220,6 +220,12 @@ newproject:
     alt: "New project"
     title: "New project"
 
+newsubtree:
+  - url: /assets/images/page/new_subtree.png
+    image_path: /assets/images/page/new_subtree.png
+    alt: "New subtree"
+    title: "New subtree"
+
 projectlist:
   - url: /assets/images/page/project_list.png
     image_path: /assets/images/page/project_list.png
@@ -535,6 +541,8 @@ Create a new subtree.
 
 A subtree can be used to contain repetitive groups of action nodes
 
+{% include gallery id="newsubtree" caption="Create subtree" %}
+
 #### Delete node
 
 Two options:
@@ -550,6 +558,9 @@ Two options:
 
 * Double click on the node
 * Select the node, then click on the edit button
+
+{% include gallery id="editactioncropped" caption="Image" %}
+<!-- {% include gallery id="editaction" caption="Image" %} -->
 
 ##### Add input/output to node
 
@@ -578,14 +589,17 @@ This will be indicated in the diagram by the port turning to black.
 
 The blackboard allows you to connect different input and output ports from different parts of the diagram.
 
-{% include gallery id="editactioncropped" caption="Image" %}
-{% include gallery id="editaction" caption="Image" %}
 {% include gallery id="edittagblackboardcropped" caption="Image" %}
-{% include gallery id="edittagblackboard" caption="Image" %}
-{% include gallery id="edittagvaluecropped" caption="Image" %}
-{% include gallery id="edittagvalue" caption="Image" %}
+<!-- {% include gallery id="edittagblackboard" caption="Image" %} -->
 
-#### Zoom
+{% include gallery id="edittagvaluecropped" caption="Image" %}
+<!-- {% include gallery id="edittagvalue" caption="Image" %} -->
+
+#### Reset Zoom
+
+Resets the zoom to fit the entirety of the behavior tree in the canvas.
+
+To zoom in the canvas the actions are:
 
 * Scroll up = Zoom in
 * Scroll down = Zoom out
@@ -594,14 +608,21 @@ The blackboard allows you to connect different input and output ports from diffe
 
 #### Help button
 
+It redirects to [this page](https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation).
+
 #### Behavior tree monitor toggle
 
 {% include gallery id="monitorswitchgif" caption="Gif" %}
 
 #### Go back to parent tree
 
-{% include gallery id="entersubtreegif" caption="Gif" %}
+If you are inside of a subtree you can go back to the parent tree.
+
 {% include gallery id="exitsubtreegif" caption="Gif" %}
+
+To enter inside a subtree you need to click inside the subtree node in the canvas.
+
+{% include gallery id="entersubtreegif" caption="Gif" %}
 
 ### Error and Warning popups
 
