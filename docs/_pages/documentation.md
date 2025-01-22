@@ -457,7 +457,7 @@ And after connecting it displays the following information:
 {% include gallery id="framestatusdark" caption="Image with explanation" %}
 <!-- {% include gallery id="framestatuslight" caption="Image with explanation" %} -->
 
-If the Robotics BAckend is not connected make sure that the Robotics Backend docker is launched (TODO link here) and if it is, press the button and wait a couple of seconds.
+If the Robotics BAckend is not connected make sure that the [Robotics Backend docker is launched](https://jderobot.github.io/bt-studio/remote/) and if it is, press the button and wait a couple of seconds.
 
 When being connected and a universe is selected it should appear as:
 

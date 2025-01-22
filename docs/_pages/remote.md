@@ -1,19 +1,13 @@
 ---
-permalink: /install/
+permalink: /remote/
 
-title: "Installation"
+title: "Remote Use"
 
 sidebar:
   nav: "docs"
 ---
 
-**Bt Studio** supports Linux (Ubuntu 22.04, 24.04 and other distributions), MacOS and Windows.
-
-
-<a name="installation"></a>
-# 1. Installation
-
-The installation of ROS, Gazebo, etc. has been greatly simplified, as all the required dependencies are already pre-installed in the Robotics Backend.
+# Instructions for using Robotics Backend
 
 ## Minimum System Requirements
 
@@ -25,16 +19,15 @@ The installation of ROS, Gazebo, etc. has been greatly simplified, as all the re
 
 1. Download [Docker](https://docs.docker.com/get-docker/) **(minimum version of docker-py: 5.0.3)**.
 
-2. Pull the current distribution of Bt Studio and of Bt Studio Database **(currently version 0.8)**:
+2. Pull the current distribution of Robotics Backend **(currently version 4.6.18)**:
 
 ```bash
-docker pull jderobot/bt-studio-database:latest
-docker pull jderobot/bt-studio:latest
+docker pull jderobot/robotics-backend:latest
 ```
 
 - In order to obtain optimal performance, Docker should be using multiple CPU cores. In case of Docker for Mac or Docker for Windows, the VM should be assigned a greater number of cores.
 
-- It is recommended to use the latest image. However, older distributions of Bt Studio can be found [here](https://hub.docker.com/r/jderobot/bt-studio/tags).
+- It is recommended to use the latest image. However, older distributions of Robotics Backend can be found [here](https://hub.docker.com/r/jderobot/robotics-backend/tags).
 
 ## Windows Users
 
@@ -48,42 +41,28 @@ Windows users should choose WSL 2 backend Docker installation if possible, as it
 
     ![WSL integration](/RoboticsAcademy/assets/images/user_guide/wsl-integration-docker.png)
 
-4. Pull the current distribution of Bt Studio and of Bt Studio Database **(currently version 0.8)**:
+4. Pull the current distribution of Robotics Backend **(currently version 4.6.18)**:
 
 ```bash
-docker pull jderobot/bt-studio-database:latest
-docker pull jderobot/bt-studio:latest
+docker pull jderobot/robotics-backend:latest
 ```
 
 - In order to obtain optimal performance, Docker should be using multiple CPU cores. In case of Docker for Mac or Docker for Windows, the VM should be assigned a greater number of cores.
 
-- It is recommended to use the latest image. However, older distributions of Bt Studio can be found [here](https://hub.docker.com/r/jderobot/bt-studio/tags).
+- It is recommended to use the latest image. However, older distributions of Robotics Backend can be found [here](https://hub.docker.com/r/jderobot/robotics-backend/tags).
 
 ## MacOs (NOT TESTED!)
 
 * Remember to add minium docker version to run a Bt Studio.
 
 <a name="launch"></a>
-# 2. How to launch a Bt Studio container?
-
-* Launch databases
-
-```bash
-docker run --hostname my-postgres --name universe_db -d\
-    -e POSTGRES_DB=universe_db \
-    -e POSTGRES_USER=user-dev \
-    -e POSTGRES_PASSWORD=bt-studio-dev \
-    -e POSTGRES_PORT=5432 \
-    -d -p 5432:5432 \
-    jderobot/bt-studio-database:latest
-```
-
+# 2. How to launch a Robotics Backend container?
 
 * Start a new docker container of the image and keep it running in the background:
 * The priority order is: NVIDIA -> Intel -> Only CPU
 
 ```bash
-docker run --rm -it $(nvidia-smi >/dev/null 2>&1 && echo "--gpus all" || echo "") --device /dev/dri -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link universe_db jderobot/bt-studio:latest
+docker run --rm -it $(nvidia-smi >/dev/null 2>&1 && echo "--gpus all" || echo "") --device /dev/dri -p 6080:6080 -p 1108:1108 -p 7163:7163 jderobot/robotics-backend:latest
 ```
 
 ## Advanced Instructions on Linux
@@ -92,13 +71,13 @@ docker run --rm -it $(nvidia-smi >/dev/null 2>&1 && echo "--gpus all" || echo ""
 
 - **Integrated GPU**
 ```bash
-docker run --rm -it --device /dev/dri -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link universe_db jderobot/bt-studio:latest
+docker run --rm -it --device /dev/dri -p 6080:6080 -p 1108:1108 -p 7163:7163 jderobot/robotics-backend:latest
 
 ```
 
 - **Only CPU:** 
 ```bash
-docker run --rm -it -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link universe_db jderobot/bt-studio:latest
+docker run --rm -it -p 6080:6080 -p 1108:1108 -p 7163:7163 jderobot/robotics-backend:latest
 
 ```
 
@@ -109,14 +88,14 @@ For Windows machines, acceleration can be achieved for NVIDIA GPUs if a valid CU
 
 Once these requirements are ready, you should be able to run Bt Studio with GPU acceleration as follows:
 ```bash
-docker run --rm -it --gpus all -v /usr/lib/wsl:/usr/lib/wsl -e LD_LIBRARY_PATH=/usr/lib/wsl/lib --device /dev/dri -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link academy_db jderobot/bt-studio:latest
+docker run --rm -it --gpus all -v /usr/lib/wsl:/usr/lib/wsl -e LD_LIBRARY_PATH=/usr/lib/wsl/lib --device /dev/dri -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link academy_db jderobot/robotics-backend::latest
 ```
 
 ### Tips for Docker
 
 Make sure to remove the container if you have problems with the exercise not loading with the following commands.
 
-1. Locate the docker container used for Bt Studio using
+1. Locate the docker container used for Robotics Backend using
 
 ```bash
 docker ps -a

@@ -19,9 +19,17 @@ feature_row:
     btn_label: "Learn more"
 
   - image_path: /assets/images/cover/install.png
-    alt: "Install"
-    title: "Install"
-    excerpt: "Use of the software. Instructions for replicating project content."
+    alt: "Local Install"
+    title: "Local Install"
+    excerpt: "Instructions for installation and use locally"
+    url: "/install/"
+    btn_class: "btn--primary"
+    btn_label: "Learn more"
+
+  - image_path: /assets/images/cover/install.png
+    alt: "Remote Use"
+    title: "Remote Use"
+    excerpt: "Instructions for use remotely"
     url: "/install/"
     btn_class: "btn--primary"
     btn_label: "Learn more"
