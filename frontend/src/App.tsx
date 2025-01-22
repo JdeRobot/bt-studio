@@ -95,6 +95,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
               return;
           } else {
               // Connection failed, try again after a delay
+              currentUsers -= 1;
               console.log("Connection failed, trying again!");
               setTimeout(connectWithRetry, 1000);
           }
