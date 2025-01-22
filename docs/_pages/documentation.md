@@ -220,6 +220,18 @@ newproject:
     alt: "New project"
     title: "New project"
 
+projectlist:
+  - url: /assets/images/page/project_list.png
+    image_path: /assets/images/page/project_list.png
+    alt: "Projects list"
+    title: "Projects list"
+
+projectlistdelete:
+  - url: /assets/images/page/project_list_delete.png
+    image_path: /assets/images/page/project_list_delete.png
+    alt: "Delete project"
+    title: "Delete project"
+
 reconnectdocker:
   - url: /assets/images/page/reconnect_docker.png
     image_path: /assets/images/page/reconnect_docker.png
@@ -343,6 +355,8 @@ It can also be separated into 3 main parts:
 
 Opens the project menu where you can switch, delete or create projects.
 
+{% include gallery id="projectlist" caption="Project menu" %}
+
 ##### Create a new project
 
 1. Click on the create "Create New Project" button at the bottom of the project menu
@@ -354,9 +368,11 @@ Opens the project menu where you can switch, delete or create projects.
 
 ##### Delete a project
 
-1. Click on the create "Create New Project" button at the bottom of the project menu
-2. Write the name in the input field
-3. Press the "Create Project" button
+On hover over a project in the project menu a red button appears. If that project is not currently selected you can delete it.
+
+This will delete the entirety of the project including the universes for that project.
+
+{% include gallery id="projectlistdelete" caption="Delete a project" %}
 
 ##### Switch projects
 
@@ -364,15 +380,62 @@ To switch projects it is only required to click on top of the desired one.
 
 #### Universe Menu
 
+Opens the universe menu where you can switch, delete or add universes.
+
+<!-- {% include gallery id="universelist" caption="Universe menu" %} -->
+{% include gallery id="universelistcropped" caption="Universe menu" %}
+
+##### Add a new custom universe
+
+Functionality not available right now online.
+
+Functionality in alpha in local mode, it may not work properly.
+
+##### Add a new universe from Robotics Backend
+
+1. Click on the create "Import from Robotics Backend library" button at the bottom of the project menu
+2. Write the name in the input field
+3. Select the universe from the list of available ones.
+4. Press the "Create Universe" button
+
+<!-- {% include gallery id="dockeruniverse" caption="Image" %} -->
+{% include gallery id="dockeruniversecropped" caption="Add a new universe from Robotics Backend" %}
+
+##### Delete an universe
+
+On hover over a universe in the universe menu a red button appears. If that universe is not currently selected you can delete it.
+
+##### Switch universes
+
+To switch universes it is only required to click on top of the desired one.
+
 #### Settings Menu
+
+Opens the settings menu. These settings are applied and stored per project.
 
 #### Save project Button
 
+Saves the Behaviour Tree diagram, not the code in the File Editor.
+
 #### Download project Button
+
+Downloads the project as a ROS2 package prepared for execution locally.
 
 #### Play/Pause execution Button
 
+Plays or pauses the execution. For it to work an universe needs to be selected and the simulation working.
+
+Do not spam the button repeatedily because it can malfunction.
+
+{% include gallery id="playmonitorgif" caption="Gif" %}
+
 #### Reset execution Button
+
+Restarts the execution to the start state. For it to work an universe needs to be selected and the simulation working.
+
+Do not spam the button repeatedily because it can malfunction.
+
+{% include gallery id="restartgif" caption="Gif" %}
 
 ### Status Bar
 
@@ -387,16 +450,12 @@ To switch projects it is only required to click on top of the desired one.
 {% include gallery id="entersubtreegif" caption="Gif" %}
 {% include gallery id="exitsubtreegif" caption="Gif" %}
 {% include gallery id="monitorswitchgif" caption="Gif" %}
-{% include gallery id="playmonitorgif" caption="Gif" %}
-{% include gallery id="restartgif" caption="Gif" %}
 {% include gallery id="zoomgif" caption="Gif" %}
 
 ## Images
 
 {% include gallery id="btdark" caption="Image" %}
 {% include gallery id="btlight" caption="Image" %}
-{% include gallery id="dockeruniversecropped" caption="Image" %}
-{% include gallery id="dockeruniverse" caption="Image" %}
 {% include gallery id="editactioncropped" caption="Image" %}
 {% include gallery id="editaction" caption="Image" %}
 {% include gallery id="edittagblackboardcropped" caption="Image" %}
@@ -421,8 +480,6 @@ To switch projects it is only required to click on top of the desired one.
 {% include gallery id="newfoldercropped" caption="Image" %}
 {% include gallery id="newfolder" caption="Image" %}
 {% include gallery id="reconnectdocker" caption="Image" %}
-{% include gallery id="universelistcropped" caption="Image" %}
-{% include gallery id="universelist" caption="Image" %}
 {% include gallery id="warningcropped" caption="Image" %}
 {% include gallery id="warning" caption="Image" %}
 
