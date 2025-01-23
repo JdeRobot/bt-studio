@@ -50,8 +50,14 @@ function TreeNode({
 
   useEffect(() => {
     if (node.is_dir) {
+      if (parentGroup !== "") {
+        setGroup(parentGroup);
+      }
+
       if (node.name === "actions") {
         setGroup("Action");
+      } else if (node.name === "trees") {
+        setGroup("Trees");
       }
     }
     subscribe("updateAccentColor", callback);
@@ -70,6 +76,12 @@ function TreeNode({
       setUpdate(false);
     }
   }, [update]);
+
+  useEffect(() => {
+    if (parentGroup !== "") {
+      setGroup(parentGroup);
+    }
+  }, [parentGroup]);
 
   const handleClick = () => {
     if (node.is_dir) {
@@ -94,7 +106,7 @@ function TreeNode({
             is_dir={node.is_dir}
             is_collapsed={isCollapsed}
             name={node.name}
-            group={parentGroup === "" ? group : parentGroup}
+            group={group}
           />
           <label>{node.name}</label>
           {/* Add menu button */}
@@ -103,11 +115,8 @@ function TreeNode({
             stroke={"var(--icon)"}
             title={"More"}
             onClick={(e) => {
-              menuProps.showMoreActionsMenu(
-                e,
-                node,
-                parentGroup === "" ? group : parentGroup,
-              );
+              console.log(group);
+              menuProps.showMoreActionsMenu(e, node, group);
             }}
           />
           {settings.editorShowAccentColors.value && (
