@@ -389,7 +389,7 @@ const FileEditor = ({
       )}
       {fileContent !== null ? (
         <Editor
-          className="fileEditor"
+          className="file-editor"
           width="100%"
           height="calc(100% - 50px)"
           defaultLanguage="python"
