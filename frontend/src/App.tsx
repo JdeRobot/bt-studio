@@ -217,6 +217,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
                 autosaveEnabled={autosaveEnabled}
                 setAutosave={setAutosave}
                 forceSaveCurrent={forceSaveCurrent}
+                manager={manager}
               />
               {showTerminal && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
             </div>

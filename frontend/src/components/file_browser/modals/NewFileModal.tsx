@@ -293,7 +293,7 @@ const CardSelector = ({
   id: string;
   name: string;
   checkedVariable: string;
-  checkedCallback: (e:any) => void;
+  checkedCallback: (e: any) => void;
 }) => {
   return (
     <div className="bt-form-row" id={id}>
@@ -323,7 +323,7 @@ const CardEntry = ({
   cardEntryProp: CardEntryProps;
   name: string;
   checkedVariable: string;
-  checkedCallback: (e:any) => void;
+  checkedCallback: (e: any) => void;
 }) => {
   return (
     <div className="bt-templates-col">
