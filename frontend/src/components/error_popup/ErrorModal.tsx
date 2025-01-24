@@ -5,6 +5,7 @@ import Modal from "../Modal/Modal";
 enum ErrorType {
   ERROR,
   WARNING,
+  INFO,
 }
 
 const ErrorContext = createContext<ErrorData>({
@@ -13,6 +14,7 @@ const ErrorContext = createContext<ErrorData>({
   type: ErrorType.ERROR,
   error: (msg: string) => {},
   warning: (msg: string) => {},
+  info: (msg: string) => {},
   close: () => {},
 });
 
@@ -22,15 +24,37 @@ interface ErrorData {
   type: ErrorType;
   error: (msg: string) => void;
   warning: (msg: string) => void;
+  info: (msg: string) => void;
   close: () => void;
 }
 
 const ErrorModal = () => {
   const { isOpen, msg, type, close } = useError();
 
+  var type_str = "error";
+  var type_header = "Error";
+
+  switch (type) {
+    case ErrorType.ERROR:
+      type_str = "error";
+      type_header = "Error";
+      break;
+    case ErrorType.WARNING:
+      type_str = "warning";
+      type_header = "Warning";
+      break;
+    case ErrorType.INFO:
+      type_str = "info";
+      type_header = "Info";
+      break;
+
+    default:
+      break;
+  }
+
   return (
     <Modal
-      id={`${type === ErrorType.ERROR ? "error" : "warning"}-modal`}
+      id={`${type_str}-modal`}
       hasCloseBtn={true}
       isOpen={isOpen}
       onClose={close}
@@ -41,15 +65,12 @@ const ErrorModal = () => {
           htmlFor="actionName"
           style={{ textAlign: "center" }}
         >
-          {type === ErrorType.ERROR ? "Error" : "Warning"}
+          {type_header}
         </label>
       </div>
       <div className="bt-form-row">
         <div className="bt-error-modal-buttons-container">
-          <label
-            className={`bt-modal-${type === ErrorType.ERROR ? "error" : "warning"}-label`}
-            id="errorMsg"
-          >
+          <label className={`bt-modal-${type_str}-label`} id="errorMsg">
             {msg}
           </label>
         </div>
@@ -57,7 +78,7 @@ const ErrorModal = () => {
       <div className="bt-form-row">
         <div className="bt-error-modal-buttons-container">
           <div
-            className={`bt-${type === ErrorType.ERROR ? "error" : "warning"}-modal-button`}
+            className={`bt-${type_str}-modal-button`}
             onClick={() => close()}
           >
             Close
@@ -85,6 +106,12 @@ export const ErrorProvider = ({ children }: { children: any }) => {
     open(true);
   };
 
+  const showInfo = (msg: string) => {
+    setMsg(msg);
+    setType(ErrorType.INFO);
+    open(true);
+  };
+
   const close = () => {
     open(false);
   };
@@ -95,6 +122,7 @@ export const ErrorProvider = ({ children }: { children: any }) => {
     type: type,
     error: (msg: string) => showError(msg),
     warning: (msg: string) => showWarning(msg),
+    info: (msg: string) => showInfo(msg),
     close: () => close(),
   };
 
