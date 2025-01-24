@@ -8,6 +8,7 @@ import FileEditor from "./components/file_editor/FileEditor";
 import "./App.css";
 import VncViewer from "./components/vnc_viewer/VncViewer";
 import ErrorModal, { ErrorProvider } from "./components/error_popup/ErrorModal";
+import { useError } from "./components/error_popup/ErrorModal";
 import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
 import CommsManager from "./api_helper/CommsManager";
 import { loadProjectConfig } from "./api_helper/TreeWrapper";
@@ -33,9 +34,12 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
 
   //Only needed in Unibotics
-  var currentUsers = 0;
-  var UsersAtMaxCapacity = false;
-  const maxUsers = 1;
+  const [currentUsers, setCurrentUsers] = useState<number>(0);
+  const [maxUsers, setMaxUsers] = useState<number>(1);
+  const [usersAtMaxCapacity, setUsersAtMaxCapacity] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const { error } = useError();
+  
 
   const [dockerData, setDockerData] = useState<{
     gpu_avaliable: string;
@@ -68,6 +72,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         console.log("Entering UsersCapacity function")
         if (currentUserCount > maxUsers) {
             console.log("Too much users!");
+            
             return true;
         } else {
             console.log("There's enough room. You can go in");
@@ -80,22 +85,23 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       return;
     }
       try {
-      console.log("Current number of users connected: " + currentUsers);
-      currentUsers += 1;
-      UsersAtMaxCapacity = checkOverUsersCapacity(currentUsers);
-      console.log("Is currents users equal or less to maximum?" + (currentUsers <= maxUsers))
-        if (!UsersAtMaxCapacity) {
+      console.log("Current number of users connected: " + { currentUsers });
+      setCurrentUsers(currentUsers + 1);
+      setUsersAtMaxCapacity(checkOverUsersCapacity(currentUsers));
+      console.log("Is currents users equal or less to maximum? " + (currentUsers <= maxUsers))
+        if (!usersAtMaxCapacity) {
             await manager.connect();
             console.log("Connected!");
             connected.current = true;
         }
       } catch (error) {
-          if (UsersAtMaxCapacity) {
+          if (usersAtMaxCapacity) {
               console.log("User maximum exceeded.")
+              {error}("You can not access Bt-studio right now. The user capacity is at its limit. Please wait until a spot is free.");
               return;
           } else {
               // Connection failed, try again after a delay
-              currentUsers -= 1;
+              setCurrentUsers(currentUsers - 1);
               console.log("Connection failed, trying again!");
               setTimeout(connectWithRetry, 1000);
           }
@@ -112,7 +118,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
 
   useUnload(() => {
       if (manager) {
-      currentUsers -= 1;
+      setCurrentUsers(currentUsers - 1);
       manager.disconnect();
       connected.current = false;
     }
