@@ -111,7 +111,7 @@ def ascii_blackboard_to_json(blackboard):
     json_str = '"blackboard":{'
     do_append_coma = False
 
-    ansi_escape = re.compile(r"\\\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])")
+    ansi_escape = re.compile(r"\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])")
     blackboard = ansi_escape.sub("", blackboard)
 
     for line in iter(blackboard.splitlines()):
