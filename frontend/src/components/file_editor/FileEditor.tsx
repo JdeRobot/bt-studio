@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Editor, { Monaco } from "@monaco-editor/react";
 import "./FileEditor.css";
 
@@ -8,6 +8,7 @@ import { ReactComponent as SplashIconUnibotics } from "./img/logo_unibotics_mono
 import { getFile, saveFile } from "../../api_helper/TreeWrapper";
 import { useError } from "../error_popup/ErrorModal";
 import { OptionsContext } from "../options/Options";
+import CommsManager from "../../api_helper/CommsManager";
 
 const fileTypes = {
   json: "json",
@@ -22,6 +23,33 @@ const fileTypes = {
   repos: "yaml",
 };
 
+const pylint_error: string[] = ["E0401", "E1101"];
+const pylint_warning: string[] = ["W0611"];
+const pylint_convention: string[] = [
+  "C0114",
+  "C0303",
+  "C0304",
+  "C0305",
+  "C0411",
+];
+const pylint_refactor: string[] = [];
+const pylint_fatal: string[] = [];
+
+const getMarkerSeverity = (type: string, monaco: Monaco) => {
+  switch (type) {
+    case "refactor":
+    case "convention":
+      return monaco.MarkerSeverity.Info;
+    case "error":
+      return monaco.MarkerSeverity.Error;
+    case "warning":
+    case "fatal":
+      return monaco.MarkerSeverity.Warning;
+    default:
+      return monaco.MarkerSeverity.Error;
+  }
+};
+
 const FileEditor = ({
   currentFilename,
   currentProjectname,
@@ -30,6 +58,7 @@ const FileEditor = ({
   autosaveEnabled,
   setAutosave,
   forceSaveCurrent,
+  manager,
 }: {
   currentFilename: string;
   currentProjectname: string;
@@ -38,16 +67,92 @@ const FileEditor = ({
   autosaveEnabled: boolean;
   setAutosave: Function;
   forceSaveCurrent: boolean;
+  manager: CommsManager | null;
 }) => {
   const { error } = useError();
   const settings = React.useContext(OptionsContext);
 
-  const [fileContent, setFileContent] = useState(null);
+  const editorRef = useRef<any>(null);
+  const monacoRef = useRef<Monaco>(null);
+
+  const [fileContent, setFileContent] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState(14);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [filenameToSave, setFilenameToSave] = useState("");
-  const [languaage, setLanguage] = useState("python");
+  const [language, setLanguage] = useState("python");
   const [projectToSave, setProjectToSave] = useState(currentProjectname);
+
+  const code_analysis = (message: any) => {
+    if (!editorRef.current || !monacoRef.current) return;
+
+    const controller = new AbortController();
+
+    const drawMarker = async () => {
+      const data = message.data;
+
+      if (!data) return;
+
+      const model = editorRef.current.getModel();
+      const pylint_data = data.pylint_output.map((pylint: any, i: number) => {
+        return {
+          startLineNumber: pylint.line,
+          startColumn: pylint.column,
+          endLineNumber:
+            pylint.endLine === null ? pylint.column : pylint.endLine,
+          endColumn:
+            pylint.endColumn === null
+              ? model.getLineMaxColumn(pylint.line)
+              : pylint.endColumn,
+          message: pylint.message,
+          severity: getMarkerSeverity(pylint.type, monacoRef.current),
+        };
+      });
+      monacoRef.current.editor.setModelMarkers(model, "owner", pylint_data);
+    };
+
+    drawMarker();
+
+    return () => controller.abort();
+  };
+
+  const code_format = (message: any) => {
+    if (!editorRef.current) return;
+
+    const data = message.data;
+
+    if (!data) return;
+
+    setFileContent(data.formatted_code);
+  };
+
+  const handleKeyDown = async (event: any) => {
+    if (event.ctrlKey && event.key === "s") {
+      event.preventDefault();
+      autoSave();
+    }
+  };
+
+  useEffect(() => {
+    if (manager === null) {
+      return;
+    }
+
+    manager.subscribe("code-format", code_format);
+    manager.subscribe("code-analysis", code_analysis);
+
+    return () => {
+      manager.unsubscribe("code-format", code_format);
+      manager.unsubscribe("code-analysis", code_analysis);
+    };
+  }, [manager]);
+
+  useEffect(() => {
+    return () => {
+      editorRef.current
+        .getDomNode()
+        .removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const handleEditorDidMount = (monaco: Monaco) => {
     monaco.editor.defineTheme("dark-theme", {
@@ -66,6 +171,32 @@ const FileEditor = ({
         "editor.background": "#e2e2e9",
       },
     });
+  };
+
+  const handleEditorMount = async (editor: any, monaco: Monaco) => {
+    monacoRef.current = monaco;
+    editorRef.current = editor;
+
+    editorRef.current.getDomNode().addEventListener("keydown", handleKeyDown);
+
+    editorRef.current.addCommand(
+      monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyI,
+      function () {
+        if (language !== "python")
+          //TODO: only format for python. We could add more later
+          return;
+
+        if (manager && fileContent) {
+          manager.code_format(fileContent);
+        }
+      },
+    );
+
+    return () => {
+      editorRef.current
+        .getDomNode()
+        .removeEventListener("keydown", handleKeyDown);
+    };
   };
 
   const editorOptions = {
@@ -204,6 +335,37 @@ const FileEditor = ({
     setFontSize((prevFontSize) => Math.max(10, prevFontSize - 2));
   };
 
+  // Code Analysis (with pylint)
+  useEffect(() => {
+    if (!editorRef.current || !monacoRef.current || !fileContent || !manager)
+      return;
+
+    editorRef.current.addCommand(
+      monacoRef.current.KeyMod.CtrlCmd |
+        monacoRef.current.KeyMod.Shift |
+        monacoRef.current.KeyCode.KeyI,
+      function () {
+        if (language !== "python")
+          //TODO: only format for python. We could add more later
+          return;
+
+        if (manager && fileContent) {
+          manager.code_format(fileContent);
+        }
+      },
+    );
+
+    if (language !== "python") return;
+
+    manager.code_analysis(fileContent, [
+      ...pylint_error,
+      ...pylint_warning,
+      ...pylint_convention,
+      ...pylint_refactor,
+      ...pylint_fatal,
+    ]);
+  }, [fileContent]);
+
   return (
     <div className="bt-editor-container">
       <div className="bt-editor-menu">
@@ -227,12 +389,12 @@ const FileEditor = ({
       )}
       {fileContent !== null ? (
         <Editor
-          className="fileEditor"
+          className="file-editor"
           width="100%"
           height="calc(100% - 50px)"
           defaultLanguage="python"
           defaultValue=""
-          language={languaage}
+          language={language}
           value={fileContent}
           theme={`${settings.theme.value}-theme`}
           onChange={(newContent: any) => {
@@ -242,6 +404,7 @@ const FileEditor = ({
           }}
           options={editorOptions}
           beforeMount={handleEditorDidMount}
+          onMount={handleEditorMount}
         />
       ) : (
         <>

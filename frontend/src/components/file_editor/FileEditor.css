@@ -5,6 +5,7 @@
   /* padding-right: 2px; */
   height: 100%;
   background-color: var(--app-background);
+  overflow: hidden;
 }
 
 .bt-zoom-buttons {
@@ -84,25 +85,4 @@
   margin-top: calc(50% - var(--size) / 2);
   margin-left: calc(50% - var(--size) / 2);
   width: var(--size);
-}
-
-/* Ace editor config */
-
-.ace_scrollbar::-webkit-scrollbar {
-  height: 5px;
-  width: 5px;
-}
-
-.ace_scrollbar::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px var(--scrollbar);
-  padding-right: 2px;
-}
-
-.ace_scrollbar::-webkit-scrollbar-thumb {
-  background: var(--scrollbar);
-  border-radius: 10px;
-}
-
-.ace_scrollbar-h {
-  margin-bottom: 10px;
 }

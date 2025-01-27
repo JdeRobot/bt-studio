@@ -13,6 +13,11 @@
   }
 }
 
+#info-modal {
+  background-color: var(--background) !important;
+  border-color: var(--buttons) !important;
+}
+
 .bt-error-modal-buttons-container {
   display: flex;
   flex-direction: row;
@@ -53,6 +58,22 @@
   }
 }
 
+.bt-info-modal-button {
+  height: 45px;
+  width: 175px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: var(--buttons);
+  color: var(--text);
+  font-weight: 600;
+  text-align: center;
+  user-select: none;
+
+  &:hover {
+    background-color: var(--buttons-hover) !important;
+  }
+}
+
 .bt-modal-error-label {
   color: var(--text);
   font-weight: 600;
@@ -61,6 +82,12 @@
 
 .bt-modal-warning-label {
   color: var(--bt-dark-text);
+  font-weight: 600;
+  text-align: center;
+}
+
+.bt-modal-info-label {
+  color: var(--text);
   font-weight: 600;
   text-align: center;
 }

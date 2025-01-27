@@ -50,15 +50,17 @@ function MoreActionsMenu({
         className="bt-more-actions-menu"
         style={{ top: menuProps.position.y, left: menuProps.position.x }}
       >
-        <div
-          className="bt-more-actions-menu-entry"
-          onClick={() => {
-            onRename(menuProps.file);
-            closeMenu();
-          }}
-        >
-          <label>Rename</label>
-        </div>
+        {menuProps.fileGroup !== "Trees" && (
+          <div
+            className="bt-more-actions-menu-entry"
+            onClick={() => {
+              onRename(menuProps.file);
+              closeMenu();
+            }}
+          >
+            <label>Rename</label>
+          </div>
+        )}
         {true && (
           <div
             className="bt-more-actions-menu-entry"
@@ -96,34 +98,38 @@ function MoreActionsMenu({
               </div>
             </>
           )}
-        <div className="bt-more-actions-menu-divider" />
-        <div
-          className="bt-more-actions-menu-entry"
-          onClick={() => {
-            onCreateFile(menuProps.file);
-            closeMenu();
-          }}
-        >
-          <label>New File</label>
-        </div>
-        <div
-          className="bt-more-actions-menu-entry"
-          onClick={() => {
-            onCreateFolder(menuProps.file);
-            closeMenu();
-          }}
-        >
-          <label>New Folder</label>
-        </div>
-        <div
-          className="bt-more-actions-menu-entry"
-          onClick={() => {
-            onUpload(menuProps.file);
-            closeMenu();
-          }}
-        >
-          <label>Upload</label>
-        </div>
+        {menuProps.fileGroup !== "Trees" && (
+          <>
+            <div className="bt-more-actions-menu-divider" />
+            <div
+              className="bt-more-actions-menu-entry"
+              onClick={() => {
+                onCreateFile(menuProps.file);
+                closeMenu();
+              }}
+            >
+              <label>New File</label>
+            </div>
+            <div
+              className="bt-more-actions-menu-entry"
+              onClick={() => {
+                onCreateFolder(menuProps.file);
+                closeMenu();
+              }}
+            >
+              <label>New Folder</label>
+            </div>
+            <div
+              className="bt-more-actions-menu-entry"
+              onClick={() => {
+                onUpload(menuProps.file);
+                closeMenu();
+              }}
+            >
+              <label>Upload</label>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
