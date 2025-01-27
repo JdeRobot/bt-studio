@@ -34,11 +34,10 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
 
   //Only needed in Unibotics
-  const [maxUsers, setMaxUsers] = useState<number>(10);
+  const maxUsers = 0;
   const currentUsers = React.useRef<number>(0);
   const btAtMaxCapacity = React.useRef<boolean>(false);
-  const { error } = useError();
-  
+  const { error_critical } = useError();
 
   const [dockerData, setDockerData] = useState<{
     gpu_avaliable: string;
@@ -53,8 +52,30 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const connected = useRef<boolean>(false);
 
   useEffect(() => {
+    console.log("Current number of users connected: " + currentUsers.current);
+    addUser();
+    console.log(
+      "Now the updated value of users connected is: ",
+      currentUsers.current,
+    );
+    console.log(
+      "Current value of UsersAtMaxCapacity: ",
+      btAtMaxCapacity.current,
+    );
+    updateBtAtMaxCapacity(currentUsers.current);
+    console.log(
+      "Updated value of UsersAtMaxCapacity: ",
+      btAtMaxCapacity.current,
+    );
+
     const manager = CommsManager.getInstance();
-    setManager(manager);
+    if (btAtMaxCapacity.current == false) {
+      setManager(manager);
+    }
+
+    return () => {
+      substractUser();
+    };
   }, []);
 
   const resetManager = () => {
@@ -68,56 +89,42 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   };
 
   /////////////////////////////Functions only used in Unibotics///////////////////////////////////////////////////
-  
+
   const addUser = () => {
     currentUsers.current += 1;
-  }
+  };
 
   const substractUser = () => {
     currentUsers.current -= 1;
-  }
+  };
 
   const updateBtAtMaxCapacity = (currentUserCount: number) => {
     console.log("Entering update of MaxCapacity");
-    if (currentUserCount > maxUsers){
+    if (currentUserCount > maxUsers) {
       console.log("Too much users!");
       btAtMaxCapacity.current = true;
-      error("There's not enough room for you to enter BT-studio. Please try again later.");
+      error_critical(
+        "There's not enough room for you to enter BT-studio. Please try again later.",
+      );
     } else {
       console.log("The user can go in");
       btAtMaxCapacity.current = false;
     }
-  }
-  
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  };
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const connectWithRetry = async () => {
     if (!manager || connected.current) {
       return;
     }
-      try {
-        console.log("Current number of users connected: " + currentUsers.current);
-        addUser();
-        console.log("Now the updated value of users connected is: ", currentUsers.current);
-        console.log("Current value of UsersAtMaxCapacity: ", btAtMaxCapacity.current);
-        updateBtAtMaxCapacity(currentUsers.current);
-        console.log("Updated value of UsersAtMaxCapacity: ", btAtMaxCapacity.current);
-          if (btAtMaxCapacity.current == false) {
-              await manager.connect();
-              console.log("Connected!");
-              connected.current = true;
-          }
-      } catch (error) {
-        if (btAtMaxCapacity.current == true) {
-            console.log("User maximum exceeded.");
-            return;
-          } else {
-              // Connection failed, try again after a delay
-              substractUser();
-              console.log("Connection failed, trying again!");
-              setTimeout(connectWithRetry, 1000);
-          }
+    try {
+      await manager.connect();
+      console.log("Connected!");
+      connected.current = true;
+    } catch (error) {
+      console.log("Connection failed, trying again!");
+      setTimeout(connectWithRetry, 1000);
     }
   };
 
@@ -130,8 +137,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   }, [manager]);
 
   useUnload(() => {
-      if (manager) {
-      substractUser();
+    if (manager) {
       manager.disconnect();
       connected.current = false;
     }
@@ -155,15 +161,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         break;
     }
   };
-
-  // Error modal
-  // const openError = (err: unknown) => {
-  //   if (err instanceof Error) {
-  //     (document.getElementById("errorMsg") as HTMLElement).innerText =
-  //       err.message;
-  //     setErrorModalOpen(true);
-  //   }
-  // };
 
   // Show VNC viewers
   const showVNCViewer = () => {
@@ -189,8 +186,8 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       data-theme={settings.theme.value}
       style={{ display: "flex" }}
     >
-      <ErrorProvider>
-        <ErrorModal />
+      <ErrorModal />
+      <>
         <HeaderMenu
           currentProjectname={currentProjectname}
           setCurrentProjectname={setCurrentProjectname}
@@ -302,7 +299,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
           dockerData={dockerData}
           resetManager={resetManager}
         />
-      </ErrorProvider>
+      </>
     </div>
   );
 };

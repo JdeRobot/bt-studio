@@ -4,6 +4,7 @@ import Modal from "../Modal/Modal";
 
 enum ErrorType {
   ERROR,
+  ERROR_CRITICAL,
   WARNING,
   INFO,
 }
@@ -13,6 +14,7 @@ const ErrorContext = createContext<ErrorData>({
   msg: "",
   type: ErrorType.ERROR,
   error: (msg: string) => {},
+  error_critical: (msg: string) => {},
   warning: (msg: string) => {},
   info: (msg: string) => {},
   close: () => {},
@@ -23,6 +25,7 @@ interface ErrorData {
   msg: string;
   type: ErrorType;
   error: (msg: string) => void;
+  error_critical: (msg: string) => void;
   warning: (msg: string) => void;
   info: (msg: string) => void;
   close: () => void;
@@ -34,10 +37,19 @@ const ErrorModal = () => {
   var type_str = "error";
   var type_header = "Error";
 
+  var onClose = () => close();
+
   switch (type) {
     case ErrorType.ERROR:
       type_str = "error";
       type_header = "Error";
+      break;
+    case ErrorType.ERROR_CRITICAL:
+      type_str = "error";
+      type_header = "Error";
+      onClose = () => {
+        document.location.href = "/apps";
+      };
       break;
     case ErrorType.WARNING:
       type_str = "warning";
@@ -57,7 +69,7 @@ const ErrorModal = () => {
       id={`${type_str}-modal`}
       hasCloseBtn={true}
       isOpen={isOpen}
-      onClose={close}
+      onClose={onClose}
     >
       <div className="bt-modal-titlebar">
         <label
@@ -79,7 +91,7 @@ const ErrorModal = () => {
         <div className="bt-error-modal-buttons-container">
           <div
             className={`bt-${type_str}-modal-button`}
-            onClick={() => close()}
+            onClick={() => onClose()}
           >
             Close
           </div>
@@ -97,6 +109,12 @@ export const ErrorProvider = ({ children }: { children: any }) => {
   const showError = (msg: string) => {
     setMsg(msg);
     setType(ErrorType.ERROR);
+    open(true);
+  };
+
+  const showErrorCritical = (msg: string) => {
+    setMsg(msg);
+    setType(ErrorType.ERROR_CRITICAL);
     open(true);
   };
 
@@ -121,6 +139,7 @@ export const ErrorProvider = ({ children }: { children: any }) => {
     msg: msg,
     type: type,
     error: (msg: string) => showError(msg),
+    error_critical: (msg: string) => showErrorCritical(msg),
     warning: (msg: string) => showWarning(msg),
     info: (msg: string) => showInfo(msg),
     close: () => close(),
