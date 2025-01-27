@@ -34,7 +34,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
 
   //Only needed in Unibotics
-  const maxUsers = 0;
+  const maxUsers = 10;
   const currentUsers = React.useRef<number>(0);
   const btAtMaxCapacity = React.useRef<boolean>(false);
   const { error_critical } = useError();
