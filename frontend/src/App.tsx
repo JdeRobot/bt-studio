@@ -37,7 +37,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [maxUsers, setMaxUsers] = useState<number>(10);
   const currentUsers = React.useRef<number>(0);
   const btAtMaxCapacity = React.useRef<boolean>(false);
-  const { warning } = useError();
+  const { error } = useError();
   
 
   const [dockerData, setDockerData] = useState<{
@@ -82,6 +82,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     if (currentUserCount > maxUsers){
       console.log("Too much users!");
       btAtMaxCapacity.current = true;
+      error("There's not enough room for you to enter BT-studio. Please try again later.");
     } else {
       console.log("The user can go in");
       btAtMaxCapacity.current = false;
@@ -110,7 +111,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       } catch (error) {
         if (btAtMaxCapacity.current == true) {
             console.log("User maximum exceeded.");
-            warning("There's not enough room for you to enter BT-studio. Please try again later.");
             return;
           } else {
               // Connection failed, try again after a delay
