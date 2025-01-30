@@ -8,6 +8,7 @@ import FileEditor from "./components/file_editor/FileEditor";
 import "./App.css";
 import VncViewer from "./components/vnc_viewer/VncViewer";
 import ErrorModal, { ErrorProvider } from "./components/error_popup/ErrorModal";
+import { useError } from "./components/error_popup/ErrorModal";
 import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
 import CommsManager from "./api_helper/CommsManager";
 import { loadProjectConfig } from "./api_helper/TreeWrapper";
@@ -32,6 +33,12 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [showSim, setSimVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
 
+  //Only needed in Unibotics
+  const maxUsers = 0;
+  const currentUsers = React.useRef<number>(0);
+  const btAtMaxCapacity = React.useRef<boolean>(false);
+  const { error_critical } = useError();
+
   const [dockerData, setDockerData] = useState<{
     gpu_avaliable: string;
     robotics_backend_version: string;
@@ -45,8 +52,30 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const connected = useRef<boolean>(false);
 
   useEffect(() => {
+    console.log("Current number of users connected: " + currentUsers.current);
+    addUser();
+    console.log(
+      "Now the updated value of users connected is: ",
+      currentUsers.current,
+    );
+    console.log(
+      "Current value of UsersAtMaxCapacity: ",
+      btAtMaxCapacity.current,
+    );
+    updateBtAtMaxCapacity(currentUsers.current);
+    console.log(
+      "Updated value of UsersAtMaxCapacity: ",
+      btAtMaxCapacity.current,
+    );
+
     const manager = CommsManager.getInstance();
-    setManager(manager);
+    if (btAtMaxCapacity.current == false) {
+      setManager(manager);
+    }
+
+    return () => {
+      substractUser();
+    };
   }, []);
 
   const resetManager = () => {
@@ -59,17 +88,41 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     setDockerData(msg.data);
   };
 
+  /////////////////////////////Functions only used in Unibotics///////////////////////////////////////////////////
+
+  const addUser = () => {
+    currentUsers.current += 1;
+  };
+
+  const substractUser = () => {
+    currentUsers.current -= 1;
+  };
+
+  const updateBtAtMaxCapacity = (currentUserCount: number) => {
+    console.log("Entering update of MaxCapacity");
+    if (currentUserCount > maxUsers && isUnibotics) {
+      console.log("Too much users!");
+      btAtMaxCapacity.current = true;
+      error_critical(
+        "There's not enough room for you to enter BT-studio. Please try again later.",
+      );
+    } else {
+      console.log("The user can go in");
+      btAtMaxCapacity.current = false;
+    }
+  };
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   const connectWithRetry = async () => {
     if (!manager || connected.current) {
       return;
     }
-
     try {
       await manager.connect();
       console.log("Connected!");
       connected.current = true;
     } catch (error) {
-      // Connection failed, try again after a delay
       console.log("Connection failed, trying again!");
       setTimeout(connectWithRetry, 1000);
     }
@@ -109,15 +162,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     }
   };
 
-  // Error modal
-  // const openError = (err: unknown) => {
-  //   if (err instanceof Error) {
-  //     (document.getElementById("errorMsg") as HTMLElement).innerText =
-  //       err.message;
-  //     setErrorModalOpen(true);
-  //   }
-  // };
-
   // Show VNC viewers
   const showVNCViewer = () => {
     setSimVisible(true);
@@ -142,8 +186,8 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       data-theme={settings.theme.value}
       style={{ display: "flex" }}
     >
-      <ErrorProvider>
-        <ErrorModal />
+      <ErrorModal />
+      <>
         <HeaderMenu
           currentProjectname={currentProjectname}
           setCurrentProjectname={setCurrentProjectname}
@@ -255,7 +299,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
           dockerData={dockerData}
           resetManager={resetManager}
         />
-      </ErrorProvider>
+      </>
     </div>
   );
 };

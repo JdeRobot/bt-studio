@@ -7,6 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import "beautiful-react-diagrams/styles.css";
 
 import { OptionsProvider } from "./components/options/Options";
+import { ErrorProvider } from "./components/error_popup/ErrorModal";
 
 // Load Google Font
 WebFont.load({
@@ -24,7 +25,9 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
   <OptionsProvider>
-    <App isUnibotics={false} />
+    <ErrorProvider>
+      <App isUnibotics={false} />
+    </ErrorProvider>
   </OptionsProvider>,
   // </React.StrictMode>,
 );
