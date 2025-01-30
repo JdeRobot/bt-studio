@@ -1,43 +1,108 @@
-# How to contribute
+<a href="https://mmg-ai.com/en/"><img src="https://jderobot.github.io/assets/images/logo.png" width="100 " align="right" /></a>
 
-I'm really glad you're reading this, because we need volunteer developers to help this project come to fruition.
+# Contributing to Bt Studio
 
-If you haven't already, come find us in IRC ([#opengovernment](irc://chat.freenode.net/opengovernment) on freenode). We want you working on things you're excited about.
+First off, thanks for your interest in contributing to Bt Studio! All contributors are welcome, from commenting issues to reviewing or sending Pull Requests.
 
-Here are some important resources:
+## How to contribute?
 
-  * [OpenGovernment for Developers](http://opengovernment.org/pages/developer) tells you where we are,
-  * [Our roadmap](http://opengovernment.org/pages/wish-list) is the 10k foot view of where we're going, and
-  * [Pivotal Tracker](http://pivotaltracker.com/projects/64842) is our day-to-day project management space.
-  * Mailing list: Join our [developer list](http://groups.google.com/group/opengovernment/)
-  * Bugs? [Lighthouse](https://participatorypolitics.lighthouseapp.com/projects/47665-opengovernment/overview) is where to report them
-  * IRC: chat.freenode.net channel [#opengovernment](irc://chat.freenode.net/opengovernment). We're usually there during business hours.
+If you are new to GitHub, visit the [first-contributions instructions](https://github.com/firstcontributions/first-contributions/blob/master/README.md) to learn how to contribute on GitHub.
 
-## Testing
+To find issues you can help with, go though the list of [good first issues](https://github.com/JdeRobot/bt-studio/issues?q=is%3Aissue+is%3Aopen+label%3Agood-first-issue) or issues labeled with [help wanted](https://github.com/JdeRobot/bt-studio/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22).
 
-We have a handful of Cucumber features, but most of our testbed consists of RSpec examples. Please write RSpec examples for new code you create.
+Once found or created an issue, let us know that you want to work on it by commenting in the issue.
+
+## Launching Bt Studio
+
+To launch Bt Studio you must choose between this 2 ways. We recommend to just use the first one, because it will automatically update Bt Studio and the databases to the ones found locally on your machine.
+
+* **Recomended** Using the developer script (docker compose):
+
+```bash
+sh scripts/develop.sh
+```
+
+* Using docker run **(does not use the current database and bt-studio)**:
+
+```bash
+docker run --hostname my-postgres --name universe_db -d\
+    -e POSTGRES_DB=universe_db \
+    -e POSTGRES_USER=user-dev \
+    -e POSTGRES_PASSWORD=bt-studio-dev \
+    -e POSTGRES_PORT=5432 \
+    -d -p 5432:5432 \
+    jderobot/bt-studio-database:latest
+docker run --rm -it $(nvidia-smi >/dev/null 2>&1 && echo "--gpus all" || echo "") --device /dev/dri -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link universe_db jderobot/bt-studio:latest
+```
+
+## Creating a custom BTDI (Bt Studio Docker Image)
+
+If you need to create a custom docker image instead of using the ones found in dockerhub you must use the next script.
+
+You may need to use this if you have to use a specific Robotics Infrastructure or Robotics Application Manager branch.
+
+### Usage
+
+1. **Navigate to the scripts directory**
+
+    ```bash
+    cd /scripts/RADI
+    ```
+
+2. **Build the Docker image**
+
+    Run the script using the following command:
+
+    ```bash
+    ./build.sh -bt [BT_STUDIO] -i [ROBOTICS_INFRASTRUCTURE] -m [RAM] -r [ROS_DISTRO] -t [IMAGE_TAG]
+
+    ```
+
+    Each of the parameters is explained below:
+
+`BT_STUDIO`: This is the branch name of the Bt Studio repository to use. Default value is main.
+
+`ROBOTICS_INFRASTRUCTURE`: This is the branch name of the Robotics Infrastructure repository to use. Default value is humble-devel.
+
+`RAM`: This is the branch name of the RoboticsApplicationManager repository to use. Default value is humble-devel.
+
+`ROS_DISTRO`: This is the ROS distribution to use. The script currently supports `humble`. Default value is humble.
+
+`IMAGE_TAG`: This is the tag of the Docker image that will be created. Default value is `test`.
+
+## Questions, suggestions or new ideas
+
+Please don't open an issue to ask a question or suggestion. Use the [GitHub Discussions](https://github.com/JdeRobot/bt-studio/discussions) which are meant to it. New ideas and enhacements are also welcome as discussion posts.
+
+## Issue reporting
+
+Feel free to [create a new issue](https://github.com/JdeRobot/bt-studio/issues/new) if you have some issue to report. But first, make sure that the issue has not been reported yet.
+
+Be sure to explain in details the context and the outcome that you are lookign for. If reporting bugs, provide basic information like you OS version, Bt Studio docker version and Bt Studio version.
+
 
 ## Submitting changes
 
-Please send a [GitHub Pull Request to opengovernment](https://github.com/opengovernment/opengovernment/pull/new/master) with a clear list of what you've done (read more about [pull requests](http://help.github.com/pull-requests/)). When you send a pull request, we will love you forever if you include RSpec examples. We can always use more test coverage. Please follow our coding conventions (below) and make sure all of your commits are atomic (one feature per commit).
-
-Always write a clear log message for your commits. One-line messages are fine for small changes, but bigger changes should look like this:
-
-    $ git commit -m "A brief summary of the commit
-    > 
-    > A paragraph describing what changed and its impact."
+* Please open a Pull Request with a clear description of what it contains.
+* If there is no Issue related to what the Pull Request solves make sure to create ones and link them with the PR.
+* Always write a clear log message for your commits.
+* Make sure that the code is formated properly so that the actions executed when uploading a commit end succesfully. If the code is not formatted properly it will not be merged. See more in the **Formatting** section.
 
 ## Coding conventions
 
-Start reading our code and you'll get the hang of it. We optimize for readability:
+Try to make the code as readable as possible. Also follow the next things:
 
-  * We indent using two spaces (soft tabs)
-  * We use HAML for all views
-  * We avoid logic in views, putting HTML generators into helpers
-  * We ALWAYS put spaces after list items and method parameters (`[1, 2, 3]`, not `[1,2,3]`), around operators (`x += 1`, not `x+=1`), and around hash arrows.
-  * This is open source software. Consider the people who will read your code, and make it look nice for them. It's sort of like driving a car: Perhaps you love doing donuts when you're alone, but with passengers the goal is to make the ride as smooth as possible.
-  * So that we can consistently serve images from the CDN, always use image_path or image_tag when referring to images. Never prepend "/images/" when using image_path or image_tag.
-  * Also for the CDN, always use cwd-relative paths rather than root-relative paths in image URLs in any CSS. So instead of url('/images/blah.gif'), use url('../images/blah.gif').
+### Frontend
+  
+* All code must be in TypeScript and typed as much as possible.
+* Formated using prettier. To format execute `yarn format` inside the frontend directory.
+* All calls to the backend must be found inside the `frontend/src/api_helper/TreeWrapper.ts` file and following the schema found inside.
+* Follow as much as possible the [React Guidelines](https://react.dev/reference/rules).
 
-Thanks,
-Carl Tashian, Participatory Politics Foundation
+### Backend
+
+* Uses Django and it is found inside the `backend/tree_api/` folder.
+* Formatted using Black.
+
+Thanks! :heart: :heart:
+Bt Studio Team
