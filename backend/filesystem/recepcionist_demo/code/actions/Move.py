@@ -52,7 +52,7 @@ class MoveAction(Node):
 
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback.distance_remaining
-        print(feedback)
+        #print(feedback)
         if (
             feedback < 0.3
             and feedback != 0.0

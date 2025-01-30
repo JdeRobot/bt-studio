@@ -83,7 +83,6 @@ class SetDestination(py_trees.behaviour.Behaviour):
             goal.pose.orientation.w = 0.0
 
         tree_tools.set_port_content(self.ports["waypoint"], goal)
-        print(goal)
 
         return py_trees.common.Status.SUCCESS
 

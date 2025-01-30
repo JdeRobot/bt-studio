@@ -38,8 +38,8 @@ class OrderDrink(py_trees.behaviour.Behaviour):
 
         response = input("Do you have the drink I requested? (Y/n): ")
 
-        if response != "Y":
-            return py_trees.common.Status.FAILURE
+        #if response != "Y":
+        #    return py_trees.common.Status.FAILURE
 
         return py_trees.common.Status.SUCCESS
 

@@ -30,9 +30,14 @@ RUN chmod +x /start_vnc.sh /kill_all.sh /entrypoint.sh /start_vnc_gpu.sh /set_dr
 ARG BT_STUDIO=$BT_STUDIO
 RUN git clone --depth 1 https://github.com/JdeRobot/bt-studio.git -b $BT_STUDIO /BtStudio/
 
+# Yolo
+WORKDIR /home/ws/src
+RUN git clone --recursive https://github.com/javizqh/darknet_ros_fp16.git
+RUN /bin/bash -c "darknet_ros_fp16/darknet_ros/rm_darknet_CMakeLists.sh"
+
 # Compiling and sourcing the workspace
 WORKDIR /home/ws
-RUN /bin/bash -c "source /home/drones_ws/install/setup.bash; rosdep install --from-paths src --ignore-src -r --rosdistro humble -y"
+RUN /bin/bash -c "source /home/drones_ws/install/setup.bash"
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash; colcon build --symlink-install"
 
 # build frontend
