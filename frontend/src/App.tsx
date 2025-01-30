@@ -34,7 +34,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
 
   //Only needed in Unibotics
-  const maxUsers = 10;
+  const maxUsers = 0;
   const currentUsers = React.useRef<number>(0);
   const btAtMaxCapacity = React.useRef<boolean>(false);
   const { error_critical } = useError();
@@ -100,7 +100,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
 
   const updateBtAtMaxCapacity = (currentUserCount: number) => {
     console.log("Entering update of MaxCapacity");
-    if (currentUserCount > maxUsers) {
+    if (currentUserCount > maxUsers && isUnibotics) {
       console.log("Too much users!");
       btAtMaxCapacity.current = true;
       error_critical(
