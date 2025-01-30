@@ -34,15 +34,10 @@ const setTreeStatus = (
   for (let index = 0; index < subtreeHierarchy.length; index++) {
     var moveTo = subtreeHierarchy[index];
     stateTree = Object.values(stateTree)[0];
-    console.log(moveTo, stateTree);
-    stateTree = Object.entries(stateTree)[moveTo + 1];
-    var dict: any = {};
-    const name = stateTree[0];
-    dict[name] = stateTree[1];
-    stateTree = dict;
+    stateTree = [stateTree["childs"][moveTo]];
   }
 
-  console.log("Estate", stateTree);
+  console.log("State", stateTree);
   setStatusNode(model, engine, stateTree, baseTree);
 };
 
@@ -65,7 +60,7 @@ const setStatusNode = (
 
   var nodeStatus;
   try {
-    nodeStatus = updateTree[nodeName]["state"];
+    nodeStatus = updateTree[index]["state"];
   } catch (error) {
     nodeStatus = "NONE";
     //FIX: bug here
@@ -77,10 +72,9 @@ const setStatusNode = (
 
   var node = model.getNode(nodeId) as BasicNodeModel;
 
-  var newIndex = 1;
-  // console.trace(nodeChilds)
+  var newIndex = 0;
   nodeChilds.forEach((element: any) => {
-    setStatusNode(model, engine, updateTree[nodeName], element, newIndex);
+    setStatusNode(model, engine, updateTree[index]["childs"], element, newIndex);
     newIndex += 1;
   });
 

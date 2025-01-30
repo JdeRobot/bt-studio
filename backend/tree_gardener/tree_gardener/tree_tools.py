@@ -71,7 +71,7 @@ def ascii_tree_to_json(tree):
     indent_levels = 4  # 4 spaces = 1 level deep
     do_append_coma = False
     last_indent_level = -1
-    json_str = '"tree":{'
+    json_str = '"tree":['
 
     # Remove escape chars
     ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
@@ -86,19 +86,18 @@ def ascii_tree_to_json(tree):
             state = ascii_state_to_state(entry[2])
 
         indent = int((len(line) - len(line.lstrip())) / indent_levels)
-        if not (indent > last_indent_level):
-            json_str += "}" * (last_indent_level - indent + 1)
+
+        if (indent == last_indent_level):
+            json_str += "]},"
+        elif (indent < last_indent_level):
+            json_str += "]}" * (last_indent_level - indent + 1) + ","
 
         last_indent_level = indent
 
-        if do_append_coma:
-            json_str += ","
-        else:
-            do_append_coma = True
-        json_str += '"' + name + '":{'
-        json_str += f'"state":"{state}"'
+        json_str += '{'
+        json_str += f'"state":"{state}","name":"{name},"childs":['
 
-    json_str += "}" * (last_indent_level + 1) + "}"
+    json_str += "]}" * (last_indent_level + 1) + "]"
     return json_str
 
 

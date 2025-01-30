@@ -13,19 +13,21 @@ StatusChoice = (
 )
 
 VisualizationType = (
-    ("none", "None"),
-    ("console", "Console"),
-    ("gazebo_gra", "Gazebo GRA"),
-    ("gazebo_rae", "Gazebo RAE"),
-    ("physic_gra", "Physic GRA"),
-    ("physic_rae", "Physic RAE"),
+    ('none', "None"),
+    ('console', "Console"),
+    ('gazebo_gra', "Gazebo GRA"),
+    ('gazebo_rae', "Gazebo RAE"),
+    ('gzsim_gra', "Gz Sim GRA"),
+    ('gzsim_rae', "Gz Sim RAE"),
+    ('physic_gra', "Physic GRA"),
+    ('physic_rae', "Physic RAE")
 )
 
 UniverseType = (
-    ("none", "None"),
-    ("gazebo", "Gazebo"),
-    ("drones", "Gazebo Drones"),
-    ("physical", "Physical"),
+    ('none', "None"),
+    ('gazebo', "Gazebo"),
+    ('drones', "Gazebo Drones"),
+    ('physical', "Physical")
 )
 
 RosVersion = (("ROS1", "ROS1"), ("ROS2", "ROS2"))

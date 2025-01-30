@@ -2,8 +2,7 @@ import JSZip from "jszip";
 
 // NOTE: Make sure to escape \ character
 
-const treeTools =
-`import re
+const treeTools = `import re
 import py_trees
 
 
@@ -76,7 +75,7 @@ def ascii_tree_to_json(tree):
     indent_levels = 4  # 4 spaces = 1 level deep
     do_append_coma = False
     last_indent_level = -1
-    json_str = '"tree":{'
+    json_str = '"tree":['
 
     # Remove escape chars
     ansi_escape = re.compile(r"\\x1B(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])")
@@ -91,19 +90,18 @@ def ascii_tree_to_json(tree):
             state = ascii_state_to_state(entry[2])
 
         indent = int((len(line) - len(line.lstrip())) / indent_levels)
-        if not (indent > last_indent_level):
-            json_str += "}" * (last_indent_level - indent + 1)
+
+        if (indent == last_indent_level):
+            json_str += "]},"
+        elif (indent < last_indent_level):
+            json_str += "]}" * (last_indent_level - indent + 1) + ","
 
         last_indent_level = indent
 
-        if do_append_coma:
-            json_str += ","
-        else:
-            do_append_coma = True
-        json_str += '"' + name + '":{'
-        json_str += f'"state":"{state}"'
+        json_str += '{'
+        json_str += f'"state":"{state}","name":"{name}","childs":['
 
-    json_str += "}" * (last_indent_level + 1) + "}"
+    json_str += "]}" * (last_indent_level + 1) + "]"
     return json_str
 
 
@@ -138,10 +136,9 @@ def ascii_bt_to_json(tree, blackboard, file):
     # file.write(f"{ascii_tree_to_json(tree)}")
     file.write("}")
     file.close()
-`
+`;
 
-const treeFactory = 
-`##############################################################################
+const treeFactory = `##############################################################################
 # Imports
 ##############################################################################
 
@@ -583,10 +580,9 @@ class TreeFactory(rclpy.node.Node):
             return None
 
         return self.tree
-`
+`;
 
-const packageInfo = 
-`<?xml version="1.0"?>
+const packageInfo = `<?xml version="1.0"?>
 <package format="3">
   <name>tree_gardener</name>
   <version>0.2.0</version>
@@ -606,17 +602,15 @@ const packageInfo =
     <build_type>ament_python</build_type>
   </export>
 </package>
-`
+`;
 
-const setupConfig = 
-`[develop]
+const setupConfig = `[develop]
 script_dir=$base/lib/tree_gardener
 [install]
 install_scripts=$base/lib/tree_gardener
-`
+`;
 
-const setupPython = 
-`from setuptools import setup
+const setupPython = `from setuptools import setup
 from setuptools import find_packages
 
 package_name = "tree_gardener"
@@ -647,21 +641,20 @@ setup(
     tests_require=["pytest"],
 )
 
-`
-
+`;
 
 namespace TreeGardener {
-  export function addDockerFiles(zip:JSZip ) {
+  export function addDockerFiles(zip: JSZip) {
     zip.file("tree_factory.py", treeFactory);
     zip.file("tree_tools.py", treeTools);
   }
 
-  export function addLocalFiles(zip:JSZip ) {
+  export function addLocalFiles(zip: JSZip) {
     const loc = zip.folder("tree_gardener");
 
     if (loc == null) {
-        return
-    } 
+      return;
+    }
 
     loc.file("resource/tree_gardener", "");
 

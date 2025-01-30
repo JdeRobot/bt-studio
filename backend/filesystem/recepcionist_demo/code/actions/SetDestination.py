@@ -1,5 +1,5 @@
 import py_trees
-from tree_gardener import tree_tools
+import tree_tools
 from geometry_msgs.msg import PoseStamped
 
 
@@ -83,6 +83,7 @@ class SetDestination(py_trees.behaviour.Behaviour):
             goal.pose.orientation.w = 0.0
 
         tree_tools.set_port_content(self.ports["waypoint"], goal)
+        print(goal)
 
         return py_trees.common.Status.SUCCESS
 
