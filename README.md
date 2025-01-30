@@ -13,6 +13,10 @@
 
 BT Studio is an **open-source** tool crafted for the development of robotic applications. Its primary objective is to facilitate the quick deployment of behavior tree-based robotic applications within ROS 2. In BT Studio, a robotic app is defined as an graphical tree coupled with actions scripted in Python, which the tool then translates into a ROS 2 package. This process circumvents the unnecessary complexities often associated with ROS-specific configurations, offering developers a more streamlined approach.
 
+## How to contribute?
+
+Take a look at the [contributing](CONTRIBUTING.md) guide lines.
+
 ## Usage
 
 ### Basic: No cloning repo
