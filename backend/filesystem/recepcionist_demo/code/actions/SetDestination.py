@@ -44,8 +44,8 @@ class SetDestination(py_trees.behaviour.Behaviour):
 
             goal.pose.orientation.x = 0.0
             goal.pose.orientation.y = 0.0
-            goal.pose.orientation.z = 0.0
-            goal.pose.orientation.w = 0.0
+            goal.pose.orientation.z = 0.7
+            goal.pose.orientation.w = -0.7
         elif wp_id == "Couch":
             print("Go to Couch")
             goal.pose.position.x = 1.2

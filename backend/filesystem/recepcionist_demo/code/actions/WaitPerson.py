@@ -1,7 +1,7 @@
 import py_trees
 import tree_tools
 from geometry_msgs.msg import PoseStamped
-from vision_msgs.msg import Detection3DArray
+from darknet_ros_msgs.msg import BoundingBoxes
 
 
 class WaitPerson(py_trees.behaviour.Behaviour):
@@ -27,10 +27,10 @@ class WaitPerson(py_trees.behaviour.Behaviour):
 
         # Setup the subscription to the vision msg
         self.subscription = self.node.create_subscription(
-            Detection3DArray, "/output_detection_3d", self.listener_callback, 10
+            BoundingBoxes, "/darknet_ros/bounding_boxes", self.listener_callback, 10
         )
 
-        self.last_detection_ = Detection3DArray()
+        self.last_detection_ = BoundingBoxes()
 
     def listener_callback(self, msg) -> None:
         self.last_detection_ = msg
@@ -48,12 +48,12 @@ class WaitPerson(py_trees.behaviour.Behaviour):
         if self.last_detection_ == None:
             return py_trees.common.Status.RUNNING
 
-        for detection in self.last_detection_.detections:
-            if detection.results[0].hypothesis.class_id == "person":
-                if detection.bbox.center.position.z < 1.5:
+        for detection in self.last_detection_.bounding_boxes:
+            if detection.class_id == "person":
+                if detection.probability > 0.99:
                     return py_trees.common.Status.SUCCESS
                 self.logger.info(
-                    "Client detected, depth %f" % (detection.bbox.center.position.z)
+                    "Client detected, probability %f" % (detection.probability)
                 )
 
         return py_trees.common.Status.RUNNING
