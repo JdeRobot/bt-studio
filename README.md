@@ -196,7 +196,7 @@ You can see a running application as reference here:
 
 ## Roadmap
 
-In the future, this project will have total integration with [RoboticsAcademy](https://github.com/JdeRobot/RoboticsAcademy), so developers will be able to deploy the trees in a dockerized environment. 
+In the future, this project will have total support for Gazebo Harmonic universes, for now they can be used if custom BTDI is created with the branch of Robotics Application Manager being prajyot/migration_to_gz_harmonic.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [contributors-shield]: https://img.shields.io/github/contributors/JdeRobot/bt-studio
