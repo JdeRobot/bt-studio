@@ -1,4 +1,4 @@
-import axios, { AxiosResponse} from "axios";
+import axios, { AxiosResponse } from "axios";
 
 // Helpers
 
@@ -84,7 +84,7 @@ const saveFile = async (
 
   if (fileName.split("/")[0] === "trees") {
     console.log(fileName + " is Read Only."); //TODO: test in Unibotics
-    return
+    return;
   }
 
   const apiUrl = "/bt_studio/save_file/";
@@ -311,7 +311,10 @@ const getRoboticsBackendUniversePath = async (universeName: string) => {
       ); // Response error
     }
 
-    return JSON.stringify(response.data.universe_path);
+    return {
+      universePath: response.data.universe_path,
+      visualization: response.data.visualization,
+    };
   } catch (error: unknown) {
     throw error; // Rethrow
   }
@@ -347,10 +350,7 @@ const createRoboticsBackendUniverse = async (
   }
 };
 
-const deleteUniverse = async (
-  projectName: string,
-  universeName: string,
-) => {
+const deleteUniverse = async (projectName: string, universeName: string) => {
   if (!projectName) throw new Error("The project name is not set");
   if (!universeName) throw new Error("The universe name is not set");
 
@@ -607,7 +607,7 @@ const uploadFile = async (
 const createAction = async (
   projectName: string,
   fileName: string,
-  template: string,
+  template: string
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
@@ -638,7 +638,7 @@ const createAction = async (
 const createFile = async (
   projectName: string,
   fileName: string,
-  location: string,
+  location: string
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
@@ -669,7 +669,7 @@ const createFile = async (
 const createFolder = async (
   projectName: string,
   folderName: string,
-  location: string,
+  location: string
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!folderName) throw new Error("Folder name is not set");
@@ -700,7 +700,7 @@ const createFolder = async (
 const renameFile = async (
   projectName: string,
   path: string,
-  new_path: string,
+  new_path: string
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!path) throw new Error("Path is not set");
@@ -731,7 +731,7 @@ const renameFile = async (
 const renameFolder = async (
   projectName: string,
   path: string,
-  new_path: string,
+  new_path: string
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!path) throw new Error("Path is not set");
@@ -759,10 +759,7 @@ const renameFolder = async (
   }
 };
 
-const deleteFile = async (
-  projectName: string,
-  path: string,
-) => {
+const deleteFile = async (projectName: string, path: string) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!path) throw new Error("Path is not set");
 
@@ -787,10 +784,7 @@ const deleteFile = async (
   }
 };
 
-const deleteFolder = async (
-  projectName: string,
-  path: string,
-) => {
+const deleteFolder = async (projectName: string, path: string) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!path) throw new Error("Path is not set");
 
@@ -818,7 +812,7 @@ const deleteFolder = async (
 const uploadUniverse = async (
   projectName: string,
   universeName: string,
-  uploadedUniverse: string,
+  uploadedUniverse: string
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!universeName) throw new Error("Universe name is not set");
@@ -880,7 +874,7 @@ const listProjects = async () => {
   }
 };
 
-const listUniverses = async (projectName:string ) => {
+const listUniverses = async (projectName: string) => {
   if (!projectName) throw new Error("Current Project name is not set");
 
   const apiUrl = `/bt_studio/get_universes_list?project_name=${encodeURIComponent(projectName)}`;
@@ -899,7 +893,7 @@ const listUniverses = async (projectName:string ) => {
   }
 };
 
-const getTreeStructure = async (projectName:string, btOrder: string) => {
+const getTreeStructure = async (projectName: string, btOrder: string) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
 
@@ -919,7 +913,11 @@ const getTreeStructure = async (projectName:string, btOrder: string) => {
   }
 };
 
-const getSubtreeStructure = async (projectName:string, subtreeName:string,  btOrder: string) => {
+const getSubtreeStructure = async (
+  projectName: string,
+  subtreeName: string,
+  btOrder: string
+) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!subtreeName) throw new Error("Subtree name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
@@ -939,7 +937,6 @@ const getSubtreeStructure = async (projectName:string, subtreeName:string,  btOr
     throw error; // Rethrow
   }
 };
-
 
 // Named export
 export {

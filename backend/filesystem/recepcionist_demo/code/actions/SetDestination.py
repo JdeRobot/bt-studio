@@ -1,5 +1,5 @@
 import py_trees
-from tree_gardener import tree_tools
+import tree_tools
 from geometry_msgs.msg import PoseStamped
 
 
@@ -44,8 +44,8 @@ class SetDestination(py_trees.behaviour.Behaviour):
 
             goal.pose.orientation.x = 0.0
             goal.pose.orientation.y = 0.0
-            goal.pose.orientation.z = 0.0
-            goal.pose.orientation.w = 0.0
+            goal.pose.orientation.z = 0.7
+            goal.pose.orientation.w = -0.7
         elif wp_id == "Couch":
             print("Go to Couch")
             goal.pose.position.x = 1.2
@@ -83,6 +83,7 @@ class SetDestination(py_trees.behaviour.Behaviour):
             goal.pose.orientation.w = 0.0
 
         tree_tools.set_port_content(self.ports["waypoint"], goal)
+        print(goal)
 
         return py_trees.common.Status.SUCCESS
 

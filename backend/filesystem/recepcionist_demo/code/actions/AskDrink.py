@@ -1,5 +1,5 @@
 import py_trees
-from tree_gardener import tree_tools
+import tree_tools
 
 
 class AskDrink(py_trees.behaviour.Behaviour):

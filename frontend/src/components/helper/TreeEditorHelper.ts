@@ -321,25 +321,26 @@ export const changeColorNode = (
         ")"
     );
     publish("updateAccentColor");
+    
+    model.getNodes().forEach((oldNode: NodeModel) => {
+      var convNode;
+      var name;
+      if (oldNode.getOptions().type === "tag") {
+        return;
+      }
+
+      convNode = oldNode as BasicNodeModel;
+      name = convNode.getName();
+      if (!isActionNode(name)) {
+        return;
+      }
+
+      if (name === node.getName() && node.getID() !== convNode.getID()) {
+        convNode.setColor(node.getColor());
+      }
+    });
   }
 
-  model.getNodes().forEach((oldNode: NodeModel) => {
-    var convNode;
-    var name;
-    if (oldNode.getOptions().type === "tag") {
-      return;
-    }
-
-    convNode = oldNode as BasicNodeModel;
-    name = convNode.getName();
-    if (!isActionNode(name)) {
-      return;
-    }
-
-    if (name === node.getName() && node.getID() !== convNode.getID()) {
-      convNode.setColor(node.getColor());
-    }
-  });
 
   diagramEditedCallback(true);
   updateJsonState();

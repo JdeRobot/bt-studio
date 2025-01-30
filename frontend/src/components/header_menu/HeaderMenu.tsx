@@ -104,15 +104,21 @@ const HeaderMenu = ({
 
     try {
       if (configJson.type === "robotics_backend") {
-        const launch_file_path = await getRoboticsBackendUniversePath(
+        const dockerUniverseInfo = await getRoboticsBackendUniversePath(
           configJson.id,
         );
 
+        let visualization = "bt_studio";
+
+        if (dockerUniverseInfo.visualization === "gzsim_rae") {
+          visualization = "bt_studio_gz";
+        }
+
         const universe_config = {
           name: configJson.name,
-          launch_file_path: launch_file_path,
+          launch_file_path: dockerUniverseInfo.universePath,
           ros_version: "ROS2",
-          visualization: "bt_studio",
+          visualization: visualization,
           world: "gazebo",
         };
 

@@ -1355,7 +1355,12 @@ def get_docker_universe_path(request):
         universe = Universe.objects.get(name=name)
 
         # Return the list of projects
-        return Response({"universe_path": universe.launch_file_path})
+        return Response(
+            {
+                "universe_path": universe.launch_file_path,
+                "visualization": universe.visualization,
+            }
+        )
 
     except Exception as e:
         return Response({"error": f"An error occurred: {str(e)}"}, status=500)
