@@ -87,14 +87,14 @@ def ascii_tree_to_json(tree):
 
         indent = int((len(line) - len(line.lstrip())) / indent_levels)
 
-        if (indent == last_indent_level):
+        if indent == last_indent_level:
             json_str += "]},"
-        elif (indent < last_indent_level):
+        elif indent < last_indent_level:
             json_str += "]}" * (last_indent_level - indent + 1) + ","
 
         last_indent_level = indent
 
-        json_str += '{'
+        json_str += "{"
         json_str += f'"state":"{state}","name":"{name},"childs":['
 
     json_str += "]}" * (last_indent_level + 1) + "]"

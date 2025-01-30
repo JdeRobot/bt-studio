@@ -74,7 +74,13 @@ const setStatusNode = (
 
   var newIndex = 0;
   nodeChilds.forEach((element: any) => {
-    setStatusNode(model, engine, updateTree[index]["childs"], element, newIndex);
+    setStatusNode(
+      model,
+      engine,
+      updateTree[index]["childs"],
+      element,
+      newIndex,
+    );
     newIndex += 1;
   });
 
