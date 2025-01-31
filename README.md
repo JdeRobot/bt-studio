@@ -199,9 +199,11 @@ ros2 run your_app_name executor
 
 ## Showcase
 
-You can see a running application as reference here:
+You can see some demos running application as reference here:
 
-[Showcase video](https://www.youtube.com/watch?v=Bo4SJEiBKGQ)
+* [Receptionist Demo video](https://www.youtube.com/watch?v=2AuwqGPP8WQ)
+* [Bump & Go Demo video](https://www.youtube.com/watch?v=luxoZLU-Y8g)
+* [Follow Person Demo video](https://www.youtube.com/watch?v=q_K0pl-IoFA)
 
 ## Roadmap
 
