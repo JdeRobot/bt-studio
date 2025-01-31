@@ -4,7 +4,7 @@
 
 # BT Studio
 
-![version](https://img.shields.io/badge/Version-0.7-blue)
+![version](https://img.shields.io/badge/Version-0.8.2-blue)
 ![distro](https://img.shields.io/badge/ROS2-Humble-blue)
 [![License](http://img.shields.io/:license-gpl-green.svg)](http://opensource.org/licenses/GPL-3.0)
 ![stars](https://img.shields.io/github/stars/JdeRobot/bt-studio)
