@@ -250,7 +250,7 @@ def get_subtree_structure(request):
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(base_path, project_name)
-    subtree_path = os.path.join(project_path, "code/trees/subtrees/json")
+    subtree_path = os.path.join(project_path, "code/trees/subtrees")
     graph_path = os.path.join(subtree_path, subtree_name + ".json")
 
     # Check if the project exists
