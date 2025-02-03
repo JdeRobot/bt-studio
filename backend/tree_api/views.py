@@ -950,7 +950,7 @@ def generate_local_app(request):
     project_path = os.path.join(base_path, app_name)
     action_path = os.path.join(project_path, "code/actions")
     tree_path = os.path.join(project_path, "code/trees/main.json")
-    subtree_path = os.path.join(project_path, "code/trees/subtrees/json")
+    subtree_path = os.path.join(project_path, "code/trees/subtrees")
 
     subtrees = []
     actions = []
@@ -1035,7 +1035,7 @@ def generate_dockerized_app(request):
     project_path = os.path.join(base_path, app_name)
     action_path = os.path.join(project_path, "code/actions")
     tree_path = os.path.join(project_path, "code/trees/main.json")
-    subtree_path = os.path.join(project_path, "code/trees/subtrees/json")
+    subtree_path = os.path.join(project_path, "code/trees/subtrees")
 
     subtrees = []
     actions = []
