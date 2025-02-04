@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<Root name="Tree Root">
-  <BehaviorTree>
-    <Sequence name="Sequence">
-      <CheckObstacle name="CheckObstacle" amplitude="20" obs_dist="1.0"/>
-    </Sequence>
-  </BehaviorTree>
-</Root>
