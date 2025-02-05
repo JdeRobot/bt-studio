@@ -179,6 +179,10 @@ export default class CommsManager {
     return this.send("disconnect");
   }
 
+  public style_check(code: string) {
+    return this.send("style_check", {code: code});
+  }
+
   public code_format(code: string) {
     return this.send("code_format", {code: code});
   }
