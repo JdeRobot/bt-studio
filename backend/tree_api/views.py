@@ -1341,11 +1341,29 @@ def get_docker_universe_path(request):
     try:
         universe = Universe.objects.get(name=name)
 
+        config = {
+            "name": universe.name,
+            "world": {
+                "name": universe.world.name,
+                "launch_file_path": universe.world.launch_file_path,
+                "ros_version": universe.world.ros_version,
+                "visualization": universe.world.visualization,
+                "world": universe.world.world,
+            },
+            "robot": {
+                "name": universe.robot.name,
+                "launch_file_path": universe.robot.launch_file_path,
+                "ros_version": universe.world.ros_version,
+                "visualization": universe.world.visualization,
+                "world": universe.world.world,
+            },
+        }
+
         # Return the list of projects
         return Response(
             {
-                "universe_path": universe.launch_file_path,
-                "visualization": universe.visualization,
+                "success": True,
+                "universe": config,
             }
         )
 

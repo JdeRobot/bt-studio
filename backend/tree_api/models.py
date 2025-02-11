@@ -1,11 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
-import json
-from django.db import models
-import subprocess
-
 StatusChoice = (
     ("ACTIVE", "ACTIVE"),
     ("INACTIVE", "INACTIVE"),
@@ -30,12 +24,27 @@ UniverseType = (
     ("physical", "Physical"),
 )
 
-RosVersion = (("ROS1", "ROS1"), ("ROS2", "ROS2"))
+RosVersion = (("ROS", "ROS"), ("ROS2", "ROS2"))
 
 
-class Universe(models.Model):
+class Robot(models.Model):
     """
-    Modelo Universe para RoboticsCademy
+    Modelo Robot para RoboticsAcademy
+    """
+
+    name = models.CharField(max_length=100, blank=False, unique=True)
+    launch_file_path = models.CharField(max_length=200, blank=False)
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        db_table = '"robots"'
+
+
+class World(models.Model):
+    """
+    Modelo World para RoboticsCademy
     """
 
     name = models.CharField(max_length=100, blank=False, unique=True)
@@ -46,6 +55,26 @@ class Universe(models.Model):
     )
     world = models.CharField(
         max_length=50, choices=UniverseType, default="none", blank=False
+    )
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        db_table = '"worlds"'
+
+
+class Universe(models.Model):
+    """
+    Modelo Universe para Robotics Academy
+    """
+
+    name = models.CharField(max_length=100, blank=False, unique=True)
+    world = models.OneToOneField(
+        World, default=None, on_delete=models.CASCADE, db_column='"world_id"'
+    )
+    robot = models.OneToOneField(
+        Robot, default=None, on_delete=models.CASCADE, db_column='"robot_id"'
     )
 
     def __str__(self):

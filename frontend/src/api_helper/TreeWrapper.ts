@@ -312,8 +312,8 @@ const getRoboticsBackendUniversePath = async (universeName: string) => {
     }
 
     return {
-      universePath: response.data.universe_path,
-      visualization: response.data.visualization,
+      world: response.data.universe.world,
+      robot: response.data.universe.robot,
     };
   } catch (error: unknown) {
     throw error; // Rethrow

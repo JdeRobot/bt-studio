@@ -110,21 +110,35 @@ const HeaderMenu = ({
 
         let visualization = "bt_studio";
 
-        if (dockerUniverseInfo.visualization === "gzsim_rae") {
+        if (dockerUniverseInfo.world.visualization === "gzsim_rae") {
           visualization = "bt_studio_gz";
         }
 
+        const world_config = {
+          name: dockerUniverseInfo.world.name,
+          launch_file_path: dockerUniverseInfo.world.launch_file_path,
+          ros_version: dockerUniverseInfo.world.ros_version,
+          visualization: visualization,
+          world: dockerUniverseInfo.world.world,
+        };
+
+        const robot_config = {
+          name: dockerUniverseInfo.robot.name,
+          launch_file_path: dockerUniverseInfo.robot.launch_file_path,
+          ros_version: dockerUniverseInfo.world.ros_version,
+          visualization: visualization,
+          world: dockerUniverseInfo.world.world,
+        };
+
         const universe_config = {
           name: configJson.name,
-          launch_file_path: dockerUniverseInfo.universePath,
-          ros_version: "ROS2",
-          visualization: visualization,
-          world: "gazebo",
+          world: world_config,
+          robot: robot_config,
         };
 
         await manager.launchWorld(universe_config);
         console.log("RB universe launched!");
-        await manager.prepareVisualization(universe_config.visualization);
+        await manager.prepareVisualization(visualization);
         console.log("Viz ready!");
       } else {
         console.log("Custom universe rework underway");
@@ -138,7 +152,8 @@ const HeaderMenu = ({
         reader.onloadend = async function () {
           // Get the zip in base64
           var base64data = reader.result;
-          const universe_config = {
+
+          const world_config = {
             name: configJson.name,
             launch_file_path: configJson.ram_config.launch_file_path,
             ros_version: configJson.ram_config.ros_version,
@@ -146,9 +161,24 @@ const HeaderMenu = ({
             world: configJson.ram_config.world,
             zip: base64data,
           };
+
+          const robot_config = {
+            name: null,
+            launch_file_path: null,
+            ros_version: null,
+            visualization: null,
+            world: null,
+          };
+
+          const universe_config = {
+            name: configJson.name,
+            world: world_config,
+            robot: robot_config,
+          };
+
           await manager.launchWorld(universe_config);
           console.log("RB universe launched!");
-          await manager.prepareVisualization(universe_config.visualization);
+          await manager.prepareVisualization(world_config.visualization);
           console.log("Viz ready!");
         };
       }
