@@ -20,7 +20,6 @@ export default class CommsManager {
     // Message callback
     this.ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
-      // console.log(msg);
 
       // Check if the message ID exists in the pending promises map
       const handlers = this.pendingPromises.get(msg.id);
@@ -180,6 +179,10 @@ export default class CommsManager {
     return this.send("disconnect");
   }
 
+  public style_check(code: string) {
+    return this.send("style_check", {code: code});
+  }
+
   public code_format(code: string) {
     return this.send("code_format", {code: code});
   }
@@ -190,6 +193,10 @@ export default class CommsManager {
       disable_errors: disable_errors,
     });
   }
+
+  public code_autocomplete(code: string, line:number, col:number) {
+    return this.send("code_autocomplete", {code: code, line:line, col:col});
+  }
 }
 
 // const events = {
@@ -199,4 +206,5 @@ export default class CommsManager {
 //   INTROSPECTION: "introspection",
 //   CODE_FORMAT: "code-format",
 //   CODE_ANALYSIS: "code-analysis",
+//   CODE_AUTOCOMPLETE: "code-autocomplete",
 // };

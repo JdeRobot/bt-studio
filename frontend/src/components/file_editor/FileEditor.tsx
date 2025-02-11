@@ -9,6 +9,7 @@ import { getFile, saveFile } from "../../api_helper/TreeWrapper";
 import { useError } from "../error_popup/ErrorModal";
 import { OptionsContext } from "../options/Options";
 import CommsManager from "../../api_helper/CommsManager";
+import { monacoEditorSnippet } from "./extras";
 
 const fileTypes = {
   json: "json",
@@ -178,6 +179,8 @@ const FileEditor = ({
     editorRef.current = editor;
 
     editorRef.current.getDomNode().addEventListener("keydown", handleKeyDown);
+
+    monacoEditorSnippet(monaco, manager);
 
     editorRef.current.addCommand(
       monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyI,
