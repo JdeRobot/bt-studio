@@ -8,7 +8,7 @@ from . import app_generator
 from . import tree_generator
 from . import json_translator
 from . import templates
-from .models import Universe
+from .models import Robot, Universe, World
 from .project_view import list_dir, EntryEncoder
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -1327,6 +1327,29 @@ def list_docker_universes(request):
     except Exception as e:
         return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
+@api_view(["GET"])
+def list_docker_worlds(request):
+    try:
+        worlds = World.objects.all()
+        worlds_docker_list = [x.name for x in worlds]
+        print(worlds_docker_list)
+        # Return the list of projects
+        return Response({"worlds": worlds_docker_list})
+
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
+    
+@api_view(["GET"])
+def list_docker_robots(request):
+    try:
+        robots = Robot.objects.all()
+        robots_docker_list = [x.name for x in robots]
+        print(robots_docker_list)
+        # Return the list of projects
+        return Response({"robots": robots_docker_list})
+
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 @api_view(["GET"])
 def get_docker_universe_path(request):

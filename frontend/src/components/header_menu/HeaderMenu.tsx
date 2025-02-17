@@ -157,7 +157,7 @@ const HeaderMenu = ({
             name: configJson.name,
             launch_file_path: configJson.ram_config.launch_file_path,
             ros_version: configJson.ram_config.ros_version,
-            visualization: "bt_studio",
+            visualization: "bt_studio_gz",
             world: configJson.ram_config.world,
             zip: base64data,
           };

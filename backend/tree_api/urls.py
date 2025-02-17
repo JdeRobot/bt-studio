@@ -23,6 +23,16 @@ urlpatterns = [
         name="list_docker_universes",
     ),
     path(
+        "list_docker_worlds/",
+        views.list_docker_worlds,
+        name="list_docker_worlds",
+    ),
+    path(
+        "list_docker_robots/",
+        views.list_docker_robots,
+        name="list_docker_robots",
+    ),
+    path(
         "get_docker_universe_path/",
         views.get_docker_universe_path,
         name="get_docker_universe_path",

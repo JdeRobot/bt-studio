@@ -4,6 +4,7 @@ import Modal from "../../Modal/Modal";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 import { ReactComponent as DeleteIcon } from "../../tree_editor/img/delete.svg";
 import CreatePage from "./universe/CreatePage";
+import CreateWorldPage from "./universe/CreateWorldPage";
 import UniverseUploadModal from "./UniverseUploadModal";
 import { deleteUniverse, listUniverses } from "../../../api_helper/TreeWrapper";
 import { useError } from "../../error_popup/ErrorModal";
@@ -178,7 +179,7 @@ const UniverseModal = ({
           </>
         ) : (
           <>
-            <CreatePage
+            <CreateWorldPage
               setVisible={showCreationMenu}
               visible={creationMenu}
               onClose={onClose}

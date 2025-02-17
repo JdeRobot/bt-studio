@@ -350,6 +350,39 @@ const createRoboticsBackendUniverse = async (
   }
 };
 
+const createRoboticsBackendWorldAndRobot = async (
+  projectName: string,
+  universeName: string,
+  worldId: string,
+  robotId: string
+) => {
+  if (!projectName) throw new Error("The project name is not set");
+  if (!universeName) throw new Error("The universe name is not set");
+  if (!worldId) throw new Error("The world id is not set");
+  if (!robotId) throw new Error("The robot id is not set");
+
+  const apiUrl = "/bt_studio/add_docker_world_and_robot/";
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        app_name: projectName,
+        universe_name: universeName,
+        world_id: worldId,
+        robot_id: robotId,
+      },
+      axiosExtra
+    );
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to save subtree."); // Response error
+    }
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 const deleteUniverse = async (projectName: string, universeName: string) => {
   if (!projectName) throw new Error("The project name is not set");
   if (!universeName) throw new Error("The universe name is not set");
@@ -857,6 +890,41 @@ const listDockerUniverses = async () => {
   }
 };
 
+const listDockerWorlds = async () => {
+  const apiUrl = `/bt_studio/list_docker_worlds`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get subtree."); // Response error
+    }
+
+    return response.data.worlds;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
+const listDockerRobots = async () => {
+  const apiUrl = `/bt_studio/list_docker_robots`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get subtree."); // Response error
+    }
+
+    return response.data.robots;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
+
 const listProjects = async () => {
   const apiUrl = `/bt_studio/get_project_list`;
 
@@ -945,6 +1013,7 @@ export {
   createFolder,
   createProject,
   createRoboticsBackendUniverse,
+  createRoboticsBackendWorldAndRobot,
   createSubtree,
   deleteFile,
   deleteFolder,
@@ -964,6 +1033,8 @@ export {
   getTreeStructure,
   getUniverseConfig,
   listDockerUniverses,
+  listDockerWorlds,
+  listDockerRobots,
   listProjects,
   listUniverses,
   loadProjectConfig,
