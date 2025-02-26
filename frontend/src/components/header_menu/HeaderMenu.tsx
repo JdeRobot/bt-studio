@@ -110,25 +110,13 @@ const HeaderMenu = ({
 
         let visualization = "bt_studio";
 
-        if (dockerUniverseInfo.world.visualization === "gzsim_rae") {
+        if (dockerUniverseInfo.visualization === "gzsim_rae") {
           visualization = "bt_studio_gz";
         }
 
-        const world_config = {
-          name: dockerUniverseInfo.world.name,
-          launch_file_path: dockerUniverseInfo.world.launch_file_path,
-          ros_version: dockerUniverseInfo.world.ros_version,
-          visualization: visualization,
-          world: dockerUniverseInfo.world.world,
-        };
+        const world_config = dockerUniverseInfo.world;
 
-        const robot_config = {
-          name: dockerUniverseInfo.robot.name,
-          launch_file_path: dockerUniverseInfo.robot.launch_file_path,
-          ros_version: dockerUniverseInfo.world.ros_version,
-          visualization: visualization,
-          world: dockerUniverseInfo.world.world,
-        };
+        const robot_config = dockerUniverseInfo.robot;
 
         const universe_config = {
           name: configJson.name,
@@ -138,7 +126,7 @@ const HeaderMenu = ({
 
         await manager.launchWorld(universe_config);
         console.log("RB universe launched!");
-        await manager.prepareVisualization(visualization);
+        await manager.prepareVisualization(visualization, dockerUniverseInfo.visualization_config);
         console.log("Viz ready!");
       } else {
         console.log("Custom universe rework underway");
@@ -157,7 +145,6 @@ const HeaderMenu = ({
             name: configJson.name,
             launch_file_path: configJson.ram_config.launch_file_path,
             ros_version: configJson.ram_config.ros_version,
-            visualization: "bt_studio",
             world: configJson.ram_config.world,
             zip: base64data,
           };
@@ -166,8 +153,8 @@ const HeaderMenu = ({
             name: null,
             launch_file_path: null,
             ros_version: null,
-            visualization: null,
             world: null,
+            start_pose: null,
           };
 
           const universe_config = {
@@ -178,7 +165,7 @@ const HeaderMenu = ({
 
           await manager.launchWorld(universe_config);
           console.log("RB universe launched!");
-          await manager.prepareVisualization(world_config.visualization);
+          await manager.prepareVisualization("bt_studio_gz", null);
           console.log("Viz ready!");
         };
       }

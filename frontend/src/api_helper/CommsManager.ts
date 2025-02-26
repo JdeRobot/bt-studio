@@ -139,8 +139,8 @@ export default class CommsManager {
     return this.send("launch_world", cfg);
   }
 
-  public prepareVisualization(visualization_type: string) {
-    return this.send("prepare_visualization", visualization_type);
+  public prepareVisualization(visualization_type: string, visualization_config: string | null) {
+    return this.send("prepare_visualization", {type: visualization_type, file: visualization_config});
   }
 
   public run(cfg: Object) {

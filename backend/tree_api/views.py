@@ -1347,16 +1347,17 @@ def get_docker_universe_path(request):
                 "name": universe.world.name,
                 "launch_file_path": universe.world.launch_file_path,
                 "ros_version": universe.world.ros_version,
-                "visualization": universe.world.visualization,
                 "world": universe.world.world,
             },
             "robot": {
                 "name": universe.robot.name,
                 "launch_file_path": universe.robot.launch_file_path,
                 "ros_version": universe.world.ros_version,
-                "visualization": universe.world.visualization,
                 "world": universe.world.world,
+                "start_pose": universe.world.start_pose
             },
+            "visualization": universe.world.visualization,
+            "visualization_config_path": universe.world.visualization_config_path
         }
 
         # Return the list of projects
