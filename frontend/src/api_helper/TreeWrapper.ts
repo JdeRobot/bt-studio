@@ -102,7 +102,13 @@ const saveFile = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
+      if (response.status == 507){
+        console.log("Entering right thorugh max user size limit")
+        //throw new Error("You're using too much AWS space!" ||  response.data.message)
+        throw new Error("You're using too much AWS space!")
+      } else {
       throw new Error(response.data.message || "Failed to create project."); // Response error
+      }
     }
   } catch (error) {
     throw error; // Rethrow
@@ -178,7 +184,12 @@ const saveBaseTree = async (modelJson: string, currentProjectname: string) => {
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
+      if (response.status == 507){
+        console.log("Entering right thorugh max user size limit")
+        throw new Error("You're using too much AWS space!")
+      } else {
       throw new Error(response.data.message || "Failed to create project."); // Response error
+      }
     }
   } catch (error: unknown) {
     throw error; // Rethrow
@@ -242,7 +253,12 @@ const saveProjectConfig = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
+      if (response.status == 507){
+        console.log("Entering right thorugh max user size limit")
+        throw new Error("You're using too much AWS space!")
+      } else {
       throw new Error(response.data.message || "Failed to create project."); // Response error
+      }
     }
   } catch (error: unknown) {
     throw error; // Rethrow
@@ -563,7 +579,12 @@ const saveSubtree = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to save subtree."); // Response error
+      if (response.status == 507){
+        console.log("Entering right thorugh max user size limit")
+        throw new Error("You're using too much AWS space!")
+      } else {
+      throw new Error(response.data.message || "Failed to create project."); // Response error
+      }
     }
   } catch (error: unknown) {
     throw error; // Rethrow

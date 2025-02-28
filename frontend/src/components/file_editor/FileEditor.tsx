@@ -273,8 +273,13 @@ const FileEditor = ({
       console.log("Auto save completed");
     } catch (e) {
       if (e instanceof Error) {
-        console.error("Error saving file: " + e.message);
-        error("Error saving file: " + e.message);
+        if (e.message="You're using too much AWS space!"){
+          console.error("Error saving file: " + e.message);
+          error("Error saving file: " + e.message);
+        } else {
+          console.error("Error saving file: " + e.message);
+          error("Error saving file: " + e.message);
+        }
       }
     }
   };
@@ -324,8 +329,13 @@ const FileEditor = ({
       setProjectChanges(false);
     } catch (e) {
       if (e instanceof Error) {
-        console.error("Error saving file: " + e.message);
-        error("Error saving file: " + e.message);
+        if (e.message="You're using too much AWS space!"){
+          console.error("Error saving file: " + e.message);
+          error("Error saving file: " + e.message);
+        } else {
+          console.error("Error saving file: " + e.message);
+          error("Error saving file: " + e.message);
+        }
       }
     }
   };
