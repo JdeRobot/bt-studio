@@ -1,15 +1,24 @@
 import axios, { AxiosResponse } from "axios";
+import { SettingsData, SettingData } from "../components/options/Options";
 
 // Helpers
 
 const isSuccessful = (response: AxiosResponse) => {
   return response.status >= 200 && response.status < 300;
 };
+const getCookie=(name: string)=>{
 
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);  //to get CSRF token among all the cookies in 'value'
+    if (parts.length === 2) return parts.pop()?.split(';').shift();
+    return undefined;
+};
+
+const csrfToken = getCookie('csrftoken');
 const axiosExtra = {
   headers: {
     //@ts-ignore Needed for compatibility with Unibotics
-    "X-CSRFToken": context.csrf,
+    "X-CSRFToken": csrfToken,
   },
 };
 
@@ -187,7 +196,7 @@ const saveBaseTree = async (modelJson: string, currentProjectname: string) => {
 
 const loadProjectConfig = async (
   currentProjectname: string,
-  settings: Object
+  settings: SettingsData
 ) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
@@ -195,30 +204,27 @@ const loadProjectConfig = async (
   try {
     const response = await axios.get(apiUrl);
 
-    // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
       throw new Error(
         response.data.message || "Failed to retrieve project config"
-      ); // Response error
+      );
     }
 
-    // Extract the project settings from the response
     let raw_config = JSON.parse(response.data);
     let project_settings = raw_config.config;
 
-    // Load all the settings
-    Object.entries(settings).map(([key, value]) => {
+    Object.entries(settings).forEach(([key, value]) => {
       value.setter(
         project_settings[key] ? project_settings[key] : value.default_value
       );
     });
   } catch (error) {
     console.log("Loading default settings");
-    Object.entries(settings).map(([key, value]) => {
+    Object.entries(settings).forEach(([key, value]) => {
       value.setter(value.default_value);
     });
 
-    throw error; // Rethrow
+    throw error;
   }
 };
 
