@@ -51,7 +51,11 @@ jobs:
   push_to_registry:
     name: Run Test and Update Docker Image
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.inputs.tag }}
     steps:
+      - name: Save the version tag
+        run: echo "TAG=${TAG#v}" >> $GITHUB_ENV
       - name: Check out the repo # checking our the code at current commit that triggers the workflow
         uses: actions/checkout@v3
         with:
@@ -74,13 +78,13 @@ jobs:
         run: |
           cd scripts
           docker build --no-cache -f Dockerfile.database_BT \
-            --build-arg IMAGE_TAG=${{ github.event.inputs.tag }} \
+            --build-arg IMAGE_TAG=${TAG} \
             --build-arg BT_STUDIO=${{ github.event.inputs.BT }}\
             --build-arg ROBOTICS_INFRASTRUCTURE=${{ github.event.inputs.RI }} \
-            -t jderobot/bt-studio-database:${{ github.event.inputs.tag }} .
-          docker push jderobot/bt-studio-database:${{ github.event.inputs.tag }}
+            -t jderobot/bt-studio-database:${TAG} .
+          docker push jderobot/bt-studio-database:${TAG}
       - name: Upload as Latest
         if:  ${{ inputs.latest }} 
         run: |
-            docker image tag jderobot/bt-studio-database:${{ github.event.inputs.tag }} jderobot/bt-studio-database:latest
+            docker image tag jderobot/bt-studio-database:${TAG} jderobot/bt-studio-database:latest
             docker push jderobot/bt-studio-database:latest
