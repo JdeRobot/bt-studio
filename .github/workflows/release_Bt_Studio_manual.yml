@@ -1,5 +1,5 @@
 # Generates and uploads an image of Bt-Studio and Bt-Studio database using the desired tag and branches
-name: Release new Bt Studio Version
+name: Release new Bt Studio Version Manually
 
 on:
   workflow_dispatch:
