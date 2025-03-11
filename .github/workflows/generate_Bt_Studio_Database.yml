@@ -76,8 +76,8 @@ jobs:
 
       - name: Build and push Bt Studio database
         run: |
-          cd scripts
-          docker build --no-cache -f Dockerfile.database_BT \
+          cd scripts/BTDI
+          docker build --no-cache -f Dockerfile.database \
             --build-arg IMAGE_TAG=${TAG} \
             --build-arg BT_STUDIO=${{ github.event.inputs.BT }}\
             --build-arg ROBOTICS_INFRASTRUCTURE=${{ github.event.inputs.RI }} \

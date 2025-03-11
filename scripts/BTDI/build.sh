@@ -85,7 +85,7 @@ echo
 # Determine Dockerfile based on ROS_DISTRO
 if [[ $ROS_DISTRO == "humble" ]]; then
     DOCKERFILE_BASE="Dockerfile.dependencies_humble"
-    DOCKERFILE="Dockerfile.mini_humble"
+    DOCKERFILE="Dockerfile.humble"
 else
     echo "Error: Unknown ROS_DISTRO ($ROS_DISTRO). Please set it to 'noetic' or 'humble'."
     exit 1
