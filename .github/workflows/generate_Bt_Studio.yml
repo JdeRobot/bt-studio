@@ -71,7 +71,11 @@ jobs:
   push_to_registry:
     name: Run Test and Update Docker Image
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.inputs.tag }}
     steps:
+      - run: echo "TAG=${TAG#v}" >> $GITHUB_ENV
+      - run: echo ${TAG}
       - name: Check out the repo # checking our the code at current commit that triggers the workflow
         uses: actions/checkout@v3
         with:
@@ -108,14 +112,14 @@ jobs:
               --build-arg ROBOTICS_INFRASTRUCTURE=${{ github.event.inputs.RI }} \
               --build-arg RAM=${{ github.event.inputs.RAM }} \
               --build-arg ROS_DISTRO=${{ github.event.inputs.ROS }} \
-              --build-arg IMAGE_TAG=${{ github.event.inputs.tag }} \
-              -t jderobot/bt-studio:${{ github.event.inputs.tag }} .
-            docker push jderobot/bt-studio:${{ github.event.inputs.tag }}
+              --build-arg IMAGE_TAG=${TAG} \
+              -t jderobot/bt-studio:${TAG} .
+            docker push jderobot/bt-studio:${TAG}
           else
             echo "Incorrect ROS version"
           fi
       - name: Upload as Latest
         if:  ${{ inputs.latest }} 
         run: |
-            docker image tag jderobot/bt-studio:${{ github.event.inputs.tag }} jderobot/bt-studio:latest
+            docker image tag jderobot/bt-studio:${TAG} jderobot/bt-studio:latest
             docker push jderobot/bt-studio:latest

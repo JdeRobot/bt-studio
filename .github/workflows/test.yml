@@ -14,7 +14,7 @@ jobs:
     name: Generate Bt-Studio Image
     uses: ./.github/workflows/generate_Bt_Studio.yml
     with:
-      tag: ${${{ github.event.inputs.tag }}#v}
+      tag: ${{ github.event.inputs.tag }}
       latest: false
       BT: main
       RI: humble-devel
