@@ -1,0 +1,28 @@
+# Generates and uploads an image of Bt-Studio and Bt-Studio database using the desired tag and branches
+name: Release new Bt Studio Version
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  generate-Bt-Studio-docker-image:
+    name: Generate Bt-Studio Image
+    uses: ./.github/workflows/generate_Bt_Studio.yml
+    with:
+      tag: ${${{ github.ref_name }}#v}
+      latest: true
+      BT: main
+      RI: humble-devel
+      RAM: humble-devel
+      ROS: humble
+    secrets: inherit
+  generate-Bt-Studio-database-docker-image:
+    name: Generate Bt-Studio Database Image
+    uses: ./.github/workflows/generate_Bt_Studio_Database.yml
+    with:
+      tag: ${${{ github.ref_name }}#v}
+      latest: true
+      BT: main
+      RI: database
+    secrets: inherit
