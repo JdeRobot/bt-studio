@@ -97,17 +97,17 @@ jobs:
       - name: Build base image
         run: |
           sudo apt-get update
-          cd scripts
+          cd scripts/BTDI
           if [ "${{ github.event.inputs.ROS }}" == "humble" ]; then
-            docker build -f Dockerfile.dependencies_humble_bt_studio -t jderobot/robotics-applications:dependencies-humble .
+            docker build -f Dockerfile.dependencies_humble -t jderobot/robotics-applications:dependencies-humble .
           else
             echo "Incorrect ROS version"
           fi
       - name: Build and push BTDI
         run: |
-          cd scripts
+          cd scripts/BTDI
           if [ "${{ github.event.inputs.ROS }}" == "humble" ]; then
-            docker build --no-cache -f Dockerfile.humble_BT \
+            docker build --no-cache -f Dockerfile.humble \
               --build-arg BT_STUDIO=${{ github.event.inputs.BT }}\
               --build-arg ROBOTICS_INFRASTRUCTURE=${{ github.event.inputs.RI }} \
               --build-arg RAM=${{ github.event.inputs.RAM }} \
