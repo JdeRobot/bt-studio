@@ -10,7 +10,7 @@ jobs:
     name: Generate Bt-Studio Image
     uses: ./.github/workflows/generate_Bt_Studio.yml
     with:
-      tag: ${${{ github.ref_name }}#v}
+      tag: ${{ github.ref_name }}
       latest: true
       BT: main
       RI: humble-devel
@@ -21,7 +21,7 @@ jobs:
     name: Generate Bt-Studio Database Image
     uses: ./.github/workflows/generate_Bt_Studio_Database.yml
     with:
-      tag: ${${{ github.ref_name }}#v}
+      tag: ${{ github.ref_name }}
       latest: true
       BT: main
       RI: database
