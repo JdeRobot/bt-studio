@@ -24,7 +24,7 @@ Take a look at the [contributing](CONTRIBUTING.md) guide lines.
 To save the code you will need to download the app. Everything will be reset every time the command below is launched.
 
 ```bash
-curl -s https://raw.githubusercontent.com/JdeRobotbt-studio//main/scripts/run.sh | sudo bash
+curl -s https://raw.githubusercontent.com/JdeRobot/bt-studio/main/scripts/run.sh | sudo bash
 ```
 
 ### Developer
