@@ -27,7 +27,7 @@ jobs:
           node-version: '17'
 
       - name: Install Prettier
-        run: npm install -g prettier@3.4.1
+        run: npm install -g prettier
 
       - name: Prettify code
         run: prettier --check "frontend/src/**/*.{js,jsx,css,tsx,html}"
