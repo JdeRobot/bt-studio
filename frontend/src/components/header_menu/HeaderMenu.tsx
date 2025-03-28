@@ -94,12 +94,21 @@ const HeaderMenu = ({
     await manager.terminateUniverse();
   };
 
-  const zipFile = async (zip: JSZip, universe_name:string, file_path: string, file_name: string) => {
-    var content = await getUniverseFile(currentProjectname, universe_name, file_path);
+  const zipFile = async (
+    zip: JSZip,
+    universe_name: string,
+    file_path: string,
+    file_name: string,
+  ) => {
+    var content = await getUniverseFile(
+      currentProjectname,
+      universe_name,
+      file_path,
+    );
     zip.file(file_name, content);
   };
 
-  const zipFolder = async (zip: JSZip, file: Entry, universe_name:string,) => {
+  const zipFolder = async (zip: JSZip, file: Entry, universe_name: string) => {
     const folder = zip.folder(file.name);
 
     if (folder === null) {
@@ -117,6 +126,16 @@ const HeaderMenu = ({
     }
   };
 
+  const zipToData = (zip: JSZip) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      zip.generateAsync({ type: "blob" }).then(function (content) {
+        reader.readAsDataURL(content);
+      });
+    });
+  };
+
   const launchUniverse = async (universeConfig: string) => {
     if (!manager) {
       warning(
@@ -126,7 +145,7 @@ const HeaderMenu = ({
     }
 
     if (currentProjectname === "") {
-      error("Failed to find the current project name.")
+      error("Failed to find the current project name.");
       return;
     }
 
@@ -175,15 +194,18 @@ const HeaderMenu = ({
         console.log("Custom universe rework underway");
         console.warn("Custom universe rework underway");
 
-        const file_list = await getUniverseFileList(currentProjectname, configJson.name);
+        const file_list = await getUniverseFileList(
+          currentProjectname,
+          configJson.name,
+        );
         const files: Entry[] = JSON.parse(file_list);
 
         const universe: Entry = {
           name: configJson.name,
           is_dir: true,
           path: "",
-          files: files
-        }
+          files: files,
+        };
 
         const zip = new JSZip();
 
@@ -197,43 +219,35 @@ const HeaderMenu = ({
           }
         }
 
-        // Convert the blob to base64 using FileReader
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          const base64data = reader.result; // Get the zip in base64
+        const base64data = await zipToData(zip);
 
-          const world_config = {
-            name: configJson.name,
-            launch_file_path: configJson.ram_config.launch_file_path,
-            ros_version: configJson.ram_config.ros_version,
-            visualization: "bt_studio_gz",
-            world: configJson.ram_config.world,
-            zip: base64data,
-          };
-
-          const robot_config = {
-            name: null,
-            launch_file_path: null,
-            ros_version: null,
-            visualization: null,
-            world: null,
-          };
-
-          const universe_config = {
-            name: configJson.name,
-            world: world_config,
-            robot: robot_config,
-          };
-
-          await manager.launchWorld(universe_config);
-          console.log("RB universe launched!");
-          await manager.prepareVisualization(world_config.visualization);
-          console.log("Viz ready!");
+        const world_config = {
+          name: configJson.name,
+          launch_file_path: configJson.ram_config.launch_file_path,
+          ros_version: configJson.ram_config.ros_version,
+          visualization: "bt_studio_gz",
+          world: configJson.ram_config.world,
+          zip: base64data,
         };
 
-        zip.generateAsync({ type: "blob" }).then(function (content) {
-          reader.readAsDataURL(content);
-        });
+        const robot_config = {
+          name: null,
+          launch_file_path: null,
+          ros_version: null,
+          visualization: null,
+          world: null,
+        };
+
+        const universe_config = {
+          name: configJson.name,
+          world: world_config,
+          robot: robot_config,
+        };
+
+        await manager.launchWorld(universe_config);
+        console.log("RB universe launched!");
+        await manager.prepareVisualization(world_config.visualization);
+        console.log("Viz ready!");
       }
     } catch (e: unknown) {
       throw e; // rethrow
