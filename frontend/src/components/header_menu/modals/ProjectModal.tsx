@@ -155,6 +155,7 @@ const ProjectModal = ({
               <div className="bt-project-modal-creation-buttons-container">
                 <div
                   className="bt-project-modal-create-button"
+                  id="create-project-open"
                   onClick={() => {
                     setCreateProjectOpen(true);
                   }}

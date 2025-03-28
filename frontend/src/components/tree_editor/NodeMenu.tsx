@@ -16,7 +16,7 @@ import {
   getSubtreeList,
   getActionsList,
 } from "../../api_helper/TreeWrapper";
-import { TreeViewType } from "../helper/TreeEditorHelper";
+import { subscribe, TreeViewType, unsubscribe } from "../helper/TreeEditorHelper";
 import AddSubtreeModal from "./modals/AddSubtreeModal";
 import { useError } from "../error_popup/ErrorModal";
 
@@ -36,39 +36,6 @@ var NODE_MENU_ITEMS: Record<string, string[]> = {
   Actions: [],
   Subtrees: [],
   "Port values": ["Input port value", "Output port value"],
-};
-
-const fetchActionList = async (project_name: string) => {
-  try {
-    const files = await getActionsList(project_name);
-    if (Array.isArray(files)) {
-      const actions = files.map((file) => file.replace(".py", ""));
-      NODE_MENU_ITEMS["Actions"] = actions;
-    } else {
-      console.error("API response is not an array:", files);
-    }
-  } catch (error) {
-    console.error("Error fetching files:", error);
-  }
-};
-
-const fetchSubtreeList = async (project_name: string) => {
-  console.log("Fetching subtrees...");
-  try {
-    const subtreeList = await getSubtreeList(project_name);
-    console.log("Subtree list:", subtreeList);
-    if (Array.isArray(subtreeList)) {
-      NODE_MENU_ITEMS["Subtrees"] = subtreeList;
-      return;
-    } else {
-      console.error("API response is not an array:", subtreeList);
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error("Error fetching subtrees:", error.message);
-    }
-  }
-  NODE_MENU_ITEMS["Subtrees"] = [];
 };
 
 const NodeMenu = ({
@@ -99,14 +66,57 @@ const NodeMenu = ({
   const { error } = useError();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [menuLabel, setMenuLabel] = useState<string>("");
+  const [menuLabel, setMenuLabel] = useState<string>();
+  const [menuList, setMenuList] = useState<string[]>([]);
+  const [actionsList, updateActionsList] = useState<string[]>([]);
+  const [subtreesList, updateSubtreesList] = useState<string[]>([]);
   const [isNewSubtreeModalOpen, setNewSubtreeModalOpen] =
     useState<boolean>(false);
 
+  const fetchActionList = async () => {
+    console.log("Fetching actions...");
+    try {
+      const files = await getActionsList(projectName);
+      const actions = files.map((file:string) => file.replace(".py", ""));
+      updateActionsList(actions);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Error fetching files:", e.message);
+        // error("Failed to fetch files: " + e.message);
+      }
+      updateActionsList([]);
+    }
+  };
+
+  const fetchSubtreeList = async () => {
+    console.log("Fetching subtrees...");
+    try {
+      const subtreeList = await getSubtreeList(projectName);
+      console.log("Subtree list:", subtreeList);
+      updateSubtreesList(subtreeList);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Error fetching subtrees:", e.message);
+        // error("Failed to fetch subtrees: " + e.message);
+      }
+      updateSubtreesList([]);
+    }
+  };
+
+  useEffect(() => {
+    subscribe("updateActionList", fetchActionList);
+    subscribe("updateSubtreeList", fetchSubtreeList);
+
+    return () => {
+      unsubscribe("updateActionList", () => {});
+      unsubscribe("updateSubtreeList", () => {});
+    };
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
-      await fetchActionList(projectName);
-      await fetchSubtreeList(projectName);
+      await fetchActionList();
+      await fetchSubtreeList();
     };
 
     fetchData();
@@ -114,12 +124,16 @@ const NodeMenu = ({
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
-    label: string,
+    label: string
   ) => {
     setAnchorEl(event.currentTarget);
-    setMenuLabel(label);
+    setMenuLabel(label)
     if (label === "Actions") {
-      fetchActionList(projectName);
+      setMenuList(actionsList)
+    } else if (label === "Subtrees") {
+      setMenuList(subtreesList)
+    } else {
+      setMenuList(NODE_MENU_ITEMS[label])
     }
   };
 
@@ -127,9 +141,18 @@ const NodeMenu = ({
 
   const handleSelect = (nodeName: string) => {
     console.log("Selected: " + nodeName);
-    const nodeType = Object.keys(NODE_MENU_ITEMS).find((key) =>
-      NODE_MENU_ITEMS[key].includes(nodeName),
-    );
+    var nodeType: string | undefined;
+
+    if (menuLabel === "Actions") {
+      nodeType = "Actions"
+    } else if (menuLabel === "Subtrees") {
+      nodeType = "Subtrees"
+    } else {
+      nodeType = Object.keys(NODE_MENU_ITEMS).find((key) =>
+        NODE_MENU_ITEMS[key].includes(nodeName)
+      );
+    }
+
     if (nodeType) {
       console.log("Node Type: " + nodeType);
       onAddNode(nodeType, nodeName);
@@ -155,7 +178,7 @@ const NodeMenu = ({
   const handleCloseCreateFolder = () => {
     setNewSubtreeModalOpen(false);
     var subtree_input = document.getElementById(
-      "subTreeName",
+      "subTreeName"
     ) as HTMLInputElement;
     if (subtree_input) {
       subtree_input.value = "";
@@ -167,7 +190,7 @@ const NodeMenu = ({
       try {
         const subtreeId = await createSubtree(subtreeName, projectName);
         console.log("Created subtree:", subtreeId);
-        fetchSubtreeList(projectName);
+        fetchSubtreeList();
         updateFileExplorer(true);
       } catch (e) {
         if (e instanceof Error) {
@@ -189,6 +212,7 @@ const NodeMenu = ({
             return (
               <button
                 key={label}
+                id={label}
                 className="bt-node-button"
                 onClick={(e) => handleClick(e, label)}
               >
@@ -203,8 +227,8 @@ const NodeMenu = ({
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          {NODE_MENU_ITEMS[menuLabel]?.map((item) => (
-            <MenuItem key={item} onClick={() => handleSelect(item)}>
+          {menuList.map((item) => (
+            <MenuItem key={item} id={item} onClick={() => handleSelect(item)}>
               {item}
             </MenuItem>
           ))}
@@ -265,8 +289,8 @@ const NodeMenu = ({
             onClick={() => {
               openInNewTab(
                 new URL(
-                  "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
-                ),
+                  "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
+                )
               );
             }}
             title="Help"
@@ -280,7 +304,7 @@ const NodeMenu = ({
               changeView(
                 view === TreeViewType.Editor
                   ? TreeViewType.Visualizer
-                  : TreeViewType.Editor,
+                  : TreeViewType.Editor
               )
             }
             title="Change view"

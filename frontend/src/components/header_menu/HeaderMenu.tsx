@@ -495,6 +495,7 @@ const HeaderMenu = ({
           )}
           <button
             className="bt-header-button"
+            id="open-project-manager"
             onClick={onOpenProjectModal}
             title="Change project"
           >
@@ -502,6 +503,7 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
+            id="open-universe-manager"
             onClick={onOpenUniverseModal}
             title="Universe menu"
           >
@@ -509,6 +511,7 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
+            id="open-settings-manager"
             onClick={onOpenSettingsModal}
             title="Settings"
           >
@@ -516,6 +519,7 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
+            id="save-bt-changes"
             onClick={onSaveProject}
             title="Save project"
           >
@@ -523,6 +527,7 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
+            id="download-app"
             onClick={onDownloadApp}
             title="Download app"
           >
@@ -530,6 +535,7 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
+            id="run-app"
             onClick={onAppStateChange}
             title="Run app"
           >
@@ -541,6 +547,7 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
+            id="reset-app"
             onClick={onResetApp}
             title="Reset app"
           >

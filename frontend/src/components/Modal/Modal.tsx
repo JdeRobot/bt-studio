@@ -82,6 +82,7 @@ export const ModalTitlebar = ({
       </label>
       <CloseIcon
         className="bt-modal-titlebar-close bt-icon"
+        id="close-modal"
         onClick={() => {
           handleCancel();
         }}
