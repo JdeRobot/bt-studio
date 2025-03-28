@@ -7,7 +7,7 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver import FirefoxOptions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains 
+from selenium.webdriver.common.action_chains import ActionChains
 
 # Create your tests here.
 # * Login: Entrar con un usuario de test
@@ -328,10 +328,12 @@ class SeleniumTests(StaticLiveServerTestCase):
         self.selenium.find_element(By.ID, "Sequences").click()
         menu = self.selenium.find_element(By.CLASS_NAME, "MuiPopover-root")
         menu.find_element(By.ID, "Sequence").click()
-        WebDriverWait(self.selenium, 0.2).until(EC.invisibility_of_element_located(menu))
+        WebDriverWait(self.selenium, 0.2).until(
+            EC.invisibility_of_element_located(menu)
+        )
 
         nodes = self.selenium.find_elements(By.CLASS_NAME, "bt-basic-node")
-        action = ActionChains(self.selenium) 
+        action = ActionChains(self.selenium)
 
         root_out_tag_node = None
         sequence_node = None
@@ -341,12 +343,16 @@ class SeleniumTests(StaticLiveServerTestCase):
             name = node.find_element(By.CLASS_NAME, "bt-basic-title").text
             if name == "Sequence":
                 sequence_node = node
-                sequence_in_tag_node = node.find_element(By.CLASS_NAME, "bt-basic-parent-port")
+                sequence_in_tag_node = node.find_element(
+                    By.CLASS_NAME, "bt-basic-parent-port"
+                )
             elif name == "Tree Root":
-                root_out_tag_node = node.find_element(By.CLASS_NAME, "bt-basic-children-port")
+                root_out_tag_node = node.find_element(
+                    By.CLASS_NAME, "bt-basic-children-port"
+                )
 
         if sequence_node and root_out_tag_node and sequence_in_tag_node:
-            action.drag_and_drop(sequence_node, root_out_tag_node )
+            action.drag_and_drop(sequence_node, root_out_tag_node)
             action.drag_and_drop_by_offset(sequence_node, 100, 0)
             action.drag_and_drop(root_out_tag_node, sequence_in_tag_node)
             action.perform()
@@ -354,10 +360,12 @@ class SeleniumTests(StaticLiveServerTestCase):
         self.selenium.find_element(By.ID, "Actions").click()
         menu = self.selenium.find_element(By.CLASS_NAME, "MuiPopover-root")
         menu.find_element(By.ID, "Action").click()
-        WebDriverWait(self.selenium, 0.2).until(EC.invisibility_of_element_located(menu))
+        WebDriverWait(self.selenium, 0.2).until(
+            EC.invisibility_of_element_located(menu)
+        )
 
         nodes = self.selenium.find_elements(By.CLASS_NAME, "bt-basic-node")
-        action = ActionChains(self.selenium) 
+        action = ActionChains(self.selenium)
 
         sequence_out_tag_node = None
         action_node = None
@@ -366,20 +374,26 @@ class SeleniumTests(StaticLiveServerTestCase):
         for node in nodes:
             name = node.find_element(By.CLASS_NAME, "bt-basic-title").text
             if name == "Sequence":
-                sequence_out_tag_node = node.find_element(By.CLASS_NAME, "bt-basic-children-port")
+                sequence_out_tag_node = node.find_element(
+                    By.CLASS_NAME, "bt-basic-children-port"
+                )
             elif name == "Action":
                 action_node = node
-                action_in_tag_node = node.find_element(By.CLASS_NAME, "bt-basic-parent-port")
+                action_in_tag_node = node.find_element(
+                    By.CLASS_NAME, "bt-basic-parent-port"
+                )
 
         if action_node and sequence_out_tag_node and action_in_tag_node:
             action.drag_and_drop(sequence_out_tag_node, action_in_tag_node)
-            action.drag_and_drop(action_node, sequence_out_tag_node )
+            action.drag_and_drop(action_node, sequence_out_tag_node)
             action.click(sequence_node)
             action.drag_and_drop_by_offset(action_node, 100, 0)
-            action.perform() 
+            action.perform()
 
         self.selenium.find_element(By.ID, "save-bt-changes").click()
-        self.selenium.get_full_page_screenshot_as_file('/BtStudio/.test_logs/bt_create.png')
+        self.selenium.get_full_page_screenshot_as_file(
+            "/BtStudio/.test_logs/bt_create.png"
+        )
 
     # def test_bt_execution(self):
     #     print(self.live_server_url)
@@ -405,7 +419,7 @@ class SeleniumTests(StaticLiveServerTestCase):
     #     WebDriverWait(self.selenium, 0.2).until(EC.invisibility_of_element_located(menu))
 
     #     nodes = self.selenium.find_elements(By.CLASS_NAME, "bt-basic-node")
-    #     action = ActionChains(self.selenium) 
+    #     action = ActionChains(self.selenium)
 
     #     root_out_tag_node = None
     #     sequence_node = None
@@ -431,7 +445,7 @@ class SeleniumTests(StaticLiveServerTestCase):
     #     WebDriverWait(self.selenium, 0.2).until(EC.invisibility_of_element_located(menu))
 
     #     nodes = self.selenium.find_elements(By.CLASS_NAME, "bt-basic-node")
-    #     action = ActionChains(self.selenium) 
+    #     action = ActionChains(self.selenium)
 
     #     sequence_out_tag_node = None
     #     action_node = None
@@ -450,7 +464,7 @@ class SeleniumTests(StaticLiveServerTestCase):
     #         action.drag_and_drop(action_node, sequence_out_tag_node )
     #         action.click(sequence_node)
     #         action.drag_and_drop_by_offset(action_node, 100, 0)
-    #         action.perform() 
+    #         action.perform()
     #     # # Move and connect # drag_and_drop_by_offset
     #     # self.selenium.find_element(By.ID, "save-bt-changes").click()
     #     # # Create Universe
@@ -475,33 +489,33 @@ class SeleniumTests(StaticLiveServerTestCase):
     #     # self.selenium.find_element(By.ID, "delete-project-test").click()
     #     # self.selenium.find_element(By.ID, "close-modal").click()
 
-        # frontend/
-        # create-project-open
-        # projectName
-        # create-new-project
-        # create-file-open
-        # fileName
-        # actionsType
-        # actionTemplate
-        # create-new-action
-        # Sequences
-        # Sequence
-        # Move and connect # drag_and_drop_by_offset
-        # Actions
-        # Action
-        # Move and connect # drag_and_drop_by_offset
-        # save-bt-changes # Optional
-        # open-universe-manager
-        # open-import-rb-universe
-        # universeName
-        # dockerUniverseName
-        # create-new-universe
-        # project-test
-        # bt-node-change-view-button
-        # run-app
-        # wait 10s
-        # run-app
-        # reset-app
-        # open-universe-manager
-        # delete-project-test
-        # close-modal
+    # frontend/
+    # create-project-open
+    # projectName
+    # create-new-project
+    # create-file-open
+    # fileName
+    # actionsType
+    # actionTemplate
+    # create-new-action
+    # Sequences
+    # Sequence
+    # Move and connect # drag_and_drop_by_offset
+    # Actions
+    # Action
+    # Move and connect # drag_and_drop_by_offset
+    # save-bt-changes # Optional
+    # open-universe-manager
+    # open-import-rb-universe
+    # universeName
+    # dockerUniverseName
+    # create-new-universe
+    # project-test
+    # bt-node-change-view-button
+    # run-app
+    # wait 10s
+    # run-app
+    # reset-app
+    # open-universe-manager
+    # delete-project-test
+    # close-modal

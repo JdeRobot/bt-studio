@@ -16,7 +16,11 @@ import {
   getSubtreeList,
   getActionsList,
 } from "../../api_helper/TreeWrapper";
-import { subscribe, TreeViewType, unsubscribe } from "../helper/TreeEditorHelper";
+import {
+  subscribe,
+  TreeViewType,
+  unsubscribe,
+} from "../helper/TreeEditorHelper";
 import AddSubtreeModal from "./modals/AddSubtreeModal";
 import { useError } from "../error_popup/ErrorModal";
 
@@ -77,7 +81,7 @@ const NodeMenu = ({
     console.log("Fetching actions...");
     try {
       const files = await getActionsList(projectName);
-      const actions = files.map((file:string) => file.replace(".py", ""));
+      const actions = files.map((file: string) => file.replace(".py", ""));
       updateActionsList(actions);
     } catch (e) {
       if (e instanceof Error) {
@@ -124,16 +128,16 @@ const NodeMenu = ({
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
-    label: string
+    label: string,
   ) => {
     setAnchorEl(event.currentTarget);
-    setMenuLabel(label)
+    setMenuLabel(label);
     if (label === "Actions") {
-      setMenuList(actionsList)
+      setMenuList(actionsList);
     } else if (label === "Subtrees") {
-      setMenuList(subtreesList)
+      setMenuList(subtreesList);
     } else {
-      setMenuList(NODE_MENU_ITEMS[label])
+      setMenuList(NODE_MENU_ITEMS[label]);
     }
   };
 
@@ -144,12 +148,12 @@ const NodeMenu = ({
     var nodeType: string | undefined;
 
     if (menuLabel === "Actions") {
-      nodeType = "Actions"
+      nodeType = "Actions";
     } else if (menuLabel === "Subtrees") {
-      nodeType = "Subtrees"
+      nodeType = "Subtrees";
     } else {
       nodeType = Object.keys(NODE_MENU_ITEMS).find((key) =>
-        NODE_MENU_ITEMS[key].includes(nodeName)
+        NODE_MENU_ITEMS[key].includes(nodeName),
       );
     }
 
@@ -178,7 +182,7 @@ const NodeMenu = ({
   const handleCloseCreateFolder = () => {
     setNewSubtreeModalOpen(false);
     var subtree_input = document.getElementById(
-      "subTreeName"
+      "subTreeName",
     ) as HTMLInputElement;
     if (subtree_input) {
       subtree_input.value = "";
@@ -289,8 +293,8 @@ const NodeMenu = ({
             onClick={() => {
               openInNewTab(
                 new URL(
-                  "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation"
-                )
+                  "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
+                ),
               );
             }}
             title="Help"
@@ -304,7 +308,7 @@ const NodeMenu = ({
               changeView(
                 view === TreeViewType.Editor
                   ? TreeViewType.Visualizer
-                  : TreeViewType.Editor
+                  : TreeViewType.Editor,
               )
             }
             title="Change view"

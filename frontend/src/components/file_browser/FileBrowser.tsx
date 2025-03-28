@@ -163,8 +163,8 @@ const FileBrowser = ({
       } catch (e) {
         if (e instanceof Error) {
           console.error("Error creating file:", e);
-          if (e.message="Request failed with status code 507"){
-            error("You're using too much AWS space!")
+          if ((e.message = "Request failed with status code 507")) {
+            error("You're using too much AWS space!");
           } else {
             console.error("Error creating file:", e);
             error("Error creating file" + e.message);
