@@ -640,7 +640,7 @@ const uploadFile = async (
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
-  if (!location) throw new Error("Location is not set");
+  if (location === undefined) throw new Error("Location is not set");
   if (!content) throw new Error("Content is not defined");
 
   const apiUrl = "/bt_studio/upload_code/";
@@ -710,7 +710,7 @@ const createFile = async (
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
-  if (!location) throw new Error("Location is not set");
+  if (location === undefined) throw new Error("Location is not set");
 
   const apiUrl = "/bt_studio/create_file/";
 
@@ -747,7 +747,7 @@ const createFolder = async (
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!folderName) throw new Error("Folder name is not set");
-  if (!location) throw new Error("Location is not set");
+  if (location === undefined) throw new Error("Location is not set");
 
   const apiUrl = "/bt_studio/create_folder/";
 
