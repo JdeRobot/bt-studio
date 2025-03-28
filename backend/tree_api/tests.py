@@ -14,8 +14,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 # * Crear Proyecto: Crear un nuevo proyecto llamado "test"
 # * Entrar en proyecto: Entrar en el proyecto llamado "test"
 # * Crear un acción: Crear una acción llamada Action usando una plantilla
-# - Crear un BT: Crear un BT así: Root -> Sequence -> Action
-# - Guardar el BT: Asegurar que se guarda el BT
+# * Crear un BT: Crear un BT así: Root -> Sequence -> Action
+# * Guardar el BT: Asegurar que se guarda el BT
 # * Crear un Universo: Abrir el modal y crear un universo llamado "test" usando el universo del Robotics Backend: Follow Person
 # * Seleccionar un Universo: Seleccionar el universo "test"
 # - Ejecutar la aplicación: Ejecutar la aplicación
