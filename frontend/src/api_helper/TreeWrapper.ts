@@ -452,38 +452,6 @@ const deleteUniverse = async (projectName: string, universeName: string) => {
   }
 };
 
-const getCustomUniverseZip = async (
-  universeName: string,
-  currentProjectname: string
-) => {
-  if (!universeName) throw new Error("The universe name is not set");
-  if (!currentProjectname) throw new Error("Current Project name is not set");
-
-  const apiUrl = "/bt_studio/get_universe_zip/";
-  try {
-    // Make the request
-    const response = await axios.post(
-      apiUrl,
-      {
-        app_name: currentProjectname,
-        universe_name: universeName,
-      },
-      axiosExtra
-    );
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(
-        response.data.message || "Failed to retrieve custom universe"
-      ); // Response error
-    }
-
-    return response.data;
-  } catch (error: unknown) {
-    throw error; // Rethrow
-  }
-};
-
 // App management
 
 const generateLocalApp = async (
@@ -1068,7 +1036,6 @@ export {
   generateDockerizedApp,
   generateLocalApp,
   getActionsList,
-  getCustomUniverseZip,
   getFile,
   getFileList,
   getProjectGraph,

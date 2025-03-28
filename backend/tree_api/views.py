@@ -1125,6 +1125,7 @@ def get_universe_file_list(request):
     except Exception as e:
         return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
+
 @api_view(["GET"])
 def get_universe_file(request):
 
@@ -1149,61 +1150,6 @@ def get_universe_file(request):
             return Response({"error": "File not found"}, status=404)
     else:
         return Response({"error": "Filename parameter is missing"}, status=400)
-
-@api_view(["POST"])
-def get_universe_zip(request):
-
-    # Check if 'name' and 'zipfile' are in the request data
-    if "app_name" not in request.data or "universe_name" not in request.data:
-        return Response(
-            {"error": "Incorrect request parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # Get the request parameters
-    app_name = request.data.get("app_name")
-    universe_name = request.data.get("universe_name")
-
-    # Make folder path relative to Django app
-    base_path = os.path.join(settings.BASE_DIR, "filesystem")
-    project_path = os.path.join(base_path, app_name)
-    universes_path = os.path.join(project_path, "universes")
-    universe_path = os.path.join(universes_path, universe_name)
-
-    working_folder = "/tmp/wf"
-
-    try:
-        # 1. Create the working folder
-        if os.path.exists(working_folder):
-            shutil.rmtree(working_folder)
-        os.mkdir(working_folder)
-
-        # 2. Copy necessary files
-        shutil.copytree(universe_path, working_folder, dirs_exist_ok=True)
-
-        # 3. Generate the zip
-        zip_path = working_folder + ".zip"
-        with zipfile.ZipFile(zip_path, "w") as zipf:
-            for root, dirs, files in os.walk(working_folder):
-                for file in files:
-                    zipf.write(
-                        os.path.join(root, file),
-                        os.path.relpath(os.path.join(root, file), working_folder),
-                    )
-
-        # 4. Return the zip
-        zip_file = open(zip_path, "rb")
-        mime_type, _ = mimetypes.guess_type(zip_path)
-        response = HttpResponse(zip_file, content_type=mime_type)
-        response["Content-Disposition"] = (
-            f"attachment; filename={os.path.basename(zip_path)}"
-        )
-
-        return response
-    except Exception as e:
-        return Response(
-            {"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST
-        )
 
 
 @api_view(["POST"])
