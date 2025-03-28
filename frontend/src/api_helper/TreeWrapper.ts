@@ -7,15 +7,14 @@ import { publish } from "../components/helper/TreeEditorHelper";
 const isSuccessful = (response: AxiosResponse) => {
   return response.status >= 200 && response.status < 300;
 };
-const getCookie=(name: string)=>{
-
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);  //to get CSRF token among all the cookies in 'value'
-    if (parts.length === 2) return parts.pop()?.split(';').shift();
-    return undefined;
+const getCookie = (name: string) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`); //to get CSRF token among all the cookies in 'value'
+  if (parts.length === 2) return parts.pop()?.split(";").shift();
+  return undefined;
 };
 
-const csrfToken = getCookie('csrftoken');
+const csrfToken = getCookie("csrftoken");
 const axiosExtra = {
   headers: {
     //@ts-ignore Needed for compatibility with Unibotics
@@ -64,6 +63,54 @@ const getFile = async (projectName: string, fileName: string) => {
   }
 };
 
+const getUniverseFileList = async (
+  projectName: string,
+  universeName: string
+) => {
+  if (!projectName) throw new Error("Project name is not set");
+  if (!universeName) throw new Error("Universe name is not set");
+
+  const apiUrl = `/bt_studio/get_universe_file_list?project_name=${encodeURIComponent(projectName)}&universe_name=${encodeURIComponent(universeName)}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get file list."); // Response error
+    }
+
+    return response.data.file_list;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
+const getUniverseFile = async (
+  projectName: string,
+  universeName: string,
+  fileName: string
+) => {
+  if (!projectName) throw new Error("Project name is not set");
+  if (!universeName) throw new Error("Universe name is not set");
+  if (!fileName) throw new Error("File name is not set");
+
+  const apiUrl = `/bt_studio/get_universe_file?project_name=${encodeURIComponent(projectName)}&universe_name=${encodeURIComponent(universeName)}&filename=${encodeURIComponent(fileName)}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get file list."); // Response error
+    }
+
+    return response.data.content;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 const getActionsList = async (projectName: string) => {
   if (!projectName) throw new Error("Project name is not set");
 
@@ -77,8 +124,8 @@ const getActionsList = async (projectName: string) => {
       throw new Error(response.data.message || "Failed to get actions list."); // Response error
     }
 
-    if (! Array.isArray(response.data.actions_list)) {
-      throw new Error("API response is not an array")
+    if (!Array.isArray(response.data.actions_list)) {
+      throw new Error("API response is not an array");
     }
 
     return response.data.actions_list;
@@ -116,16 +163,16 @@ const saveFile = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507){
-        console.log("Entering right thorugh max user size limit")
+      if (response.status == 507) {
+        console.log("Entering right thorugh max user size limit");
         //throw new Error("You're using too much AWS space!" ||  response.data.message)
-        throw new Error("You're using too much AWS space!")
+        throw new Error("You're using too much AWS space!");
       } else {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
+        throw new Error(response.data.message || "Failed to create project."); // Response error
       }
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw error; // Rethrow
   }
 };
@@ -199,15 +246,15 @@ const saveBaseTree = async (modelJson: string, currentProjectname: string) => {
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507){
-        console.log("Entering right thorugh max user size limit")
-        throw new Error("You're using too much AWS space!")
+      if (response.status == 507) {
+        console.log("Entering right thorugh max user size limit");
+        throw new Error("You're using too much AWS space!");
       } else {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
+        throw new Error(response.data.message || "Failed to create project."); // Response error
       }
     }
   } catch (error: unknown) {
-    console.log(error)
+    console.log(error);
     throw error; // Rethrow
   }
 };
@@ -266,15 +313,15 @@ const saveProjectConfig = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507){
-        console.log("Entering right thorugh max user size limit")
-        throw new Error("You're using too much AWS space!")
+      if (response.status == 507) {
+        console.log("Entering right thorugh max user size limit");
+        throw new Error("You're using too much AWS space!");
       } else {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
+        throw new Error(response.data.message || "Failed to create project."); // Response error
       }
     }
   } catch (error: unknown) {
-    console.log(error)
+    console.log(error);
     throw error; // Rethrow
   }
 };
@@ -405,37 +452,6 @@ const deleteUniverse = async (projectName: string, universeName: string) => {
   }
 };
 
-const getCustomUniverseZip = async (
-  universeName: string,
-  currentProjectname: string
-) => {
-  if (!universeName) throw new Error("The universe name is not set");
-  if (!currentProjectname) throw new Error("Current Project name is not set");
-
-  const apiUrl = "/bt_studio/get_universe_zip/";
-  try {
-    // Make the request
-    const response = await axios.post(
-      apiUrl,
-      {
-        app_name: currentProjectname,
-        universe_name: universeName,
-      },
-      axiosExtra
-    );
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(
-        response.data.message || "Failed to retrieve custom universe"
-      ); // Response error
-    }
-    return response.data;
-  } catch (error: unknown) {
-    throw error; // Rethrow
-  }
-};
-
 // App management
 
 const generateLocalApp = async (
@@ -523,15 +539,15 @@ const createSubtree = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507){
-        console.log("Entering right thorugh max user size limit")
-        throw new Error("You're using too much AWS space!")
+      if (response.status == 507) {
+        console.log("Entering right thorugh max user size limit");
+        throw new Error("You're using too much AWS space!");
       } else {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
+        throw new Error(response.data.message || "Failed to create project."); // Response error
       }
     }
   } catch (error: unknown) {
-    console.log(error)
+    console.log(error);
     throw error; // Rethrow
   }
 };
@@ -550,8 +566,8 @@ const getSubtreeList = async (projectName: string) => {
       throw new Error(response.data.message || "Failed to get subtree list."); // Response error
     }
 
-    if (! Array.isArray(response.data.subtree_list)) {
-      throw new Error("API response is not an array")
+    if (!Array.isArray(response.data.subtree_list)) {
+      throw new Error("API response is not an array");
     }
 
     return response.data.subtree_list;
@@ -603,15 +619,15 @@ const saveSubtree = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507){
-        console.log("Entering right thorugh max user size limit")
-        throw new Error("You're using too much AWS space!")
+      if (response.status == 507) {
+        console.log("Entering right thorugh max user size limit");
+        throw new Error("You're using too much AWS space!");
       } else {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
+        throw new Error(response.data.message || "Failed to create project."); // Response error
       }
     }
   } catch (error: unknown) {
-    console.log(error)
+    console.log(error);
     throw error; // Rethrow
   }
 };
@@ -674,15 +690,15 @@ const createAction = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507){
-        console.log("Entering right thorugh max user size limit")
-        throw new Error("You're using too much AWS space!")
+      if (response.status == 507) {
+        console.log("Entering right thorugh max user size limit");
+        throw new Error("You're using too much AWS space!");
       } else {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
+        throw new Error(response.data.message || "Failed to create project."); // Response error
       }
     }
   } catch (error: unknown) {
-    console.log(error)
+    console.log(error);
     throw error; // Rethrow
   }
 };
@@ -711,15 +727,15 @@ const createFile = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507){
-        console.log("Entering right thorugh max user size limit")
-        throw new Error("You're using too much AWS space!")
+      if (response.status == 507) {
+        console.log("Entering right thorugh max user size limit");
+        throw new Error("You're using too much AWS space!");
       } else {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
+        throw new Error(response.data.message || "Failed to create project."); // Response error
       }
     }
   } catch (error: unknown) {
-    console.log(error)
+    console.log(error);
     throw error; // Rethrow
   }
 };
@@ -748,14 +764,14 @@ const createFolder = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507){
-        throw new Error("You're using too much AWS space!")
+      if (response.status == 507) {
+        throw new Error("You're using too much AWS space!");
       } else {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
+        throw new Error(response.data.message || "Failed to create project."); // Response error
       }
     }
   } catch (error: unknown) {
-    console.log(error)
+    console.log(error);
     throw error; // Rethrow
   }
 };
@@ -844,7 +860,7 @@ const deleteFile = async (projectName: string, path: string) => {
     if (!isSuccessful(response)) {
       throw new Error(response.data.message || "Failed to upload file."); // Response error
     }
-    
+
     publish("updateActionList");
   } catch (error: unknown) {
     throw error; // Rethrow
@@ -1020,7 +1036,6 @@ export {
   generateDockerizedApp,
   generateLocalApp,
   getActionsList,
-  getCustomUniverseZip,
   getFile,
   getFileList,
   getProjectGraph,
@@ -1030,6 +1045,8 @@ export {
   getSubtreeStructure,
   getTreeStructure,
   getUniverseConfig,
+  getUniverseFile,
+  getUniverseFileList,
   listDockerUniverses,
   listProjects,
   listUniverses,

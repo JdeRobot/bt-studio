@@ -1097,60 +1097,59 @@ def generate_dockerized_app(request):
         )
 
 
-@api_view(["POST"])
-def get_universe_zip(request):
+@api_view(["GET"])
+def get_universe_file_list(request):
 
-    # Check if 'name' and 'zipfile' are in the request data
-    if "app_name" not in request.data or "universe_name" not in request.data:
-        return Response(
-            {"error": "Incorrect request parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+    project_name = request.GET.get("project_name")
+    universe_name = request.GET.get("universe_name")
 
-    # Get the request parameters
-    app_name = request.data.get("app_name")
-    universe_name = request.data.get("universe_name")
-
-    # Make folder path relative to Django app
-    base_path = os.path.join(settings.BASE_DIR, "filesystem")
-    project_path = os.path.join(base_path, app_name)
+    print(universe_name)
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
     universes_path = os.path.join(project_path, "universes")
     universe_path = os.path.join(universes_path, universe_name)
 
-    working_folder = "/tmp/wf"
-
     try:
-        # 1. Create the working folder
-        if os.path.exists(working_folder):
-            shutil.rmtree(working_folder)
-        os.mkdir(working_folder)
+        # List all files in the directory
+        file_list = [
+            os.path.relpath(f, universe_path)
+            for f in glob.glob(universe_path + "/**", recursive=True)
+        ]
 
-        # 2. Copy necessary files
-        shutil.copytree(universe_path, working_folder, dirs_exist_ok=True)
+        file_list = list_dir(universe_path, universe_path)
+        print(file_list)
 
-        # 3. Generate the zip
-        zip_path = working_folder + ".zip"
-        with zipfile.ZipFile(zip_path, "w") as zipf:
-            for root, dirs, files in os.walk(working_folder):
-                for file in files:
-                    zipf.write(
-                        os.path.join(root, file),
-                        os.path.relpath(os.path.join(root, file), working_folder),
-                    )
+        # Return the list of files
+        return Response({"file_list": EntryEncoder().encode(file_list)})
 
-        # 4. Return the zip
-        zip_file = open(zip_path, "rb")
-        mime_type, _ = mimetypes.guess_type(zip_path)
-        response = HttpResponse(zip_file, content_type=mime_type)
-        response["Content-Disposition"] = (
-            f"attachment; filename={os.path.basename(zip_path)}"
-        )
-
-        return response
     except Exception as e:
-        return Response(
-            {"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
+
+
+@api_view(["GET"])
+def get_universe_file(request):
+
+    project_name = request.GET.get("project_name", None)
+    universe_name = request.GET.get("universe_name")
+    filename = request.GET.get("filename", None)
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    universes_path = os.path.join(project_path, "universes")
+    universe_path = os.path.join(universes_path, universe_name)
+
+    if filename:
+        file_path = os.path.join(universe_path, filename)
+        if os.path.exists(file_path):
+            with open(file_path, "r") as f:
+                content = f.read()
+            serializer = FileContentSerializer({"content": content})
+            return Response(serializer.data)
+        else:
+            return Response({"error": "File not found"}, status=404)
+    else:
+        return Response({"error": "Filename parameter is missing"}, status=400)
 
 
 @api_view(["POST"])
