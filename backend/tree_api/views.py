@@ -1097,6 +1097,59 @@ def generate_dockerized_app(request):
         )
 
 
+@api_view(["GET"])
+def get_universe_file_list(request):
+
+    project_name = request.GET.get("project_name")
+    universe_name = request.GET.get("universe_name")
+
+    print(universe_name)
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    universes_path = os.path.join(project_path, "universes")
+    universe_path = os.path.join(universes_path, universe_name)
+
+    try:
+        # List all files in the directory
+        file_list = [
+            os.path.relpath(f, universe_path)
+            for f in glob.glob(universe_path + "/**", recursive=True)
+        ]
+
+        file_list = list_dir(universe_path, universe_path)
+        print(file_list)
+
+        # Return the list of files
+        return Response({"file_list": EntryEncoder().encode(file_list)})
+
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
+
+@api_view(["GET"])
+def get_universe_file(request):
+
+    project_name = request.GET.get("project_name", None)
+    universe_name = request.GET.get("universe_name")
+    filename = request.GET.get("filename", None)
+
+    # Make folder path relative to Django app
+    folder_path = os.path.join(settings.BASE_DIR, "filesystem")
+    project_path = os.path.join(folder_path, project_name)
+    universes_path = os.path.join(project_path, "universes")
+    universe_path = os.path.join(universes_path, universe_name)
+
+    if filename:
+        file_path = os.path.join(universe_path, filename)
+        if os.path.exists(file_path):
+            with open(file_path, "r") as f:
+                content = f.read()
+            serializer = FileContentSerializer({"content": content})
+            return Response(serializer.data)
+        else:
+            return Response({"error": "File not found"}, status=404)
+    else:
+        return Response({"error": "Filename parameter is missing"}, status=400)
+
 @api_view(["POST"])
 def get_universe_zip(request):
 
