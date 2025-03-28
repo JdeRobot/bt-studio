@@ -72,7 +72,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "backend.backend.wsgi.application"
-TEST_RUNNER = 'backend.backend.test_runner.NoDbTestRunner'
+TEST_RUNNER = "backend.backend.test_runner.NoDbTestRunner"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
