@@ -7,7 +7,6 @@ import {
   generateLocalApp,
   generateDockerizedApp,
   getUniverseConfig,
-  getCustomUniverseZip,
   getRoboticsBackendUniversePath,
   getUniverseFile,
   getUniverseFileList,
