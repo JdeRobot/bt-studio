@@ -93,7 +93,7 @@ def delete_project(request):
 
     if os.path.exists(project_path):
         shutil.rmtree(project_path)
-        return Response({"success": True})
+        return Response({"success": True}, status=200)
     else:
         return Response(
             {"success": False, "message": "Project does not exist"}, status=400
@@ -1320,7 +1320,6 @@ def list_docker_universes(request):
     try:
         universes = Universe.objects.all()
         universes_docker_list = [x.name for x in universes]
-        print(universes_docker_list)
         # Return the list of projects
         return Response({"universes": universes_docker_list})
 

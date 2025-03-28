@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { SettingsData, SettingData } from "../components/options/Options";
+import { publish } from "../components/helper/TreeEditorHelper";
 
 // Helpers
 
@@ -74,6 +75,10 @@ const getActionsList = async (projectName: string) => {
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
       throw new Error(response.data.message || "Failed to get actions list."); // Response error
+    }
+
+    if (! Array.isArray(response.data.actions_list)) {
+      throw new Error("API response is not an array")
     }
 
     return response.data.actions_list;
@@ -545,6 +550,10 @@ const getSubtreeList = async (projectName: string) => {
       throw new Error(response.data.message || "Failed to get subtree list."); // Response error
     }
 
+    if (! Array.isArray(response.data.subtree_list)) {
+      throw new Error("API response is not an array")
+    }
+
     return response.data.subtree_list;
   } catch (error: unknown) {
     throw error; // Rethrow
@@ -777,6 +786,8 @@ const renameFile = async (
     if (!isSuccessful(response)) {
       throw new Error(response.data.message || "Failed to upload file."); // Response error
     }
+
+    publish("updateActionList");
   } catch (error: unknown) {
     throw error; // Rethrow
   }
@@ -833,6 +844,8 @@ const deleteFile = async (projectName: string, path: string) => {
     if (!isSuccessful(response)) {
       throw new Error(response.data.message || "Failed to upload file."); // Response error
     }
+    
+    publish("updateActionList");
   } catch (error: unknown) {
     throw error; // Rethrow
   }

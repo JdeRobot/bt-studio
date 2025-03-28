@@ -135,6 +135,7 @@ const UniverseModal = ({
                   return (
                     <div
                       className="bt-project-entry"
+                      id={"project-" + project[1]}
                       onClick={() => onClose(project[1])}
                     >
                       <label className="bt-project-entry-name">
@@ -143,6 +144,7 @@ const UniverseModal = ({
                       <DeleteIcon
                         className="bt-project-entry-delete bt-icon"
                         title="Delete"
+                        id={"delete-project-" + project[1]}
                         onClick={(e) => {
                           deleteUniverseFunc(project[1]);
                           e.stopPropagation();
@@ -166,6 +168,7 @@ const UniverseModal = ({
                 </div>
                 <div
                   className="bt-project-modal-create-button"
+                  id="open-import-rb-universe"
                   onClick={() => {
                     importFromRoboticsBackend();
                   }}

@@ -156,7 +156,7 @@ export function unsubscribe(eventName: string, listener: () => void) {
   document.removeEventListener(eventName, listener);
 }
 
-function publish(eventName: string) {
+export function publish(eventName: string) {
   const event = new CustomEvent(eventName);
   document.dispatchEvent(event);
 }
