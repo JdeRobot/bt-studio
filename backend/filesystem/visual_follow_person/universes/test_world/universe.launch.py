@@ -5,7 +5,7 @@ from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
     SetEnvironmentVariable,
-    AppendEnvironmentVariable
+    AppendEnvironmentVariable,
 )
 from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -21,8 +21,8 @@ def generate_launch_description():
     use_simulator = LaunchConfiguration("use_simulator")
     world = LaunchConfiguration("world")
 
-    package_dir = get_package_share_directory('custom_robots')
-    ros_gz_sim = get_package_share_directory('ros_gz_sim')
+    package_dir = get_package_share_directory("custom_robots")
+    ros_gz_sim = get_package_share_directory("ros_gz_sim")
 
     gazebo_models_path = os.path.join(package_dir, "models")
 
@@ -46,14 +46,20 @@ def generate_launch_description():
 
     gazebo_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(ros_gz_sim, 'launch', 'gz_sim.launch.py')),
-        launch_arguments={'gz_args': ['-r -s -v4 '], 'on_exit_shutdown': 'true'}.items()
+            os.path.join(ros_gz_sim, "launch", "gz_sim.launch.py")
+        ),
+        launch_arguments={
+            "gz_args": ["-r -s -v4 "],
+            "on_exit_shutdown": "true",
+        }.items(),
     )
 
     ld = LaunchDescription()
 
-    ld.add_action(SetEnvironmentVariable('GZ_SIM_RESOURCE_PATH', gazebo_models_path))
-    set_env_vars_resources = AppendEnvironmentVariable('GZ_SIM_RESOURCE_PATH', os.path.join(package_dir,'models'))
+    ld.add_action(SetEnvironmentVariable("GZ_SIM_RESOURCE_PATH", gazebo_models_path))
+    set_env_vars_resources = AppendEnvironmentVariable(
+        "GZ_SIM_RESOURCE_PATH", os.path.join(package_dir, "models")
+    )
 
     # Declare the launch options
     ld.add_action(declare_simulator_cmd)
