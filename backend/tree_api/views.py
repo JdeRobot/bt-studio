@@ -76,7 +76,7 @@ def create_project(request):
         )
     else:
         return Response(
-            {"success": False, "message": "Project already exists"}, status=400
+            {"success": False, "message": "Project already exists"}, status=409
         )
 
 
@@ -136,31 +136,33 @@ def save_base_tree(request):
     project_path = os.path.join(base_path, project_name)
     graph_path = os.path.join(project_path, "code/trees/main.json")
 
-    if project_path and graph_json:
+    try:
+        # Obtain pretty json
+        graph = json.loads(graph_json)
+        graph_formated = json.dumps(graph, indent=4)
 
-        try:
-            # Obtain pretty json
-            graph = json.loads(graph_json)
-            graph_formated = json.dumps(graph, indent=4)
+        with open(graph_path, "w") as f:
+            f.write(graph_formated)
 
-            with open(graph_path, "w") as f:
-                f.write(graph_formated)
+        return JsonResponse({"success": True})
 
-            return JsonResponse({"success": True})
-
-        except Exception as e:
-            return JsonResponse(
-                {"success": False, "message": f"Error deleting file: {str(e)}"},
-                status=500,
-            )
-    else:
-        return Response({"error": "app_name parameter is missing"}, status=400)
+    except Exception as e:
+        return JsonResponse(
+            {"success": False, "message": f"Error deleting file: {str(e)}"},
+            status=422,
+        )
 
 
 @api_view(["GET"])
 def get_project_graph(request):
 
     project_name = request.GET.get("project_name")
+
+    if "project_name" not in request.GET:
+        return Response(
+            {"error": "Project Name is required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -176,7 +178,7 @@ def get_project_graph(request):
         except Exception as e:
             return JsonResponse(
                 {"success": False, "message": f"Error reading file: {str(e)}"},
-                status=500,
+                status=422,
             )
     else:
         return Response(
@@ -189,19 +191,22 @@ def get_project_configuration(request):
 
     project_name = request.GET.get("project_name")
 
+    if "project_name" not in request.GET:
+        return Response(
+            {"error": "Project Name is required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
 
-    if project_name:
-        project_path = os.path.join(folder_path, project_name)
-        config_path = os.path.join(project_path, "config.json")
-        if os.path.exists(config_path):
-            with open(config_path, "r") as f:
-                content = f.read()
-            return Response(content)
-        else:
-            return Response({"error": "File not found"}, status=404)
+    project_path = os.path.join(folder_path, project_name)
+    config_path = os.path.join(project_path, "config.json")
+    if os.path.exists(config_path):
+        with open(config_path, "r") as f:
+            content = f.read()
+        return Response(content)
     else:
-        return Response({"error": "Project parameter is missing"}, status=400)
+        return Response({"error": "File not found"}, status=404)
 
 
 @api_view(["GET"])
@@ -209,6 +214,12 @@ def get_tree_structure(request):
 
     project_name = request.GET.get("project_name")
     bt_order = request.GET.get("bt_order")
+
+    if "project_name" not in request.GET or "bt_order" not in request.GET:
+        return Response(
+            {"error": "Project Name is required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -244,6 +255,16 @@ def get_subtree_structure(request):
     project_name = request.GET.get("project_name")
     subtree_name = request.GET.get("subtree_name")
     bt_order = request.GET.get("bt_order")
+
+    if (
+        "project_name" not in request.GET
+        or "subtree_name" not in request.GET
+        or "bt_order" not in request.GET
+    ):
+        return Response(
+            {"error": "Project Name is required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     # Generate the paths
     base_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -289,11 +310,11 @@ def save_project_configuration(request):
     project_path = os.path.join(folder_path, project_name)
     config_path = os.path.join(project_path, "config.json")
 
+    if content is None or len(content) == 0:
+        return Response(
+            {"success": False, "message": "Settings are missing"}, status=400
+        )
     try:
-        if content is None:
-            return Response(
-                {"success": False, "message": "Settings are missing"}, status=400
-            )
 
         d = json.loads(content)
 
@@ -302,7 +323,7 @@ def save_project_configuration(request):
 
         return Response({"success": True})
     except Exception as e:
-        return Response({"success": False, "message": str(e)}, status=400)
+        return Response({"success": False, "message": str(e)}, status=422)
 
 
 # SUBTREE MANAGEMENT
@@ -394,44 +415,31 @@ def save_subtree(request):
         project_path, "code", "trees", "subtrees", f"{subtree_name}.json"
     )
 
-    if project_path and subtree_name and subtree_json:
+    try:
+        # Write the subtree JSON to the file
+        with open(json_path, "w") as f:
+            f.write(subtree_json)
 
-        try:
-            # Write the subtree JSON to the file
-            with open(json_path, "w") as f:
-                f.write(subtree_json)
+        return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
-            return JsonResponse({"success": True}, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            print(e)
-            return JsonResponse(
-                {"success": False, "message": f"Error saving subtree: {str(e)}"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-    else:
-        return Response(
-            {"error": "Missing required parameters"}, status=status.HTTP_400_BAD_REQUEST
+    except Exception as e:
+        print(e)
+        return JsonResponse(
+            {"success": False, "message": f"Error saving subtree: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
 @api_view(["GET"])
 def get_subtree(request):
+    if "project_name" not in request.GET or "subtree_name" not in request.GET:
+        return Response(
+            {"error": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.GET.get("project_name")
     subtree_name = request.GET.get("subtree_name")
-
-    if not project_name:
-        return Response(
-            {"error": "Project parameter is missing"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    if not subtree_name:
-        return Response(
-            {"error": "Subtree parameter is missing"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
 
     # Make folder path relative to Django app
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -451,12 +459,13 @@ def get_subtree(request):
 @api_view(["GET"])
 def get_subtree_list(request):
 
-    project_name = request.GET.get("project_name")
-    if not project_name:
+    if "project_name" not in request.GET:
         return Response(
-            {"error": "Project parameter is missing"},
+            {"error": "Missing required parameters"},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+    project_name = request.GET.get("project_name")
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
@@ -473,11 +482,8 @@ def get_subtree_list(request):
         # Return the list of files
         return Response({"subtree_list": subtree_list})
 
-    except FileNotFoundError:
-        return Response({"subtree_list": []})
-
     except Exception as e:
-        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
+        return Response({"subtree_list": []})
 
 
 # UNIVERSE MANAGEMENT
@@ -487,7 +493,7 @@ def get_subtree_list(request):
 def delete_universe(request):
     if "project_name" not in request.data or "universe_name" not in request.data:
         return Response(
-            {"error": "Name and zip file are required."},
+            {"error": "Missing required parameters"},
             status=status.HTTP_400_BAD_REQUEST,
         )
     project_name = request.data.get("project_name")
@@ -503,12 +509,18 @@ def delete_universe(request):
         return Response({"success": True})
     else:
         return Response(
-            {"success": False, "message": "Project does not exist"}, status=400
+            {"success": False, "message": "Project does not exist"}, status=404
         )
 
 
 @api_view(["GET"])
 def get_universes_list(request):
+
+    if "project_name" not in request.GET:
+        return Response(
+            {"error": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.GET.get("project_name")
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -527,23 +539,19 @@ def get_universes_list(request):
         return Response({"universes_list": universes_list})
 
     except Exception as e:
-        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=404)
 
 
 @api_view(["GET"])
 def get_universe_configuration(request):
+    if "project_name" not in request.GET or "universe_name" not in request.GET:
+        return Response(
+            {"error": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     project_name = request.GET.get("project_name")
     universe_name = request.GET.get("universe_name")
-
-    if not project_name:
-        return Response(
-            {"success": False, "message": "Project parameter is missing"}, status=400
-        )
-
-    if not universe_name:
-        return Response(
-            {"success": False, "message": "Universe parameter is missing"}, status=400
-        )
 
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
@@ -562,7 +570,7 @@ def get_universe_configuration(request):
         except json.JSONDecodeError:
             return Response(
                 {"success": False, "message": "Invalid JSON format in config file"},
-                status=500,
+                status=422,
             )
     else:
         return Response({"success": False, "message": "File not found"}, status=404)
@@ -573,6 +581,11 @@ def get_universe_configuration(request):
 
 @api_view(["GET"])
 def get_file_list(request):
+    if "project_name" not in request.GET:
+        return Response(
+            {"error": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.GET.get("project_name")
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -592,11 +605,16 @@ def get_file_list(request):
         return Response({"file_list": EntryEncoder().encode(file_list)})
 
     except Exception as e:
-        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=404)
 
 
 @api_view(["GET"])
 def get_actions_list(request):
+    if "project_name" not in request.GET:
+        return Response(
+            {"error": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.GET.get("project_name")
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
@@ -615,11 +633,16 @@ def get_actions_list(request):
         return Response({"actions_list": actions_list})
 
     except Exception as e:
-        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=404)
 
 
 @api_view(["GET"])
 def get_file(request):
+    if "project_name" not in request.GET or "filename" not in request.GET:
+        return Response(
+            {"error": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.GET.get("project_name", None)
     filename = request.GET.get("filename", None)
@@ -629,17 +652,14 @@ def get_file(request):
     project_path = os.path.join(folder_path, project_name)
     action_path = os.path.join(project_path, "code")
 
-    if filename:
-        file_path = os.path.join(action_path, filename)
-        if os.path.exists(file_path):
-            with open(file_path, "r") as f:
-                content = f.read()
-            serializer = FileContentSerializer({"content": content})
-            return Response(serializer.data)
-        else:
-            return Response({"error": "File not found"}, status=404)
+    file_path = os.path.join(action_path, filename)
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        serializer = FileContentSerializer({"content": content})
+        return Response(serializer.data)
     else:
-        return Response({"error": "Filename parameter is missing"}, status=400)
+        return Response({"error": "File not found"}, status=404)
 
 
 @api_view(["POST"])
@@ -680,7 +700,7 @@ def create_action(request):
             )
     else:
         return Response(
-            {"success": False, "message": "File already exists"}, status=400
+            {"success": False, "message": "File already exists"}, status=409
         )
 
 
@@ -713,7 +733,7 @@ def create_file(request):
         return Response({"success": True})
     else:
         return Response(
-            {"success": False, "message": "File already exists"}, status=400
+            {"success": False, "message": "File already exists"}, status=409
         )
 
 
@@ -743,13 +763,12 @@ def create_folder(request):
     if not os.path.exists(folder_path):
         try:
             os.makedirs(folder_path)
-            print(folder_path)
             return Response({"success": True})
         except Exception as e:
-            return Response({"success": False, "message": e}, status=400)
+            return Response({"success": False, "message": "Invalid name"}, status=400)
     else:
         return Response(
-            {"success": False, "message": "File already exists"}, status=400
+            {"success": False, "message": "Folder already exists"}, status=409
         )
 
 
@@ -820,7 +839,7 @@ def rename_folder(request):
             return JsonResponse({"success": True})
         except Exception as e:
             return JsonResponse(
-                {"success": False, "message": f"Error deleting file: {str(e)}"},
+                {"success": False, "message": f"Error deleting folder: {str(e)}"},
                 status=500,
             )
     else:
@@ -962,7 +981,7 @@ def generate_local_app(request):
         else:
             return Response(
                 {"success": False, "message": "Main tree not found"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=404,
             )
         # 1. Generate a basic tree from the JSON definition
         main_tree = json_translator.translate_raw(graph_data, bt_order)
@@ -1047,7 +1066,7 @@ def generate_dockerized_app(request):
         else:
             return Response(
                 {"success": False, "message": "Main tree not found"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=404,
             )
         # 1. Generate a basic tree from the JSON definition
         main_tree = json_translator.translate_raw(graph_data, bt_order)
@@ -1099,11 +1118,15 @@ def generate_dockerized_app(request):
 
 @api_view(["GET"])
 def get_universe_file_list(request):
+    if "project_name" not in request.GET or "universe_name" not in request.GET:
+        return Response(
+            {"error": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.GET.get("project_name")
     universe_name = request.GET.get("universe_name")
 
-    print(universe_name)
     folder_path = os.path.join(settings.BASE_DIR, "filesystem")
     project_path = os.path.join(folder_path, project_name)
     universes_path = os.path.join(project_path, "universes")
@@ -1117,17 +1140,21 @@ def get_universe_file_list(request):
         ]
 
         file_list = list_dir(universe_path, universe_path)
-        print(file_list)
 
         # Return the list of files
         return Response({"file_list": EntryEncoder().encode(file_list)})
 
     except Exception as e:
-        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=404)
 
 
 @api_view(["GET"])
 def get_universe_file(request):
+    if "project_name" not in request.GET or "universe_name" not in request.GET or "filename" not in request.GET:
+        return Response(
+            {"error": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     project_name = request.GET.get("project_name", None)
     universe_name = request.GET.get("universe_name")
@@ -1139,17 +1166,14 @@ def get_universe_file(request):
     universes_path = os.path.join(project_path, "universes")
     universe_path = os.path.join(universes_path, universe_name)
 
-    if filename:
-        file_path = os.path.join(universe_path, filename)
-        if os.path.exists(file_path):
-            with open(file_path, "r") as f:
-                content = f.read()
-            serializer = FileContentSerializer({"content": content})
-            return Response(serializer.data)
-        else:
-            return Response({"error": "File not found"}, status=404)
+    file_path = os.path.join(universe_path, filename)
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        serializer = FileContentSerializer({"content": content})
+        return Response(serializer.data)
     else:
-        return Response({"error": "Filename parameter is missing"}, status=400)
+        return Response({"error": "File not found"}, status=404)
 
 
 @api_view(["POST"])
@@ -1185,7 +1209,7 @@ def upload_universe(request):
         zip_file_data = base64.b64decode(zip_file)
     except (TypeError, ValueError):
         return Response(
-            {"error": "Invalid zip file data."}, status=status.HTTP_400_BAD_REQUEST
+            {"error": "Invalid zip file data."}, status=422
         )
 
     # Save the zip file temporarily
@@ -1303,7 +1327,7 @@ def upload_code(request):
     # If file exist simply return
     if os.path.exists(file_path):
         return JsonResponse(
-            {"success": False, "message": "File already exists"}, status=404
+            {"success": False, "message": "File already exists"}, status=409
         )
 
     try:
@@ -1311,7 +1335,7 @@ def upload_code(request):
             f.write(base64.b64decode(content))
         return Response({"success": True})
     except Exception as e:
-        return Response({"success": False, "message": str(e)}, status=400)
+        return Response({"success": False, "message": str(e)}, status=422)
 
 
 @api_view(["GET"])
@@ -1328,13 +1352,15 @@ def list_docker_universes(request):
 
 @api_view(["GET"])
 def get_docker_universe_path(request):
+    # Check if 'name' is in the request data
+    if "name" not in request.GET:
+        return Response(
+            {"error": "Missing required parameters"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    
     name = request.GET.get("name")
 
-    # Check if 'name' is in the request data
-    if not name:
-        return Response(
-            {"success": False, "message": "Project parameter is missing"}, status=400
-        )
 
     try:
         universe = Universe.objects.get(name=name)
