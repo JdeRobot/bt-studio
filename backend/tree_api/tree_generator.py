@@ -8,14 +8,6 @@ from .json_translator import prettify_xml
 ##############################################################################
 
 
-# Get the indentation of a given line
-def get_line_indentation(line) -> int:
-
-    indent = len(line) - len(line.strip())
-
-    return indent
-
-
 # Fix the indentation in a xml string
 def fix_indentation(xml_string, actions):
 
