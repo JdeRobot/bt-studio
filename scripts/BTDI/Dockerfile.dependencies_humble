@@ -272,8 +272,41 @@ RUN apt-get update && \
         ros-humble-tf2-ros \
         ros-humble-trajectory-msgs \
         ros-humble-visualization-msgs \
+        ros-humble-moveit \
+        ros-humble-ros2-control \
+        ros-humble-ros2-controllers \
+        ros-humble-gripper-controllers \
+        ros-humble-rmw-cyclonedds-cpp \
+        ros-humble-ur \
+        ros-humble-ros-testing \
+        libpoco-dev \
       && rm -rf /var/lib/apt/lists/*
 
+RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
+    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+
+# Install CycloneDDS RMW for ROS 2 Humble to fix cycle time issues in humble-moveit (temporary fix)    
+RUN echo 'export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp' >> ~/.bashrc
+
+# Instalation for industrial robots
+
+RUN mkdir -p /home/industrial_ws/src/ABBDriver
+WORKDIR /home/industrial_ws/src/ABBDriver
+RUN git clone https://github.com/PickNikRobotics/abb_ros2.git -b rolling
+RUN . /opt/ros/$ROS_DISTRO/setup.sh && rosdep update
+RUN vcs import < abb_ros2/abb.repos
+RUN . /opt/ros/$ROS_DISTRO/setup.sh && rosdep install -r --from-paths . --ignore-src --rosdistro $ROS_DISTRO -y
+WORKDIR /home/industrial_ws/src
+RUN git clone https://github.com/ros-controls/gazebo_ros2_control.git
+RUN cd gazebo_ros2_control && git reset --hard 9a3736c # Commit for the 0.4.6 version!
+RUN git clone https://github.com/IFRA-Cranfield/IFRA_LinkAttacher.git
+RUN git clone https://github.com/IFRA-Cranfield/IFRA_ObjectPose.git
+RUN git clone https://github.com/IFRA-Cranfield/IFRA_LinkPose.git
+RUN git clone https://github.com/IFRA-Cranfield/ros2_RobotiqGripper.git
+# Forked needed in order to read the parameters from main launcher
+RUN git clone https://github.com/javizqh/ros2_SimRealRobotControl
+RUN sudo cp /home/industrial_ws/src/ros2_SimRealRobotControl/include/move_group_interface_improved.h /opt/ros/humble/include/moveit/move_group_interface/move_group_interface_improved.h
+WORKDIR /home/industrial_ws
 RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
     colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 
@@ -283,6 +316,7 @@ RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 RUN echo 'export AEROSTACK2_PATH=/home/drones_ws/src/aerostack2' >> ~/.bashrc
 RUN echo 'source $AEROSTACK2_PATH/as2_cli/setup_env.bash' >> ~/.bashrc
 RUN echo "source /home/drones_ws/install/setup.bash" >> ~/.bashrc
+RUN echo "source /home/industrial_ws/install/setup.bash" >> ~/.bashrc
 
 # Download and install OMPL library
 COPY install-ompl-ubuntu.sh /
