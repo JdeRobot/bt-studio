@@ -1146,7 +1146,11 @@ def get_universe_file_list(request):
 
 @api_view(["GET"])
 def get_universe_file(request):
-    if "project_name" not in request.GET or "universe_name" not in request.GET or "filename" not in request.GET:
+    if (
+        "project_name" not in request.GET
+        or "universe_name" not in request.GET
+        or "filename" not in request.GET
+    ):
         return Response(
             {"error": "Missing required parameters"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -1204,9 +1208,7 @@ def upload_universe(request):
     try:
         zip_file_data = base64.b64decode(zip_file)
     except (TypeError, ValueError):
-        return Response(
-            {"error": "Invalid zip file data."}, status=422
-        )
+        return Response({"error": "Invalid zip file data."}, status=422)
 
     # Save the zip file temporarily
     temp_zip_path = os.path.join(universe_path, "temp.zip")
@@ -1354,9 +1356,8 @@ def get_docker_universe_path(request):
             {"error": "Missing required parameters"},
             status=status.HTTP_400_BAD_REQUEST,
         )
-    
-    name = request.GET.get("name")
 
+    name = request.GET.get("name")
 
     try:
         universe = Universe.objects.get(name=name)

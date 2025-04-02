@@ -178,12 +178,19 @@ def delete_file(self, dir, file):
     data = json.loads(response.json()["file_list"])
     self.assertEqual(len(data[1]["files"]), 0)
 
+
 def upload_file(self, dir, file, content):
     response = self.c.post(
         "/bt_studio/upload_code/",
-        {"project_name": "test", "location": dir, "file_name": file, "content": content},
+        {
+            "project_name": "test",
+            "location": dir,
+            "file_name": file,
+            "content": content,
+        },
     )
     self.assertEqual(response.status_code, 200)
+
 
 def write_to_file(self, dir, file, content):
     response = self.c.post(
@@ -261,7 +268,7 @@ def get_subtree(self, subtree, exepected):
         {"project_name": "test", "subtree_name": subtree},
     )
     self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.json()['subtree'], exepected)
+    self.assertEqual(response.json()["subtree"], exepected)
 
 
 def write_subtree(self, subtree, content):
@@ -444,8 +451,8 @@ class LocalTestCase(TestCase):
         """Test file and dir creation, rename and deletion"""
         dir = "dir"
         file = "file.txt"
-        content = 'Test Again'
-        content_b64 = 'VGVzdCBBZ2Fpbg=='
+        content = "Test Again"
+        content_b64 = "VGVzdCBBZ2Fpbg=="
         create_proyect(self)
         check_proyect_content(self)
         create_folder(self, dir)
@@ -592,7 +599,11 @@ class LocalTestFailedCase(TestCase):
         create_subtree(self, "subtree")
         response = self.c.get(
             "/bt_studio/get_subtree_structure/",
-            {"project_name": "test", "subtree_name": "subtree", "bt_order":"top-bottom"},
+            {
+                "project_name": "test",
+                "subtree_name": "subtree",
+                "bt_order": "top-bottom",
+            },
         )
         self.assertEqual(response.status_code, 500)
         delete_proyect(self)
@@ -639,7 +650,8 @@ class LocalTestFailedCase(TestCase):
         create_proyect(self)
         create_subtree(self, "subtree")
         response = self.c.post(
-            "/bt_studio/create_subtree/", {"project_name": "test", "subtree_name": "subtree"}
+            "/bt_studio/create_subtree/",
+            {"project_name": "test", "subtree_name": "subtree"},
         )
         self.assertEqual(response.status_code, self.dup_file)
         delete_proyect(self)
@@ -651,7 +663,10 @@ class LocalTestFailedCase(TestCase):
 
     def test_bad_path_save_subtree(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/save_subtree/", {"project_name": "test", "subtree_name": "subtree", "subtree_json":""})
+        response = self.c.post(
+            "/bt_studio/save_subtree/",
+            {"project_name": "test", "subtree_name": "subtree", "subtree_json": ""},
+        )
         self.assertEqual(response.status_code, 500)
 
     def test_incorrect_get_subtree(self):
