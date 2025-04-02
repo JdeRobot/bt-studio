@@ -1021,7 +1021,11 @@ def generate_local_app(request):
         unique_imports = app_generator.get_unique_imports(actions)
 
         return JsonResponse(
-            {"success": True, "tree": final_tree, "dependencies": sorted(unique_imports)}
+            {
+                "success": True,
+                "tree": final_tree,
+                "dependencies": sorted(unique_imports),
+            }
         )
 
     except Exception as e:
