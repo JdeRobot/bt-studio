@@ -7,6 +7,631 @@ composition_proj_config = """{
     }
 }"""
 
+basic_tree_content = """{
+    "id": "6965f5c5-3788-427f-a066-24494d05dbf4",
+    "offsetX": 39.450677130431785,
+    "offsetY": -80.65427956445936,
+    "zoom": 71.09999999999992,
+    "gridSize": 0,
+    "layers": [
+        {
+            "id": "3c777675-aadf-46eb-9bc1-7772fe191011",
+            "type": "diagram-links",
+            "isSvg": true,
+            "transformed": true,
+            "models": {
+                "e192eca0-ea20-4596-bb47-4e204c2bab63": {
+                    "id": "e192eca0-ea20-4596-bb47-4e204c2bab63",
+                    "type": "default",
+                    "selected": false,
+                    "source": "a284a54f-fd9e-4235-8275-5000bdfbaf7d",
+                    "sourcePort": "178fa7e2-f83f-4ba9-8f57-a11e60db962f",
+                    "target": "55b29236-163f-4c8a-9fc9-441e637ec731",
+                    "targetPort": "7c380a1f-2368-4135-bab5-34d7d03ba015",
+                    "points": [
+                        {
+                            "id": "5f0bde8d-f789-4317-93b7-4f6af6b2208b",
+                            "type": "point",
+                            "x": 772.6314115152493,
+                            "y": 494.3449739981743
+                        },
+                        {
+                            "id": "16135ffb-5cd2-4d8b-8d15-2fde3f759306",
+                            "type": "point",
+                            "selected": true,
+                            "x": 887.4932231142297,
+                            "y": 330.2568388033286
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                },
+                "27fc7ee9-7612-45dc-ae3b-c3bfe7ba8c85": {
+                    "id": "27fc7ee9-7612-45dc-ae3b-c3bfe7ba8c85",
+                    "type": "default",
+                    "selected": false,
+                    "source": "45584467-28b6-45ce-9f96-6ffeceb57b15",
+                    "sourcePort": "cd2270b0-efb9-47de-94a7-7c524c10b8b0",
+                    "target": "55b29236-163f-4c8a-9fc9-441e637ec731",
+                    "targetPort": "f37432e4-42b2-46bb-8efb-e06b54460eaa",
+                    "points": [
+                        {
+                            "id": "c63696cb-ea44-4c43-b306-b79aca03b479",
+                            "type": "point",
+                            "x": 778.2808011121804,
+                            "y": 545.5170292707878
+                        },
+                        {
+                            "id": "fb1d3fd6-c8f8-4587-bbb4-4486e86df61d",
+                            "type": "point",
+                            "x": 887.4932231142297,
+                            "y": 354.2606201501608
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                },
+                "c15b87d4-3225-4373-bdba-91f3c375a138": {
+                    "id": "c15b87d4-3225-4373-bdba-91f3c375a138",
+                    "type": "default",
+                    "selected": false,
+                    "source": "478c5369-cda7-4146-9d9b-cc755610e152",
+                    "sourcePort": "ade1685e-705c-4fbc-b027-b103b1496d0a",
+                    "target": "55b29236-163f-4c8a-9fc9-441e637ec731",
+                    "targetPort": "038945d3-b1c2-4db8-9741-f7dbe9aa4ad7",
+                    "points": [
+                        {
+                            "id": "05e0483b-34a0-447f-a887-2bb71e70c173",
+                            "type": "point",
+                            "x": 722.7487775709807,
+                            "y": 469.473877501163
+                        },
+                        {
+                            "id": "82d69fb5-25f9-437b-8084-0092ff2dd797",
+                            "type": "point",
+                            "selected": true,
+                            "x": 886.508762956881,
+                            "y": 306.2530896480346
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                },
+                "25ac5673-a33a-4962-980f-7fa3fdc646bb": {
+                    "id": "25ac5673-a33a-4962-980f-7fa3fdc646bb",
+                    "type": "default",
+                    "selected": false,
+                    "source": "8abddf62-30cb-4417-8869-859fc37ccd1b",
+                    "sourcePort": "0221083d-596a-4bba-8f6c-84c00b918db6",
+                    "target": "478c5369-cda7-4146-9d9b-cc755610e152",
+                    "targetPort": "e2cd6528-76ba-4c0d-9f3f-22396a195c92",
+                    "points": [
+                        {
+                            "id": "e200ac8f-1192-41a5-ae33-2b520e1f200f",
+                            "type": "point",
+                            "x": 600.4092579683082,
+                            "y": 417.59863027015024
+                        },
+                        {
+                            "id": "44e73609-daf5-4007-9ff9-598b92a37912",
+                            "type": "point",
+                            "x": 640.9625266369967,
+                            "y": 469.473877501163
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                },
+                "4872f205-a38f-4d14-9230-304ca3ce2835": {
+                    "id": "4872f205-a38f-4d14-9230-304ca3ce2835",
+                    "type": "default",
+                    "selected": false,
+                    "source": "8abddf62-30cb-4417-8869-859fc37ccd1b",
+                    "sourcePort": "0221083d-596a-4bba-8f6c-84c00b918db6",
+                    "target": "26f08fa7-c226-42a3-a177-4462b056031c",
+                    "targetPort": "e07050ec-80fe-47a8-8914-a271069971fe",
+                    "points": [
+                        {
+                            "id": "be60ca90-eec4-4a0d-b249-0233c23937a0",
+                            "type": "point",
+                            "x": 600.4092579683082,
+                            "y": 417.59863027015024
+                        },
+                        {
+                            "id": "95925c70-424f-4316-a1d8-497fca1f233c",
+                            "type": "point",
+                            "x": 628.7496579880867,
+                            "y": 332.7181608849039
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                },
+                "396b885c-960f-48c4-af6f-619b7243d3be": {
+                    "id": "396b885c-960f-48c4-af6f-619b7243d3be",
+                    "type": "default",
+                    "selected": false,
+                    "source": "e6829f4f-5e0c-494a-be5c-be3b1a0b5a4c",
+                    "sourcePort": "42be04c1-b9a7-482f-a3ad-14af212d8195",
+                    "target": "ac94de35-3590-41a2-9126-2e77c61ee0ca",
+                    "targetPort": "36e40ad6-1c14-47b1-84f3-b8e73789312e",
+                    "points": [
+                        {
+                            "id": "dd2fad6f-c19e-4da1-8f90-1719569ce20f",
+                            "type": "point",
+                            "x": 116.30243494176054,
+                            "y": 294.5090692906209
+                        },
+                        {
+                            "id": "b1eb51c2-fe74-4255-961c-990c011922d9",
+                            "type": "point",
+                            "x": 223.49879748681164,
+                            "y": 332.99943981436616
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                },
+                "719acb68-d759-48aa-adce-93fee46efdfc": {
+                    "id": "719acb68-d759-48aa-adce-93fee46efdfc",
+                    "type": "default",
+                    "selected": false,
+                    "source": "ac94de35-3590-41a2-9126-2e77c61ee0ca",
+                    "sourcePort": "ddfba7cc-8323-4f0f-b4b4-bb98530f1139",
+                    "target": "8abddf62-30cb-4417-8869-859fc37ccd1b",
+                    "targetPort": "5ce8bfd9-37ce-4bb0-87a3-d6af9c552ea3",
+                    "points": [
+                        {
+                            "id": "df596725-4545-47e2-b41c-74425700b588",
+                            "type": "point",
+                            "x": 382.8284546323374,
+                            "y": 332.99943981436616
+                        },
+                        {
+                            "id": "b0738f8b-071f-4bc9-b15f-11a8acb1a6f5",
+                            "type": "point",
+                            "x": 450.9953671565112,
+                            "y": 417.59863027015024
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                },
+                "7aa184c8-d045-414f-815e-c1145d86c2bd": {
+                    "id": "7aa184c8-d045-414f-815e-c1145d86c2bd",
+                    "type": "default",
+                    "selected": false,
+                    "source": "ac94de35-3590-41a2-9126-2e77c61ee0ca",
+                    "sourcePort": "ddfba7cc-8323-4f0f-b4b4-bb98530f1139",
+                    "target": "cb0af77d-3029-47fd-89ab-c64a248dd6da",
+                    "targetPort": "fedfde51-31f9-4207-b3f6-2f6484aa13ac",
+                    "points": [
+                        {
+                            "id": "8a889d50-0064-415e-866d-2dde8117da91",
+                            "type": "point",
+                            "x": 382.8284546323374,
+                            "y": 332.99943981436616
+                        },
+                        {
+                            "id": "8d12a7dd-cf8a-4189-9cb9-5d2c0adb2721",
+                            "type": "point",
+                            "selected": true,
+                            "x": 499.0965535735021,
+                            "y": 175.09978444409631
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                },
+                "ae73763a-6b60-4350-81c6-c4311a2e5564": {
+                    "id": "ae73763a-6b60-4350-81c6-c4311a2e5564",
+                    "type": "default",
+                    "selected": false,
+                    "source": "38631cfc-99fa-40ab-acc5-89c9012d4ee7",
+                    "sourcePort": "c36b298a-6ca3-4e7a-a81a-606ba64b6109",
+                    "target": "cb0af77d-3029-47fd-89ab-c64a248dd6da",
+                    "targetPort": "38ed462d-e857-4794-9698-40337497d94a",
+                    "points": [
+                        {
+                            "id": "f7c8cfa7-567b-44fb-98b9-2b1aa9bfa059",
+                            "type": "point",
+                            "x": 474.5770745167158,
+                            "y": 285.8123965049866
+                        },
+                        {
+                            "id": "0c2d0f08-5a39-488b-bba3-581b5e86e6ac",
+                            "type": "point",
+                            "x": 500.1045457452068,
+                            "y": 199.10353359939035
+                        }
+                    ],
+                    "labels": [],
+                    "width": 3,
+                    "color": "gray",
+                    "curvyness": 50,
+                    "selectedColor": "rgb(0,192,255)"
+                }
+            }
+        },
+        {
+            "id": "96ed375b-efac-45e3-b77b-77040d3ad195",
+            "type": "diagram-nodes",
+            "isSvg": false,
+            "transformed": true,
+            "models": {
+                "e6829f4f-5e0c-494a-be5c-be3b1a0b5a4c": {
+                    "id": "e6829f4f-5e0c-494a-be5c-be3b1a0b5a4c",
+                    "type": "basic",
+                    "selected": false,
+                    "x": 19.65022137887409,
+                    "y": 273.0007069241359,
+                    "ports": [
+                        {
+                            "id": "42be04c1-b9a7-482f-a3ad-14af212d8195",
+                            "type": "children",
+                            "x": 111.29774527848917,
+                            "y": 289.5043796273496,
+                            "name": "children",
+                            "alignment": "right",
+                            "parentNode": "e6829f4f-5e0c-494a-be5c-be3b1a0b5a4c",
+                            "links": [
+                                "396b885c-960f-48c4-af6f-619b7243d3be"
+                            ],
+                            "in": false,
+                            "label": "children"
+                        }
+                    ],
+                    "name": "Tree Root",
+                    "color": "rgb(0,204,0)"
+                },
+                "a284a54f-fd9e-4235-8275-5000bdfbaf7d": {
+                    "id": "a284a54f-fd9e-4235-8275-5000bdfbaf7d",
+                    "type": "tag",
+                    "selected": false,
+                    "x": 738.5906711616389,
+                    "y": 477.8513167425423,
+                    "ports": [
+                        {
+                            "id": "178fa7e2-f83f-4ba9-8f57-a11e60db962f",
+                            "type": "tag output",
+                            "x": 767.6267218519779,
+                            "y": 489.34028433490295,
+                            "name": "tag output",
+                            "alignment": "right",
+                            "parentNode": "a284a54f-fd9e-4235-8275-5000bdfbaf7d",
+                            "links": [
+                                "e192eca0-ea20-4596-bb47-4e204c2bab63"
+                            ],
+                            "in": false,
+                            "label": "tag output"
+                        }
+                    ],
+                    "name": "20",
+                    "color": "var(--bt-tag-normal-background)",
+                    "is_selected": false
+                },
+                "38631cfc-99fa-40ab-acc5-89c9012d4ee7": {
+                    "id": "38631cfc-99fa-40ab-acc5-89c9012d4ee7",
+                    "type": "tag",
+                    "selected": false,
+                    "x": 436.61153236966044,
+                    "y": 269.3052284775137,
+                    "ports": [
+                        {
+                            "id": "c36b298a-6ca3-4e7a-a81a-606ba64b6109",
+                            "type": "tag output",
+                            "x": 469.5723955839572,
+                            "y": 280.8077068417153,
+                            "name": "tag output",
+                            "alignment": "right",
+                            "parentNode": "38631cfc-99fa-40ab-acc5-89c9012d4ee7",
+                            "links": [
+                                "ae73763a-6b60-4350-81c6-c4311a2e5564"
+                            ],
+                            "in": false,
+                            "label": "tag output"
+                        }
+                    ],
+                    "name": "0.5",
+                    "color": "var(--bt-tag-normal-background)",
+                    "is_selected": false
+                },
+                "55b29236-163f-4c8a-9fc9-441e637ec731": {
+                    "id": "55b29236-163f-4c8a-9fc9-441e637ec731",
+                    "type": "basic",
+                    "selected": false,
+                    "x": 884.4939618994454,
+                    "y": 284.74792236360537,
+                    "ports": [
+                        {
+                            "id": "038945d3-b1c2-4db8-9741-f7dbe9aa4ad7",
+                            "type": "parent",
+                            "x": 881.5040732936096,
+                            "y": 301.2484107152759,
+                            "name": "parent",
+                            "alignment": "left",
+                            "parentNode": "55b29236-163f-4c8a-9fc9-441e637ec731",
+                            "links": [
+                                "c15b87d4-3225-4373-bdba-91f3c375a138"
+                            ],
+                            "in": true,
+                            "label": "parent"
+                        },
+                        {
+                            "id": "7c380a1f-2368-4135-bab5-34d7d03ba015",
+                            "type": "input",
+                            "x": 882.4885334509584,
+                            "y": 325.25215987057,
+                            "name": "amplitude",
+                            "alignment": "left",
+                            "parentNode": "55b29236-163f-4c8a-9fc9-441e637ec731",
+                            "links": [
+                                "e192eca0-ea20-4596-bb47-4e204c2bab63"
+                            ],
+                            "in": true,
+                            "label": "input"
+                        },
+                        {
+                            "id": "f37432e4-42b2-46bb-8efb-e06b54460eaa",
+                            "type": "input",
+                            "x": 882.4885334509584,
+                            "y": 349.25593048688944,
+                            "name": "obs_dist",
+                            "alignment": "left",
+                            "parentNode": "55b29236-163f-4c8a-9fc9-441e637ec731",
+                            "links": [
+                                "27fc7ee9-7612-45dc-ae3b-c3bfe7ba8c85"
+                            ],
+                            "in": true,
+                            "label": "input"
+                        }
+                    ],
+                    "name": "CheckObstacle",
+                    "color": "rgb(128,0,128)",
+                    "is_selected": false
+                },
+                "45584467-28b6-45ce-9f96-6ffeceb57b15": {
+                    "id": "45584467-28b6-45ce-9f96-6ffeceb57b15",
+                    "type": "tag",
+                    "selected": false,
+                    "x": 740.305645498533,
+                    "y": 529.0137713352867,
+                    "ports": [
+                        {
+                            "id": "cd2270b0-efb9-47de-94a7-7c524c10b8b0",
+                            "type": "tag output",
+                            "x": 773.2761221794217,
+                            "y": 540.5123396075164,
+                            "name": "tag output",
+                            "alignment": "right",
+                            "parentNode": "45584467-28b6-45ce-9f96-6ffeceb57b15",
+                            "links": [
+                                "27fc7ee9-7612-45dc-ae3b-c3bfe7ba8c85"
+                            ],
+                            "in": false,
+                            "label": "tag output"
+                        }
+                    ],
+                    "name": "1.0",
+                    "color": "var(--bt-tag-normal-background)",
+                    "is_selected": false
+                },
+                "26f08fa7-c226-42a3-a177-4462b056031c": {
+                    "id": "26f08fa7-c226-42a3-a177-4462b056031c",
+                    "type": "basic",
+                    "selected": false,
+                    "x": 626.7399147498706,
+                    "y": 311.21131253676344,
+                    "ports": [
+                        {
+                            "id": "e07050ec-80fe-47a8-8914-a271069971fe",
+                            "type": "parent",
+                            "x": 623.7449683248153,
+                            "y": 327.71348195214523,
+                            "name": "parent",
+                            "alignment": "left",
+                            "parentNode": "26f08fa7-c226-42a3-a177-4462b056031c",
+                            "links": [
+                                "4872f205-a38f-4d14-9230-304ca3ce2835"
+                            ],
+                            "in": true,
+                            "label": "parent"
+                        }
+                    ],
+                    "name": "Turn",
+                    "color": "rgb(128,0,128)",
+                    "is_selected": false
+                },
+                "478c5369-cda7-4146-9d9b-cc755610e152": {
+                    "id": "478c5369-cda7-4146-9d9b-cc755610e152",
+                    "type": "basic",
+                    "selected": false,
+                    "x": 638.9498572481376,
+                    "y": 447.9736794875401,
+                    "ports": [
+                        {
+                            "id": "e2cd6528-76ba-4c0d-9f3f-22396a195c92",
+                            "type": "parent",
+                            "x": 635.9578369737253,
+                            "y": 464.46918783789164,
+                            "name": "parent",
+                            "alignment": "left",
+                            "parentNode": "478c5369-cda7-4146-9d9b-cc755610e152",
+                            "links": [
+                                "25ac5673-a33a-4962-980f-7fa3fdc646bb"
+                            ],
+                            "in": true,
+                            "label": "parent"
+                        },
+                        {
+                            "id": "ade1685e-705c-4fbc-b027-b103b1496d0a",
+                            "type": "children",
+                            "x": 717.7440879077093,
+                            "y": 464.46918783789164,
+                            "name": "children",
+                            "alignment": "right",
+                            "parentNode": "478c5369-cda7-4146-9d9b-cc755610e152",
+                            "links": [
+                                "c15b87d4-3225-4373-bdba-91f3c375a138"
+                            ],
+                            "in": false,
+                            "label": "children"
+                        }
+                    ],
+                    "name": "Inverter",
+                    "color": "rgb(255,153,51)",
+                    "is_selected": false
+                },
+                "8abddf62-30cb-4417-8869-859fc37ccd1b": {
+                    "id": "8abddf62-30cb-4417-8869-859fc37ccd1b",
+                    "type": "basic",
+                    "selected": false,
+                    "x": 449.0004261482639,
+                    "y": 396.0956973497807,
+                    "ports": [
+                        {
+                            "id": "5ce8bfd9-37ce-4bb0-87a3-d6af9c552ea3",
+                            "type": "parent",
+                            "x": 445.99067749323984,
+                            "y": 412.5939406068789,
+                            "name": "parent",
+                            "alignment": "left",
+                            "parentNode": "8abddf62-30cb-4417-8869-859fc37ccd1b",
+                            "links": [
+                                "719acb68-d759-48aa-adce-93fee46efdfc"
+                            ],
+                            "in": true,
+                            "label": "parent"
+                        },
+                        {
+                            "id": "0221083d-596a-4bba-8f6c-84c00b918db6",
+                            "type": "children",
+                            "x": 595.4045683050368,
+                            "y": 412.5939406068789,
+                            "name": "children",
+                            "alignment": "right",
+                            "parentNode": "8abddf62-30cb-4417-8869-859fc37ccd1b",
+                            "links": [
+                                "25ac5673-a33a-4962-980f-7fa3fdc646bb",
+                                "4872f205-a38f-4d14-9230-304ca3ce2835"
+                            ],
+                            "in": false,
+                            "label": "children"
+                        }
+                    ],
+                    "name": "ReactiveFallback",
+                    "color": "rgb(255,0,0)",
+                    "is_selected": false
+                },
+                "ac94de35-3590-41a2-9126-2e77c61ee0ca": {
+                    "id": "ac94de35-3590-41a2-9126-2e77c61ee0ca",
+                    "type": "basic",
+                    "selected": false,
+                    "x": 221.49178255372948,
+                    "y": 311.504424778761,
+                    "ports": [
+                        {
+                            "id": "36e40ad6-1c14-47b1-84f3-b8e73789312e",
+                            "type": "parent",
+                            "x": 218.49410782354028,
+                            "y": 327.99475015109476,
+                            "name": "parent",
+                            "alignment": "left",
+                            "parentNode": "ac94de35-3590-41a2-9126-2e77c61ee0ca",
+                            "links": [
+                                "396b885c-960f-48c4-af6f-619b7243d3be"
+                            ],
+                            "in": true,
+                            "label": "parent"
+                        },
+                        {
+                            "id": "ddfba7cc-8323-4f0f-b4b4-bb98530f1139",
+                            "type": "children",
+                            "x": 377.8237649690661,
+                            "y": 327.99475015109476,
+                            "name": "children",
+                            "alignment": "right",
+                            "parentNode": "ac94de35-3590-41a2-9126-2e77c61ee0ca",
+                            "links": [
+                                "719acb68-d759-48aa-adce-93fee46efdfc",
+                                "7aa184c8-d045-414f-815e-c1145d86c2bd"
+                            ],
+                            "in": false,
+                            "label": "children"
+                        }
+                    ],
+                    "name": "ReactiveSequence",
+                    "color": "rgb(0,128,255)"
+                },
+                "cb0af77d-3029-47fd-89ab-c64a248dd6da": {
+                    "id": "cb0af77d-3029-47fd-89ab-c64a248dd6da",
+                    "type": "basic",
+                    "selected": false,
+                    "x": 497.0922882427311,
+                    "y": 153.60303413400726,
+                    "ports": [
+                        {
+                            "id": "fedfde51-31f9-4207-b3f6-2f6484aa13ac",
+                            "type": "parent",
+                            "x": 494.09187464074347,
+                            "y": 170.09510551133764,
+                            "name": "parent",
+                            "alignment": "left",
+                            "parentNode": "cb0af77d-3029-47fd-89ab-c64a248dd6da",
+                            "links": [
+                                "7aa184c8-d045-414f-815e-c1145d86c2bd"
+                            ],
+                            "in": true,
+                            "label": "parent"
+                        },
+                        {
+                            "id": "38ed462d-e857-4794-9698-40337497d94a",
+                            "type": "input",
+                            "x": 495.0998560819354,
+                            "y": 194.0988546666317,
+                            "name": "speed",
+                            "alignment": "left",
+                            "parentNode": "cb0af77d-3029-47fd-89ab-c64a248dd6da",
+                            "links": [
+                                "ae73763a-6b60-4350-81c6-c4311a2e5564"
+                            ],
+                            "in": true,
+                            "label": "input"
+                        }
+                    ],
+                    "name": "Forward",
+                    "color": "rgb(128,0,128)",
+                    "is_selected": false
+                }
+            }
+        }
+    ]
+}"""
+
 composition_tree_content = """{
     "id": "fa2362dc-cffa-4764-9b70-90d475be0c02",
     "offsetX": 61.67634402521469,
@@ -1136,7 +1761,7 @@ class Turn(py_trees.behaviour.Behaviour):
         )
 """
 
-composition_deps_list = ['geometry_msgs', 'py_trees', 'sensor_msgs', 'tree_tools']
+composition_deps_list = ["geometry_msgs", "py_trees", "sensor_msgs", "tree_tools"]
 
 composition_xml = """<?xml version="1.0" ?>
 <Root name="Tree Root">
@@ -1173,6 +1798,245 @@ composition_xml = """<?xml version="1.0" ?>
       
   
       <Forward name="Forward" speed="0.4"/>
+      
+    
+    </ReactiveSequence>
+    
+  
+  </BehaviorTree>
+  
+
+  <Code>
+    <CheckObstacle>
+      import py_trees
+      import sensor_msgs
+      import tree_tools
+      
+      
+      def check_obstacle_in_laser(laser_measures, amplitude):
+      
+          relevant_measures = laser_measures[:amplitude] + laser_measures[-amplitude:]
+      
+          for measure in relevant_measures:
+      
+              if measure &lt; 1:
+                  return True
+      
+          return False
+      
+      
+      class CheckObstacle(py_trees.behaviour.Behaviour):
+          def __init__(self, name, ports=None):
+      
+              # Configure the name of the behaviour
+              super().__init__(name)
+              self.logger.debug(&quot;%s.__init__()&quot; % (self.__class__.__name__))
+      
+              # Get the ports
+              self.ports = ports
+      
+          def setup(self, **kwargs: int) -&gt; None:
+      
+              # Get the node passed from the tree (needed for interaction with ROS)
+              try:
+                  self.node = kwargs[&quot;node&quot;]
+              except KeyError as e:
+                  error_message = &quot;Couldn't find the tree node&quot;
+                  raise KeyError(error_message) from e
+      
+              # Setup the subscription to the laser
+              self.subscription = self.node.create_subscription(
+                  sensor_msgs.msg.LaserScan, &quot;/scan&quot;, self.listener_callback, 10
+              )
+      
+              self.last_scan_ = sensor_msgs.msg.LaserScan()
+      
+          def listener_callback(self, msg) -&gt; None:
+              self.last_scan_ = msg
+      
+          def initialise(self) -&gt; None:
+      
+              # Debugging
+              self.logger.debug(&quot;%s.initialise()&quot; % (self.__class__.__name__))
+      
+          def update(self) -&gt; py_trees.common.Status:
+      
+              # Check the laser measures
+              if len(self.last_scan_.ranges) == 0:
+                  new_status = py_trees.common.Status.INVALID
+      
+              # Get params from ports
+              amplitude = int(tree_tools.get_port_content(self.ports[&quot;amplitude&quot;]))
+              obs_dist = float(tree_tools.get_port_content(self.ports[&quot;obs_dist&quot;]))
+      
+              # Check if there is an obstacle
+              obstacle = check_obstacle_in_laser(self.last_scan_.ranges, amplitude)
+              if obstacle:
+                  new_status = py_trees.common.Status.SUCCESS
+              else:
+                  new_status = py_trees.common.Status.FAILURE
+      
+              return new_status
+      
+          def terminate(self, new_status: py_trees.common.Status) -&gt; None:
+      
+              # Debugging
+              self.logger.debug(
+                  &quot;%s.terminate()[%s-&gt;%s]&quot;
+                  % (self.__class__.__name__, self.status, new_status)
+              )
+      
+</CheckObstacle>
+    <Forward>
+      import py_trees
+      import geometry_msgs
+      import tree_tools
+      
+      
+      class Forward(py_trees.behaviour.Behaviour):
+          def __init__(self, name, ports=None):
+      
+              # Configure the name of the behaviour
+              super().__init__(name)
+              self.logger.debug(&quot;%s.__init__()&quot; % (self.__class__.__name__))
+      
+              # Get the ports
+              self.ports = ports
+      
+          def setup(self, **kwargs) -&gt; None:
+      
+              # Get the node passed from the tree (needed for interaction with ROS)
+              try:
+                  self.node = kwargs[&quot;node&quot;]
+              except KeyError as e:
+                  error_message = &quot;Couldn't find the tree node&quot;
+                  raise KeyError(error_message) from e
+      
+              # Setup the publisher for the robot speed
+              self.publisher = self.node.create_publisher(
+                  msg_type=geometry_msgs.msg.Twist, topic=&quot;/cmd_vel&quot;, qos_profile=10
+              )
+      
+          def initialise(self) -&gt; None:
+      
+              # Debugging
+              self.logger.debug(&quot;%s.initialise()&quot; % (self.__class__.__name__))
+      
+          def update(self) -&gt; py_trees.common.Status:
+      
+              # Publish the speed msg
+              msg = geometry_msgs.msg.Twist()
+              msg.linear.x = float(tree_tools.get_port_content(self.ports[&quot;speed&quot;]))
+              self.publisher.publish(msg)
+              print(&quot;Forward&quot;)
+      
+              return py_trees.common.Status.RUNNING
+      
+          def terminate(self, new_status: py_trees.common.Status) -&gt; None:
+      
+              # Stop the robot
+              msg = geometry_msgs.msg.Twist()
+              msg.linear.x = 0.0
+              self.publisher.publish(msg)
+      
+              # Debugging
+              self.logger.debug(
+                  &quot;%s.terminate()[%s-&gt;%s]&quot;
+                  % (self.__class__.__name__, self.status, new_status)
+              )
+      
+</Forward>
+    <Turn>
+      import py_trees
+      import geometry_msgs
+      
+      
+      class Turn(py_trees.behaviour.Behaviour):
+          def __init__(self, name, ports=None):
+      
+              # Configure the name of the behavioure
+              super().__init__(name)
+              self.logger.debug(&quot;%s.__init__()&quot; % (self.__class__.__name__))
+      
+              # Get the ports
+              self.ports = ports
+      
+          def setup(self, **kwargs: int) -&gt; None:
+      
+              # Get the node passed from the tree (needed for interaction with ROS)
+              try:
+                  self.node = kwargs[&quot;node&quot;]
+              except KeyError as e:
+                  error_message = &quot;Couldn't find the tree node&quot;
+                  raise KeyError(error_message) from e
+      
+              # Setup the publisher for the robot speed
+              self.publisher = self.node.create_publisher(
+                  msg_type=geometry_msgs.msg.Twist, topic=&quot;/cmd_vel&quot;, qos_profile=10
+              )
+      
+          def initialise(self) -&gt; None:
+      
+              # Debugging
+              self.logger.debug(&quot;%s.initialise()&quot; % (self.__class__.__name__))
+      
+          def update(self) -&gt; py_trees.common.Status:
+      
+              # Publish the speed msg
+              msg = geometry_msgs.msg.Twist()
+              msg.angular.z = 0.4
+              self.publisher.publish(msg)
+              print(&quot;Turning&quot;)
+      
+              return py_trees.common.Status.RUNNING
+      
+          def terminate(self, new_status: py_trees.common.Status) -&gt; None:
+      
+              # Stop the robot
+              msg = geometry_msgs.msg.Twist()
+              msg.linear.x = 0.0
+              self.publisher.publish(msg)
+      
+              # Debugging
+              self.logger.debug(
+                  &quot;%s.terminate()[%s-&gt;%s]&quot;
+                  % (self.__class__.__name__, self.status, new_status)
+              )
+      
+</Turn>
+  </Code>
+</Root>
+"""
+
+basic_xml = """<?xml version="1.0" ?>
+<Root name="Tree Root">
+  
+  
+  <BehaviorTree>
+    
+    
+    <ReactiveSequence name="ReactiveSequence">
+      
+      
+      <ReactiveFallback name="ReactiveFallback">
+        
+        
+        <Inverter name="Inverter">
+          
+          
+          <CheckObstacle name="CheckObstacle" amplitude="20" obs_dist="1.0"/>
+          
+        
+        </Inverter>
+        
+        
+        <Turn name="Turn"/>
+        
+      
+      </ReactiveFallback>
+      
+      
+      <Forward name="Forward" speed="0.5"/>
       
     
     </ReactiveSequence>
