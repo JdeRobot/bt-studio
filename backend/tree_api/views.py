@@ -379,13 +379,12 @@ def create_subtree(request):
 
     # Copy the subtree to the project
     if not os.path.exists(project_json_path):
-        print("Copying from: " + src_path)
         shutil.copy(init_json_path, project_json_path)
         return Response({"success": True}, status=status.HTTP_201_CREATED)
     else:
         return Response(
             {"success": False, "message": "Subtree already exists"},
-            status=status.HTTP_400_BAD_REQUEST,
+            status=409,
         )
 
 
@@ -423,7 +422,6 @@ def save_subtree(request):
         return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
     except Exception as e:
-        print(e)
         return JsonResponse(
             {"success": False, "message": f"Error saving subtree: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -1024,10 +1022,9 @@ def generate_local_app(request):
         )
 
     except Exception as e:
-        print(e)
-        import traceback
+        # import traceback
 
-        traceback.print_exc()
+        # traceback.print_exc()
         return Response(
             {"success": False, "message": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -1106,10 +1103,9 @@ def generate_dockerized_app(request):
         return JsonResponse({"success": True, "tree": final_tree})
 
     except Exception as e:
-        print(e)
-        import traceback
+        # import traceback
 
-        traceback.print_exc()
+        # traceback.print_exc()
         return Response(
             {"success": False, "message": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,

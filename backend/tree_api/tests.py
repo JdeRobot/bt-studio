@@ -8,6 +8,7 @@ from selenium.webdriver import FirefoxOptions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+import base64
 
 # Create your tests here.
 # * Login: Entrar con un usuario de test
@@ -23,6 +24,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 # * Borrar el universo: con la ejecución parada borrar el universo
 # * Borrar el proyecto: hace falta salir de BT y volver a entrar para poder borrarlo
 # Coverage: python -m coverage run --source="./backend/tree_api/" manage.py test && python -m coverage html
+
 
 def create_proyect(self):
     # * Crear Proyecto: Crear un nuevo proyecto llamado "test"
@@ -69,7 +71,16 @@ def select_RB_universe(self):
         "/bt_studio/get_universe_configuration/",
         {"project_name": "test", "universe_name": "test"},
     )
-    self.assertEqual(response.json(), self.test_rb_universe_config)
+    self.assertEqual(response.json()["config"], self.test_rb_universe_config)
+
+
+def check_RB_universe(self):
+    # - Seleccionar un Universo: Seleccionar el universo "test"
+    response = self.c.get(
+        "/bt_studio/get_universe_file_list/",
+        {"project_name": "test", "universe_name": "test"},
+    )
+    self.assertEqual(response.json(), self.base_rb_universe_content)
 
 
 def delete_RB_universe(self):
@@ -167,6 +178,13 @@ def delete_file(self, dir, file):
     data = json.loads(response.json()["file_list"])
     self.assertEqual(len(data[1]["files"]), 0)
 
+def upload_file(self, dir, file, content):
+    response = self.c.post(
+        "/bt_studio/upload_code/",
+        {"project_name": "test", "location": dir, "file_name": file, "content": content},
+    )
+    self.assertEqual(response.status_code, 200)
+
 def write_to_file(self, dir, file, content):
     response = self.c.post(
         "/bt_studio/save_file/",
@@ -174,10 +192,14 @@ def write_to_file(self, dir, file, content):
     )
     self.assertEqual(response.status_code, 200)
 
+
 def check_file(self, dir, file, content):
-    response = self.c.get("/bt_studio/get_file/", {"project_name": "test", "filename": dir + "/" + file})
+    response = self.c.get(
+        "/bt_studio/get_file/", {"project_name": "test", "filename": dir + "/" + file}
+    )
     self.assertEqual(response.status_code, 200)
     self.assertEqual(response.json()["content"], content)
+
 
 def create_folder(self, dir):
     response = self.c.get("/bt_studio/get_file_list/", {"project_name": "test"})
@@ -225,6 +247,31 @@ def delete_folder(self, dir):
     self.assertEqual(len(data), 2)
 
 
+def create_subtree(self, subtree):
+    response = self.c.post(
+        "/bt_studio/create_subtree/",
+        {"project_name": "test", "subtree_name": subtree},
+    )
+    self.assertEqual(response.status_code, 201)
+
+
+def get_subtree(self, subtree, exepected):
+    response = self.c.get(
+        "/bt_studio/get_subtree/",
+        {"project_name": "test", "subtree_name": subtree},
+    )
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response.json()['subtree'], exepected)
+
+
+def write_subtree(self, subtree, content):
+    response = self.c.post(
+        "/bt_studio/save_subtree/",
+        {"project_name": "test", "subtree_name": subtree, "subtree_json": content},
+    )
+    self.assertEqual(response.status_code, 200)
+
+
 class LocalTestCase(TestCase):
     empty_project_content = {
         "file_list": '[{"is_dir": true, "name": "actions", "path": "actions", "files": []}, {"is_dir": true, "name": "trees", "path": "trees", "files": [{"is_dir": true, "name": "subtrees", "path": "trees/subtrees", "files": []}, {"is_dir": false, "name": "main.json", "path": "trees/main.json", "files": []}]}]'
@@ -233,12 +280,66 @@ class LocalTestCase(TestCase):
     base_project_config = '{"name": "test", "config": {"editorShowAccentColors": true, "theme": "dark", "btOrder": "bottom-to-top"}}'
 
     test_rb_universe_config = {
-        "success": True,
-        "config": {"name": "test", "id": "Follow Person", "type": "robotics_backend"},
+        "name": "test",
+        "id": "Follow Person",
+        "type": "robotics_backend",
+    }
+
+    base_rb_universe_content = {
+        "file_list": '[{"is_dir": false, "name": "config.json", "path": "config.json", "files": []}]'
     }
 
     test_action_content = {
         "content": 'import py_trees\nimport geometry_msgs\n\nclass Action(py_trees.behaviour.Behaviour):\n\n    def __init__(self, name, ports = None):\n\n        """ Constructor, executed when the class is instantiated """\n\n        # Configure the name of the behavioure\n        super().__init__(name)\n        self.logger.debug("%s.__init__()" % (self.__class__.__name__))\n\n        # Get the ports\n        self.ports = ports\n\n    def setup(self, **kwargs: int) -> None:\n\n        """ Executed when the setup function is called upon the tree """\n\n        # Get the node passed from the tree (needed for interaction with ROS)\n        try:\n            self.node = kwargs[\'node\']\n        except KeyError as e:\n            error_message = "Couldn\'t find the tree node"\n            raise KeyError(error_message) from e\n\n    def initialise(self) -> None:\n\n        """ Executed when coming from an idle state """\n\n        # Debugging\n        self.logger.debug("%s.initialise()" % (self.__class__.__name__))\n\n    def update(self) -> py_trees.common.Status:\n\n        """ Executed when the action is ticked. Do not block! """\n\n        return py_trees.common.Status.RUNNING \n\n    def terminate(self, new_status: py_trees.common.Status) -> None:\n\n        """ Called whenever the behaviour switches to a non-running state """\n\n        # Debugging\n        self.logger.debug("%s.terminate()[%s->%s]" % (self.__class__.__name__, self.status, new_status))'
+    }
+
+    base_subtree_content = {
+        "id": "fa2362dc-cffa-4764-9b70-90d475be0c02",
+        "offsetX": -5.628119613229821,
+        "offsetY": 4.788388817065306,
+        "zoom": 66,
+        "gridSize": 0,
+        "layers": [
+            {
+                "id": "1d9af8b5-858e-4253-9057-fbf3c9f2442d",
+                "type": "diagram-links",
+                "isSvg": True,
+                "transformed": True,
+                "models": {},
+            },
+            {
+                "id": "fed3b351-5f1a-4cad-9f61-031f8a6af57e",
+                "type": "diagram-nodes",
+                "isSvg": False,
+                "transformed": True,
+                "models": {
+                    "94891f48-9deb-4724-a39d-3551b000dcf6": {
+                        "id": "94891f48-9deb-4724-a39d-3551b000dcf6",
+                        "type": "basic",
+                        "selected": False,
+                        "x": 200,
+                        "y": 200,
+                        "ports": [
+                            {
+                                "id": "d988236c-73d4-423a-8acc-05911daede71",
+                                "type": "children",
+                                "x": 291.64069082023457,
+                                "y": 215.99999978001466,
+                                "name": "children",
+                                "alignment": "right",
+                                "parentNode": "94891f48-9deb-4724-a39d-3551b000dcf6",
+                                "links": [],
+                                "in": False,
+                                "label": "children",
+                            }
+                        ],
+                        "name": "Tree Root",
+                        "color": "rgb(0,204,0)",
+                        "is_selected": False,
+                    }
+                },
+            },
+        ],
     }
 
     @classmethod
@@ -246,10 +347,15 @@ class LocalTestCase(TestCase):
         self.c = Client()
 
     def tearDown(self):
+        # Delete all remaining projects
         response = self.c.get("/bt_studio/get_project_list/")
         if "test" in response.json()["project_list"]:
-            response = self.c.post("/bt_studio/delete_project/", {"project_name": "test"})
+            response = self.c.post(
+                "/bt_studio/delete_project/", {"project_name": "test"}
+            )
             self.assertEqual(response.status_code, 200)
+        response = self.c.get("/bt_studio/get_project_list/")
+        self.assertEqual("test" in response.json()["project_list"], False)
 
     def test_proyect(self):
         """Test if proyect is created with the proper content and deleted"""
@@ -261,13 +367,18 @@ class LocalTestCase(TestCase):
         """Test if proyect is created with the proper content and deleted"""
         create_proyect(self)
         check_proyect_content(self)
-        response = self.c.get("/bt_studio/get_project_configuration/", {"project_name": "test"})
+        response = self.c.get(
+            "/bt_studio/get_project_configuration/", {"project_name": "test"}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(str(response.json()), self.base_project_config)
-        response = self.c.post("/bt_studio/save_project_configuration/", {"project_name": "test", "settings":response.json()})
+        response = self.c.post(
+            "/bt_studio/save_project_configuration/",
+            {"project_name": "test", "settings": response.json()},
+        )
         self.assertEqual(response.status_code, 200)
         delete_proyect(self)
-        
+
     def test_universe_db(self):
         response = self.c.get("/bt_studio/list_docker_universes/")
         self.assertEqual(response.status_code, 200)
@@ -285,6 +396,18 @@ class LocalTestCase(TestCase):
         check_proyect_content(self)
         create_RB_universe(self, "Follow Person")
         select_RB_universe(self)
+        check_RB_universe(self)
+        response = self.c.get(
+            "/bt_studio/get_universe_file/",
+            {
+                "project_name": "test",
+                "universe_name": "test",
+                "filename": "config.json",
+            },
+        )
+        self.assertEqual(
+            json.loads(response.json()["content"]), self.test_rb_universe_config
+        )
         delete_RB_universe(self)
         delete_proyect(self)
 
@@ -317,9 +440,34 @@ class LocalTestCase(TestCase):
         delete_folder(self, dir_rename)
         delete_proyect(self)
 
+    def test_upload_code(self):
+        """Test file and dir creation, rename and deletion"""
+        dir = "dir"
+        file = "file.txt"
+        content = 'Test Again'
+        content_b64 = 'VGVzdCBBZ2Fpbg=='
+        create_proyect(self)
+        check_proyect_content(self)
+        create_folder(self, dir)
+        upload_file(self, dir, file, content_b64)
+        check_file(self, dir, file, content)
+
+    def test_subtree_creation(self):
+        """Test action creation with templates"""
+        create_proyect(self)
+        check_proyect_content(self)
+        response = self.c.post(
+            "/bt_studio/delete_folder/",
+            {"project_name": "test", "path": "trees/subtrees"},
+        )
+        self.assertEqual(response.status_code, 200)
+        create_subtree(self, "subtree")
+        get_subtree(self, "subtree", self.base_subtree_content)
+        write_subtree(self, "subtree", "{}")
+        get_subtree(self, "subtree", {})
+
 
 class LocalTestFailedCase(TestCase):
-    
 
     @classmethod
     def setUpClass(self):
@@ -333,9 +481,13 @@ class LocalTestFailedCase(TestCase):
         # Delete all remaining projects
         response = self.c.get("/bt_studio/get_project_list/")
         if "test" in response.json()["project_list"]:
-            response = self.c.post("/bt_studio/delete_project/", {"project_name": "test"})
+            response = self.c.post(
+                "/bt_studio/delete_project/", {"project_name": "test"}
+            )
             self.assertEqual(response.status_code, 200)
-    
+        response = self.c.get("/bt_studio/get_project_list/")
+        self.assertEqual("test" in response.json()["project_list"], False)
+
     def test_incorrect_create_proyect(self):
         """Test if error appears when no paramters are passed"""
         response = self.c.post("/bt_studio/create_project/")
@@ -369,7 +521,9 @@ class LocalTestFailedCase(TestCase):
 
     def test_bad_json_save_base_tree(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/save_base_tree/", {"project_name": "test", "graph_json":"[]"})
+        response = self.c.post(
+            "/bt_studio/save_base_tree/", {"project_name": "test", "graph_json": "[]"}
+        )
         self.assertEqual(response.status_code, self.bad_data)
 
     def test_incorrect_get_main_tree(self):
@@ -385,8 +539,8 @@ class LocalTestFailedCase(TestCase):
     def test_bad_json_get_main_tree(self):
         """Test if error appears when paramters are wrong"""
         create_proyect(self)
-        write_to_file(self,"trees","main.json","{[]}")
-        check_file(self,"trees","main.json","{[]}")
+        write_to_file(self, "trees", "main.json", "{[]}")
+        check_file(self, "trees", "main.json", "{[]}")
         response = self.c.get("/bt_studio/get_project_graph/", {"project_name": "test"})
         self.assertEqual(response.status_code, self.bad_data)
         delete_proyect(self)
@@ -398,7 +552,9 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_get_proy_config(self):
         """Test if error appears when paramters are wrong"""
-        response = self.c.get("/bt_studio/get_project_configuration/", {"project_name": "test"})
+        response = self.c.get(
+            "/bt_studio/get_project_configuration/", {"project_name": "test"}
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_get_tree_structure(self):
@@ -408,7 +564,10 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_get_tree_structure(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_tree_structure/", {"project_name": "test", "bt_order":"top-bottom"})
+        response = self.c.get(
+            "/bt_studio/get_tree_structure/",
+            {"project_name": "test", "bt_order": "top-bottom"},
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_get_subtree_structure(self):
@@ -418,8 +577,25 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_get_subtree_structure(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_subtree_structure/", {"project_name": "test", "subtree_name":"subtree", "bt_order":"top-bottom"})
+        response = self.c.get(
+            "/bt_studio/get_subtree_structure/",
+            {
+                "project_name": "test",
+                "subtree_name": "subtree",
+                "bt_order": "top-bottom",
+            },
+        )
         self.assertEqual(response.status_code, self.no_files)
+
+    def test_write_error_get_subtree_structure(self):
+        create_proyect(self)
+        create_subtree(self, "subtree")
+        response = self.c.get(
+            "/bt_studio/get_subtree_structure/",
+            {"project_name": "test", "subtree_name": "subtree", "bt_order":"top-bottom"},
+        )
+        self.assertEqual(response.status_code, 500)
+        delete_proyect(self)
 
     def test_incorrect_save_proj_configuration(self):
         """Test if error appears when no paramters are passed"""
@@ -428,13 +604,19 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_content_save_proj_configuration(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/save_project_configuration/", {"project_name": "test", "settings": ""})
+        response = self.c.post(
+            "/bt_studio/save_project_configuration/",
+            {"project_name": "test", "settings": ""},
+        )
         self.assertEqual(response.status_code, 400)
 
     def test_bad_json_save_proj_configuration(self):
         """Test if error appears when no paramters are passed"""
         create_proyect(self)
-        response = self.c.post("/bt_studio/save_project_configuration/", {"project_name": "test", "settings": "{[]}"})
+        response = self.c.post(
+            "/bt_studio/save_project_configuration/",
+            {"project_name": "test", "settings": "{[]}"},
+        )
         self.assertEqual(response.status_code, self.bad_data)
         delete_proyect(self)
 
@@ -442,19 +624,35 @@ class LocalTestFailedCase(TestCase):
         """Test if error appears when no paramters are passed"""
         response = self.c.post("/bt_studio/create_subtree/")
         self.assertEqual(response.status_code, self.no_param)
-        response = self.c.post("/bt_studio/create_subtree/", {"project_name": "","subtree_name":"subtree"})
+        response = self.c.post(
+            "/bt_studio/create_subtree/",
+            {"project_name": "", "subtree_name": "subtree"},
+        )
         self.assertEqual(response.status_code, self.no_param)
-        response = self.c.post("/bt_studio/create_subtree/", {"project_name": "test","subtree_name":""})
+        response = self.c.post(
+            "/bt_studio/create_subtree/", {"project_name": "test", "subtree_name": ""}
+        )
         self.assertEqual(response.status_code, self.no_param)
 
     def test_duplicate_create_subtree(self):
         """Test if error appears when no paramters are passed"""
-        #TODO
+        create_proyect(self)
+        create_subtree(self, "subtree")
+        response = self.c.post(
+            "/bt_studio/create_subtree/", {"project_name": "test", "subtree_name": "subtree"}
+        )
+        self.assertEqual(response.status_code, self.dup_file)
+        delete_proyect(self)
 
     def test_incorrect_save_subtree(self):
         """Test if error appears when no paramters are passed"""
         response = self.c.post("/bt_studio/save_subtree/")
         self.assertEqual(response.status_code, self.no_param)
+
+    def test_bad_path_save_subtree(self):
+        """Test if error appears when no paramters are passed"""
+        response = self.c.post("/bt_studio/save_subtree/", {"project_name": "test", "subtree_name": "subtree", "subtree_json":""})
+        self.assertEqual(response.status_code, 500)
 
     def test_incorrect_get_subtree(self):
         """Test if error appears when no paramters are passed"""
@@ -463,7 +661,10 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_get_subtree(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_subtree/", {"project_name": "test","subtree_name":"subtree"})
+        response = self.c.get(
+            "/bt_studio/get_subtree/",
+            {"project_name": "test", "subtree_name": "subtree"},
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_get_subtree_list(self):
@@ -484,7 +685,10 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_delete_universe(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/delete_universe/", {"project_name": "test", "universe_name":"test"})
+        response = self.c.post(
+            "/bt_studio/delete_universe/",
+            {"project_name": "test", "universe_name": "test"},
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_get_universes_list(self):
@@ -494,7 +698,9 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_get_universes_list(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_universes_list/", {"project_name": "test"})
+        response = self.c.get(
+            "/bt_studio/get_universes_list/", {"project_name": "test"}
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_get_universe_configuration(self):
@@ -504,15 +710,21 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_get_universe_configuration(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_universe_configuration/", {"project_name": "test", "universe_name":"test"})
+        response = self.c.get(
+            "/bt_studio/get_universe_configuration/",
+            {"project_name": "test", "universe_name": "test"},
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_bad_json_get_universe_configuration(self):
         """Test if error appears when paramters are wrong"""
         create_proyect(self)
         create_RB_universe(self, "Follow Person")
-        write_to_file(self,"../universes/test/","config.json","{[]}")
-        response = self.c.get("/bt_studio/get_universe_configuration/", {"project_name": "test", "universe_name":"test"})
+        write_to_file(self, "../universes/test/", "config.json", "{[]}")
+        response = self.c.get(
+            "/bt_studio/get_universe_configuration/",
+            {"project_name": "test", "universe_name": "test"},
+        )
         self.assertEqual(response.status_code, self.bad_data)
         delete_proyect(self)
 
@@ -543,7 +755,9 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_get_file(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_file/", {"project_name": "test", "filename":"a"})
+        response = self.c.get(
+            "/bt_studio/get_file/", {"project_name": "test", "filename": "a"}
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_create_action(self):
@@ -555,14 +769,20 @@ class LocalTestFailedCase(TestCase):
         """Test if error appears when no paramters are passed"""
         create_proyect(self)
         create_action(self)
-        response = self.c.post("/bt_studio/create_action/", {"project_name": "test", "template": "action", "filename": "Action"})
+        response = self.c.post(
+            "/bt_studio/create_action/",
+            {"project_name": "test", "template": "action", "filename": "Action"},
+        )
         self.assertEqual(response.status_code, self.dup_file)
         delete_action(self)
         delete_proyect(self)
 
     def test_no_template_create_action(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/create_action/", {"project_name": "test", "template": "error", "filename": "Action"})
+        response = self.c.post(
+            "/bt_studio/create_action/",
+            {"project_name": "test", "template": "error", "filename": "Action"},
+        )
         self.assertEqual(response.status_code, 400)
 
     def test_incorrect_create_file(self):
@@ -574,8 +794,11 @@ class LocalTestFailedCase(TestCase):
         """Test if error appears when no paramters are passed"""
         create_proyect(self)
         create_folder(self, "dir")
-        create_file(self,"dir","file.txt")
-        response = self.c.post("/bt_studio/create_file/", {"project_name": "test", "location": "dir", "file_name": "file.txt"})
+        create_file(self, "dir", "file.txt")
+        response = self.c.post(
+            "/bt_studio/create_file/",
+            {"project_name": "test", "location": "dir", "file_name": "file.txt"},
+        )
         self.assertEqual(response.status_code, self.dup_file)
         delete_proyect(self)
 
@@ -588,15 +811,20 @@ class LocalTestFailedCase(TestCase):
         """Test if error appears when no paramters are passed"""
         create_proyect(self)
         create_folder(self, "dir")
-        response = self.c.post("/bt_studio/create_folder/", {"project_name": "test", "location": "", "folder_name": "dir"})
+        response = self.c.post(
+            "/bt_studio/create_folder/",
+            {"project_name": "test", "location": "", "folder_name": "dir"},
+        )
         self.assertEqual(response.status_code, self.dup_file)
         delete_proyect(self)
 
     def test_invalid_name_create_folder(self):
         """Test if error appears when no paramters are passed"""
         create_proyect(self)
-        response = self.c.post("/bt_studio/create_folder/", {"project_name": "test", "location": "", "folder_name": "a/./.."})
-        #TODO: check again
+        response = self.c.post(
+            "/bt_studio/create_folder/",
+            {"project_name": "test", "location": "", "folder_name": "a/./.."},
+        )
         self.assertEqual(response.status_code, 400)
         delete_proyect(self)
 
@@ -607,15 +835,25 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_rename_file(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/rename_file/", {"project_name": "test", "path": "dir", "rename_to": "file.txt"})
+        response = self.c.post(
+            "/bt_studio/rename_file/",
+            {"project_name": "test", "path": "dir", "rename_to": "file.txt"},
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_invalid_name_rename_file(self):
         """Test if error appears when no paramters are passed"""
         create_proyect(self)
         create_folder(self, "dir")
-        create_file(self,"dir","file.txt")
-        response = self.c.post("/bt_studio/rename_file/", {"project_name": "test", "path": "dir/file.txt", "rename_to": "dir2/file.txt"})
+        create_file(self, "dir", "file.txt")
+        response = self.c.post(
+            "/bt_studio/rename_file/",
+            {
+                "project_name": "test",
+                "path": "dir/file.txt",
+                "rename_to": "dir2/file.txt",
+            },
+        )
         self.assertEqual(response.status_code, 500)
         delete_proyect(self)
 
@@ -626,14 +864,20 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_create_folder(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/rename_folder/", {"project_name": "test", "path": "dir/", "rename_to": "dir/"})
+        response = self.c.post(
+            "/bt_studio/rename_folder/",
+            {"project_name": "test", "path": "dir/", "rename_to": "dir/"},
+        )
         self.assertEqual(response.status_code, self.no_files)
 
-    def test_invalid_name_create_folder(self):
+    def test_invalid_name_rename_folder(self):
         """Test if error appears when no paramters are passed"""
         create_proyect(self)
         create_folder(self, "dir")
-        response = self.c.post("/bt_studio/rename_folder/", {"project_name": "test", "path": "dir", "rename_to": "dir/./.."})
+        response = self.c.post(
+            "/bt_studio/rename_folder/",
+            {"project_name": "test", "path": "dir", "rename_to": "dir/./.."},
+        )
         self.assertEqual(response.status_code, 500)
         delete_proyect(self)
 
@@ -644,7 +888,9 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_delete_file(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/delete_file/", {"project_name": "test", "path": "a"})
+        response = self.c.post(
+            "/bt_studio/delete_file/", {"project_name": "test", "path": "a"}
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_delete_folder(self):
@@ -654,7 +900,9 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_delete_folder(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/delete_folder/", {"project_name": "test", "path": "a"})
+        response = self.c.post(
+            "/bt_studio/delete_folder/", {"project_name": "test", "path": "a"}
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_save_file(self):
@@ -664,7 +912,10 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_save_file(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/save_file/", {"project_name": "test", "filename": "a", "content":"a"})
+        response = self.c.post(
+            "/bt_studio/save_file/",
+            {"project_name": "test", "filename": "a", "content": "a"},
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_generate_local_app(self):
@@ -674,13 +925,19 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_generate_local_app(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/generate_local_app/", {"app_name": "test", "bt_order": "top-bottom"})
+        response = self.c.post(
+            "/bt_studio/generate_local_app/",
+            {"app_name": "test", "bt_order": "top-bottom"},
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_tree_error_generate_local_app(self):
         """Test if error appears when no paramters are passed"""
         create_proyect(self)
-        response = self.c.post("/bt_studio/generate_local_app/", {"app_name": "test", "bt_order": "top-bottom"})
+        response = self.c.post(
+            "/bt_studio/generate_local_app/",
+            {"app_name": "test", "bt_order": "top-bottom"},
+        )
         self.assertEqual(response.status_code, 500)
         delete_proyect(self)
 
@@ -691,13 +948,19 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_generate_dockerized_app(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/generate_dockerized_app/", {"app_name": "test", "bt_order": "top-bottom"})
+        response = self.c.post(
+            "/bt_studio/generate_dockerized_app/",
+            {"app_name": "test", "bt_order": "top-bottom"},
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_tree_error_generate_dockerized_app(self):
         """Test if error appears when no paramters are passed"""
         create_proyect(self)
-        response = self.c.post("/bt_studio/generate_dockerized_app/", {"app_name": "test", "bt_order": "top-bottom"})
+        response = self.c.post(
+            "/bt_studio/generate_dockerized_app/",
+            {"app_name": "test", "bt_order": "top-bottom"},
+        )
         self.assertEqual(response.status_code, 500)
         delete_proyect(self)
 
@@ -708,7 +971,10 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_get_universe_file_list(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_universe_file_list/", {"project_name": "test", "universe_name": "test"})
+        response = self.c.get(
+            "/bt_studio/get_universe_file_list/",
+            {"project_name": "test", "universe_name": "test"},
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_get_universe_file(self):
@@ -718,7 +984,10 @@ class LocalTestFailedCase(TestCase):
 
     def test_no_find_get_universe_file(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_universe_file/", {"project_name": "test", "universe_name": "test", "filename":"a"})
+        response = self.c.get(
+            "/bt_studio/get_universe_file/",
+            {"project_name": "test", "universe_name": "test", "filename": "a"},
+        )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_upload_universe(self):
@@ -728,7 +997,10 @@ class LocalTestFailedCase(TestCase):
 
     def test_bad_zip_upload_universe(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/upload_universe/", {"app_name": "test", "universe_name": "test", "zip_file":"a"})
+        response = self.c.post(
+            "/bt_studio/upload_universe/",
+            {"app_name": "test", "universe_name": "test", "zip_file": "a"},
+        )
         self.assertEqual(response.status_code, self.bad_data)
 
     def test_incorrect_add_docker_universe(self):
@@ -736,17 +1008,20 @@ class LocalTestFailedCase(TestCase):
         response = self.c.post("/bt_studio/add_docker_universe/")
         self.assertEqual(response.status_code, self.no_param)
 
-    def test_incorrect_upload_code(self):
-        """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/upload_code/")
-        self.assertEqual(response.status_code, self.no_param)
-
     def test_duplicate_upload_code(self):
         """Test if error appears when no paramters are passed"""
         create_proyect(self)
         create_folder(self, "dir")
-        create_file(self,"dir","file.txt")
-        response = self.c.post("/bt_studio/upload_code/", {"project_name": "test", "location": "dir", "file_name": "file.txt","content":"a"})
+        create_file(self, "dir", "file.txt")
+        response = self.c.post(
+            "/bt_studio/upload_code/",
+            {
+                "project_name": "test",
+                "location": "dir",
+                "file_name": "file.txt",
+                "content": "a",
+            },
+        )
         self.assertEqual(response.status_code, self.dup_file)
         delete_proyect(self)
 
@@ -754,13 +1029,26 @@ class LocalTestFailedCase(TestCase):
         """Test if error appears when no paramters are passed"""
         create_proyect(self)
         create_folder(self, "dir")
-        response = self.c.post("/bt_studio/upload_code/", {"project_name": "test", "location": "dir", "file_name": "file.txt","content":"a"})
+        response = self.c.post(
+            "/bt_studio/upload_code/",
+            {
+                "project_name": "test",
+                "location": "dir",
+                "file_name": "file.txt",
+                "content": "a",
+            },
+        )
         self.assertEqual(response.status_code, self.bad_data)
         delete_proyect(self)
 
     def test_incorrect_upload_code(self):
         """Test if error appears when no paramters are passed"""
         response = self.c.post("/bt_studio/upload_code/")
+        self.assertEqual(response.status_code, self.no_param)
+
+    def test_incorrect_get_docker_universe_path(self):
+        """Test if error appears when no paramters are passed"""
+        response = self.c.get("/bt_studio/get_docker_universe_path/")
         self.assertEqual(response.status_code, self.no_param)
 
 
