@@ -55,7 +55,6 @@ def get_bt_structure(xml_string) -> str:
 
 # Get a list of properly named actions to search in the nodes directory
 def get_action_set(tree, possible_actions) -> set:
-
     actions = set()
     for leaf in tree:
 
@@ -164,6 +163,7 @@ def parse_tree_(tree_xml, subtrees, all_actions):
     # Obtain the defined actions
     possible_actions = [x["name"] for x in all_actions]
     actions = get_action_set(tree, possible_actions)
+    actions = sorted(actions)
 
     # Add subsections for the action code
     add_actions_code_(tree, actions, all_actions)

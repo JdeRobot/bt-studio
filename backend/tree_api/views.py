@@ -986,12 +986,13 @@ def generate_local_app(request):
 
         # 2. Get all possible subtrees name and content
         try:
-            for subtree_file in os.listdir(subtree_path):
+            subtrees_list = os.listdir(subtree_path)
+            subtrees_list.sort()
+            for subtree_file in subtrees_list:
                 if subtree_file.endswith(".json"):
                     subtree_name = base = os.path.splitext(
                         os.path.basename(subtree_file)
                     )[0]
-                    print(os.path.join(subtree_path, subtree_file))
 
                     with open(os.path.join(subtree_path, subtree_file), "r+") as f:
                         # Reading from a file
@@ -1003,7 +1004,9 @@ def generate_local_app(request):
             print("No subtrees")
 
         # 3. Get all possible actions name and content
-        for action_file in os.listdir(action_path):
+        actions_list = os.listdir(action_path)
+        actions_list.sort()
+        for action_file in actions_list:
             if action_file.endswith(".py"):
                 action_name = base = os.path.splitext(os.path.basename(action_file))[0]
 
@@ -1018,7 +1021,7 @@ def generate_local_app(request):
         unique_imports = app_generator.get_unique_imports(actions)
 
         return JsonResponse(
-            {"success": True, "tree": final_tree, "dependencies": unique_imports}
+            {"success": True, "tree": final_tree, "dependencies": sorted(unique_imports)}
         )
 
     except Exception as e:
@@ -1075,7 +1078,6 @@ def generate_dockerized_app(request):
                     subtree_name = base = os.path.splitext(
                         os.path.basename(subtree_file)
                     )[0]
-                    print(os.path.join(subtree_path, subtree_file))
 
                     with open(os.path.join(subtree_path, subtree_file), "r+") as f:
                         # Reading from a file

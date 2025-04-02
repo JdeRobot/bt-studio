@@ -1,3 +1,12 @@
+composition_proj_config = """{
+    "name": "test",
+    "config": {
+        "editorShowAccentColors": true,
+        "theme": "dark",
+        "btOrder": "top-to-bottom"
+    }
+}"""
+
 composition_tree_content = """{
     "id": "fa2362dc-cffa-4764-9b70-90d475be0c02",
     "offsetX": 61.67634402521469,
@@ -1127,7 +1136,7 @@ class Turn(py_trees.behaviour.Behaviour):
         )
 """
 
-composition_deps_list = ["py_trees", "tree_tools", "geometry_msgs", "sensor_msgs"]
+composition_deps_list = ['geometry_msgs', 'py_trees', 'sensor_msgs', 'tree_tools']
 
 composition_xml = """<?xml version="1.0" ?>
 <Root name="Tree Root">
@@ -1145,9 +1154,15 @@ composition_xml = """<?xml version="1.0" ?>
         <Inverter name="Inverter">
           
         
-          <ObstacleDetection name="ObstacleDetection"/>
-          
+          <Sequence name="Sequence">
+            
       
+            <CheckObstacle name="CheckObstacle" amplitude="20" obs_dist="1.0"/>
+            
+    
+          </Sequence>
+          
+  
         </Inverter>
         
       
@@ -1167,6 +1182,86 @@ composition_xml = """<?xml version="1.0" ?>
   
 
   <Code>
+    <CheckObstacle>
+      import py_trees
+      import sensor_msgs
+      import tree_tools
+      
+      
+      def check_obstacle_in_laser(laser_measures, amplitude):
+      
+          relevant_measures = laser_measures[:amplitude] + laser_measures[-amplitude:]
+      
+          for measure in relevant_measures:
+      
+              if measure &lt; 1:
+                  return True
+      
+          return False
+      
+      
+      class CheckObstacle(py_trees.behaviour.Behaviour):
+          def __init__(self, name, ports=None):
+      
+              # Configure the name of the behaviour
+              super().__init__(name)
+              self.logger.debug(&quot;%s.__init__()&quot; % (self.__class__.__name__))
+      
+              # Get the ports
+              self.ports = ports
+      
+          def setup(self, **kwargs: int) -&gt; None:
+      
+              # Get the node passed from the tree (needed for interaction with ROS)
+              try:
+                  self.node = kwargs[&quot;node&quot;]
+              except KeyError as e:
+                  error_message = &quot;Couldn't find the tree node&quot;
+                  raise KeyError(error_message) from e
+      
+              # Setup the subscription to the laser
+              self.subscription = self.node.create_subscription(
+                  sensor_msgs.msg.LaserScan, &quot;/scan&quot;, self.listener_callback, 10
+              )
+      
+              self.last_scan_ = sensor_msgs.msg.LaserScan()
+      
+          def listener_callback(self, msg) -&gt; None:
+              self.last_scan_ = msg
+      
+          def initialise(self) -&gt; None:
+      
+              # Debugging
+              self.logger.debug(&quot;%s.initialise()&quot; % (self.__class__.__name__))
+      
+          def update(self) -&gt; py_trees.common.Status:
+      
+              # Check the laser measures
+              if len(self.last_scan_.ranges) == 0:
+                  new_status = py_trees.common.Status.INVALID
+      
+              # Get params from ports
+              amplitude = int(tree_tools.get_port_content(self.ports[&quot;amplitude&quot;]))
+              obs_dist = float(tree_tools.get_port_content(self.ports[&quot;obs_dist&quot;]))
+      
+              # Check if there is an obstacle
+              obstacle = check_obstacle_in_laser(self.last_scan_.ranges, amplitude)
+              if obstacle:
+                  new_status = py_trees.common.Status.SUCCESS
+              else:
+                  new_status = py_trees.common.Status.FAILURE
+      
+              return new_status
+      
+          def terminate(self, new_status: py_trees.common.Status) -&gt; None:
+      
+              # Debugging
+              self.logger.debug(
+                  &quot;%s.terminate()[%s-&gt;%s]&quot;
+                  % (self.__class__.__name__, self.status, new_status)
+              )
+      
+</CheckObstacle>
     <Forward>
       import py_trees
       import geometry_msgs

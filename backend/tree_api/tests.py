@@ -8,7 +8,7 @@ from selenium.webdriver import FirefoxOptions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-import base64
+from . import tests_data
 
 # Create your tests here.
 # * Login: Entrar con un usuario de test
@@ -253,6 +253,22 @@ def delete_folder(self, dir):
     data = json.loads(response.json()["file_list"])
     self.assertEqual(len(data), 2)
 
+def get_tree(self, exepected):
+    response = self.c.get(
+        "/bt_studio/get_project_graph/",
+        {"project_name": "test"},
+    )
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response.json()["graph_json"], exepected)
+
+
+def write_tree(self, content):
+    response = self.c.post(
+        "/bt_studio/save_base_tree/",
+        {"project_name": "test", "graph_json": content},
+    )
+    self.assertEqual(response.status_code, 200)
+
 
 def create_subtree(self, subtree):
     response = self.c.post(
@@ -300,7 +316,7 @@ class LocalTestCase(TestCase):
         "content": 'import py_trees\nimport geometry_msgs\n\nclass Action(py_trees.behaviour.Behaviour):\n\n    def __init__(self, name, ports = None):\n\n        """ Constructor, executed when the class is instantiated """\n\n        # Configure the name of the behavioure\n        super().__init__(name)\n        self.logger.debug("%s.__init__()" % (self.__class__.__name__))\n\n        # Get the ports\n        self.ports = ports\n\n    def setup(self, **kwargs: int) -> None:\n\n        """ Executed when the setup function is called upon the tree """\n\n        # Get the node passed from the tree (needed for interaction with ROS)\n        try:\n            self.node = kwargs[\'node\']\n        except KeyError as e:\n            error_message = "Couldn\'t find the tree node"\n            raise KeyError(error_message) from e\n\n    def initialise(self) -> None:\n\n        """ Executed when coming from an idle state """\n\n        # Debugging\n        self.logger.debug("%s.initialise()" % (self.__class__.__name__))\n\n    def update(self) -> py_trees.common.Status:\n\n        """ Executed when the action is ticked. Do not block! """\n\n        return py_trees.common.Status.RUNNING \n\n    def terminate(self, new_status: py_trees.common.Status) -> None:\n\n        """ Called whenever the behaviour switches to a non-running state """\n\n        # Debugging\n        self.logger.debug("%s.terminate()[%s->%s]" % (self.__class__.__name__, self.status, new_status))'
     }
 
-    base_subtree_content = {
+    base_tree_content = {
         "id": "fa2362dc-cffa-4764-9b70-90d475be0c02",
         "offsetX": -5.628119613229821,
         "offsetY": 4.788388817065306,
@@ -459,20 +475,160 @@ class LocalTestCase(TestCase):
         upload_file(self, dir, file, content_b64)
         check_file(self, dir, file, content)
 
-    def test_subtree_creation(self):
+    def test_tree_creation(self):
         """Test action creation with templates"""
         create_proyect(self)
         check_proyect_content(self)
+        get_tree(self, self.base_tree_content)
+        delete_proyect(self)
+
+
+    def test_subtree_creation(self):
+        """Test action creation with templates"""
+        create_proyect(self)
         response = self.c.post(
             "/bt_studio/delete_folder/",
             {"project_name": "test", "path": "trees/subtrees"},
         )
         self.assertEqual(response.status_code, 200)
         create_subtree(self, "subtree")
-        get_subtree(self, "subtree", self.base_subtree_content)
+        get_subtree(self, "subtree", self.base_tree_content)
         write_subtree(self, "subtree", "{}")
         get_subtree(self, "subtree", {})
+        response = self.c.get(
+            "/bt_studio/get_subtree_list/",
+            {"project_name": "test"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['subtree_list'], ["subtree"])
 
+    def test_tree_structure(self):
+        """Test action creation with templates"""
+        create_proyect(self)
+        write_tree(self,tests_data.composition_tree_content)
+        get_tree(self, json.loads(tests_data.composition_tree_content))
+        response = self.c.get(
+            "/bt_studio/get_tree_structure/",
+            {"project_name": "test", "bt_order": "top-to-bottom"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['tree_structure'], tests_data.composition_tree_structure)
+
+    def test_subtree_structure(self):
+        """Test action creation with templates"""
+        create_proyect(self)
+        write_tree(self,tests_data.composition_tree_content)
+        get_tree(self, json.loads(tests_data.composition_tree_content))
+        create_subtree(self, "AvoidObstacle")
+        write_subtree(self, "AvoidObstacle", tests_data.composition_subtree_avoid_content)
+        get_subtree(self, "AvoidObstacle", json.loads(tests_data.composition_subtree_avoid_content))
+        response = self.c.get(
+            "/bt_studio/get_subtree_structure/",
+            {"project_name": "test", "subtree_name":"AvoidObstacle", "bt_order": "top-to-bottom"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['tree_structure'], tests_data.composition_subtree_avoid_structure)
+
+    def test_generate_local_app(self):
+        """Test action creation with templates"""
+        create_proyect(self)
+
+        response = self.c.post(
+            "/bt_studio/save_project_configuration/",
+            {"project_name": "test", "settings": tests_data.composition_proj_config},
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.c.post(
+            "/bt_studio/create_action/",
+            {"project_name": "test", "template": "action", "filename": "CheckObstacle"},
+        )
+        self.assertEqual(response.status_code, 200)
+        write_to_file(self, "actions", "CheckObstacle.py", tests_data.composition_action_obstacle_code)
+        check_file(self, "actions", "CheckObstacle.py", tests_data.composition_action_obstacle_code)
+
+        response = self.c.post(
+            "/bt_studio/create_action/",
+            {"project_name": "test", "template": "action", "filename": "Forward"},
+        )
+        self.assertEqual(response.status_code, 200)
+        write_to_file(self, "actions", "Forward.py", tests_data.composition_action_forward_code)
+        check_file(self, "actions", "Forward.py", tests_data.composition_action_forward_code)
+
+        response = self.c.post(
+            "/bt_studio/create_action/",
+            {"project_name": "test", "template": "action", "filename": "Turn"},
+        )
+        self.assertEqual(response.status_code, 200)
+        write_to_file(self, "actions", "Turn.py", tests_data.composition_action_turn_code)
+        check_file(self, "actions", "Turn.py", tests_data.composition_action_turn_code)
+
+        write_tree(self,tests_data.composition_tree_content)
+        get_tree(self, json.loads(tests_data.composition_tree_content))
+        create_subtree(self, "AvoidObstacle")
+        write_subtree(self, "AvoidObstacle", tests_data.composition_subtree_avoid_content)
+        get_subtree(self, "AvoidObstacle", json.loads(tests_data.composition_subtree_avoid_content))
+        create_subtree(self, "ObstacleDetection")
+        write_subtree(self, "ObstacleDetection", tests_data.composition_subtree_obstacle_content)
+        get_subtree(self, "ObstacleDetection", json.loads(tests_data.composition_subtree_obstacle_content))
+
+        response = self.c.post(
+            "/bt_studio/generate_local_app/",
+            {"app_name": "test", "bt_order": "top-to-bottom"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['tree'], tests_data.composition_xml)
+        self.assertEqual(response.json()['dependencies'], tests_data.composition_deps_list)
+
+    def test_generate_docker_app(self):
+        """Test action creation with templates"""
+        create_proyect(self)
+
+        response = self.c.post(
+            "/bt_studio/save_project_configuration/",
+            {"project_name": "test", "settings": tests_data.composition_proj_config},
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.c.post(
+            "/bt_studio/create_action/",
+            {"project_name": "test", "template": "action", "filename": "CheckObstacle"},
+        )
+        self.assertEqual(response.status_code, 200)
+        write_to_file(self, "actions", "CheckObstacle.py", tests_data.composition_action_obstacle_code)
+        check_file(self, "actions", "CheckObstacle.py", tests_data.composition_action_obstacle_code)
+
+        response = self.c.post(
+            "/bt_studio/create_action/",
+            {"project_name": "test", "template": "action", "filename": "Forward"},
+        )
+        self.assertEqual(response.status_code, 200)
+        write_to_file(self, "actions", "Forward.py", tests_data.composition_action_forward_code)
+        check_file(self, "actions", "Forward.py", tests_data.composition_action_forward_code)
+
+        response = self.c.post(
+            "/bt_studio/create_action/",
+            {"project_name": "test", "template": "action", "filename": "Turn"},
+        )
+        self.assertEqual(response.status_code, 200)
+        write_to_file(self, "actions", "Turn.py", tests_data.composition_action_turn_code)
+        check_file(self, "actions", "Turn.py", tests_data.composition_action_turn_code)
+
+        write_tree(self,tests_data.composition_tree_content)
+        get_tree(self, json.loads(tests_data.composition_tree_content))
+        create_subtree(self, "AvoidObstacle")
+        write_subtree(self, "AvoidObstacle", tests_data.composition_subtree_avoid_content)
+        get_subtree(self, "AvoidObstacle", json.loads(tests_data.composition_subtree_avoid_content))
+        create_subtree(self, "ObstacleDetection")
+        write_subtree(self, "ObstacleDetection", tests_data.composition_subtree_obstacle_content)
+        get_subtree(self, "ObstacleDetection", json.loads(tests_data.composition_subtree_obstacle_content))
+
+        response = self.c.post(
+            "/bt_studio/generate_dockerized_app/",
+            {"app_name": "test", "bt_order": "top-to-bottom"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['tree'], tests_data.composition_xml)
 
 class LocalTestFailedCase(TestCase):
 
@@ -573,9 +729,22 @@ class LocalTestFailedCase(TestCase):
         """Test if error appears when no paramters are passed"""
         response = self.c.get(
             "/bt_studio/get_tree_structure/",
-            {"project_name": "test", "bt_order": "top-bottom"},
+            {"project_name": "test", "bt_order": "top-to-bottom"},
         )
         self.assertEqual(response.status_code, self.no_files)
+
+    def test_write_error_get_tree_structure(self):
+        create_proyect(self)
+        create_subtree(self, "subtree")
+        response = self.c.get(
+            "/bt_studio/get_tree_structure/",
+            {
+                "project_name": "test",
+                "bt_order": "top-to-bottom",
+            },
+        )
+        self.assertEqual(response.status_code, 500)
+        delete_proyect(self)
 
     def test_incorrect_get_subtree_structure(self):
         """Test if error appears when no paramters are passed"""
@@ -589,7 +758,7 @@ class LocalTestFailedCase(TestCase):
             {
                 "project_name": "test",
                 "subtree_name": "subtree",
-                "bt_order": "top-bottom",
+                "bt_order": "top-to-bottom",
             },
         )
         self.assertEqual(response.status_code, self.no_files)
@@ -602,7 +771,7 @@ class LocalTestFailedCase(TestCase):
             {
                 "project_name": "test",
                 "subtree_name": "subtree",
-                "bt_order": "top-bottom",
+                "bt_order": "top-to-bottom",
             },
         )
         self.assertEqual(response.status_code, 500)
@@ -942,7 +1111,7 @@ class LocalTestFailedCase(TestCase):
         """Test if error appears when no paramters are passed"""
         response = self.c.post(
             "/bt_studio/generate_local_app/",
-            {"app_name": "test", "bt_order": "top-bottom"},
+            {"app_name": "test", "bt_order": "top-to-bottom"},
         )
         self.assertEqual(response.status_code, self.no_files)
 
@@ -951,7 +1120,7 @@ class LocalTestFailedCase(TestCase):
         create_proyect(self)
         response = self.c.post(
             "/bt_studio/generate_local_app/",
-            {"app_name": "test", "bt_order": "top-bottom"},
+            {"app_name": "test", "bt_order": "top-to-bottom"},
         )
         self.assertEqual(response.status_code, 500)
         delete_proyect(self)
@@ -965,7 +1134,7 @@ class LocalTestFailedCase(TestCase):
         """Test if error appears when no paramters are passed"""
         response = self.c.post(
             "/bt_studio/generate_dockerized_app/",
-            {"app_name": "test", "bt_order": "top-bottom"},
+            {"app_name": "test", "bt_order": "top-to-bottom"},
         )
         self.assertEqual(response.status_code, self.no_files)
 
@@ -974,7 +1143,7 @@ class LocalTestFailedCase(TestCase):
         create_proyect(self)
         response = self.c.post(
             "/bt_studio/generate_dockerized_app/",
-            {"app_name": "test", "bt_order": "top-bottom"},
+            {"app_name": "test", "bt_order": "top-to-bottom"},
         )
         self.assertEqual(response.status_code, 500)
         delete_proyect(self)
