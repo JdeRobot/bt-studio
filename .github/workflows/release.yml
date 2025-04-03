@@ -3,14 +3,14 @@ name: Release new Bt Studio Version on new version
 
 on:
   release:
-    types: [released]
+    types: [published]
 
 jobs:
   generate-Bt-Studio-docker-image:
     name: Generate Bt-Studio Image
     uses: ./.github/workflows/generate_Bt_Studio.yml
     with:
-      tag: github.event.release.tag_name
+      tag: ${{ github.event.release.tag_name }}
       latest: true
       BT: main
       RI: humble-devel
@@ -21,7 +21,7 @@ jobs:
     name: Generate Bt-Studio Database Image
     uses: ./.github/workflows/generate_Bt_Studio_Database.yml
     with:
-      tag: github.event.release.tag_name
+      tag: ${{ github.event.release.tag_name }}
       latest: true
       BT: main
       RI: database
