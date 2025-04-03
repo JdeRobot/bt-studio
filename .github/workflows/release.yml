@@ -105,7 +105,6 @@ jobs:
             -t jderobot/bt-studio-database:${TAG} .
           docker push jderobot/bt-studio-database:${TAG}
       - name: Upload as Latest
-        if:  ${{ inputs.latest }} 
         run: |
             docker image tag jderobot/bt-studio-database:${TAG} jderobot/bt-studio-database:latest
             docker push jderobot/bt-studio-database:latest
