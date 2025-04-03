@@ -273,8 +273,13 @@ const FileEditor = ({
       console.log("Auto save completed");
     } catch (e) {
       if (e instanceof Error) {
-        console.error("Error saving file: " + e.message);
-        error("Error saving file: " + e.message);
+        if ((e.message = "Request failed with status code 507")) {
+          error("Error saving file: " + "You're using too much AWS space!");
+        } else {
+          console.log("Error saving file: " + e.message);
+          //error("Error saving file: " + e.message);
+          error("Error saving file: " + "I'm entering through the bad one");
+        }
       }
     }
   };
@@ -324,8 +329,12 @@ const FileEditor = ({
       setProjectChanges(false);
     } catch (e) {
       if (e instanceof Error) {
-        console.error("Error saving file: " + e.message);
-        error("Error saving file: " + e.message);
+        if ((e.message = "Request failed with status code 507")) {
+          error("Error saving file: " + "You're using too much AWS space");
+        } else {
+          console.error("Error saving file: " + e.message);
+          error("Error saving file: " + e.message);
+        }
       }
     }
   };

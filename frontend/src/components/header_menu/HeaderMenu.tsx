@@ -7,8 +7,9 @@ import {
   generateLocalApp,
   generateDockerizedApp,
   getUniverseConfig,
-  getCustomUniverseZip,
   getRoboticsBackendUniversePath,
+  getUniverseFile,
+  getUniverseFileList,
 } from "../../api_helper/TreeWrapper";
 import CommsManager from "../../api_helper/CommsManager";
 
@@ -32,6 +33,7 @@ import { OptionsContext } from "../options/Options";
 import RosTemplates from "./../../templates/RosTemplates";
 import TreeGardener from "./../../templates/TreeGardener";
 import { useError } from "../error_popup/ErrorModal";
+import { Entry } from "../file_browser/FileBrowser";
 
 const HeaderMenu = ({
   currentProjectname,
@@ -91,11 +93,58 @@ const HeaderMenu = ({
     await manager.terminateUniverse();
   };
 
+  const zipFile = async (
+    zip: JSZip,
+    universe_name: string,
+    file_path: string,
+    file_name: string,
+  ) => {
+    var content = await getUniverseFile(
+      currentProjectname,
+      universe_name,
+      file_path,
+    );
+    zip.file(file_name, content);
+  };
+
+  const zipFolder = async (zip: JSZip, file: Entry, universe_name: string) => {
+    const folder = zip.folder(file.name);
+
+    if (folder === null) {
+      return;
+    }
+
+    for (let index = 0; index < file.files.length; index++) {
+      const element = file.files[index];
+      console.log(element);
+      if (element.is_dir) {
+        await zipFolder(folder, element, universe_name);
+      } else {
+        await zipFile(folder, universe_name, element.path, element.name);
+      }
+    }
+  };
+
+  const zipToData = (zip: JSZip) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      zip.generateAsync({ type: "blob" }).then(function (content) {
+        reader.readAsDataURL(content);
+      });
+    });
+  };
+
   const launchUniverse = async (universeConfig: string) => {
     if (!manager) {
       warning(
         "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
       );
+      return;
+    }
+
+    if (currentProjectname === "") {
+      error("Failed to find the current project name.");
       return;
     }
 
@@ -131,43 +180,62 @@ const HeaderMenu = ({
       } else {
         console.log("Custom universe rework underway");
         console.warn("Custom universe rework underway");
-        const zipBlob: Blob = await getCustomUniverseZip(
-          configJson.name,
+
+        const file_list = await getUniverseFileList(
           currentProjectname,
+          configJson.name,
         );
-        var reader = new FileReader();
-        reader.readAsDataURL(zipBlob);
-        reader.onloadend = async function () {
-          // Get the zip in base64
-          var base64data = reader.result;
+        
+        const files: Entry[] = JSON.parse(file_list);
 
-          const world_config = {
-            name: configJson.name,
-            launch_file_path: configJson.ram_config.launch_file_path,
-            ros_version: configJson.ram_config.ros_version,
-            world: configJson.ram_config.world,
-            zip: base64data,
-          };
-
-          const robot_config = {
-            name: null,
-            launch_file_path: null,
-            ros_version: null,
-            world: null,
-            start_pose: null,
-          };
-
-          const universe_config = {
-            name: configJson.name,
-            world: world_config,
-            robot: robot_config,
-          };
-
-          await manager.launchWorld(universe_config);
-          console.log("RB universe launched!");
-          await manager.prepareVisualization("bt_studio_gz", null);
-          console.log("Viz ready!");
+        const universe: Entry = {
+          name: configJson.name,
+          is_dir: true,
+          path: "",
+          files: files,
         };
+
+        const zip = new JSZip();
+
+        for (let index = 0; index < universe.files.length; index++) {
+          const element = universe.files[index];
+          console.log(element);
+          if (element.is_dir) {
+            await zipFolder(zip, element, universe.name);
+          } else {
+            await zipFile(zip, universe.name, element.path, element.name);
+          }
+        }
+
+        const base64data = await zipToData(zip);
+
+        const world_config = {
+          name: configJson.name,
+          launch_file_path: configJson.ram_config.launch_file_path,
+          ros_version: configJson.ram_config.ros_version,
+          visualization: "bt_studio_gz",
+          world: configJson.ram_config.world,
+          zip: base64data,
+        };
+
+        const robot_config = {
+          name: null,
+          launch_file_path: null,
+          ros_version: null,
+          visualization: null,
+          world: null,
+        };
+
+        const universe_config = {
+          name: configJson.name,
+          world: world_config,
+          robot: robot_config,
+        };
+
+        await manager.launchWorld(universe_config);
+        console.log("RB universe launched!");
+        await manager.prepareVisualization(world_config.visualization);
+        console.log("Viz ready!");
       }
     } catch (e: unknown) {
       throw e; // rethrow
@@ -215,7 +283,7 @@ const HeaderMenu = ({
       return;
     }
     try {
-      //TODO: check if possible consurrency problems
+      //TODO: check if possible concurrency problems
       setSaveCurrentDiagram(true);
       setProjectChanges(false);
       console.log("Project saved");
@@ -410,8 +478,8 @@ const HeaderMenu = ({
         }
       } catch (e: unknown) {
         if (e instanceof Error) {
-          console.error("Unable launch selected universe: " + e.message);
-          error("Unable launch selected universe: " + e.message);
+          console.error("Unable to launch selected universe: " + e.message);
+          error("Unable to launch selected universe: " + e.message);
         }
       }
     } catch (e: unknown) {
@@ -482,6 +550,7 @@ const HeaderMenu = ({
           )}
           <button
             className="bt-header-button"
+            id="open-project-manager"
             onClick={onOpenProjectModal}
             title="Change project"
           >
@@ -489,6 +558,7 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
+            id="open-universe-manager"
             onClick={onOpenUniverseModal}
             title="Universe menu"
           >
@@ -496,6 +566,7 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
+            id="open-settings-manager"
             onClick={onOpenSettingsModal}
             title="Settings"
           >
@@ -503,6 +574,7 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
+            id="save-bt-changes"
             onClick={onSaveProject}
             title="Save project"
           >
@@ -510,6 +582,7 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
+            id="download-app"
             onClick={onDownloadApp}
             title="Download app"
           >
@@ -517,6 +590,7 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
+            id="run-app"
             onClick={onAppStateChange}
             title="Run app"
           >
@@ -528,6 +602,7 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
+            id="reset-app"
             onClick={onResetApp}
             title="Reset app"
           >

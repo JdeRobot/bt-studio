@@ -8,14 +8,6 @@ from .json_translator import prettify_xml
 ##############################################################################
 
 
-# Get the indentation of a given line
-def get_line_indentation(line) -> int:
-
-    indent = len(line) - len(line.strip())
-
-    return indent
-
-
 # Fix the indentation in a xml string
 def fix_indentation(xml_string, actions):
 
@@ -55,7 +47,6 @@ def get_bt_structure(xml_string) -> str:
 
 # Get a list of properly named actions to search in the nodes directory
 def get_action_set(tree, possible_actions) -> set:
-
     actions = set()
     for leaf in tree:
 
@@ -164,6 +155,7 @@ def parse_tree_(tree_xml, subtrees, all_actions):
     # Obtain the defined actions
     possible_actions = [x["name"] for x in all_actions]
     actions = get_action_set(tree, possible_actions)
+    actions = sorted(actions)
 
     # Add subsections for the action code
     add_actions_code_(tree, actions, all_actions)

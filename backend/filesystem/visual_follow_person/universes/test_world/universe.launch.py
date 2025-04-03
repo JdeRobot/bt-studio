@@ -1,6 +1,12 @@
 import os
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import (
+    DeclareLaunchArgument,
+    IncludeLaunchDescription,
+    SetEnvironmentVariable,
+    AppendEnvironmentVariable,
+)
 from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, LaunchConfiguration, PythonExpression
@@ -15,8 +21,10 @@ def generate_launch_description():
     use_simulator = LaunchConfiguration("use_simulator")
     world = LaunchConfiguration("world")
 
-    # Set the path to the Gazebo ROS package
-    pkg_gazebo_ros = FindPackageShare(package="gazebo_ros").find("gazebo_ros")
+    package_dir = get_package_share_directory("custom_robots")
+    ros_gz_sim = get_package_share_directory("ros_gz_sim")
+
+    gazebo_models_path = os.path.join(package_dir, "models")
 
     declare_simulator_cmd = DeclareLaunchArgument(
         name="headless",
@@ -36,23 +44,29 @@ def generate_launch_description():
         description="Whether to start the simulator",
     )
 
-    # Start Gazebo server
-    start_gazebo_server_cmd = IncludeLaunchDescription(
+    gazebo_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_gazebo_ros, "launch", "gzserver.launch.py")
+            os.path.join(ros_gz_sim, "launch", "gz_sim.launch.py")
         ),
-        condition=IfCondition(use_simulator),
+        launch_arguments={
+            "gz_args": ["-r -s -v4 "],
+            "on_exit_shutdown": "true",
+        }.items(),
     )
 
-    # Create the launch description and populate
     ld = LaunchDescription()
+
+    ld.add_action(SetEnvironmentVariable("GZ_SIM_RESOURCE_PATH", gazebo_models_path))
+    set_env_vars_resources = AppendEnvironmentVariable(
+        "GZ_SIM_RESOURCE_PATH", os.path.join(package_dir, "models")
+    )
 
     # Declare the launch options
     ld.add_action(declare_simulator_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_use_simulator_cmd)
 
-    # Add any actions
-    ld.add_action(start_gazebo_server_cmd)
+    ld.add_action(set_env_vars_resources)
+    ld.add_action(gazebo_server)
 
     return ld

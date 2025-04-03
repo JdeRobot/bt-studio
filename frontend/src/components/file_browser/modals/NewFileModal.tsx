@@ -336,7 +336,7 @@ const CardEntry = ({
           checked={checkedVariable === cardEntryProp.value}
           onChange={checkedCallback}
         />
-        <div>
+        <div id={"button-" + cardEntryProp.id}>
           {cardEntryProp.icon}
           <p> {cardEntryProp.text} </p>
         </div>

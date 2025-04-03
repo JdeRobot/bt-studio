@@ -27,6 +27,7 @@ import { ReactComponent as RefreshIcon } from "./img/refresh.svg";
 import { ReactComponent as RenameIcon } from "./img/rename.svg";
 
 import { useError } from "../error_popup/ErrorModal";
+import { publish } from "../helper/TreeEditorHelper";
 
 export interface Entry {
   name: string;
@@ -146,6 +147,7 @@ const FileBrowser = ({
       try {
         switch (data.fileType) {
           case "actions":
+            publish("updateActionList");
             await createAction(
               currentProjectname,
               data.fileName,
@@ -160,8 +162,12 @@ const FileBrowser = ({
         fetchFileList(); // Update the file list
       } catch (e) {
         if (e instanceof Error) {
-          console.error("Error creating file:", e);
-          error("Error creating file" + e.message);
+          if (e.message === "Request failed with status code 507") {
+            error("You're using too much AWS space!");
+          } else {
+            console.error("Error creating file:", e);
+            error("Error creating file" + e.message);
+          }
         }
       }
     }
@@ -404,6 +410,7 @@ const FileBrowser = ({
         <div className="bt-sidebar-entry-menu">
           <button
             className="bt-sidebar-button"
+            id="create-file-open"
             onClick={() => handleCreateFile(undefined)}
             title="Create a new file"
           >
