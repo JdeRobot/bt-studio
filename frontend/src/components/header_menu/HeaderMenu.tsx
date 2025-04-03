@@ -159,25 +159,13 @@ const HeaderMenu = ({
 
         let visualization = "bt_studio";
 
-        if (dockerUniverseInfo.world.visualization === "gzsim_rae") {
+        if (dockerUniverseInfo.visualization === "gzsim_rae") {
           visualization = "bt_studio_gz";
         }
 
-        const world_config = {
-          name: dockerUniverseInfo.world.name,
-          launch_file_path: dockerUniverseInfo.world.launch_file_path,
-          ros_version: dockerUniverseInfo.world.ros_version,
-          visualization: visualization,
-          world: dockerUniverseInfo.world.world,
-        };
+        const world_config = dockerUniverseInfo.world;
 
-        const robot_config = {
-          name: dockerUniverseInfo.robot.name,
-          launch_file_path: dockerUniverseInfo.robot.launch_file_path,
-          ros_version: dockerUniverseInfo.world.ros_version,
-          visualization: visualization,
-          world: dockerUniverseInfo.world.world,
-        };
+        const robot_config = dockerUniverseInfo.robot;
 
         const universe_config = {
           name: configJson.name,
@@ -187,7 +175,7 @@ const HeaderMenu = ({
 
         await manager.launchWorld(universe_config);
         console.log("RB universe launched!");
-        await manager.prepareVisualization(visualization);
+        await manager.prepareVisualization(visualization, dockerUniverseInfo.visualization_config);
         console.log("Viz ready!");
       } else {
         console.log("Custom universe rework underway");
@@ -197,6 +185,7 @@ const HeaderMenu = ({
           currentProjectname,
           configJson.name,
         );
+        
         const files: Entry[] = JSON.parse(file_list);
 
         const universe: Entry = {

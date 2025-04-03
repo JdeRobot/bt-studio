@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 StatusChoice = (
     ("ACTIVE", "ACTIVE"),
@@ -49,12 +50,21 @@ class World(models.Model):
 
     name = models.CharField(max_length=100, blank=False, unique=True)
     launch_file_path = models.CharField(max_length=200, blank=False)
+    visualization_config_path = models.CharField(max_length=200, blank=False)
     ros_version = models.CharField(max_length=4, choices=RosVersion, default="none")
     visualization = models.CharField(
         max_length=50, choices=VisualizationType, default="none", blank=False
     )
     world = models.CharField(
         max_length=50, choices=UniverseType, default="none", blank=False
+    )
+
+    start_pose = ArrayField(
+        ArrayField(
+            models.DecimalField(
+                decimal_places=4, max_digits=10, default=None, blank=False
+            )
+        )
     )
 
     def __str__(self):
