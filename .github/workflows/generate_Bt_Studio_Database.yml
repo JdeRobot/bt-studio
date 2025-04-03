@@ -56,6 +56,8 @@ jobs:
     steps:
       - name: Save the version tag
         run: echo "TAG=${TAG#v}" >> $GITHUB_ENV
+      - name: Save the version tag2
+        run: echo "${{ github.event.inputs.tag }}"
       - name: Check out the repo # checking our the code at current commit that triggers the workflow
         uses: actions/checkout@v3
         with:
