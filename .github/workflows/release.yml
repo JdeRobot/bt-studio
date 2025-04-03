@@ -44,18 +44,14 @@ jobs:
       - name: Build and push BTDI
         run: |
           cd scripts/BTDI
-          if [ "${{ github.event.inputs.ROS }}" == "humble" ]; then
-            docker build --no-cache -f Dockerfile.humble \
-              --build-arg BT_STUDIO=main\
-              --build-arg ROBOTICS_INFRASTRUCTURE=humble-devel\
-              --build-arg RAM=humble-devel \
-              --build-arg ROS_DISTRO=humble \
-              --build-arg IMAGE_TAG=${TAG} \
-              -t jderobot/bt-studio:${TAG} .
-            docker push jderobot/bt-studio:${TAG}
-          else
-            echo "Incorrect ROS version"
-          fi
+          docker build --no-cache -f Dockerfile.humble \
+            --build-arg BT_STUDIO=main\
+            --build-arg ROBOTICS_INFRASTRUCTURE=humble-devel\
+            --build-arg RAM=humble-devel \
+            --build-arg ROS_DISTRO=humble \
+            --build-arg IMAGE_TAG=${TAG} \
+            -t jderobot/bt-studio:${TAG} .
+          docker push jderobot/bt-studio:${TAG}
       - name: Upload as Latest
         run: |
             docker image tag jderobot/bt-studio:${TAG} jderobot/bt-studio:latest
