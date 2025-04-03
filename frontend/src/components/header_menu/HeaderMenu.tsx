@@ -213,7 +213,6 @@ const HeaderMenu = ({
           name: configJson.name,
           launch_file_path: configJson.ram_config.launch_file_path,
           ros_version: configJson.ram_config.ros_version,
-          visualization: "bt_studio_gz",
           world: configJson.ram_config.world,
           zip: base64data,
         };
@@ -224,17 +223,17 @@ const HeaderMenu = ({
           ros_version: null,
           visualization: null,
           world: null,
+          start_pose: null,
         };
 
         const universe_config = {
-          name: configJson.name,
           world: world_config,
           robot: robot_config,
         };
 
         await manager.launchWorld(universe_config);
         console.log("RB universe launched!");
-        await manager.prepareVisualization(world_config.visualization);
+        await manager.prepareVisualization("gzsim_rae", null);
         console.log("Viz ready!");
       }
     } catch (e: unknown) {
