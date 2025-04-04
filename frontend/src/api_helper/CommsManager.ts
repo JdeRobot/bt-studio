@@ -140,6 +140,9 @@ export default class CommsManager {
   }
 
   public prepareVisualization(visualization_type: string, visualization_config: string | null) {
+    if (visualization_config === null || visualization_config === undefined) {
+      visualization_config = "None"
+    }
     return this.send("prepare_visualization", {type: visualization_type, file: visualization_config});
   }
 
