@@ -96,7 +96,7 @@ def delete_project(request):
         return Response({"success": True}, status=200)
     else:
         return Response(
-            {"success": False, "message": "Project does not exist"}, status=400
+            {"success": False, "message": "Project does not exist"}, status=404
         )
 
 
