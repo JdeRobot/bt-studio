@@ -27,6 +27,7 @@ from .file_access import FAL
 
 fal = FAL()
 
+
 @api_view(["POST"])
 def create_project(request):
     if "project_name" not in request.data:
@@ -1383,10 +1384,10 @@ def get_docker_universe_path(request):
                 "launch_file_path": universe.robot.launch_file_path,
                 "ros_version": universe.world.ros_version,
                 "world": universe.world.world,
-                "start_pose": universe.world.start_pose
+                "start_pose": universe.world.start_pose,
             },
             "visualization": universe.world.visualization,
-            "visualization_config_path": universe.world.visualization_config_path
+            "visualization_config_path": universe.world.visualization_config_path,
         }
 
         # Return the list of projects
