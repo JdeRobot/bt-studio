@@ -1,7 +1,6 @@
 from xml.etree.ElementTree import Element, SubElement, ElementTree, tostring
 import json
 from xml.dom import minidom
-import os
 
 
 def prettify_xml(element):
@@ -160,10 +159,7 @@ def get_start_node_id(node_models, link_models):
 def translate_raw(content, raw_order):
 
     # Parse the JSON data
-    try:
-        parsed_json = json.loads(content)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON content: {e}")
+    parsed_json = json.loads(content)
 
     try:
         # Extract nodes and links information

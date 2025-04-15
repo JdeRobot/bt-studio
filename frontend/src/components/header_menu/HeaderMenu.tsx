@@ -175,7 +175,10 @@ const HeaderMenu = ({
 
         await manager.launchWorld(universe_config);
         console.log("RB universe launched!");
-        await manager.prepareVisualization(visualization, dockerUniverseInfo.visualization_config);
+        await manager.prepareVisualization(
+          visualization,
+          dockerUniverseInfo.visualization_config,
+        );
         console.log("Viz ready!");
       } else {
         console.log("Custom universe rework underway");
@@ -185,7 +188,7 @@ const HeaderMenu = ({
           currentProjectname,
           configJson.name,
         );
-        
+
         const files: Entry[] = JSON.parse(file_list);
 
         const universe: Entry = {
