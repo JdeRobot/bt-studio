@@ -1,3 +1,4 @@
+from contextlib import suppress
 import glob
 import os
 from django.conf import settings
@@ -25,7 +26,9 @@ from .file_access import FAL
 
 # PROJECT MANAGEMENT
 
-fal = FAL()
+CUSTOM_EXCEPTIONS = (ResourceNotExists, ResourceAlreadyExists)
+
+fal = FAL(settings.BASE_DIR)
 
 
 @api_view(["POST"])
@@ -37,7 +40,7 @@ def create_project(request):
         )
 
     project_name = request.data.get("project_name")
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     action_path = fal.path_join(project_path, "code/actions")
     universes_path = fal.path_join(project_path, "universes")
@@ -91,7 +94,7 @@ def delete_project(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
     project_name = request.data.get("project_name")
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
 
     if fal.exists(project_path):
@@ -106,7 +109,7 @@ def delete_project(request):
 @api_view(["GET"])
 def get_project_list(request):
 
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
 
     try:
         # List all folders in the directory
@@ -118,7 +121,8 @@ def get_project_list(request):
 
         # Return the list of projects
         return Response({"project_list": project_list})
-
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
         return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
@@ -135,7 +139,7 @@ def save_base_tree(request):
     graph_json = request.data.get("graph_json")
 
     # Generate the paths
-    base_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    base_path = fal.base_path()
     project_path = fal.path_join(base_path, project_name)
     graph_path = fal.path_join(project_path, "code/trees/main.json")
 
@@ -168,7 +172,7 @@ def get_project_graph(request):
         )
 
     # Generate the paths
-    base_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    base_path = fal.base_path()
     project_path = fal.path_join(base_path, project_name)
     graph_path = fal.path_join(project_path, "code/trees/main.json")
 
@@ -200,7 +204,7 @@ def get_project_configuration(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
 
     project_path = fal.path_join(folder_path, project_name)
     config_path = fal.path_join(project_path, "config.json")
@@ -225,7 +229,7 @@ def get_tree_structure(request):
         )
 
     # Generate the paths
-    base_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    base_path = fal.base_path()
     project_path = fal.path_join(base_path, project_name)
     graph_path = fal.path_join(project_path, "code/trees/main.json")
 
@@ -270,7 +274,7 @@ def get_subtree_structure(request):
         )
 
     # Generate the paths
-    base_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    base_path = fal.base_path()
     project_path = fal.path_join(base_path, project_name)
     subtree_path = fal.path_join(project_path, "code/trees/subtrees")
     graph_path = fal.path_join(subtree_path, subtree_name + ".json")
@@ -309,7 +313,7 @@ def save_project_configuration(request):
     project_name = request.data.get("project_name")
     content = request.data.get("settings")
 
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     config_path = fal.path_join(project_path, "config.json")
 
@@ -355,7 +359,7 @@ def create_subtree(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     project_actions_path = fal.path_join(project_path, "code", "actions")
     library_path = fal.path_join(settings.BASE_DIR, "library", subtree_name)
@@ -411,7 +415,7 @@ def save_subtree(request):
     subtree_json = request.data.get("subtree_json")
 
     # Generate the paths
-    base_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    base_path = fal.base_path()
     project_path = fal.path_join(base_path, project_name)
     json_path = fal.path_join(
         project_path, "code", "trees", "subtrees", f"{subtree_name}.json"
@@ -443,7 +447,7 @@ def get_subtree(request):
     subtree_name = request.GET.get("subtree_name")
 
     # Make folder path relative to Django app
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     subtree_path = fal.path_join(
         project_path, "code/trees/subtrees", f"{subtree_name}.json"
@@ -468,7 +472,7 @@ def get_subtree_list(request):
 
     project_name = request.GET.get("project_name")
 
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     tree_path = fal.path_join(project_path, "code", "trees", "subtrees")
 
@@ -500,7 +504,7 @@ def delete_universe(request):
     project_name = request.data.get("project_name")
     universe_name = request.data.get("universe_name")
 
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     universes_path = fal.path_join(project_path, "universes/")
     universe_path = fal.path_join(universes_path, universe_name)
@@ -524,7 +528,7 @@ def get_universes_list(request):
         )
 
     project_name = request.GET.get("project_name")
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     universes_path = fal.path_join(project_path, "universes/")
 
@@ -554,7 +558,7 @@ def get_universe_configuration(request):
     project_name = request.GET.get("project_name")
     universe_name = request.GET.get("universe_name")
 
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     universes_path = fal.path_join(project_path, "universes/")
 
@@ -589,7 +593,7 @@ def get_file_list(request):
         )
 
     project_name = request.GET.get("project_name")
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     action_path = fal.path_join(project_path, "code")
 
@@ -618,7 +622,7 @@ def get_actions_list(request):
         )
 
     project_name = request.GET.get("project_name")
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     action_path = fal.path_join(project_path, "code/actions")
 
@@ -649,7 +653,7 @@ def get_file(request):
     filename = request.GET.get("filename", None)
 
     # Make folder path relative to Django app
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     action_path = fal.path_join(project_path, "code")
 
@@ -680,7 +684,7 @@ def create_action(request):
     template = request.data.get("template")
 
     # Make folder path relative to Django app
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     action_path = fal.path_join(project_path, "code/actions")
     file_path = fal.path_join(action_path, filename + ".py")
@@ -722,7 +726,7 @@ def create_file(request):
     filename = request.data.get("file_name")
 
     # Make folder path relative to Django app
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     action_path = fal.path_join(project_path, "code")
     create_path = fal.path_join(action_path, location)
@@ -755,7 +759,7 @@ def create_folder(request):
     folder_name = request.data.get("folder_name")
 
     # Make folder path relative to Django app
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     action_path = fal.path_join(project_path, "code")
     create_path = fal.path_join(action_path, location)
@@ -790,7 +794,7 @@ def rename_file(request):
     rename_path = request.data.get("rename_to")
 
     # Make folder path relative to Django app
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     action_path = fal.path_join(project_path, "code")
     file_path = fal.path_join(action_path, path)
@@ -828,7 +832,7 @@ def rename_folder(request):
     rename_path = request.data.get("rename_to")
 
     # Make folder path relative to Django app
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     action_path = fal.path_join(project_path, "code")
     file_path = fal.path_join(action_path, path)
@@ -862,7 +866,7 @@ def delete_file(request):
     path = request.data.get("path")
 
     # Make folder path relative to Django app
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     action_path = fal.path_join(project_path, "code")
     file_path = fal.path_join(action_path, path)
@@ -895,7 +899,7 @@ def delete_folder(request):
     path = request.data.get("path")
 
     # Make folder path relative to Django app
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     action_path = fal.path_join(project_path, "code")
     file_path = fal.path_join(action_path, path)
@@ -931,7 +935,7 @@ def save_file(request):
     filename = request.data.get("filename")
     content = request.data.get("content")
 
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     action_path = fal.path_join(project_path, "code")
     file_path = fal.path_join(action_path, filename)
@@ -964,7 +968,7 @@ def generate_local_app(request):
     bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
-    base_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    base_path = fal.base_path()
     project_path = fal.path_join(base_path, app_name)
     action_path = fal.path_join(project_path, "code/actions")
     tree_path = fal.path_join(project_path, "code/trees/main.json")
@@ -997,7 +1001,7 @@ def generate_local_app(request):
                         os.path.basename(subtree_file)
                     )[0]
 
-                    with open(fal.path_join(subtree_path, subtree_file), "r+") as f:
+                    with open(fal.path_join(subtree_path, subtree_file), "r") as f:
                         # Reading from a file
                         subtree_json = f.read()
 
@@ -1013,7 +1017,7 @@ def generate_local_app(request):
             if action_file.endswith(".py"):
                 action_name = base = os.path.splitext(os.path.basename(action_file))[0]
 
-                with open(fal.path_join(action_path, action_file), "r+") as f:
+                with open(fal.path_join(action_path, action_file), "r") as f:
                     action_content = f.read()
 
                 actions.append({"name": action_name, "content": action_content})
@@ -1055,7 +1059,7 @@ def generate_dockerized_app(request):
     bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
-    base_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    base_path = fal.base_path()
     project_path = fal.path_join(base_path, app_name)
     action_path = fal.path_join(project_path, "code/actions")
     tree_path = fal.path_join(project_path, "code/trees/main.json")
@@ -1086,7 +1090,7 @@ def generate_dockerized_app(request):
                         os.path.basename(subtree_file)
                     )[0]
 
-                    with open(fal.path_join(subtree_path, subtree_file), "r+") as f:
+                    with open(fal.path_join(subtree_path, subtree_file), "r") as f:
                         # Reading from a file
                         subtree_json = f.read()
 
@@ -1100,7 +1104,7 @@ def generate_dockerized_app(request):
             if action_file.endswith(".py"):
                 action_name = base = os.path.splitext(os.path.basename(action_file))[0]
 
-                with open(fal.path_join(action_path, action_file), "r+") as f:
+                with open(fal.path_join(action_path, action_file), "r") as f:
                     action_content = f.read()
 
                 actions.append({"name": action_name, "content": action_content})
@@ -1132,7 +1136,7 @@ def get_universe_file_list(request):
     project_name = request.GET.get("project_name")
     universe_name = request.GET.get("universe_name")
 
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     universes_path = fal.path_join(project_path, "universes")
     universe_path = fal.path_join(universes_path, universe_name)
@@ -1170,7 +1174,7 @@ def get_universe_file(request):
     filename = request.GET.get("filename", None)
 
     # Make folder path relative to Django app
-    folder_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    folder_path = fal.base_path()
     project_path = fal.path_join(folder_path, project_name)
     universes_path = fal.path_join(project_path, "universes")
     universe_path = fal.path_join(universes_path, universe_name)
@@ -1205,7 +1209,7 @@ def upload_universe(request):
     zip_file = request.data.get("zip_file")
 
     # Make folder path relative to Django app
-    base_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    base_path = fal.base_path()
     project_path = fal.path_join(base_path, app_name)
     universes_path = fal.path_join(project_path, "universes")
     universe_path = fal.path_join(universes_path, universe_name)
@@ -1280,7 +1284,7 @@ def add_docker_universe(request):
     id = request.data.get("id")
 
     # Make folder path relative to Django app
-    base_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    base_path = fal.base_path()
     project_path = fal.path_join(base_path, app_name)
     universes_path = fal.path_join(project_path, "universes")
     universe_path = fal.path_join(universes_path, universe_name)
@@ -1325,7 +1329,7 @@ def upload_code(request):
     content = request.data.get("content")
 
     # Make folder path relative to Django app
-    base_path = fal.path_join(settings.BASE_DIR, "filesystem")
+    base_path = fal.base_path()
     project_path = fal.path_join(base_path, project_name)
     code_path = fal.path_join(project_path, "code")
     create_path = fal.path_join(code_path, location)
