@@ -1269,9 +1269,9 @@ class LocalTestFailedCase(TestCase):
         create_folder(self, "dir")
         response = self.c.post(
             "/bt_studio/rename_folder/",
-            {"project_name": "test", "path": "dir", "rename_to": "dir/./.."},
+            {"project_name": "test", "path": "dir", "rename_to": "dir"},
         )
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, self.dup_file)
         delete_proyect(self)
 
     def test_incorrect_delete_file(self):

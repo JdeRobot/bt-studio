@@ -1,6 +1,7 @@
 # File Abstraction Layer
 
 import os
+import shutil
 from .project_view import list_dir
 from .exceptions import ResourceNotExists, ResourceAlreadyExists
 
@@ -89,3 +90,42 @@ class FAL:
         file_data = self.read(template_path)
         new_data = file_data.replace("ACTION", filename)
         return new_data
+    
+    def mkdir(self, path:str):
+        os.makedirs(path)
+
+    def renamefile(self, old_path:str, new_path:str):
+        if not self.exists(old_path):
+            raise ResourceNotExists(old_path)
+        
+        if self.exists(new_path):
+            raise ResourceAlreadyExists(new_path)
+        
+        os.rename(old_path, new_path)
+
+    def renamedir(self, old_path:str, new_path:str):
+        if not self.exists(old_path):
+            raise ResourceNotExists(old_path)
+        
+        if self.exists(new_path):
+            raise ResourceAlreadyExists(new_path)
+        
+        os.rename(old_path, new_path)
+
+    def removefile(self, path:str):
+        if not self.exists(path):
+            raise ResourceNotExists(path)
+        
+        if not self.isfile(path):
+            raise ResourceNotExists(path)
+        
+        os.remove(path)
+
+    def removedir(self, path:str):
+        if not self.exists(path):
+            raise ResourceNotExists(path)
+        
+        if not self.isdir(path):
+            raise ResourceNotExists(path)
+        
+        shutil.rmtree(path)

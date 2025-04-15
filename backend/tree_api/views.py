@@ -62,11 +62,11 @@ def create_project(request):
     if not fal.exists(project_path):
 
         # Create folders
-        os.mkdir(project_path)
-        os.makedirs(action_path)
-        os.mkdir(universes_path)
-        os.mkdir(tree_path)
-        os.mkdir(subtree_path)
+        fal.mkdir(project_path)
+        fal.mkdir(action_path)
+        fal.mkdir(universes_path)
+        fal.mkdir(tree_path)
+        fal.mkdir(subtree_path)
 
         # Create default config
         with open(config_path, "w") as cfg:
@@ -322,7 +322,8 @@ def create_subtree(request):
     project_actions_path = fal.actions_path(project_name)
     project_subtree_path = fal.subtrees_path(project_name)
 
-    library_path = os.path.join(settings.BASE_DIR, "library", subtree_name)
+    library_base_path = fal.path_join(settings.BASE_DIR, "library")
+    library_path = fal.path_join(library_base_path, subtree_name)
     library_actions_path = fal.path_join(library_path, "actions")
     template_path = fal.path_join(settings.BASE_DIR, "templates")
     src_path = template_path
@@ -341,7 +342,7 @@ def create_subtree(request):
 
     # Create subtree directory if it does not exist
     if not fal.exists(project_subtree_path):
-        os.mkdir(project_subtree_path)
+        fal.mkdir(project_subtree_path)
 
     # Copy the subtree to the project
     if not fal.exists(project_json_path):
@@ -652,7 +653,7 @@ def create_folder(request):
 
     if not fal.exists(folder_path):
         try:
-            os.makedirs(folder_path)
+            fal.mkdir(folder_path)
             return Response({"success": True})
         except Exception as e:
             return Response({"success": False, "message": "Invalid name"}, status=400)
@@ -683,19 +684,13 @@ def rename_file(request):
     file_path = fal.path_join(code_path, path)
     new_path = fal.path_join(code_path, rename_path)
 
-    if fal.exists(file_path):
-        try:
-            os.rename(file_path, new_path)
-            return JsonResponse({"success": True})
-        except Exception as e:
-            return JsonResponse(
-                {"success": False, "message": f"Error deleting file: {str(e)}"},
-                status=500,
-            )
-    else:
-        return JsonResponse(
-            {"success": False, "message": "File does not exist"}, status=404
-        )
+    try:
+        fal.renamefile(file_path, new_path)
+        return JsonResponse({"success": True})
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"success": False, "message": "Server error"}, status=500)
 
 
 @api_view(["POST"])
@@ -719,19 +714,13 @@ def rename_folder(request):
     file_path = fal.path_join(code_path, path)
     new_path = fal.path_join(code_path, rename_path)
 
-    if fal.exists(file_path):
-        try:
-            os.rename(file_path, new_path)
-            return JsonResponse({"success": True})
-        except Exception as e:
-            return JsonResponse(
-                {"success": False, "message": f"Error deleting folder: {str(e)}"},
-                status=500,
-            )
-    else:
-        return JsonResponse(
-            {"success": False, "message": "File does not exist"}, status=404
-        )
+    try:
+        fal.renamedir(file_path, new_path)
+        return JsonResponse({"success": True})
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"success": False, "message": "Server error"}, status=500)
 
 
 @api_view(["POST"])
@@ -750,19 +739,13 @@ def delete_file(request):
     code_path = fal.code_path(project_name)
     file_path = fal.path_join(code_path, path)
 
-    if fal.exists(file_path) and not fal.isdir(file_path):
-        try:
-            os.remove(file_path)
-            return JsonResponse({"success": True})
-        except Exception as e:
-            return JsonResponse(
-                {"success": False, "message": f"Error deleting file: {str(e)}"},
-                status=500,
-            )
-    else:
-        return JsonResponse(
-            {"success": False, "message": "File does not exist"}, status=404
-        )
+    try:
+        fal.removefile(file_path)
+        return JsonResponse({"success": True})
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"success": False, "message": "Server error"}, status=500)
 
 
 @api_view(["POST"])
@@ -781,19 +764,13 @@ def delete_folder(request):
     code_path = fal.code_path(project_name)
     file_path = fal.path_join(code_path, path)
 
-    if fal.exists(file_path) and fal.isdir(file_path):
-        try:
-            shutil.rmtree(file_path)
-            return JsonResponse({"success": True})
-        except Exception as e:
-            return JsonResponse(
-                {"success": False, "message": f"Error deleting file: {str(e)}"},
-                status=500,
-            )
-    else:
-        return JsonResponse(
-            {"success": False, "message": "File does not exist"}, status=404
-        )
+    try:
+        fal.removedir(file_path)
+        return JsonResponse({"success": True})
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"success": False, "message": "Server error"}, status=500)
 
 
 @api_view(["POST"])
@@ -820,6 +797,8 @@ def save_file(request):
         return Response({"success": True})
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"success": False, "message": "Server error"}, status=500)
 
 
 @api_view(["POST"])
@@ -1045,7 +1024,7 @@ def upload_universe(request):
 
     # Create the folder if it doesn't exist
     if not fal.exists(universe_path):
-        os.makedirs(universe_path)
+        fal.mkdir(universe_path)
 
     try:
         zip_file_data = base64.b64decode(zip_file)
@@ -1118,7 +1097,7 @@ def add_docker_universe(request):
 
     # Create the folder if it doesn't exist
     if not fal.exists(universe_path):
-        os.makedirs(universe_path)
+        fal.mkdir(universe_path)
 
     # Fill the config dictionary of the universe
     universe_config = {"name": universe_name, "id": id, "type": "robotics_backend"}
