@@ -15,46 +15,61 @@ import zipfile
 from rest_framework import status
 import base64
 from .file_access import FAL
-from .exceptions import ResourceNotExists, ResourceAlreadyExists
+from .exceptions import ResourceNotExists, ResourceAlreadyExists, ParameterInvalid
 
 # PROJECT MANAGEMENT
 
-CUSTOM_EXCEPTIONS = (ResourceNotExists, ResourceAlreadyExists)
+CUSTOM_EXCEPTIONS = (ResourceNotExists, ResourceAlreadyExists, ParameterInvalid)
 
 fal = FAL(settings.BASE_DIR)
 
 
+def check_post_parameters(request, param: list[str]):
+    for p in param:
+        if p not in request:
+            raise ParameterInvalid(p)
+        data = request.get(p)
+        if not data or len(data) == 0:
+            if p != "location":
+                raise ParameterInvalid(p)
+
+
+def check_get_parameters(request, param: list[str]):
+    for p in param:
+        if p not in request:
+            raise ParameterInvalid(p)
+        data = request.get(p)
+        if not data or len(data) == 0:
+            raise ParameterInvalid(p)
+
+
 @api_view(["POST"])
 def create_project(request):
-    if "project_name" not in request.data:
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.data.get("project_name")
-
-    project_path = fal.project_path(project_name)
-    action_path = fal.actions_path(project_name)
-    universes_path = fal.universes_path(project_name)
-    tree_path = fal.trees_path(project_name)
-    subtree_path = fal.subtrees_path(project_name)
-
-    config_path = fal.path_join(project_path, "config.json")
-    base_tree_path = fal.path_join(tree_path, "main.json")
-    init_graph_path = fal.path_join(settings.BASE_DIR, "templates/graph.json")
-
-    # Default cfg values
-    default_cfg = {
-        "name": project_name,
-        "config": {
-            "editorShowAccentColors": True,
-            "theme": "dark",
-            "btOrder": "bottom-to-top",
-        },
-    }
-
     try:
+        check_post_parameters(request.data, ["project_name"])
+
+        project_name = request.data.get("project_name")
+
+        project_path = fal.project_path(project_name)
+        action_path = fal.actions_path(project_name)
+        universes_path = fal.universes_path(project_name)
+        tree_path = fal.trees_path(project_name)
+        subtree_path = fal.subtrees_path(project_name)
+
+        config_path = fal.path_join(project_path, "config.json")
+        base_tree_path = fal.path_join(tree_path, "main.json")
+        init_graph_path = fal.path_join(settings.BASE_DIR, "templates/graph.json")
+
+        # Default cfg values
+        default_cfg = {
+            "name": project_name,
+            "config": {
+                "editorShowAccentColors": True,
+                "theme": "dark",
+                "btOrder": "bottom-to-top",
+            },
+        }
+
         # Create folders
         fal.mkdir(project_path)
         fal.mkdir(action_path)
@@ -81,16 +96,13 @@ def create_project(request):
 
 @api_view(["POST"])
 def delete_project(request):
-    if "project_name" not in request.data:
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    project_name = request.data.get("project_name")
-
-    project_path = fal.project_path(project_name)
-
     try:
+        check_post_parameters(request.data, ["project_name"])
+
+        project_name = request.data.get("project_name")
+
+        project_path = fal.project_path(project_name)
+
         fal.removedir(project_path)
         return Response({"success": True}, status=200)
     except CUSTOM_EXCEPTIONS as e:
@@ -115,20 +127,17 @@ def get_project_list(request):
 
 @api_view(["POST"])
 def save_base_tree(request):
-    if "project_name" not in request.data or "graph_json" not in request.data:
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    # Get the app name and the graph
-    project_name = request.data.get("project_name")
-    graph_json = request.data.get("graph_json")
-
-    # Generate the paths
-    trees_path = fal.trees_path(project_name)
-    graph_path = fal.path_join(trees_path, "main.json")
-
     try:
+        check_post_parameters(request.data, ["project_name", "graph_json"])
+
+        # Get the app name and the graph
+        project_name = request.data.get("project_name")
+        graph_json = request.data.get("graph_json")
+
+        # Generate the paths
+        trees_path = fal.trees_path(project_name)
+        graph_path = fal.path_join(trees_path, "main.json")
+
         # Obtain pretty json
         graph = json.loads(graph_json)
         graph_formated = json.dumps(graph, indent=4)
@@ -260,23 +269,19 @@ def get_subtree_structure(request):
 
 @api_view(["POST"])
 def save_project_configuration(request):
-    if "project_name" not in request.data or "settings" not in request.data:
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.data.get("project_name")
-    content = request.data.get("settings")
-
-    project_path = fal.project_path(project_name)
-    config_path = fal.path_join(project_path, "config.json")
-
-    if content is None or len(content) == 0:
-        return Response(
-            {"success": False, "message": "Settings are missing"}, status=400
-        )
     try:
+        check_post_parameters(request.data, ["project_name", "settings"])
+
+        project_name = request.data.get("project_name")
+        content = request.data.get("settings")
+
+        project_path = fal.project_path(project_name)
+        config_path = fal.path_join(project_path, "config.json")
+
+        if content is None or len(content) == 0:
+            return Response(
+                {"success": False, "message": "Settings are missing"}, status=400
+            )
         graph = json.loads(content)
         graph_formated = json.dumps(graph, indent=4)
         fal.write(config_path, graph_formated)
@@ -292,53 +297,37 @@ def save_project_configuration(request):
 
 @api_view(["POST"])
 def create_subtree(request):
-    if "project_name" not in request.data or "subtree_name" not in request.data:
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.data.get("project_name")
-    subtree_name = request.data.get("subtree_name")
-
-    if not project_name:
-        return Response(
-            {"success": False, "message": "Project parameter is missing"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    if not subtree_name:
-        return Response(
-            {"success": False, "message": "Subtree parameter is missing"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_actions_path = fal.actions_path(project_name)
-    project_subtree_path = fal.subtrees_path(project_name)
-
-    library_base_path = fal.path_join(settings.BASE_DIR, "library")
-    library_path = fal.path_join(library_base_path, subtree_name)
-    library_actions_path = fal.path_join(library_path, "actions")
-    template_path = fal.path_join(settings.BASE_DIR, "templates")
-    src_path = template_path
-
-    # Check if the subtree is already implemented on the library
-    if fal.exists(library_path):
-        src_path = library_path
-        if fal.exists(library_actions_path):
-            shutil.copytree(
-                library_actions_path, project_actions_path, dirs_exist_ok=True
-            )
-
-    # Setup init and copy paths
-    init_json_path = fal.path_join(src_path, "graph.json")
-    project_json_path = fal.path_join(project_subtree_path, f"{subtree_name}.json")
-
-    # Create subtree directory if it does not exist
-    if not fal.exists(project_subtree_path):
-        fal.mkdir(project_subtree_path)
-
     try:
+        check_post_parameters(request.data, ["project_name", "subtree_name"])
+
+        project_name = request.data.get("project_name")
+        subtree_name = request.data.get("subtree_name")
+
+        project_actions_path = fal.actions_path(project_name)
+        project_subtree_path = fal.subtrees_path(project_name)
+
+        library_base_path = fal.path_join(settings.BASE_DIR, "library")
+        library_path = fal.path_join(library_base_path, subtree_name)
+        library_actions_path = fal.path_join(library_path, "actions")
+        template_path = fal.path_join(settings.BASE_DIR, "templates")
+        src_path = template_path
+
+        # Check if the subtree is already implemented on the library
+        if fal.exists(library_path):
+            src_path = library_path
+            if fal.exists(library_actions_path):
+                shutil.copytree(
+                    library_actions_path, project_actions_path, dirs_exist_ok=True
+                )
+
+        # Setup init and copy paths
+        init_json_path = fal.path_join(src_path, "graph.json")
+        project_json_path = fal.path_join(project_subtree_path, f"{subtree_name}.json")
+
+        # Create subtree directory if it does not exist
+        if not fal.exists(project_subtree_path):
+            fal.mkdir(project_subtree_path)
+
         subtree = json.loads(fal.read(init_json_path))
         subtree_formated = json.dumps(subtree, indent=4)
         fal.create(project_json_path, subtree_formated)
@@ -355,28 +344,20 @@ def create_subtree(request):
 
 @api_view(["POST"])
 def save_subtree(request):
-
-    # Check if 'project_name', 'subtree_name', and 'subtree_json' are in the request data
-    if (
-        "project_name" not in request.data
-        or "subtree_name" not in request.data
-        or "subtree_json" not in request.data
-    ):
-        return Response(
-            {"success": False, "message": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
+    try:
+        check_post_parameters(
+            request.data, ["project_name", "subtree_name", "subtree_json"]
         )
 
-    # Get the project name, subtree name, and subtree JSON
-    project_name = request.data.get("project_name")
-    subtree_name = request.data.get("subtree_name")
-    subtree_json = request.data.get("subtree_json")
+        # Get the project name, subtree name, and subtree JSON
+        project_name = request.data.get("project_name")
+        subtree_name = request.data.get("subtree_name")
+        subtree_json = request.data.get("subtree_json")
 
-    # Generate the paths
-    subtrees_path = fal.subtrees_path(project_name)
-    subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
+        # Generate the paths
+        subtrees_path = fal.subtrees_path(project_name)
+        subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
 
-    try:
         fal.write(subtree_path, subtree_json)
         return JsonResponse({"success": True}, status=status.HTTP_200_OK)
     except CUSTOM_EXCEPTIONS as e:
@@ -437,18 +418,14 @@ def get_subtree_list(request):
 
 @api_view(["POST"])
 def delete_universe(request):
-    if "project_name" not in request.data or "universe_name" not in request.data:
-        return Response(
-            {"error": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    project_name = request.data.get("project_name")
-    universe_name = request.data.get("universe_name")
-
-    universes_path = fal.universes_path(project_name)
-    universe_path = fal.path_join(universes_path, universe_name)
-
     try:
+        check_post_parameters(request.data, ["project_name", "universe_name"])
+        project_name = request.data.get("project_name")
+        universe_name = request.data.get("universe_name")
+
+        universes_path = fal.universes_path(project_name)
+        universe_path = fal.path_join(universes_path, universe_name)
+
         fal.removedir(universe_path)
         return Response({"success": True}, status=200)
     except CUSTOM_EXCEPTIONS as e:
@@ -574,25 +551,18 @@ def get_file(request):
 
 @api_view(["POST"])
 def create_action(request):
-    if (
-        "project_name" not in request.data
-        or "template" not in request.data
-        or "filename" not in request.data
-    ):
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    # Get the file info
-    project_name = request.data.get("project_name")
-    filename = request.data.get("filename")
-    template = request.data.get("template")
-
-    # Make folder path relative to Django app
-    action_path = fal.actions_path(project_name)
-    file_path = fal.path_join(action_path, filename + ".py")
-
     try:
+        check_post_parameters(request.data, ["project_name", "filename", "template"])
+
+        # Get the file info
+        project_name = request.data.get("project_name")
+        filename = request.data.get("filename")
+        template = request.data.get("template")
+
+        # Make folder path relative to Django app
+        action_path = fal.actions_path(project_name)
+        file_path = fal.path_join(action_path, filename + ".py")
+
         content = fal.get_action_template(filename, template)
         fal.create(file_path, content)
         return JsonResponse({"success": True}, status=status.HTTP_200_OK)
@@ -602,26 +572,18 @@ def create_action(request):
 
 @api_view(["POST"])
 def create_file(request):
-    if (
-        "project_name" not in request.data
-        or "location" not in request.data
-        or "file_name" not in request.data
-    ):
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    # Get the file info
-    project_name = request.data.get("project_name")
-    location = request.data.get("location")
-    filename = request.data.get("file_name")
-
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    create_path = fal.path_join(code_path, location)
-    file_path = fal.path_join(create_path, filename)
-
     try:
+        check_post_parameters(request.data, ["project_name", "location", "file_name"])
+        # Get the file info
+        project_name = request.data.get("project_name")
+        location = request.data.get("location")
+        filename = request.data.get("file_name")
+
+        # Make folder path relative to Django app
+        code_path = fal.code_path(project_name)
+        create_path = fal.path_join(code_path, location)
+        file_path = fal.path_join(create_path, filename)
+
         fal.create(file_path, "")
         return Response({"success": True})
     except CUSTOM_EXCEPTIONS as e:
@@ -630,59 +592,40 @@ def create_file(request):
 
 @api_view(["POST"])
 def create_folder(request):
-    if (
-        "project_name" not in request.data
-        or "location" not in request.data
-        or "folder_name" not in request.data
-    ):
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    # Get the file info
-    project_name = request.data.get("project_name")
-    location = request.data.get("location")
-    folder_name = request.data.get("folder_name")
+    try:
+        check_post_parameters(request.data, ["project_name", "location", "folder_name"])
+        # Get the file info
+        project_name = request.data.get("project_name")
+        location = request.data.get("location")
+        folder_name = request.data.get("folder_name")
 
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    create_path = fal.path_join(code_path, location)
-    folder_path = fal.path_join(create_path, folder_name)
+        # Make folder path relative to Django app
+        code_path = fal.code_path(project_name)
+        create_path = fal.path_join(code_path, location)
+        folder_path = fal.path_join(create_path, folder_name)
 
-    if not fal.exists(folder_path):
-        try:
-            fal.mkdir(folder_path)
-            return Response({"success": True})
-        except Exception as e:
-            return Response({"success": False, "message": "Invalid name"}, status=400)
-    else:
-        return Response(
-            {"success": False, "message": "Folder already exists"}, status=409
-        )
+        fal.mkdir(folder_path)
+        return Response({"success": True})
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"success": False, "message": "Invalid name"}, status=400)
 
 
 @api_view(["POST"])
 def rename_file(request):
-    if (
-        "project_name" not in request.data
-        or "path" not in request.data
-        or "rename_to" not in request.data
-    ):
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    # Get the file info
-    project_name = request.data.get("project_name")
-    path = request.data.get("path")
-    rename_path = request.data.get("rename_to")
-
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    file_path = fal.path_join(code_path, path)
-    new_path = fal.path_join(code_path, rename_path)
-
     try:
+        check_post_parameters(request.data, ["project_name", "path", "rename_to"])
+        # Get the file info
+        project_name = request.data.get("project_name")
+        path = request.data.get("path")
+        rename_path = request.data.get("rename_to")
+
+        # Make folder path relative to Django app
+        code_path = fal.code_path(project_name)
+        file_path = fal.path_join(code_path, path)
+        new_path = fal.path_join(code_path, rename_path)
+
         fal.renamefile(file_path, new_path)
         return JsonResponse({"success": True})
     except CUSTOM_EXCEPTIONS as e:
@@ -693,26 +636,18 @@ def rename_file(request):
 
 @api_view(["POST"])
 def rename_folder(request):
-    if (
-        "project_name" not in request.data
-        or "path" not in request.data
-        or "rename_to" not in request.data
-    ):
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    # Get the folder info
-    project_name = request.data.get("project_name")
-    path = request.data.get("path")
-    rename_path = request.data.get("rename_to")
-
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    file_path = fal.path_join(code_path, path)
-    new_path = fal.path_join(code_path, rename_path)
-
     try:
+        check_post_parameters(request.data, ["project_name", "path", "rename_to"])
+        # Get the folder info
+        project_name = request.data.get("project_name")
+        path = request.data.get("path")
+        rename_path = request.data.get("rename_to")
+
+        # Make folder path relative to Django app
+        code_path = fal.code_path(project_name)
+        file_path = fal.path_join(code_path, path)
+        new_path = fal.path_join(code_path, rename_path)
+
         fal.renamedir(file_path, new_path)
         return JsonResponse({"success": True})
     except CUSTOM_EXCEPTIONS as e:
@@ -723,21 +658,16 @@ def rename_folder(request):
 
 @api_view(["POST"])
 def delete_file(request):
-    if "project_name" not in request.data or "path" not in request.data:
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # Get the file info
-    project_name = request.data.get("project_name")
-    path = request.data.get("path")
-
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    file_path = fal.path_join(code_path, path)
-
     try:
+        check_post_parameters(request.data, ["project_name", "path"])
+        # Get the file info
+        project_name = request.data.get("project_name")
+        path = request.data.get("path")
+
+        # Make folder path relative to Django app
+        code_path = fal.code_path(project_name)
+        file_path = fal.path_join(code_path, path)
+
         fal.removefile(file_path)
         return JsonResponse({"success": True})
     except CUSTOM_EXCEPTIONS as e:
@@ -748,21 +678,16 @@ def delete_file(request):
 
 @api_view(["POST"])
 def delete_folder(request):
-    if "project_name" not in request.data or "path" not in request.data:
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # Get the folder info
-    project_name = request.data.get("project_name")
-    path = request.data.get("path")
-
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    file_path = fal.path_join(code_path, path)
-
     try:
+        check_post_parameters(request.data, ["project_name", "path"])
+        # Get the folder info
+        project_name = request.data.get("project_name")
+        path = request.data.get("path")
+
+        # Make folder path relative to Django app
+        code_path = fal.code_path(project_name)
+        file_path = fal.path_join(code_path, path)
+
         fal.removedir(file_path)
         return JsonResponse({"success": True})
     except CUSTOM_EXCEPTIONS as e:
@@ -773,24 +698,16 @@ def delete_folder(request):
 
 @api_view(["POST"])
 def save_file(request):
-    if (
-        "project_name" not in request.data
-        or "filename" not in request.data
-        or "content" not in request.data
-    ):
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.data.get("project_name")
-    filename = request.data.get("filename")
-    content = request.data.get("content")
-
-    code_path = fal.code_path(project_name)
-    file_path = fal.path_join(code_path, filename)
-
     try:
+        check_post_parameters(request.data, ["project_name", "filename", "content"])
+
+        project_name = request.data.get("project_name")
+        filename = request.data.get("filename")
+        content = request.data.get("content")
+
+        code_path = fal.code_path(project_name)
+        file_path = fal.path_join(code_path, filename)
+
         fal.write(file_path, content)
         return Response({"success": True})
     except CUSTOM_EXCEPTIONS as e:
@@ -801,18 +718,13 @@ def save_file(request):
 
 @api_view(["POST"])
 def generate_local_app(request):
-    # Check if 'app_name', 'main_tree_graph', and 'bt_order' are in the request data
-    if "app_name" not in request.data or "bt_order" not in request.data:
-        return Response(
-            {"success": False, "message": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # Get the request parameters
-    project_name = request.data.get("app_name")
-    bt_order = request.data.get("bt_order")
-
     try:
+        check_post_parameters(request.data, ["app_name", "bt_order"])
+
+        # Get the request parameters
+        project_name = request.data.get("app_name")
+        bt_order = request.data.get("bt_order")
+
         final_tree, actions = app_generator.generate_app(fal, project_name, bt_order)
         unique_imports = app_generator.get_unique_imports(actions)
         return JsonResponse(
@@ -833,18 +745,13 @@ def generate_local_app(request):
 
 @api_view(["POST"])
 def generate_dockerized_app(request):
-    # Check if 'app_name', 'tree_graph', and 'bt_order' are in the request data
-    if "app_name" not in request.data or "bt_order" not in request.data:
-        return Response(
-            {"success": False, "message": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # Get the request parameters
-    project_name = request.data.get("app_name")
-    bt_order = request.data.get("bt_order")
-
     try:
+        check_post_parameters(request.data, ["app_name", "bt_order"])
+
+        # Get the request parameters
+        project_name = request.data.get("app_name")
+        bt_order = request.data.get("bt_order")
+
         final_tree, _ = app_generator.generate_app(fal, project_name, bt_order)
         return JsonResponse({"success": True, "tree": final_tree})
     except CUSTOM_EXCEPTIONS as e:
@@ -989,38 +896,28 @@ def upload_universe(request):
 
 @api_view(["POST"])
 def add_docker_universe(request):
-
-    # Check if 'universe_name', 'app_name' and 'id' are in the request data
-    if (
-        "universe_name" not in request.data
-        or "app_name" not in request.data
-        or "id" not in request.data
-    ):
-        return Response(
-            {"error": "Name and id are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # Get the name and the id file from the request
-    universe_name = request.data.get("universe_name")
-    project_name = request.data.get("app_name")
-    id = request.data.get("id")
-
-    # Make folder path relative to Django app
-    universes_path = fal.universes_path(project_name)
-    universe_path = fal.path_join(universes_path, universe_name)
-
-    # Create the folder if it doesn't exist
-    if not fal.exists(universe_path):
-        fal.mkdir(universe_path)
-
-    # Fill the config dictionary of the universe
-    universe_config = {"name": universe_name, "id": id, "type": "robotics_backend"}
-
-    # Generate the json config
-    config_path = fal.path_join(universe_path, "config.json")
-
     try:
+        check_post_parameters(request.data, ["app_name", "universe_name", "id"])
+
+        # Get the name and the id file from the request
+        universe_name = request.data.get("universe_name")
+        project_name = request.data.get("app_name")
+        id = request.data.get("id")
+
+        # Make folder path relative to Django app
+        universes_path = fal.universes_path(project_name)
+        universe_path = fal.path_join(universes_path, universe_name)
+
+        # Create the folder if it doesn't exist
+        if not fal.exists(universe_path):
+            fal.mkdir(universe_path)
+
+        # Fill the config dictionary of the universe
+        universe_config = {"name": universe_name, "id": id, "type": "robotics_backend"}
+
+        # Generate the json config
+        config_path = fal.path_join(universe_path, "config.json")
+
         universe_data = json.dumps(universe_config, ensure_ascii=False, indent=4)
         fal.create(config_path, universe_data)
         return Response(
@@ -1033,37 +930,28 @@ def add_docker_universe(request):
 
 @api_view(["POST"])
 def upload_code(request):
-
-    # Check if 'name' and 'zipfile' are in the request data
-    if (
-        "project_name" not in request.data
-        or "file_name" not in request.data
-        or "location" not in request.data
-        or "content" not in request.data
-    ):
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # Get the name and the zip file from the request
-    project_name = request.data.get("project_name")
-    file_name = request.data.get("file_name")
-    location = request.data.get("location")
-    content = request.data.get("content")
-
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    create_path = fal.path_join(code_path, location)
-    file_path = fal.path_join(create_path, file_name)
-
-    # If file exist simply return
-    if fal.exists(file_path):
-        return JsonResponse(
-            {"success": False, "message": "File already exists"}, status=409
-        )
-
     try:
+        check_post_parameters(
+            request.data, ["project_name", "file_name", "location", "content"]
+        )
+
+        # Get the name and the zip file from the request
+        project_name = request.data.get("project_name")
+        file_name = request.data.get("file_name")
+        location = request.data.get("location")
+        content = request.data.get("content")
+
+        # Make folder path relative to Django app
+        code_path = fal.code_path(project_name)
+        create_path = fal.path_join(code_path, location)
+        file_path = fal.path_join(create_path, file_name)
+
+        # If file exist simply return
+        if fal.exists(file_path):
+            return JsonResponse(
+                {"success": False, "message": "File already exists"}, status=409
+            )
+
         fal.create_binary(file_path, base64.b64decode(content))
         return Response({"success": True})
     except CUSTOM_EXCEPTIONS as e:
