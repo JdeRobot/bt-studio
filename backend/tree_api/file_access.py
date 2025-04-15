@@ -1,7 +1,8 @@
 # File Abstraction Layer
 
 import os
-
+from .project_view import list_dir
+from .exceptions import ResourceNotExists, ResourceAlreadyExists
 
 class FAL:
     """File Abstraction Layer"""
@@ -26,7 +27,7 @@ class FAL:
 
     def relpath(self, path: str, start: str) -> str:
         return os.path.relpath(path, start)
-    
+
     def write(self, path: str, content):
         with open(path, "w") as f:
             f.write(content)
@@ -36,5 +37,16 @@ class FAL:
             f.write(content)
 
     def read(self, path: str) -> str:
+        if not self.exists(path):
+            raise ResourceNotExists(path)
         with open(path, "r") as f:
             return f.read()
+
+    def listdirs(self, path: str):
+        return [d for d in os.listdir(path) if self.isdir(self.path_join(path, d))]
+    
+    def listfiles(self, path: str):
+        return [d for d in os.listdir(path) if self.isfile(self.path_join(path, d))]
+    
+    def list_formatted(self, path: str):
+        return list_dir(path, path)

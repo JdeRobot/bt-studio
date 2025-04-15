@@ -1,4 +1,3 @@
-from contextlib import suppress
 import glob
 import os
 from django.conf import settings
@@ -23,6 +22,7 @@ from django.core.files.storage import default_storage
 import base64
 import xml.etree.ElementTree as ET
 from .file_access import FAL
+from .exceptions import ResourceNotExists, ResourceAlreadyExists
 
 # PROJECT MANAGEMENT
 
@@ -112,14 +112,7 @@ def get_project_list(request):
     folder_path = fal.base_path()
 
     try:
-        # List all folders in the directory
-        project_list = [
-            d
-            for d in os.listdir(folder_path)
-            if fal.isdir(fal.path_join(folder_path, d))
-        ]
-
-        # Return the list of projects
+        project_list = fal.listdirs(folder_path)
         return Response({"project_list": project_list})
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
@@ -177,19 +170,15 @@ def get_project_graph(request):
     graph_path = fal.path_join(project_path, "code/trees/main.json")
 
     # Check if the project exists
-    if fal.exists(graph_path):
-        try:
-            with open(graph_path, "r") as f:
-                graph_data = json.load(f)
-            return JsonResponse({"success": True, "graph_json": graph_data})
-        except Exception as e:
-            return JsonResponse(
-                {"success": False, "message": f"Error reading file: {str(e)}"},
-                status=422,
-            )
-    else:
-        return Response(
-            {"error": "The project does not have a graph definition"}, status=404
+    try:
+        graph_data = json.loads(fal.read(graph_path))
+        return JsonResponse({"success": True, "graph_json": graph_data})
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return JsonResponse(
+            {"success": False, "message": f"Error reading file: {str(e)}"},
+            status=422,
         )
 
 
@@ -208,12 +197,11 @@ def get_project_configuration(request):
 
     project_path = fal.path_join(folder_path, project_name)
     config_path = fal.path_join(project_path, "config.json")
-    if fal.exists(config_path):
-        with open(config_path, "r") as f:
-            content = f.read()
+    try:
+        content = fal.read(config_path)
         return Response(content)
-    else:
-        return Response({"error": "File not found"}, status=404)
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
 
 
 @api_view(["GET"])
@@ -234,25 +222,17 @@ def get_tree_structure(request):
     graph_path = fal.path_join(project_path, "code/trees/main.json")
 
     # Check if the project exists
-    if fal.exists(graph_path):
-        try:
-            with open(graph_path, "r") as f:
-                graph_data = json.load(f)
-
-                # Get the tree structure
-                tree_structure = json_translator.translate_tree_structure(
-                    graph_data, bt_order
-                )
-
-            return JsonResponse({"success": True, "tree_structure": tree_structure})
-        except Exception as e:
-            return JsonResponse(
-                {"success": False, "message": f"Error reading file: {str(e)}"},
-                status=500,
-            )
-    else:
-        return Response(
-            {"error": "The project does not have a graph definition"}, status=404
+    try:
+        graph_data = json.loads(fal.read(graph_path))
+        # Get the tree structure
+        tree_structure = json_translator.translate_tree_structure(graph_data, bt_order)
+        return JsonResponse({"success": True, "tree_structure": tree_structure})
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return JsonResponse(
+            {"success": False, "message": f"Error reading file: {str(e)}"},
+            status=500,
         )
 
 
@@ -280,25 +260,17 @@ def get_subtree_structure(request):
     graph_path = fal.path_join(subtree_path, subtree_name + ".json")
 
     # Check if the project exists
-    if fal.exists(graph_path):
-        try:
-            with open(graph_path, "r") as f:
-                graph_data = json.load(f)
-
-                # Get the tree structure
-                tree_structure = json_translator.translate_tree_structure(
-                    graph_data, bt_order
-                )
-
-            return JsonResponse({"success": True, "tree_structure": tree_structure})
-        except Exception as e:
-            return JsonResponse(
-                {"success": False, "message": f"Error reading file: {str(e)}"},
-                status=500,
-            )
-    else:
-        return Response(
-            {"error": "The project does not have a graph definition"}, status=404
+    try:
+        graph_data = json.loads(fal.read(graph_path))
+        # Get the tree structure
+        tree_structure = json_translator.translate_tree_structure(graph_data, bt_order)
+        return JsonResponse({"success": True, "tree_structure": tree_structure})
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return JsonResponse(
+            {"success": False, "message": f"Error reading file: {str(e)}"},
+            status=500,
         )
 
 
@@ -453,12 +425,11 @@ def get_subtree(request):
         project_path, "code/trees/subtrees", f"{subtree_name}.json"
     )
 
-    if fal.exists(subtree_path):
-        with open(subtree_path, "r") as f:
-            subtree = json.load(f)
-            return Response({"subtree": subtree}, status=status.HTTP_200_OK)
-    else:
-        return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        subtree = json.loads(fal.read(subtree_path))
+        return Response({"subtree": subtree}, status=status.HTTP_200_OK)
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
 
 
 @api_view(["GET"])
@@ -478,13 +449,8 @@ def get_subtree_list(request):
 
     try:
         # List all files in the directory removing the .json extension
-        subtree_list = [
-            f.split(".")[0]
-            for f in os.listdir(tree_path)
-            if fal.isfile(fal.path_join(tree_path, f))
-        ]
-
-        # Return the list of files
+        subtree_list = fal.listfiles(tree_path)
+        subtree_list = [f.split(".")[0] for f in subtree_list]
         return Response({"subtree_list": subtree_list})
 
     except Exception as e:
@@ -533,16 +499,8 @@ def get_universes_list(request):
     universes_path = fal.path_join(project_path, "universes/")
 
     try:
-        # List all files in the directory
-        universes_list = [
-            d
-            for d in os.listdir(universes_path)
-            if fal.isdir(fal.path_join(universes_path, d))
-        ]
-
-        # Return the list of files
+        universes_list = fal.listdirs(universes_path)
         return Response({"universes_list": universes_list})
-
     except Exception as e:
         return Response({"error": f"An error occurred: {str(e)}"}, status=404)
 
@@ -565,20 +523,18 @@ def get_universe_configuration(request):
     universe_path = fal.path_join(universes_path, universe_name)
     config_path = fal.path_join(universe_path, "config.json")
 
-    if fal.exists(config_path):
-        try:
-            with open(config_path, "r") as f:
-                content = json.load(f)  # Load JSON content directly
-            return Response(
-                {"success": True, "config": content}, status=200
-            )  # Return as JSON
-        except json.JSONDecodeError:
-            return Response(
-                {"success": False, "message": "Invalid JSON format in config file"},
-                status=422,
-            )
-    else:
-        return Response({"success": False, "message": "File not found"}, status=404)
+    try:
+        content = json.loads(fal.read(config_path))
+        return Response(
+            {"success": True, "config": content}, status=200
+        )  # Return as JSON
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except json.JSONDecodeError:
+        return Response(
+            {"success": False, "message": "Invalid JSON format in config file"},
+            status=422,
+        )
 
 
 # FILE MANAGEMENT
@@ -598,13 +554,7 @@ def get_file_list(request):
     action_path = fal.path_join(project_path, "code")
 
     try:
-        # List all files in the directory
-        file_list = [
-            fal.relpath(f, action_path)
-            for f in glob.glob(action_path + "/**", recursive=True)
-        ]
-
-        file_list = list_dir(action_path, action_path)
+        file_list = fal.list_formatted(action_path)
 
         # Return the list of files
         return Response({"file_list": EntryEncoder().encode(file_list)})
@@ -627,16 +577,8 @@ def get_actions_list(request):
     action_path = fal.path_join(project_path, "code/actions")
 
     try:
-        # List all actions in the directory
-        actions_list = [
-            f
-            for f in os.listdir(action_path)
-            if fal.isfile(fal.path_join(action_path, f))
-        ]
-
-        # Return the list of files
+        actions_list = fal.listfiles(action_path)
         return Response({"actions_list": actions_list})
-
     except Exception as e:
         return Response({"error": f"An error occurred: {str(e)}"}, status=404)
 
@@ -658,13 +600,12 @@ def get_file(request):
     action_path = fal.path_join(project_path, "code")
 
     file_path = fal.path_join(action_path, filename)
-    if fal.exists(file_path):
-        with open(file_path, "r") as f:
-            content = f.read()
+    try:
+        content = fal.read(file_path)
         serializer = FileContentSerializer({"content": content})
         return Response(serializer.data)
-    else:
-        return Response({"error": "File not found"}, status=404)
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
 
 
 @api_view(["POST"])
@@ -980,14 +921,7 @@ def generate_local_app(request):
     try:
 
         # Check if the project exists
-        if fal.exists(tree_path):
-            with open(tree_path, "r") as f:
-                graph_data = f.read()
-        else:
-            return Response(
-                {"success": False, "message": "Main tree not found"},
-                status=404,
-            )
+        graph_data = fal.read(tree_path)
         # 1. Generate a basic tree from the JSON definition
         main_tree = json_translator.translate_raw(graph_data, bt_order)
 
@@ -997,13 +931,9 @@ def generate_local_app(request):
             subtrees_list.sort()
             for subtree_file in subtrees_list:
                 if subtree_file.endswith(".json"):
-                    subtree_name = base = os.path.splitext(
-                        os.path.basename(subtree_file)
-                    )[0]
-
-                    with open(fal.path_join(subtree_path, subtree_file), "r") as f:
-                        # Reading from a file
-                        subtree_json = f.read()
+                    subtree_name = os.path.splitext(os.path.basename(subtree_file))[0]
+                    path = fal.path_join(subtree_path, subtree_file)
+                    subtree_json = fal.read(path)
 
                     subtree = json_translator.translate_raw(subtree_json, bt_order)
                     subtrees.append({"name": subtree_name, "content": subtree})
@@ -1015,10 +945,9 @@ def generate_local_app(request):
         actions_list.sort()
         for action_file in actions_list:
             if action_file.endswith(".py"):
-                action_name = base = os.path.splitext(os.path.basename(action_file))[0]
-
-                with open(fal.path_join(action_path, action_file), "r") as f:
-                    action_content = f.read()
+                action_name = os.path.splitext(os.path.basename(action_file))[0]
+                path = fal.path_join(action_path, action_file)
+                action_content = fal.read(path)
 
                 actions.append({"name": action_name, "content": action_content})
 
@@ -1034,11 +963,9 @@ def generate_local_app(request):
                 "dependencies": sorted(unique_imports),
             }
         )
-
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        # import traceback
-
-        # traceback.print_exc()
         return Response(
             {"success": False, "message": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -1071,14 +998,8 @@ def generate_dockerized_app(request):
     try:
 
         # Check if the project exists
-        if fal.exists(tree_path):
-            with open(tree_path, "r") as f:
-                graph_data = f.read()
-        else:
-            return Response(
-                {"success": False, "message": "Main tree not found"},
-                status=404,
-            )
+        graph_data = fal.read(tree_path)
+
         # 1. Generate a basic tree from the JSON definition
         main_tree = json_translator.translate_raw(graph_data, bt_order)
 
@@ -1086,13 +1007,9 @@ def generate_dockerized_app(request):
         try:
             for subtree_file in os.listdir(subtree_path):
                 if subtree_file.endswith(".json"):
-                    subtree_name = base = os.path.splitext(
-                        os.path.basename(subtree_file)
-                    )[0]
-
-                    with open(fal.path_join(subtree_path, subtree_file), "r") as f:
-                        # Reading from a file
-                        subtree_json = f.read()
+                    subtree_name = os.path.splitext(os.path.basename(subtree_file))[0]
+                    path = fal.path_join(subtree_path, subtree_file)
+                    subtree_json = fal.read(path)
 
                     subtree = json_translator.translate_raw(subtree_json, bt_order)
                     subtrees.append({"name": subtree_name, "content": subtree})
@@ -1102,10 +1019,9 @@ def generate_dockerized_app(request):
         # 3. Get all possible actions name and content
         for action_file in os.listdir(action_path):
             if action_file.endswith(".py"):
-                action_name = base = os.path.splitext(os.path.basename(action_file))[0]
-
-                with open(fal.path_join(action_path, action_file), "r") as f:
-                    action_content = f.read()
+                action_name = os.path.splitext(os.path.basename(action_file))[0]
+                path = fal.path_join(action_path, action_file)
+                action_content = fal.read(path)
 
                 actions.append({"name": action_name, "content": action_content})
 
@@ -1115,10 +1031,9 @@ def generate_dockerized_app(request):
         # 6. Return the files as a response
         return JsonResponse({"success": True, "tree": final_tree})
 
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        # import traceback
-
-        # traceback.print_exc()
         return Response(
             {"success": False, "message": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -1142,13 +1057,7 @@ def get_universe_file_list(request):
     universe_path = fal.path_join(universes_path, universe_name)
 
     try:
-        # List all files in the directory
-        file_list = [
-            fal.relpath(f, universe_path)
-            for f in glob.glob(universe_path + "/**", recursive=True)
-        ]
-
-        file_list = list_dir(universe_path, universe_path)
+        file_list = fal.list_formatted(universe_path)
 
         # Return the list of files
         return Response({"file_list": EntryEncoder().encode(file_list)})
@@ -1180,13 +1089,12 @@ def get_universe_file(request):
     universe_path = fal.path_join(universes_path, universe_name)
 
     file_path = fal.path_join(universe_path, filename)
-    if fal.exists(file_path):
-        with open(file_path, "r") as f:
-            content = f.read()
+    try:
+        content = fal.read(file_path)
         serializer = FileContentSerializer({"content": content})
         return Response(serializer.data)
-    else:
-        return Response({"error": "File not found"}, status=404)
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
 
 
 @api_view(["POST"])
