@@ -827,7 +827,7 @@ def generate_local_app(request):
 
         # 2. Get all possible subtrees name and content
         try:
-            subtrees_list = os.listdir(subtree_path)
+            subtrees_list = fal.listfiles(subtree_path)
             subtrees_list.sort()
             for subtree_file in subtrees_list:
                 if subtree_file.endswith(".json"):
@@ -841,7 +841,7 @@ def generate_local_app(request):
             print("No subtrees")
 
         # 3. Get all possible actions name and content
-        actions_list = os.listdir(action_path)
+        actions_list = fal.listfiles(action_path)
         actions_list.sort()
         for action_file in actions_list:
             if action_file.endswith(".py"):
@@ -904,7 +904,7 @@ def generate_dockerized_app(request):
 
         # 2. Get all possible subtrees name and content
         try:
-            for subtree_file in os.listdir(subtree_path):
+            for subtree_file in fal.listfiles(subtree_path):
                 if subtree_file.endswith(".json"):
                     subtree_name = os.path.splitext(os.path.basename(subtree_file))[0]
                     path = fal.path_join(subtree_path, subtree_file)
@@ -916,7 +916,7 @@ def generate_dockerized_app(request):
             print("No subtrees")
 
         # 3. Get all possible actions name and content
-        for action_file in os.listdir(action_path):
+        for action_file in fal.listfiles(action_path):
             if action_file.endswith(".py"):
                 action_name = os.path.splitext(os.path.basename(action_file))[0]
                 path = fal.path_join(action_path, action_file)
