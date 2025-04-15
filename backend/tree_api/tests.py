@@ -1011,7 +1011,7 @@ class LocalTestFailedCase(TestCase):
         create_proyect(self)
         response = self.c.post(
             "/bt_studio/save_project_configuration/",
-            {"project_name": "test", "settings": "{[]}"},
+            {"project_name": "test", "settings": "{"},
         )
         self.assertEqual(response.status_code, self.bad_data)
         delete_proyect(self)
@@ -1075,8 +1075,7 @@ class LocalTestFailedCase(TestCase):
     def test_no_find_get_subtree_list(self):
         """Test if error appears when no paramters are passed"""
         response = self.c.get("/bt_studio/get_subtree_list/", {"project_name": "test"})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["subtree_list"], [])
+        self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_delete_universe(self):
         """Test if error appears when no paramters are passed"""

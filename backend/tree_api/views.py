@@ -120,7 +120,6 @@ def delete_project(request):
 
 @api_view(["GET"])
 def get_project_list(request):
-
     folder_path = fal.base_path()
 
     try:
@@ -161,21 +160,14 @@ def save_base_tree(request):
 
 @api_view(["GET"])
 def get_project_graph(request):
-
-    project_name = request.GET.get("project_name")
-
-    if "project_name" not in request.GET:
-        return Response(
-            {"error": "Project Name is required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # Generate the paths
-    trees_path = fal.trees_path(project_name)
-    graph_path = fal.path_join(trees_path, "main.json")
-
-    # Check if the project exists
     try:
+        check_get_parameters(request.GET, ["project_name"])
+        project_name = request.GET.get("project_name")
+
+        # Generate the paths
+        trees_path = fal.trees_path(project_name)
+        graph_path = fal.path_join(trees_path, "main.json")
+
         graph_data = json.loads(fal.read(graph_path))
         return JsonResponse({"success": True, "graph_json": graph_data})
     except CUSTOM_EXCEPTIONS as e:
@@ -189,42 +181,32 @@ def get_project_graph(request):
 
 @api_view(["GET"])
 def get_project_configuration(request):
-
-    project_name = request.GET.get("project_name")
-
-    if "project_name" not in request.GET:
-        return Response(
-            {"error": "Project Name is required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_path = fal.project_path(project_name)
-    config_path = fal.path_join(project_path, "config.json")
     try:
+        check_get_parameters(request.GET, ["project_name"])
+        project_name = request.GET.get("project_name")
+
+        project_path = fal.project_path(project_name)
+        config_path = fal.path_join(project_path, "config.json")
         content = fal.read(config_path)
         return Response(content)
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["GET"])
 def get_tree_structure(request):
-
-    project_name = request.GET.get("project_name")
-    bt_order = request.GET.get("bt_order")
-
-    if "project_name" not in request.GET or "bt_order" not in request.GET:
-        return Response(
-            {"error": "Project Name is required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # Generate the paths
-    trees_path = fal.trees_path(project_name)
-    graph_path = fal.path_join(trees_path, "main.json")
-
-    # Check if the project exists
     try:
+        check_get_parameters(request.GET, ["project_name", "bt_order"])
+        project_name = request.GET.get("project_name")
+        bt_order = request.GET.get("bt_order")
+
+        # Generate the paths
+        trees_path = fal.trees_path(project_name)
+        graph_path = fal.path_join(trees_path, "main.json")
+
+        # Check if the project exists
         graph_data = json.loads(fal.read(graph_path))
         # Get the tree structure
         tree_structure = json_translator.translate_tree_structure(graph_data, bt_order)
@@ -232,35 +214,22 @@ def get_tree_structure(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return JsonResponse(
-            {"success": False, "message": f"Error reading file: {str(e)}"},
-            status=500,
-        )
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["GET"])
 def get_subtree_structure(request):
-
-    project_name = request.GET.get("project_name")
-    subtree_name = request.GET.get("subtree_name")
-    bt_order = request.GET.get("bt_order")
-
-    if (
-        "project_name" not in request.GET
-        or "subtree_name" not in request.GET
-        or "bt_order" not in request.GET
-    ):
-        return Response(
-            {"error": "Project Name is required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # Generate the paths
-    subtrees_path = fal.subtrees_path(project_name)
-    graph_path = fal.path_join(subtrees_path, subtree_name + ".json")
-
-    # Check if the project exists
     try:
+        check_get_parameters(request.GET, ["project_name", "subtree_name", "bt_order"])
+        project_name = request.GET.get("project_name")
+        subtree_name = request.GET.get("subtree_name")
+        bt_order = request.GET.get("bt_order")
+
+        # Generate the paths
+        subtrees_path = fal.subtrees_path(project_name)
+        graph_path = fal.path_join(subtrees_path, subtree_name + ".json")
+
+        # Check if the project exists
         graph_data = json.loads(fal.read(graph_path))
         # Get the tree structure
         tree_structure = json_translator.translate_tree_structure(graph_data, bt_order)
@@ -268,10 +237,7 @@ def get_subtree_structure(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return JsonResponse(
-            {"success": False, "message": f"Error reading file: {str(e)}"},
-            status=500,
-        )
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -296,7 +262,7 @@ def save_project_configuration(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response({"success": False, "message": str(e)}, status=422)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 # SUBTREE MANAGEMENT
@@ -342,11 +308,7 @@ def create_subtree(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        print(str(e))
-        return JsonResponse(
-            {"success": False, "message": f"Error saving subtree: {str(e)}"},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -370,54 +332,46 @@ def save_subtree(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return JsonResponse(
-            {"success": False, "message": f"Error saving subtree: {str(e)}"},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["GET"])
 def get_subtree(request):
-    if "project_name" not in request.GET or "subtree_name" not in request.GET:
-        return Response(
-            {"error": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.GET.get("project_name")
-    subtree_name = request.GET.get("subtree_name")
-
-    subtrees_path = fal.subtrees_path(project_name)
-    subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
-
     try:
+        check_get_parameters(request.GET, ["project_name", "subtree_name"])
+
+        project_name = request.GET.get("project_name")
+        subtree_name = request.GET.get("subtree_name")
+
+        subtrees_path = fal.subtrees_path(project_name)
+        subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
+
         subtree = json.loads(fal.read(subtree_path))
         return Response({"subtree": subtree}, status=status.HTTP_200_OK)
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["GET"])
 def get_subtree_list(request):
-
-    if "project_name" not in request.GET:
-        return Response(
-            {"error": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.GET.get("project_name")
-
-    subtrees_path = fal.subtrees_path(project_name)
-
     try:
+        check_get_parameters(request.GET, ["project_name"])
+
+        project_name = request.GET.get("project_name")
+
+        subtrees_path = fal.subtrees_path(project_name)
+
         # List all files in the directory removing the .json extension
         subtree_list = fal.listfiles(subtrees_path)
         subtree_list = [f.split(".")[0] for f in subtree_list]
         return Response({"subtree_list": subtree_list})
 
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response({"subtree_list": []})
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 # UNIVERSE MANAGEMENT
@@ -443,40 +397,33 @@ def delete_universe(request):
 
 @api_view(["GET"])
 def get_universes_list(request):
-
-    if "project_name" not in request.GET:
-        return Response(
-            {"error": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.GET.get("project_name")
-
-    universes_path = fal.universes_path(project_name)
-
     try:
+        check_get_parameters(request.GET, ["project_name"])
+
+        project_name = request.GET.get("project_name")
+
+        universes_path = fal.universes_path(project_name)
+
         universes_list = fal.listdirs(universes_path)
         return Response({"universes_list": universes_list})
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response({"error": f"An error occurred: {str(e)}"}, status=404)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["GET"])
 def get_universe_configuration(request):
-    if "project_name" not in request.GET or "universe_name" not in request.GET:
-        return Response(
-            {"error": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.GET.get("project_name")
-    universe_name = request.GET.get("universe_name")
-
-    universes_path = fal.universes_path(project_name)
-    universe_path = fal.path_join(universes_path, universe_name)
-    config_path = fal.path_join(universe_path, "config.json")
-
     try:
+        check_get_parameters(request.GET, ["project_name", "universe_name"])
+
+        project_name = request.GET.get("project_name")
+        universe_name = request.GET.get("universe_name")
+
+        universes_path = fal.universes_path(project_name)
+        universe_path = fal.path_join(universes_path, universe_name)
+        config_path = fal.path_join(universe_path, "config.json")
+
         content = json.loads(fal.read(config_path))
         return Response(
             {"success": True, "config": content}, status=200
@@ -495,65 +442,59 @@ def get_universe_configuration(request):
 
 @api_view(["GET"])
 def get_file_list(request):
-    if "project_name" not in request.GET:
-        return Response(
-            {"error": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.GET.get("project_name")
-
-    code_path = fal.code_path(project_name)
-
     try:
+        check_get_parameters(request.GET, ["project_name"])
+
+        project_name = request.GET.get("project_name")
+
+        code_path = fal.code_path(project_name)
+
         file_list = fal.list_formatted(code_path)
 
         # Return the list of files
         return Response({"file_list": EntryEncoder().encode(file_list)})
 
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response({"error": f"An error occurred: {str(e)}"}, status=404)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["GET"])
 def get_actions_list(request):
-    if "project_name" not in request.GET:
-        return Response(
-            {"error": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.GET.get("project_name")
-
-    action_path = fal.actions_path(project_name)
-
     try:
+        check_get_parameters(request.GET, ["project_name"])
+
+        project_name = request.GET.get("project_name")
+
+        action_path = fal.actions_path(project_name)
+
         actions_list = fal.listfiles(action_path)
         return Response({"actions_list": actions_list})
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response({"error": f"An error occurred: {str(e)}"}, status=404)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["GET"])
 def get_file(request):
-    if "project_name" not in request.GET or "filename" not in request.GET:
-        return Response(
-            {"error": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.GET.get("project_name", None)
-    filename = request.GET.get("filename", None)
-
-    code_path = fal.code_path(project_name)
-
-    file_path = fal.path_join(code_path, filename)
     try:
+        check_get_parameters(request.GET, ["project_name", "filename"])
+
+        project_name = request.GET.get("project_name", None)
+        filename = request.GET.get("filename", None)
+
+        code_path = fal.code_path(project_name)
+
+        file_path = fal.path_join(code_path, filename)
         content = fal.read(file_path)
         serializer = FileContentSerializer({"content": content})
         return Response(serializer.data)
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -575,6 +516,8 @@ def create_action(request):
         return JsonResponse({"success": True}, status=status.HTTP_200_OK)
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -597,6 +540,8 @@ def create_file(request):
         return Response({"success": True})
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -620,7 +565,7 @@ def create_folder(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response({"success": False, "message": "Invalid name"}, status=400)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -642,7 +587,7 @@ def rename_file(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response({"success": False, "message": "Server error"}, status=500)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -664,7 +609,7 @@ def rename_folder(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response({"success": False, "message": "Server error"}, status=500)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -684,7 +629,7 @@ def delete_file(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response({"success": False, "message": "Server error"}, status=500)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -704,7 +649,7 @@ def delete_folder(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response({"success": False, "message": "Server error"}, status=500)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -726,7 +671,7 @@ def save_file(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response({"success": False, "message": "Server error"}, status=500)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -750,10 +695,7 @@ def generate_local_app(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response(
-            {"success": False, "message": str(e)},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -770,63 +712,52 @@ def generate_dockerized_app(request):
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response(
-            {"success": False, "message": str(e)},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["GET"])
 def get_universe_file_list(request):
-    if "project_name" not in request.GET or "universe_name" not in request.GET:
-        return Response(
-            {"error": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.GET.get("project_name")
-    universe_name = request.GET.get("universe_name")
-
-    universes_path = fal.universes_path(project_name)
-    universe_path = fal.path_join(universes_path, universe_name)
-
     try:
+        check_get_parameters(request.GET, ["project_name", "universe_name"])
+
+        project_name = request.GET.get("project_name")
+        universe_name = request.GET.get("universe_name")
+
+        universes_path = fal.universes_path(project_name)
+        universe_path = fal.path_join(universes_path, universe_name)
+
         file_list = fal.list_formatted(universe_path)
 
         # Return the list of files
         return Response({"file_list": EntryEncoder().encode(file_list)})
 
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
-        return Response({"error": f"An error occurred: {str(e)}"}, status=404)
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["GET"])
 def get_universe_file(request):
-    if (
-        "project_name" not in request.GET
-        or "universe_name" not in request.GET
-        or "filename" not in request.GET
-    ):
-        return Response(
-            {"error": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    project_name = request.GET.get("project_name", None)
-    universe_name = request.GET.get("universe_name")
-    filename = request.GET.get("filename", None)
-
-    # Make folder path relative to Django app
-    universes_path = fal.universes_path(project_name)
-    universe_path = fal.path_join(universes_path, universe_name)
-
-    file_path = fal.path_join(universe_path, filename)
     try:
+        check_get_parameters(request.GET, ["project_name", "universe_name", "filename"])
+
+        project_name = request.GET.get("project_name", None)
+        universe_name = request.GET.get("universe_name")
+        filename = request.GET.get("filename", None)
+
+        # Make folder path relative to Django app
+        universes_path = fal.universes_path(project_name)
+        universe_path = fal.path_join(universes_path, universe_name)
+
+        file_path = fal.path_join(universe_path, filename)
         content = fal.read(file_path)
         serializer = FileContentSerializer({"content": content})
         return Response(serializer.data)
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -939,6 +870,8 @@ def add_docker_universe(request):
         )
     except CUSTOM_EXCEPTIONS as e:
         return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])
@@ -987,16 +920,11 @@ def list_docker_universes(request):
 
 @api_view(["GET"])
 def get_docker_universe_path(request):
-    # Check if 'name' is in the request data
-    if "name" not in request.GET:
-        return Response(
-            {"error": "Missing required parameters"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    name = request.GET.get("name")
-
     try:
+        check_get_parameters(request.GET, ["name"])
+
+        name = request.GET.get("name")
+
         universe = Universe.objects.get(name=name)
 
         config = {
@@ -1025,6 +953,7 @@ def get_docker_universe_path(request):
                 "universe": config,
             }
         )
-
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
         return Response({"error": f"An error occurred: {str(e)}"}, status=500)

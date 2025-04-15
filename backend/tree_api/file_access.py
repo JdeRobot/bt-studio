@@ -76,12 +76,30 @@ class FAL:
             return f.read()
 
     def listdirs(self, path: str):
+        if not self.exists(path):
+            raise ResourceNotExists(path)
+
+        if not self.isdir(path):
+            raise ResourceNotExists(path)
+
         return [d for d in os.listdir(path) if self.isdir(self.path_join(path, d))]
 
     def listfiles(self, path: str):
+        if not self.exists(path):
+            raise ResourceNotExists(path)
+
+        if not self.isdir(path):
+            raise ResourceNotExists(path)
+
         return [d for d in os.listdir(path) if self.isfile(self.path_join(path, d))]
 
     def list_formatted(self, path: str):
+        if not self.exists(path):
+            raise ResourceNotExists(path)
+
+        if not self.isdir(path):
+            raise ResourceNotExists(path)
+
         return list_dir(path, path)
 
     def get_action_template(self, filename, template):
