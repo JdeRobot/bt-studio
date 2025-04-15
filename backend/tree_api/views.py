@@ -65,11 +65,8 @@ def create_project(request):
 
 @error_wrapper("POST", ["project_name"])
 def delete_project(request):
-
     project_name = request.data.get("project_name")
-
     project_path = fal.project_path(project_name)
-
     fal.removedir(project_path)
     return Response({"success": True}, status=200)
 
@@ -77,14 +74,12 @@ def delete_project(request):
 @error_wrapper("GET")
 def get_project_list(request):
     folder_path = fal.base_path()
-
     project_list = fal.listdirs(folder_path)
     return Response({"project_list": project_list})
 
 
 @error_wrapper("POST", ["project_name", "graph_json"])
 def save_base_tree(request):
-
     # Get the app name and the graph
     project_name = request.data.get("project_name")
     graph_json = request.data.get("graph_json")
@@ -157,7 +152,6 @@ def get_subtree_structure(request):
 
 @error_wrapper("POST", ["project_name", "settings"])
 def save_project_configuration(request):
-
     project_name = request.data.get("project_name")
     content = request.data.get("settings")
 
@@ -179,7 +173,6 @@ def save_project_configuration(request):
 
 @error_wrapper("POST", ["project_name", "subtree_name"])
 def create_subtree(request):
-
     project_name = request.data.get("project_name")
     subtree_name = request.data.get("subtree_name")
 
@@ -219,7 +212,6 @@ def create_subtree(request):
 
 @error_wrapper("POST", ["project_name", "subtree_name", "subtree_json"])
 def save_subtree(request):
-
     # Get the project name, subtree name, and subtree JSON
     project_name = request.data.get("project_name")
     subtree_name = request.data.get("subtree_name")
@@ -274,7 +266,6 @@ def delete_universe(request):
 
 @error_wrapper("GET", ["project_name"])
 def get_universes_list(request):
-
     project_name = request.GET.get("project_name")
 
     universes_path = fal.universes_path(project_name)
@@ -285,7 +276,6 @@ def get_universes_list(request):
 
 @error_wrapper("GET", ["project_name", "universe_name"])
 def get_universe_configuration(request):
-
     project_name = request.GET.get("project_name")
     universe_name = request.GET.get("universe_name")
 
@@ -302,7 +292,6 @@ def get_universe_configuration(request):
 
 @error_wrapper("GET", ["project_name"])
 def get_file_list(request):
-
     project_name = request.GET.get("project_name")
 
     code_path = fal.code_path(project_name)
@@ -315,7 +304,6 @@ def get_file_list(request):
 
 @error_wrapper("GET", ["project_name"])
 def get_actions_list(request):
-
     project_name = request.GET.get("project_name")
 
     action_path = fal.actions_path(project_name)
@@ -326,7 +314,6 @@ def get_actions_list(request):
 
 @error_wrapper("GET", ["project_name", "filename"])
 def get_file(request):
-
     project_name = request.GET.get("project_name", None)
     filename = request.GET.get("filename", None)
 
@@ -340,7 +327,6 @@ def get_file(request):
 
 @error_wrapper("POST", ["project_name", "filename", "template"])
 def create_action(request):
-
     # Get the file info
     project_name = request.data.get("project_name")
     filename = request.data.get("filename")
