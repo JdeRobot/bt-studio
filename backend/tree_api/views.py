@@ -1,18 +1,18 @@
-from django.conf import settings
-from rest_framework.response import Response
-from .serializers import FileContentSerializer
-from . import app_generator
-from . import json_translator
-from .models import Universe
-from .project_view import EntryEncoder
-from django.http import JsonResponse
-import json
-import shutil
 import zipfile
-from rest_framework import status
+import shutil
+import json
 import base64
+from rest_framework.response import Response
+from rest_framework import status
+from django.http import JsonResponse
+from django.conf import settings
+from .serializers import FileContentSerializer
+from .project_view import EntryEncoder
+from .models import Universe
 from .file_access import FAL
 from .error_handler import error_wrapper
+from . import json_translator
+from . import app_generator
 
 # PROJECT MANAGEMENT
 
