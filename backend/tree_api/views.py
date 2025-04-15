@@ -23,8 +23,8 @@ CUSTOM_EXCEPTIONS = (ResourceNotExists, ResourceAlreadyExists, ParameterInvalid)
 
 fal = FAL(settings.BASE_DIR)
 
-            
-def check_post_parameters(request, param):
+
+def check_post_parameters(request, param: list[str | tuple]):
     for p in param:
         min_len = 0
         if type(p) is tuple:
@@ -37,12 +37,16 @@ def check_post_parameters(request, param):
             raise ParameterInvalid(p)
 
 
-def check_get_parameters(request, param: list[str]):
+def check_get_parameters(request, param: list[str | tuple]):
     for p in param:
+        min_len = 0
+        if type(p) is tuple:
+            min_len = p[1]
+            p = p[0]
         if p not in request:
             raise ParameterInvalid(p)
         data = request.get(p)
-        if not data or len(data) == 0:
+        if data == None or len(data) <= min_len:
             raise ParameterInvalid(p)
 
 
@@ -576,7 +580,9 @@ def create_action(request):
 @api_view(["POST"])
 def create_file(request):
     try:
-        check_post_parameters(request.data, ["project_name", ("location",-1), "file_name"])
+        check_post_parameters(
+            request.data, ["project_name", ("location", -1), "file_name"]
+        )
         # Get the file info
         project_name = request.data.get("project_name")
         location = request.data.get("location")
@@ -596,7 +602,9 @@ def create_file(request):
 @api_view(["POST"])
 def create_folder(request):
     try:
-        check_post_parameters(request.data, ["project_name", ("location",-1), "folder_name"])
+        check_post_parameters(
+            request.data, ["project_name", ("location", -1), "folder_name"]
+        )
         # Get the file info
         project_name = request.data.get("project_name")
         location = request.data.get("location")
@@ -702,7 +710,9 @@ def delete_folder(request):
 @api_view(["POST"])
 def save_file(request):
     try:
-        check_post_parameters(request.data, ["project_name", "filename", ("content",-1)])
+        check_post_parameters(
+            request.data, ["project_name", "filename", ("content", -1)]
+        )
 
         project_name = request.data.get("project_name")
         filename = request.data.get("filename")
