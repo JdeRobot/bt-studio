@@ -7,7 +7,6 @@ from .serializers import FileContentSerializer
 from . import app_generator
 from . import tree_generator
 from . import json_translator
-from . import templates
 from .models import Universe
 from .project_view import list_dir, EntryEncoder
 from django.http import HttpResponse
@@ -40,14 +39,14 @@ def create_project(request):
         )
 
     project_name = request.data.get("project_name")
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    action_path = fal.path_join(project_path, "code/actions")
-    universes_path = fal.path_join(project_path, "universes")
-    config_path = fal.path_join(project_path, "config.json")
 
-    tree_path = fal.path_join(project_path, "code/trees")
-    subtree_path = fal.path_join(tree_path, "subtrees")
+    project_path = fal.project_path(project_name)
+    action_path = fal.actions_path(project_name)
+    universes_path = fal.universes_path(project_name)
+    tree_path = fal.trees_path(project_name)
+    subtree_path = fal.subtrees_path(project_name)
+
+    config_path = fal.path_join(project_path, "config.json")
     init_graph_path = fal.path_join(settings.BASE_DIR, "templates/graph.json")
 
     # Default cfg values
@@ -94,8 +93,8 @@ def delete_project(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
     project_name = request.data.get("project_name")
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
+
+    project_path = fal.project_path(project_name)
 
     if fal.exists(project_path):
         shutil.rmtree(project_path)
@@ -132,20 +131,17 @@ def save_base_tree(request):
     graph_json = request.data.get("graph_json")
 
     # Generate the paths
-    base_path = fal.base_path()
-    project_path = fal.path_join(base_path, project_name)
-    graph_path = fal.path_join(project_path, "code/trees/main.json")
+    trees_path = fal.trees_path(project_name)
+    graph_path = fal.path_join(trees_path, "main.json")
 
     try:
         # Obtain pretty json
         graph = json.loads(graph_json)
         graph_formated = json.dumps(graph, indent=4)
-
-        with open(graph_path, "w") as f:
-            f.write(graph_formated)
-
+        fal.write(graph_path, graph_formated)
         return JsonResponse({"success": True})
-
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
         return JsonResponse(
             {"success": False, "message": f"Error deleting file: {str(e)}"},
@@ -165,9 +161,8 @@ def get_project_graph(request):
         )
 
     # Generate the paths
-    base_path = fal.base_path()
-    project_path = fal.path_join(base_path, project_name)
-    graph_path = fal.path_join(project_path, "code/trees/main.json")
+    trees_path = fal.trees_path(project_name)
+    graph_path = fal.path_join(trees_path, "main.json")
 
     # Check if the project exists
     try:
@@ -193,9 +188,7 @@ def get_project_configuration(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    folder_path = fal.base_path()
-
-    project_path = fal.path_join(folder_path, project_name)
+    project_path = fal.project_path(project_name)
     config_path = fal.path_join(project_path, "config.json")
     try:
         content = fal.read(config_path)
@@ -217,9 +210,8 @@ def get_tree_structure(request):
         )
 
     # Generate the paths
-    base_path = fal.base_path()
-    project_path = fal.path_join(base_path, project_name)
-    graph_path = fal.path_join(project_path, "code/trees/main.json")
+    trees_path = fal.trees_path(project_name)
+    graph_path = fal.path_join(trees_path, "main.json")
 
     # Check if the project exists
     try:
@@ -254,10 +246,8 @@ def get_subtree_structure(request):
         )
 
     # Generate the paths
-    base_path = fal.base_path()
-    project_path = fal.path_join(base_path, project_name)
-    subtree_path = fal.path_join(project_path, "code/trees/subtrees")
-    graph_path = fal.path_join(subtree_path, subtree_name + ".json")
+    subtrees_path = fal.subtrees_path(project_name)
+    graph_path = fal.path_join(subtrees_path, subtree_name + ".json")
 
     # Check if the project exists
     try:
@@ -285,8 +275,7 @@ def save_project_configuration(request):
     project_name = request.data.get("project_name")
     content = request.data.get("settings")
 
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
+    project_path = fal.project_path(project_name)
     config_path = fal.path_join(project_path, "config.json")
 
     if content is None or len(content) == 0:
@@ -294,13 +283,12 @@ def save_project_configuration(request):
             {"success": False, "message": "Settings are missing"}, status=400
         )
     try:
-
-        d = json.loads(content)
-
-        with open(config_path, "w") as f:
-            json.dump(d, f, indent=4)
-
+        graph = json.loads(content)
+        graph_formated = json.dumps(graph, indent=4)
+        fal.write(config_path, graph_formated)
         return Response({"success": True})
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
         return Response({"success": False, "message": str(e)}, status=422)
 
@@ -331,14 +319,13 @@ def create_subtree(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    project_actions_path = fal.path_join(project_path, "code", "actions")
-    library_path = fal.path_join(settings.BASE_DIR, "library", subtree_name)
+    project_actions_path = fal.actions_path(project_name)
+    project_subtree_path = fal.subtrees_path(project_name)
+
+    library_path = os.path.join(settings.BASE_DIR, "library", subtree_name)
     library_actions_path = fal.path_join(library_path, "actions")
     template_path = fal.path_join(settings.BASE_DIR, "templates")
     src_path = template_path
-    project_subtree_path = fal.path_join(project_path, "code", "trees", "subtrees")
 
     # Check if the subtree is already implemented on the library
     if fal.exists(library_path):
@@ -387,19 +374,14 @@ def save_subtree(request):
     subtree_json = request.data.get("subtree_json")
 
     # Generate the paths
-    base_path = fal.base_path()
-    project_path = fal.path_join(base_path, project_name)
-    json_path = fal.path_join(
-        project_path, "code", "trees", "subtrees", f"{subtree_name}.json"
-    )
+    subtrees_path = fal.subtrees_path(project_name)
+    subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
 
     try:
-        # Write the subtree JSON to the file
-        with open(json_path, "w") as f:
-            f.write(subtree_json)
-
+        fal.write(subtree_path, subtree_json)
         return JsonResponse({"success": True}, status=status.HTTP_200_OK)
-
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
         return JsonResponse(
             {"success": False, "message": f"Error saving subtree: {str(e)}"},
@@ -418,12 +400,8 @@ def get_subtree(request):
     project_name = request.GET.get("project_name")
     subtree_name = request.GET.get("subtree_name")
 
-    # Make folder path relative to Django app
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    subtree_path = fal.path_join(
-        project_path, "code/trees/subtrees", f"{subtree_name}.json"
-    )
+    subtrees_path = fal.subtrees_path(project_name)
+    subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
 
     try:
         subtree = json.loads(fal.read(subtree_path))
@@ -443,13 +421,11 @@ def get_subtree_list(request):
 
     project_name = request.GET.get("project_name")
 
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    tree_path = fal.path_join(project_path, "code", "trees", "subtrees")
+    subtrees_path = fal.subtrees_path(project_name)
 
     try:
         # List all files in the directory removing the .json extension
-        subtree_list = fal.listfiles(tree_path)
+        subtree_list = fal.listfiles(subtrees_path)
         subtree_list = [f.split(".")[0] for f in subtree_list]
         return Response({"subtree_list": subtree_list})
 
@@ -470,9 +446,7 @@ def delete_universe(request):
     project_name = request.data.get("project_name")
     universe_name = request.data.get("universe_name")
 
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    universes_path = fal.path_join(project_path, "universes/")
+    universes_path = fal.universes_path(project_name)
     universe_path = fal.path_join(universes_path, universe_name)
 
     if fal.exists(universe_path):
@@ -494,9 +468,8 @@ def get_universes_list(request):
         )
 
     project_name = request.GET.get("project_name")
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    universes_path = fal.path_join(project_path, "universes/")
+
+    universes_path = fal.universes_path(project_name)
 
     try:
         universes_list = fal.listdirs(universes_path)
@@ -516,10 +489,7 @@ def get_universe_configuration(request):
     project_name = request.GET.get("project_name")
     universe_name = request.GET.get("universe_name")
 
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    universes_path = fal.path_join(project_path, "universes/")
-
+    universes_path = fal.universes_path(project_name)
     universe_path = fal.path_join(universes_path, universe_name)
     config_path = fal.path_join(universe_path, "config.json")
 
@@ -549,12 +519,11 @@ def get_file_list(request):
         )
 
     project_name = request.GET.get("project_name")
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    action_path = fal.path_join(project_path, "code")
+
+    code_path = fal.code_path(project_name)
 
     try:
-        file_list = fal.list_formatted(action_path)
+        file_list = fal.list_formatted(code_path)
 
         # Return the list of files
         return Response({"file_list": EntryEncoder().encode(file_list)})
@@ -572,9 +541,8 @@ def get_actions_list(request):
         )
 
     project_name = request.GET.get("project_name")
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    action_path = fal.path_join(project_path, "code/actions")
+
+    action_path = fal.actions_path(project_name)
 
     try:
         actions_list = fal.listfiles(action_path)
@@ -594,12 +562,9 @@ def get_file(request):
     project_name = request.GET.get("project_name", None)
     filename = request.GET.get("filename", None)
 
-    # Make folder path relative to Django app
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    action_path = fal.path_join(project_path, "code")
+    code_path = fal.code_path(project_name)
 
-    file_path = fal.path_join(action_path, filename)
+    file_path = fal.path_join(code_path, filename)
     try:
         content = fal.read(file_path)
         serializer = FileContentSerializer({"content": content})
@@ -625,29 +590,15 @@ def create_action(request):
     template = request.data.get("template")
 
     # Make folder path relative to Django app
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    action_path = fal.path_join(project_path, "code/actions")
+    action_path = fal.actions_path(project_name)
     file_path = fal.path_join(action_path, filename + ".py")
 
-    templates_folder_path = fal.path_join(settings.BASE_DIR, "templates")
-    template_path = fal.path_join(templates_folder_path, template)
-
-    if not fal.exists(file_path):
-        try:
-            with open(file_path, "w") as f:
-                f.write(
-                    templates.get_action_template(filename, template, template_path)
-                )
-            return Response({"success": True})
-        except:
-            return Response(
-                {"success": False, "message": "Template does not exist"}, status=400
-            )
-    else:
-        return Response(
-            {"success": False, "message": "File already exists"}, status=409
-        )
+    try:
+        content = fal.get_action_template(filename, template)
+        fal.create(file_path, content)
+        return JsonResponse({"success": True}, status=status.HTTP_200_OK)
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
 
 
 @api_view(["POST"])
@@ -667,20 +618,15 @@ def create_file(request):
     filename = request.data.get("file_name")
 
     # Make folder path relative to Django app
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    action_path = fal.path_join(project_path, "code")
-    create_path = fal.path_join(action_path, location)
+    code_path = fal.code_path(project_name)
+    create_path = fal.path_join(code_path, location)
     file_path = fal.path_join(create_path, filename)
 
-    if not fal.exists(file_path):
-        with open(file_path, "w") as f:
-            f.write("")
+    try:
+        fal.create(file_path, "")
         return Response({"success": True})
-    else:
-        return Response(
-            {"success": False, "message": "File already exists"}, status=409
-        )
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
 
 
 @api_view(["POST"])
@@ -700,10 +646,8 @@ def create_folder(request):
     folder_name = request.data.get("folder_name")
 
     # Make folder path relative to Django app
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    action_path = fal.path_join(project_path, "code")
-    create_path = fal.path_join(action_path, location)
+    code_path = fal.code_path(project_name)
+    create_path = fal.path_join(code_path, location)
     folder_path = fal.path_join(create_path, folder_name)
 
     if not fal.exists(folder_path):
@@ -735,11 +679,9 @@ def rename_file(request):
     rename_path = request.data.get("rename_to")
 
     # Make folder path relative to Django app
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    action_path = fal.path_join(project_path, "code")
-    file_path = fal.path_join(action_path, path)
-    new_path = fal.path_join(action_path, rename_path)
+    code_path = fal.code_path(project_name)
+    file_path = fal.path_join(code_path, path)
+    new_path = fal.path_join(code_path, rename_path)
 
     if fal.exists(file_path):
         try:
@@ -773,11 +715,9 @@ def rename_folder(request):
     rename_path = request.data.get("rename_to")
 
     # Make folder path relative to Django app
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    action_path = fal.path_join(project_path, "code")
-    file_path = fal.path_join(action_path, path)
-    new_path = fal.path_join(action_path, rename_path)
+    code_path = fal.code_path(project_name)
+    file_path = fal.path_join(code_path, path)
+    new_path = fal.path_join(code_path, rename_path)
 
     if fal.exists(file_path):
         try:
@@ -807,10 +747,8 @@ def delete_file(request):
     path = request.data.get("path")
 
     # Make folder path relative to Django app
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    action_path = fal.path_join(project_path, "code")
-    file_path = fal.path_join(action_path, path)
+    code_path = fal.code_path(project_name)
+    file_path = fal.path_join(code_path, path)
 
     if fal.exists(file_path) and not fal.isdir(file_path):
         try:
@@ -840,10 +778,8 @@ def delete_folder(request):
     path = request.data.get("path")
 
     # Make folder path relative to Django app
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    action_path = fal.path_join(project_path, "code")
-    file_path = fal.path_join(action_path, path)
+    code_path = fal.code_path(project_name)
+    file_path = fal.path_join(code_path, path)
 
     if fal.exists(file_path) and fal.isdir(file_path):
         try:
@@ -876,23 +812,14 @@ def save_file(request):
     filename = request.data.get("filename")
     content = request.data.get("content")
 
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    action_path = fal.path_join(project_path, "code")
-    file_path = fal.path_join(action_path, filename)
-
-    # If file doesn't exist simply return
-    if not fal.exists(file_path):
-        return JsonResponse(
-            {"success": False, "message": "File does not exist"}, status=404
-        )
+    code_path = fal.code_path(project_name)
+    file_path = fal.path_join(code_path, filename)
 
     try:
-        with open(file_path, "w") as f:
-            f.write(content)
+        fal.write(file_path, content)
         return Response({"success": True})
-    except Exception as e:
-        return Response({"success": False, "message": str(e)}, status=400)
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
 
 
 @api_view(["POST"])
@@ -905,15 +832,14 @@ def generate_local_app(request):
         )
 
     # Get the request parameters
-    app_name = request.data.get("app_name")
+    project_name = request.data.get("app_name")
     bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
-    base_path = fal.base_path()
-    project_path = fal.path_join(base_path, app_name)
-    action_path = fal.path_join(project_path, "code/actions")
-    tree_path = fal.path_join(project_path, "code/trees/main.json")
-    subtree_path = fal.path_join(project_path, "code/trees/subtrees")
+    action_path = fal.actions_path(project_name)
+    trees_path = fal.trees_path(project_name)
+    tree_path = fal.path_join(trees_path, "main.json")
+    subtree_path = fal.subtrees_path(project_name)
 
     subtrees = []
     actions = []
@@ -982,15 +908,14 @@ def generate_dockerized_app(request):
         )
 
     # Get the request parameters
-    app_name = request.data.get("app_name")
+    project_name = request.data.get("app_name")
     bt_order = request.data.get("bt_order")
 
     # Make folder path relative to Django app
-    base_path = fal.base_path()
-    project_path = fal.path_join(base_path, app_name)
-    action_path = fal.path_join(project_path, "code/actions")
-    tree_path = fal.path_join(project_path, "code/trees/main.json")
-    subtree_path = fal.path_join(project_path, "code/trees/subtrees")
+    action_path = fal.actions_path(project_name)
+    trees_path = fal.trees_path(project_name)
+    tree_path = fal.path_join(trees_path, "main.json")
+    subtree_path = fal.subtrees_path(project_name)
 
     subtrees = []
     actions = []
@@ -1051,9 +976,7 @@ def get_universe_file_list(request):
     project_name = request.GET.get("project_name")
     universe_name = request.GET.get("universe_name")
 
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    universes_path = fal.path_join(project_path, "universes")
+    universes_path = fal.universes_path(project_name)
     universe_path = fal.path_join(universes_path, universe_name)
 
     try:
@@ -1083,9 +1006,7 @@ def get_universe_file(request):
     filename = request.GET.get("filename", None)
 
     # Make folder path relative to Django app
-    folder_path = fal.base_path()
-    project_path = fal.path_join(folder_path, project_name)
-    universes_path = fal.path_join(project_path, "universes")
+    universes_path = fal.universes_path(project_name)
     universe_path = fal.path_join(universes_path, universe_name)
 
     file_path = fal.path_join(universe_path, filename)
@@ -1188,13 +1109,11 @@ def add_docker_universe(request):
 
     # Get the name and the id file from the request
     universe_name = request.data.get("universe_name")
-    app_name = request.data.get("app_name")
+    project_name = request.data.get("app_name")
     id = request.data.get("id")
 
     # Make folder path relative to Django app
-    base_path = fal.base_path()
-    project_path = fal.path_join(base_path, app_name)
-    universes_path = fal.path_join(project_path, "universes")
+    universes_path = fal.universes_path(project_name)
     universe_path = fal.path_join(universes_path, universe_name)
 
     # Create the folder if it doesn't exist
@@ -1206,13 +1125,17 @@ def add_docker_universe(request):
 
     # Generate the json config
     config_path = fal.path_join(universe_path, "config.json")
-    with open(config_path, "w") as config_file:
-        json.dump(universe_config, config_file, ensure_ascii=False, indent=4)
 
-    return Response(
-        {"success": True, "message": "Universe uploaded successfully"},
-        status=status.HTTP_200_OK,
-    )
+    try:
+        universe_data = json.dumps(universe_config, ensure_ascii=False, indent=4)
+        fal.create(config_path, universe_data)
+        return Response(
+            {"success": True, "message": "Universe uploaded successfully"},
+            status=status.HTTP_200_OK,
+        )
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+
 
 
 @api_view(["POST"])
@@ -1237,9 +1160,7 @@ def upload_code(request):
     content = request.data.get("content")
 
     # Make folder path relative to Django app
-    base_path = fal.base_path()
-    project_path = fal.path_join(base_path, project_name)
-    code_path = fal.path_join(project_path, "code")
+    code_path = fal.code_path(project_name)
     create_path = fal.path_join(code_path, location)
     file_path = fal.path_join(create_path, file_name)
 
@@ -1250,9 +1171,10 @@ def upload_code(request):
         )
 
     try:
-        with open(file_path, "wb") as f:
-            f.write(base64.b64decode(content))
+        fal.create_binary(file_path, base64.b64decode(content))
         return Response({"success": True})
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
     except Exception as e:
         return Response({"success": False, "message": str(e)}, status=422)
 

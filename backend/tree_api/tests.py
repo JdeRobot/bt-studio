@@ -894,7 +894,7 @@ class LocalTestFailedCase(TestCase):
     def test_bad_json_save_base_tree(self):
         """Test if error appears when no paramters are passed"""
         response = self.c.post(
-            "/bt_studio/save_base_tree/", {"project_name": "test", "graph_json": "[]"}
+            "/bt_studio/save_base_tree/", {"project_name": "test", "graph_json": "{"}
         )
         self.assertEqual(response.status_code, self.bad_data)
 
@@ -1045,7 +1045,7 @@ class LocalTestFailedCase(TestCase):
             "/bt_studio/save_subtree/",
             {"project_name": "test", "subtree_name": "subtree", "subtree_json": ""},
         )
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_get_subtree(self):
         """Test if error appears when no paramters are passed"""
@@ -1176,7 +1176,7 @@ class LocalTestFailedCase(TestCase):
             "/bt_studio/create_action/",
             {"project_name": "test", "template": "error", "filename": "Action"},
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_create_file(self):
         """Test if error appears when no paramters are passed"""

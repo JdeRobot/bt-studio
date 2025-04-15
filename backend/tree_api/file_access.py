@@ -13,6 +13,24 @@ class FAL:
 
     def base_path(self) -> str:
         return self.path_join(self.base, "filesystem")
+    
+    def project_path(self, project_name) -> str:
+        return self.path_join(self.base_path(), project_name)
+    
+    def universes_path(self, project_name) -> str:
+        return self.path_join(self.project_path(project_name), "universes")
+    
+    def code_path(self, project_name) -> str:
+        return self.path_join(self.project_path(project_name), "code")
+    
+    def actions_path(self, project_name) -> str:
+        return self.path_join(self.code_path(project_name), "actions")
+    
+    def trees_path(self, project_name) -> str:
+        return self.path_join(self.code_path(project_name), "trees")
+    
+    def subtrees_path(self, project_name) -> str:
+        return self.path_join(self.trees_path(project_name), "subtrees")
 
     def path_join(self, a: str, b: str) -> str:
         return os.path.join(a, b)
@@ -29,12 +47,25 @@ class FAL:
     def relpath(self, path: str, start: str) -> str:
         return os.path.relpath(path, start)
 
-    def write(self, path: str, content):
+    def create(self, path: str, content):
+        if self.exists(path):
+            raise ResourceAlreadyExists(path)
+
         with open(path, "w") as f:
             f.write(content)
 
-    def write_binary(self, path: str, content):
+    def create_binary(self, path: str, content):
+        if self.exists(path):
+            raise ResourceAlreadyExists(path)
+
         with open(path, "wb") as f:
+            f.write(content)
+
+    def write(self, path: str, content):
+        if not self.exists(path):
+            raise ResourceNotExists(path)
+
+        with open(path, "w") as f:
             f.write(content)
 
     def read(self, path: str) -> str:
@@ -51,3 +82,10 @@ class FAL:
 
     def list_formatted(self, path: str):
         return list_dir(path, path)
+    
+    def get_action_template(self, filename, template):
+        templates_folder_path = self.path_join(self.base, "templates")
+        template_path = self.path_join(templates_folder_path, template)
+        file_data = self.read(template_path)
+        new_data = file_data.replace("ACTION", filename)
+        return new_data
