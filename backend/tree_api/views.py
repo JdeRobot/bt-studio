@@ -1,4 +1,3 @@
-import os
 from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -831,7 +830,7 @@ def generate_local_app(request):
             subtrees_list.sort()
             for subtree_file in subtrees_list:
                 if subtree_file.endswith(".json"):
-                    subtree_name = os.path.splitext(os.path.basename(subtree_file))[0]
+                    subtree_name = fal.filename(subtree_file)
                     path = fal.path_join(subtree_path, subtree_file)
                     subtree_json = fal.read(path)
 
@@ -845,7 +844,7 @@ def generate_local_app(request):
         actions_list.sort()
         for action_file in actions_list:
             if action_file.endswith(".py"):
-                action_name = os.path.splitext(os.path.basename(action_file))[0]
+                action_name = fal.filename(action_file)
                 path = fal.path_join(action_path, action_file)
                 action_content = fal.read(path)
 
@@ -904,9 +903,11 @@ def generate_dockerized_app(request):
 
         # 2. Get all possible subtrees name and content
         try:
-            for subtree_file in fal.listfiles(subtree_path):
+            subtrees_list = fal.listfiles(subtree_path)
+            subtrees_list.sort()
+            for subtree_file in subtrees_list:
                 if subtree_file.endswith(".json"):
-                    subtree_name = os.path.splitext(os.path.basename(subtree_file))[0]
+                    subtree_name = fal.filename(subtree_file)
                     path = fal.path_join(subtree_path, subtree_file)
                     subtree_json = fal.read(path)
 
@@ -916,9 +917,11 @@ def generate_dockerized_app(request):
             print("No subtrees")
 
         # 3. Get all possible actions name and content
-        for action_file in fal.listfiles(action_path):
+        actions_list = fal.listfiles(action_path)
+        actions_list.sort()
+        for action_file in actions_list:
             if action_file.endswith(".py"):
-                action_name = os.path.splitext(os.path.basename(action_file))[0]
+                action_name = fal.filename(action_file)
                 path = fal.path_join(action_path, action_file)
                 action_content = fal.read(path)
 
@@ -1040,9 +1043,12 @@ def upload_universe(request):
             {"error": "Invalid zip file."}, status=status.HTTP_400_BAD_REQUEST
         )
     finally:
-        # Clean up the temporary zip file
-        if fal.exists(temp_zip_path):
-            os.remove(temp_zip_path)
+        try:
+            fal.removefile(temp_zip_path)
+        except CUSTOM_EXCEPTIONS as e:
+            return Response({"error": f"{str(e)}"}, status=e.error_code)
+        except Exception as e:
+            return Response({"success": False, "message": "Server error"}, status=500)
 
     # Fill the config dictionary of the universe
     ram_launch_path = "/workspace/worlds/" + universe_name + "/universe.launch.py"

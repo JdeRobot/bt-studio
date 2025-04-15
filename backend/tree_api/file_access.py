@@ -129,3 +129,6 @@ class FAL:
             raise ResourceNotExists(path)
 
         shutil.rmtree(path)
+
+    def filename(self, path: str) -> str:
+        return os.path.splitext(os.path.basename(path))[0]
