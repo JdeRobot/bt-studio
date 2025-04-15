@@ -41,6 +41,7 @@ def create_project(request):
     subtree_path = fal.subtrees_path(project_name)
 
     config_path = fal.path_join(project_path, "config.json")
+    base_tree_path = fal.path_join(tree_path, "main.json")
     init_graph_path = fal.path_join(settings.BASE_DIR, "templates/graph.json")
 
     # Default cfg values
@@ -53,8 +54,7 @@ def create_project(request):
         },
     }
 
-    if not fal.exists(project_path):
-
+    try:
         # Create folders
         fal.mkdir(project_path)
         fal.mkdir(action_path)
@@ -63,20 +63,20 @@ def create_project(request):
         fal.mkdir(subtree_path)
 
         # Create default config
-        with open(config_path, "w") as cfg:
-            json.dump(default_cfg, cfg)
+        config_formated = json.dumps(default_cfg, indent=4)
+        fal.create(config_path, config_formated)
 
         # Copy default graph from templates
-        shutil.copy(init_graph_path, fal.path_join(tree_path, "main.json"))
-
+        graph_data = fal.read(init_graph_path)
+        fal.create(base_tree_path, graph_data)
         return Response(
             {"success": True, "message": "Project created successfully"},
             status=status.HTTP_201_CREATED,
         )
-    else:
-        return Response(
-            {"success": False, "message": "Project already exists"}, status=409
-        )
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["POST"])

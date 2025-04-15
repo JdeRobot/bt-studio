@@ -92,6 +92,9 @@ class FAL:
         return new_data
 
     def mkdir(self, path: str):
+        if self.exists(path):
+            raise ResourceAlreadyExists(path)
+
         os.makedirs(path)
 
     def renamefile(self, old_path: str, new_path: str):

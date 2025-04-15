@@ -301,7 +301,14 @@ class LocalTestCase(TestCase):
         "file_list": '[{"is_dir": true, "name": "actions", "path": "actions", "files": []}, {"is_dir": true, "name": "trees", "path": "trees", "files": [{"is_dir": true, "name": "subtrees", "path": "trees/subtrees", "files": []}, {"is_dir": false, "name": "main.json", "path": "trees/main.json", "files": []}]}]'
     }
 
-    base_project_config = '{"name": "test", "config": {"editorShowAccentColors": true, "theme": "dark", "btOrder": "bottom-to-top"}}'
+    base_project_config = {
+        "name": "test",
+        "config": {
+            "editorShowAccentColors": True,
+            "theme": "dark",
+            "btOrder": "bottom-to-top",
+        },
+    }
 
     test_rb_universe_config = {
         "name": "test",
@@ -395,7 +402,7 @@ class LocalTestCase(TestCase):
             "/bt_studio/get_project_configuration/", {"project_name": "test"}
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(str(response.json()), self.base_project_config)
+        self.assertEqual(json.loads(response.json()), self.base_project_config)
         response = self.c.post(
             "/bt_studio/save_project_configuration/",
             {"project_name": "test", "settings": response.json()},
