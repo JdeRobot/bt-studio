@@ -1,13 +1,10 @@
-import binascii
 from django.conf import settings
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import FileContentSerializer
 from . import app_generator
 from . import json_translator
 from .models import Universe
 from .project_view import EntryEncoder
-from django.http import HttpResponse
 from django.http import JsonResponse
 import json
 import shutil
@@ -15,7 +12,7 @@ import zipfile
 from rest_framework import status
 import base64
 from .file_access import FAL
-from .error_handler import error_wrapper, check_get_parameters, check_post_parameters
+from .error_handler import error_wrapper
 
 # PROJECT MANAGEMENT
 
@@ -23,11 +20,8 @@ from .error_handler import error_wrapper, check_get_parameters, check_post_param
 fal = FAL(settings.BASE_DIR)
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name"])
 def create_project(request):
-    check_post_parameters(request.data, ["project_name"])
-
     project_name = request.data.get("project_name")
 
     project_path = fal.project_path(project_name)
@@ -69,10 +63,8 @@ def create_project(request):
     )
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name"])
 def delete_project(request):
-    check_post_parameters(request.data, ["project_name"])
 
     project_name = request.data.get("project_name")
 
@@ -82,8 +74,7 @@ def delete_project(request):
     return Response({"success": True}, status=200)
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET")
 def get_project_list(request):
     folder_path = fal.base_path()
 
@@ -91,10 +82,8 @@ def get_project_list(request):
     return Response({"project_list": project_list})
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", "graph_json"])
 def save_base_tree(request):
-    check_post_parameters(request.data, ["project_name", "graph_json"])
 
     # Get the app name and the graph
     project_name = request.data.get("project_name")
@@ -111,10 +100,8 @@ def save_base_tree(request):
     return JsonResponse({"success": True})
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name"])
 def get_project_graph(request):
-    check_get_parameters(request.GET, ["project_name"])
     project_name = request.GET.get("project_name")
 
     # Generate the paths
@@ -125,10 +112,8 @@ def get_project_graph(request):
     return JsonResponse({"success": True, "graph_json": graph_data})
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name"])
 def get_project_configuration(request):
-    check_get_parameters(request.GET, ["project_name"])
     project_name = request.GET.get("project_name")
 
     project_path = fal.project_path(project_name)
@@ -137,10 +122,8 @@ def get_project_configuration(request):
     return Response(content)
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name", "bt_order"])
 def get_tree_structure(request):
-    check_get_parameters(request.GET, ["project_name", "bt_order"])
     project_name = request.GET.get("project_name")
     bt_order = request.GET.get("bt_order")
 
@@ -155,10 +138,8 @@ def get_tree_structure(request):
     return JsonResponse({"success": True, "tree_structure": tree_structure})
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name", "subtree_name", "bt_order"])
 def get_subtree_structure(request):
-    check_get_parameters(request.GET, ["project_name", "subtree_name", "bt_order"])
     project_name = request.GET.get("project_name")
     subtree_name = request.GET.get("subtree_name")
     bt_order = request.GET.get("bt_order")
@@ -174,10 +155,8 @@ def get_subtree_structure(request):
     return JsonResponse({"success": True, "tree_structure": tree_structure})
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", "settings"])
 def save_project_configuration(request):
-    check_post_parameters(request.data, ["project_name", "settings"])
 
     project_name = request.data.get("project_name")
     content = request.data.get("settings")
@@ -198,10 +177,8 @@ def save_project_configuration(request):
 # SUBTREE MANAGEMENT
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", "subtree_name"])
 def create_subtree(request):
-    check_post_parameters(request.data, ["project_name", "subtree_name"])
 
     project_name = request.data.get("project_name")
     subtree_name = request.data.get("subtree_name")
@@ -240,12 +217,8 @@ def create_subtree(request):
     return JsonResponse({"success": True}, status=status.HTTP_201_CREATED)
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", "subtree_name", "subtree_json"])
 def save_subtree(request):
-    check_post_parameters(
-        request.data, ["project_name", "subtree_name", "subtree_json"]
-    )
 
     # Get the project name, subtree name, and subtree JSON
     project_name = request.data.get("project_name")
@@ -260,11 +233,8 @@ def save_subtree(request):
     return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name", "subtree_name"])
 def get_subtree(request):
-    check_get_parameters(request.GET, ["project_name", "subtree_name"])
-
     project_name = request.GET.get("project_name")
     subtree_name = request.GET.get("subtree_name")
 
@@ -275,11 +245,8 @@ def get_subtree(request):
     return Response({"subtree": subtree}, status=status.HTTP_200_OK)
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name"])
 def get_subtree_list(request):
-    check_get_parameters(request.GET, ["project_name"])
-
     project_name = request.GET.get("project_name")
 
     subtrees_path = fal.subtrees_path(project_name)
@@ -293,10 +260,8 @@ def get_subtree_list(request):
 # UNIVERSE MANAGEMENT
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", "universe_name"])
 def delete_universe(request):
-    check_post_parameters(request.data, ["project_name", "universe_name"])
     project_name = request.data.get("project_name")
     universe_name = request.data.get("universe_name")
 
@@ -307,10 +272,8 @@ def delete_universe(request):
     return Response({"success": True}, status=200)
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name"])
 def get_universes_list(request):
-    check_get_parameters(request.GET, ["project_name"])
 
     project_name = request.GET.get("project_name")
 
@@ -320,10 +283,8 @@ def get_universes_list(request):
     return Response({"universes_list": universes_list})
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name", "universe_name"])
 def get_universe_configuration(request):
-    check_get_parameters(request.GET, ["project_name", "universe_name"])
 
     project_name = request.GET.get("project_name")
     universe_name = request.GET.get("universe_name")
@@ -339,10 +300,8 @@ def get_universe_configuration(request):
 # FILE MANAGEMENT
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name"])
 def get_file_list(request):
-    check_get_parameters(request.GET, ["project_name"])
 
     project_name = request.GET.get("project_name")
 
@@ -354,10 +313,8 @@ def get_file_list(request):
     return Response({"file_list": EntryEncoder().encode(file_list)})
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name"])
 def get_actions_list(request):
-    check_get_parameters(request.GET, ["project_name"])
 
     project_name = request.GET.get("project_name")
 
@@ -367,10 +324,8 @@ def get_actions_list(request):
     return Response({"actions_list": actions_list})
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name", "filename"])
 def get_file(request):
-    check_get_parameters(request.GET, ["project_name", "filename"])
 
     project_name = request.GET.get("project_name", None)
     filename = request.GET.get("filename", None)
@@ -383,10 +338,8 @@ def get_file(request):
     return Response(serializer.data)
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", "filename", "template"])
 def create_action(request):
-    check_post_parameters(request.data, ["project_name", "filename", "template"])
 
     # Get the file info
     project_name = request.data.get("project_name")
@@ -402,10 +355,8 @@ def create_action(request):
     return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", ("location", -1), "file_name"])
 def create_file(request):
-    check_post_parameters(request.data, ["project_name", ("location", -1), "file_name"])
     # Get the file info
     project_name = request.data.get("project_name")
     location = request.data.get("location")
@@ -420,12 +371,8 @@ def create_file(request):
     return Response({"success": True})
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", ("location", -1), "folder_name"])
 def create_folder(request):
-    check_post_parameters(
-        request.data, ["project_name", ("location", -1), "folder_name"]
-    )
     # Get the file info
     project_name = request.data.get("project_name")
     location = request.data.get("location")
@@ -440,10 +387,8 @@ def create_folder(request):
     return Response({"success": True})
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", "path", "rename_to"])
 def rename_file(request):
-    check_post_parameters(request.data, ["project_name", "path", "rename_to"])
     # Get the file info
     project_name = request.data.get("project_name")
     path = request.data.get("path")
@@ -458,10 +403,8 @@ def rename_file(request):
     return JsonResponse({"success": True})
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", "path", "rename_to"])
 def rename_folder(request):
-    check_post_parameters(request.data, ["project_name", "path", "rename_to"])
     # Get the folder info
     project_name = request.data.get("project_name")
     path = request.data.get("path")
@@ -476,10 +419,8 @@ def rename_folder(request):
     return JsonResponse({"success": True})
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", "path"])
 def delete_file(request):
-    check_post_parameters(request.data, ["project_name", "path"])
     # Get the file info
     project_name = request.data.get("project_name")
     path = request.data.get("path")
@@ -492,10 +433,8 @@ def delete_file(request):
     return JsonResponse({"success": True})
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", "path"])
 def delete_folder(request):
-    check_post_parameters(request.data, ["project_name", "path"])
     # Get the folder info
     project_name = request.data.get("project_name")
     path = request.data.get("path")
@@ -508,11 +447,8 @@ def delete_folder(request):
     return JsonResponse({"success": True})
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", "filename", ("content", -1)])
 def save_file(request):
-    check_post_parameters(request.data, ["project_name", "filename", ("content", -1)])
-
     project_name = request.data.get("project_name")
     filename = request.data.get("filename")
     content = request.data.get("content")
@@ -524,11 +460,8 @@ def save_file(request):
     return Response({"success": True})
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["app_name", "bt_order"])
 def generate_local_app(request):
-    check_post_parameters(request.data, ["app_name", "bt_order"])
-
     # Get the request parameters
     project_name = request.data.get("app_name")
     bt_order = request.data.get("bt_order")
@@ -544,11 +477,8 @@ def generate_local_app(request):
     )
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["app_name", "bt_order"])
 def generate_dockerized_app(request):
-    check_post_parameters(request.data, ["app_name", "bt_order"])
-
     # Get the request parameters
     project_name = request.data.get("app_name")
     bt_order = request.data.get("bt_order")
@@ -557,11 +487,8 @@ def generate_dockerized_app(request):
     return JsonResponse({"success": True, "tree": final_tree})
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name", "universe_name"])
 def get_universe_file_list(request):
-    check_get_parameters(request.GET, ["project_name", "universe_name"])
-
     project_name = request.GET.get("project_name")
     universe_name = request.GET.get("universe_name")
 
@@ -574,11 +501,8 @@ def get_universe_file_list(request):
     return Response({"file_list": EntryEncoder().encode(file_list)})
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["project_name", "universe_name", "filename"])
 def get_universe_file(request):
-    check_get_parameters(request.GET, ["project_name", "universe_name", "filename"])
-
     project_name = request.GET.get("project_name", None)
     universe_name = request.GET.get("universe_name")
     filename = request.GET.get("filename", None)
@@ -593,21 +517,8 @@ def get_universe_file(request):
     return Response(serializer.data)
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["app_name", "universe_name", "zip_file"])
 def upload_universe(request):
-
-    # Check if 'name' and 'zipfile' are in the request data
-    if (
-        "universe_name" not in request.data
-        or "app_name" not in request.data
-        or "zip_file" not in request.data
-    ):
-        return Response(
-            {"error": "Name and zip file are required."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
     # Get the name and the zip file from the request
     universe_name = request.data.get("universe_name")
     app_name = request.data.get("app_name")
@@ -670,11 +581,8 @@ def upload_universe(request):
     )
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["app_name", "universe_name", "id"])
 def add_docker_universe(request):
-    check_post_parameters(request.data, ["app_name", "universe_name", "id"])
-
     # Get the name and the id file from the request
     universe_name = request.data.get("universe_name")
     project_name = request.data.get("app_name")
@@ -702,13 +610,8 @@ def add_docker_universe(request):
     )
 
 
-@api_view(["POST"])
-@error_wrapper
+@error_wrapper("POST", ["project_name", "file_name", "location", "content"])
 def upload_code(request):
-    check_post_parameters(
-        request.data, ["project_name", "file_name", "location", "content"]
-    )
-
     # Get the name and the zip file from the request
     project_name = request.data.get("project_name")
     file_name = request.data.get("file_name")
@@ -730,8 +633,7 @@ def upload_code(request):
     return Response({"success": True})
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET")
 def list_docker_universes(request):
     universes = Universe.objects.all()
     universes_docker_list = [x.name for x in universes]
@@ -739,11 +641,8 @@ def list_docker_universes(request):
     return Response({"universes": universes_docker_list})
 
 
-@api_view(["GET"])
-@error_wrapper
+@error_wrapper("GET", ["name"])
 def get_docker_universe_path(request):
-    check_get_parameters(request.GET, ["name"])
-
     name = request.GET.get("name")
 
     universe = Universe.objects.get(name=name)
