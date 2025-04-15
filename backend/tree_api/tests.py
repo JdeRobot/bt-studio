@@ -1050,7 +1050,7 @@ class LocalTestFailedCase(TestCase):
         """Test if error appears when no paramters are passed"""
         response = self.c.post(
             "/bt_studio/save_subtree/",
-            {"project_name": "test", "subtree_name": "subtree", "subtree_json": ""},
+            {"project_name": "test", "subtree_name": "subtree", "subtree_json": "a"},
         )
         self.assertEqual(response.status_code, self.no_files)
 
