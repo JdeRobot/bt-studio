@@ -1,22 +1,10 @@
-class TooMuchAWSSpace(Exception):
-    """Exception raised for using too much AWS space."""
-
-    def __init__(self):
-        self.message = "User is using too much AWS space"
-        super().__init__(self.message)
-        self.error_code = 507
-
-    def __str__(self):
-        return f"{self.message}"
-
-
-class LimitReached(Exception):
-    """Exception raised when a limit is reached"""
+class InvalidPath(Exception):
+    """Exception raised when a path is not valid."""
 
     def __init__(self, msg):
-        self.message = f"{msg} limit reached"
+        self.message = f"Pat: {msg} is invalid."
         super().__init__(self.message)
-        self.error_code = 400
+        self.error_code = 403
 
     def __str__(self):
         return f"{self.message}"
