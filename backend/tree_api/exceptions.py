@@ -21,6 +21,7 @@ class LimitReached(Exception):
     def __str__(self):
         return f"{self.message}"
 
+
 class ParameterInvalid(Exception):
     """Exception raised when a parameter is not passed correctly."""
 
@@ -31,6 +32,7 @@ class ParameterInvalid(Exception):
 
     def __str__(self):
         return f"{self.message}"
+
 
 class ResourceAlreadyExists(Exception):
     """Exception raised for finding a resource that already exists."""
