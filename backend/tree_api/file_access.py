@@ -4,6 +4,7 @@ import os
 from .project_view import list_dir
 from .exceptions import ResourceNotExists, ResourceAlreadyExists
 
+
 class FAL:
     """File Abstraction Layer"""
 
@@ -44,9 +45,9 @@ class FAL:
 
     def listdirs(self, path: str):
         return [d for d in os.listdir(path) if self.isdir(self.path_join(path, d))]
-    
+
     def listfiles(self, path: str):
         return [d for d in os.listdir(path) if self.isfile(self.path_join(path, d))]
-    
+
     def list_formatted(self, path: str):
         return list_dir(path, path)
