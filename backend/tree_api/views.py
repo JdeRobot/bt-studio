@@ -338,16 +338,19 @@ def create_subtree(request):
     if not fal.exists(project_subtree_path):
         fal.mkdir(project_subtree_path)
 
-    # Copy the subtree to the project
-    if not fal.exists(project_json_path):
-        shutil.copy(init_json_path, project_json_path)
-        return Response({"success": True}, status=status.HTTP_201_CREATED)
-    else:
-        return Response(
-            {"success": False, "message": "Subtree already exists"},
-            status=409,
+    try:
+        subtree = json.loads(fal.read(init_json_path))
+        subtree_formated = json.dumps(subtree, indent=4)
+        fal.create(project_json_path, subtree_formated)
+        return JsonResponse({"success": True}, status=status.HTTP_201_CREATED)
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        print(str(e))
+        return JsonResponse(
+            {"success": False, "message": f"Error saving subtree: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
 
 @api_view(["POST"])
 def save_subtree(request):
