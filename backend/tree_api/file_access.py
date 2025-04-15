@@ -14,22 +14,22 @@ class FAL:
 
     def base_path(self) -> str:
         return self.path_join(self.base, "filesystem")
-    
+
     def project_path(self, project_name) -> str:
         return self.path_join(self.base_path(), project_name)
-    
+
     def universes_path(self, project_name) -> str:
         return self.path_join(self.project_path(project_name), "universes")
-    
+
     def code_path(self, project_name) -> str:
         return self.path_join(self.project_path(project_name), "code")
-    
+
     def actions_path(self, project_name) -> str:
         return self.path_join(self.code_path(project_name), "actions")
-    
+
     def trees_path(self, project_name) -> str:
         return self.path_join(self.code_path(project_name), "trees")
-    
+
     def subtrees_path(self, project_name) -> str:
         return self.path_join(self.trees_path(project_name), "subtrees")
 
@@ -83,49 +83,49 @@ class FAL:
 
     def list_formatted(self, path: str):
         return list_dir(path, path)
-    
+
     def get_action_template(self, filename, template):
         templates_folder_path = self.path_join(self.base, "templates")
         template_path = self.path_join(templates_folder_path, template)
         file_data = self.read(template_path)
         new_data = file_data.replace("ACTION", filename)
         return new_data
-    
-    def mkdir(self, path:str):
+
+    def mkdir(self, path: str):
         os.makedirs(path)
 
-    def renamefile(self, old_path:str, new_path:str):
+    def renamefile(self, old_path: str, new_path: str):
         if not self.exists(old_path):
             raise ResourceNotExists(old_path)
-        
+
         if self.exists(new_path):
             raise ResourceAlreadyExists(new_path)
-        
+
         os.rename(old_path, new_path)
 
-    def renamedir(self, old_path:str, new_path:str):
+    def renamedir(self, old_path: str, new_path: str):
         if not self.exists(old_path):
             raise ResourceNotExists(old_path)
-        
+
         if self.exists(new_path):
             raise ResourceAlreadyExists(new_path)
-        
+
         os.rename(old_path, new_path)
 
-    def removefile(self, path:str):
+    def removefile(self, path: str):
         if not self.exists(path):
             raise ResourceNotExists(path)
-        
+
         if not self.isfile(path):
             raise ResourceNotExists(path)
-        
+
         os.remove(path)
 
-    def removedir(self, path:str):
+    def removedir(self, path: str):
         if not self.exists(path):
             raise ResourceNotExists(path)
-        
+
         if not self.isdir(path):
             raise ResourceNotExists(path)
-        
+
         shutil.rmtree(path)

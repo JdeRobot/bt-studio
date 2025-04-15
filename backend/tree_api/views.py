@@ -1,4 +1,3 @@
-import glob
 import os
 from django.conf import settings
 from rest_framework.decorators import api_view
@@ -8,18 +7,14 @@ from . import app_generator
 from . import tree_generator
 from . import json_translator
 from .models import Universe
-from .project_view import list_dir, EntryEncoder
+from .project_view import EntryEncoder
 from django.http import HttpResponse
 from django.http import JsonResponse
-import mimetypes
 import json
 import shutil
 import zipfile
-from distutils.dir_util import copy_tree
 from rest_framework import status
-from django.core.files.storage import default_storage
 import base64
-import xml.etree.ElementTree as ET
 from .file_access import FAL
 from .exceptions import ResourceNotExists, ResourceAlreadyExists
 
@@ -96,13 +91,13 @@ def delete_project(request):
 
     project_path = fal.project_path(project_name)
 
-    if fal.exists(project_path):
-        shutil.rmtree(project_path)
+    try:
+        fal.removedir(project_path)
         return Response({"success": True}, status=200)
-    else:
-        return Response(
-            {"success": False, "message": "Project does not exist"}, status=404
-        )
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["GET"])
@@ -450,13 +445,13 @@ def delete_universe(request):
     universes_path = fal.universes_path(project_name)
     universe_path = fal.path_join(universes_path, universe_name)
 
-    if fal.exists(universe_path):
-        shutil.rmtree(universe_path)
-        return Response({"success": True})
-    else:
-        return Response(
-            {"success": False, "message": "Project does not exist"}, status=404
-        )
+    try:
+        fal.removedir(universe_path)
+        return Response({"success": True}, status=200)
+    except CUSTOM_EXCEPTIONS as e:
+        return Response({"error": f"{str(e)}"}, status=e.error_code)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 @api_view(["GET"])
