@@ -40,9 +40,11 @@ const ProjectModal = ({
       setExistingProjects(response);
       setFormState(initialProjectData);
     } catch (e) {
+      setExistingProjects([]);
+      setFormState(initialProjectData);
       if (e instanceof Error) {
         console.error("Error while fetching project list: " + e.message);
-        error("Error while fetching project list: " + e.message);
+        // error("Error while fetching project list: " + e.message);
       }
     }
   };
