@@ -37,20 +37,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build base image
+      - name: Build base image and BTDI
         run: |
           sudo apt-get update
-          docker build -F Dockerfile.dependencies_humble -t jderobot/robotics-applications:dependencies-humble .
-      - name: Build BTDI
-        run: |
           cd scripts/BTDI
-          docker build --no-cache -f Dockerfile.humble \
-            --build-arg BT_STUDIO=${{ github.event.inputs.BT }}\
-            --build-arg ROBOTICS_INFRASTRUCTURE=${{ github.event.inputs.RI }} \
-            --build-arg RAM=${{ github.event.inputs.RAM }} \
-            --build-arg ROS_DISTRO=humble \
-            --build-arg IMAGE_TAG=test \
-            -t jderobot/bt-studio:test .
+          ./build.sh -F -i ${{ github.event.inputs.RI }} -m ${{ github.event.inputs.RAM }} -bt ${{ github.event.inputs.BT }}
       - name: Build BTDI database
         run: |
           docker build --no-cache -f Dockerfile.database \
