@@ -1,0 +1,77 @@
+# Generates and uploads an image of BT-Studio using the desired tag and branches
+name: Test BT-Studio
+
+on:
+  workflow_call:
+    inputs:
+      BT:
+        description: 'Branch of BT-Studio'
+        required: true
+        default: main
+        type: string
+      RI:
+        description: 'Branch of Robotics Infrastructure'
+        required: true
+        default: humble-devel
+        type: string
+      RAM:
+        description: 'Branch of Robotics Application Manager'
+        required: true
+        default: humble-devel
+        type: string
+
+jobs:
+  push_to_registry:
+    name: Run Test and Update Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo # checking our the code at current commit that triggers the workflow
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch-webserver-id }}
+          fetch-depth: 1
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build base image
+        run: |
+          sudo apt-get update
+          cd scripts/BTDI
+          if [ "${{ github.event.inputs.ROS }}" == "humble" ]; then
+            docker build -f Dockerfile.dependencies_humble -t jderobot/robotics-applications:dependencies-humble .
+          else
+            echo "Incorrect ROS version"
+          fi
+      - name: Build BTDI
+        run: |
+          cd scripts/BTDI
+          docker build --no-cache -f Dockerfile.humble \
+            --build-arg BT_STUDIO=${{ github.event.inputs.BT }}\
+            --build-arg ROBOTICS_INFRASTRUCTURE=${{ github.event.inputs.RI }} \
+            --build-arg RAM=${{ github.event.inputs.RAM }} \
+            --build-arg ROS_DISTRO=humble \
+            --build-arg IMAGE_TAG=test \
+            -t jderobot/bt-studio:test .
+      - name: Build BTDI database
+        run: |
+          docker build --no-cache -f Dockerfile.database \
+            --build-arg IMAGE_TAG=test \
+            --build-arg BT_STUDIO=${{ github.event.inputs.BT }}\
+            --build-arg ROBOTICS_INFRASTRUCTURE=${{ github.event.inputs.RI }} \
+            -t jderobot/bt-studio-database:test .
+      - name: Trigger tests
+        run: |
+          cd ../..
+          docker run --hostname my-postgres --name universe_db -d\
+            -e POSTGRES_DB=universe_db \
+            -e POSTGRES_USER=user-dev \
+            -e POSTGRES_PASSWORD=bt-studio-dev \
+            -e POSTGRES_PORT=5432 \
+            -d -p 5432:5432 \
+            jderobot/bt-studio-database:test
+          docker run --rm -it -d -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link universe_db jderobot/bt-studio:test
+          python manager.py test
