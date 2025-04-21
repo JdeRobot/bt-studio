@@ -60,4 +60,4 @@ jobs:
             -d -p 5432:5432 \
             jderobot/bt-studio-database:test
           docker run --rm -it -d --name bt_studio -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link universe_db jderobot/bt-studio:test
-          docker exec bt_studio python manager.py test
+          docker exec bt_studio python ./manage.py test
