@@ -44,6 +44,7 @@ jobs:
           ./build.sh -F -i ${{ github.event.inputs.RI }} -m ${{ github.event.inputs.RAM }} -bt ${{ github.event.inputs.BT }}
       - name: Build BTDI database
         run: |
+          cd scripts/BTDI
           docker build --no-cache -f Dockerfile.database \
             --build-arg IMAGE_TAG=test \
             --build-arg BT_STUDIO=${{ github.event.inputs.BT }}\
@@ -51,7 +52,6 @@ jobs:
             -t jderobot/bt-studio-database:test .
       - name: Trigger tests
         run: |
-          cd ../..
           docker run --hostname my-postgres --name universe_db -d\
             -e POSTGRES_DB=universe_db \
             -e POSTGRES_USER=user-dev \
