@@ -2,7 +2,7 @@
 name: Test BT-Studio
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       BT:
         description: 'Branch of BT-Studio'
