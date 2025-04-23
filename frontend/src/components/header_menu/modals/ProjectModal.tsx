@@ -74,12 +74,12 @@ const ProjectModal = ({
     }
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (formState.projectName === "") {
       return;
     }
     setCreateProjectOpen(false);
-    createProject(formState.projectName);
+    await createProject(formState.projectName);
     onClose();
   };
 
