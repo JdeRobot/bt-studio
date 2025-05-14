@@ -236,7 +236,7 @@ const HeaderMenu = ({
 
         await manager.launchWorld(universe_config);
         console.log("RB universe launched!");
-        await manager.prepareVisualization("gzsim_rae", null);
+        await manager.prepareVisualization("bt_studio_gz", null);
         console.log("Viz ready!");
       }
     } catch (e: unknown) {
