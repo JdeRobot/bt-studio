@@ -7,6 +7,12 @@ import CreatePage from "./universe/CreatePage";
 import UniverseUploadModal from "./UniverseUploadModal";
 import { deleteUniverse, listUniverses } from "../../../api_helper/TreeWrapper";
 import { useError } from "../../error_popup/ErrorModal";
+import CreateCustomPage from "./universe/CreateCustomPage";
+
+enum UniverseTypes {
+  ROBOTICSBACKEND,
+  CUSTOM,
+}
 
 const UniverseModal = ({
   onSubmit,
@@ -26,6 +32,9 @@ const UniverseModal = ({
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [universeAdded, setUniverseAdded] = useState(false);
   const [creationMenu, showCreationMenu] = useState<boolean>(false);
+  const [creationType, changeCreationType] = useState<UniverseTypes>(
+    UniverseTypes.CUSTOM
+  );
 
   const loadUniverseList = async () => {
     try {
@@ -75,7 +84,7 @@ const UniverseModal = ({
         } else {
           // Handle other statuses or general API errors
           error(
-            "Unable to connect with the backend server. Please check the backend status.",
+            "Unable to connect with the backend server. Please check the backend status."
           );
         }
       }
@@ -83,13 +92,14 @@ const UniverseModal = ({
   };
 
   const importFromRoboticsBackend = () => {
-    console.log("Create from RB");
-    //TODO: need to get the name and open a dropdown to select the universe
     showCreationMenu(true);
+    changeCreationType(UniverseTypes.ROBOTICSBACKEND);
   };
 
   const importFromZip = () => {
-    setUploadModalOpen(true);
+    // setUploadModalOpen(true);
+    showCreationMenu(true);
+    changeCreationType(UniverseTypes.CUSTOM);
   };
 
   const handleCloseUploadUniverseModal = (universe_name: string) => {
@@ -164,7 +174,7 @@ const UniverseModal = ({
                     importFromZip();
                   }}
                 >
-                  Import from zip
+                  New custom universe
                 </div>
                 <div
                   className="bt-project-modal-create-button"
@@ -175,18 +185,26 @@ const UniverseModal = ({
                 >
                   Import from Robotics Backend library
                 </div>
-                {/* <div className='bt-project-modal-create-button'>Other</div> */}
               </div>
             </div>
           </>
         ) : (
           <>
-            <CreatePage
-              setVisible={showCreationMenu}
-              visible={creationMenu}
-              onClose={onClose}
-              currentProject={currentProject}
-            />
+            {creationType === UniverseTypes.ROBOTICSBACKEND ? (
+              <CreatePage
+                setVisible={showCreationMenu}
+                visible={creationMenu}
+                onClose={onClose}
+                currentProject={currentProject}
+              />
+            ) : (
+              <CreateCustomPage
+                setVisible={showCreationMenu}
+                visible={creationMenu}
+                onClose={onClose}
+                currentProject={currentProject}
+              />
+            )}
           </>
         )}
       </form>
