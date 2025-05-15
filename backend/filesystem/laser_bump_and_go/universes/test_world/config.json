@@ -5,6 +5,6 @@
         "ros_version": "ROS2",
         "world": "gazebo",
         "launch_file_path": "/workspace/worlds/src/test_world/launch/universe.launch.py",
-        "visualization_config_path": "None"
+        "visualization_config_path": "/workspace/worlds/src/test_world/gz.config"
     }
 }

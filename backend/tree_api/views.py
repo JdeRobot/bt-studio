@@ -545,7 +545,7 @@ def upload_universe(request):
             return Response({"success": False, "message": "Server error"}, status=500)
 
     # Fill the config dictionary of the universe
-    ram_launch_path = "/workspace/worlds/" + universe_name + "/universe.launch.py"
+    ram_launch_path = "/workspace/worlds/src/" + universe_name + "/universe.launch.py"
     universe_config = {
         "name": universe_name,
         "type": "custom",
@@ -556,6 +556,8 @@ def upload_universe(request):
             "visualization_config_path": None,
         },
     }
+
+    #TODO: add all new templates
 
     # Generate the json config
     config_path = fal.path_join(universe_path, "config.json")
