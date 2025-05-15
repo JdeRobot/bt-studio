@@ -259,7 +259,7 @@ def delete_folder(self, dir):
 
 def get_tree(self, exepected):
     response = self.c.get(
-        "/bt_studio/get_project_graph/",
+        "/bt_studio/get_base_tree/",
         {"project_name": "test"},
     )
     self.assertEqual(response.status_code, 200)
@@ -420,7 +420,7 @@ class LocalTestCase(TestCase):
         self.assertEqual("Follow Person" in response.json()["universes"], True)
 
         response = self.c.get(
-            "/bt_studio/get_docker_universe_path/", {"name": "Follow Person"}
+            "/bt_studio/get_docker_universe_data/", {"name": "Follow Person"}
         )
         self.assertEqual(response.status_code, 200)
 
@@ -911,12 +911,12 @@ class LocalTestFailedCase(TestCase):
 
     def test_incorrect_get_main_tree(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_project_graph/")
+        response = self.c.get("/bt_studio/get_base_tree/")
         self.assertEqual(response.status_code, self.no_param)
 
     def test_no_find_get_main_tree(self):
         """Test if error appears when paramters are wrong"""
-        response = self.c.get("/bt_studio/get_project_graph/", {"project_name": "test"})
+        response = self.c.get("/bt_studio/get_base_tree/", {"project_name": "test"})
         self.assertEqual(response.status_code, self.no_files)
 
     def test_bad_json_get_main_tree(self):
@@ -924,7 +924,7 @@ class LocalTestFailedCase(TestCase):
         create_proyect(self)
         write_to_file(self, "trees", "main.json", "{[]}")
         check_file(self, "trees", "main.json", "{[]}")
-        response = self.c.get("/bt_studio/get_project_graph/", {"project_name": "test"})
+        response = self.c.get("/bt_studio/get_base_tree/", {"project_name": "test"})
         self.assertEqual(response.status_code, self.bad_data)
         delete_proyect(self)
 
@@ -1451,7 +1451,7 @@ class LocalTestFailedCase(TestCase):
 
     def test_incorrect_get_docker_universe_path(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_docker_universe_path/")
+        response = self.c.get("/bt_studio/get_docker_universe_data/")
         self.assertEqual(response.status_code, self.no_param)
 
 

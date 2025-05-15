@@ -329,7 +329,7 @@ const saveProjectConfig = async (
 const getProjectGraph = async (currentProjectname: string) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
-  const apiUrl = `/bt_studio/get_project_graph?project_name=${currentProjectname}`;
+  const apiUrl = `/bt_studio/get_base_tree?project_name=${currentProjectname}`;
   try {
     const response = await axios.get(apiUrl);
 
@@ -377,7 +377,7 @@ const getUniverseConfig = async (
 const getRoboticsBackendUniversePath = async (universeName: string) => {
   if (!universeName) throw new Error("The universe name is not set");
 
-  const apiUrl = `/bt_studio/get_docker_universe_path?name=${encodeURIComponent(universeName)}`;
+  const apiUrl = `/bt_studio/get_docker_universe_data?name=${encodeURIComponent(universeName)}`;
   try {
     const response = await axios.get(apiUrl);
 

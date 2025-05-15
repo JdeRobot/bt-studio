@@ -96,7 +96,7 @@ def save_base_tree(request):
 
 
 @error_wrapper("GET", ["project_name"])
-def get_project_graph(request):
+def get_base_tree(request):
     project_name = request.GET.get("project_name")
 
     # Generate the paths
@@ -631,7 +631,7 @@ def list_docker_universes(request):
 
 
 @error_wrapper("GET", ["name"])
-def get_docker_universe_path(request):
+def get_docker_universe_data(request):
     name = request.GET.get("name")
 
     universe = Universe.objects.get(name=name)
