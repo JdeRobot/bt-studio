@@ -553,6 +553,7 @@ def upload_universe(request):
             "ros_version": "ROS2",
             "world": "gazebo",
             "launch_file_path": ram_launch_path,
+            "visualization_config_path": None,
         },
     }
 
