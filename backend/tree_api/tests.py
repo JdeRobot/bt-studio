@@ -80,8 +80,8 @@ def select_RB_universe(self):
 def check_RB_universe(self):
     # - Seleccionar un Universo: Seleccionar el universo "test"
     response = self.c.get(
-        "/bt_studio/get_universe_file_list/",
-        {"project_name": "test", "universe_name": "test"},
+        "/bt_studio/get_file_list/",
+        {"project_name": "test", "universe": "test"},
     )
     self.assertEqual(response.json(), self.base_rb_universe_content)
 
@@ -432,10 +432,10 @@ class LocalTestCase(TestCase):
         select_RB_universe(self)
         check_RB_universe(self)
         response = self.c.get(
-            "/bt_studio/get_universe_file/",
+            "/bt_studio/get_file/",
             {
                 "project_name": "test",
-                "universe_name": "test",
+                "universe": "test",
                 "filename": "config.json",
             },
         )
@@ -1369,27 +1369,27 @@ class LocalTestFailedCase(TestCase):
 
     def test_incorrect_get_universe_file_list(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_universe_file_list/")
+        response = self.c.get("/bt_studio/get_file_list/")
         self.assertEqual(response.status_code, self.no_param)
 
     def test_no_find_get_universe_file_list(self):
         """Test if error appears when no paramters are passed"""
         response = self.c.get(
-            "/bt_studio/get_universe_file_list/",
-            {"project_name": "test", "universe_name": "test"},
+            "/bt_studio/get_file_list/",
+            {"project_name": "test", "universe": "test"},
         )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_get_universe_file(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_universe_file/")
+        response = self.c.get("/bt_studio/get_file/")
         self.assertEqual(response.status_code, self.no_param)
 
     def test_no_find_get_universe_file(self):
         """Test if error appears when no paramters are passed"""
         response = self.c.get(
-            "/bt_studio/get_universe_file/",
-            {"project_name": "test", "universe_name": "test", "filename": "a"},
+            "/bt_studio/get_file/",
+            {"project_name": "test", "universe": "test", "filename": "a"},
         )
         self.assertEqual(response.status_code, self.no_files)
 

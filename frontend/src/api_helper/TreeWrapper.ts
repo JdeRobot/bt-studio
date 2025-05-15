@@ -24,10 +24,15 @@ const axiosExtra = {
 
 // File management
 
-const getFileList = async (projectName: string) => {
+const getFileList = async (
+  projectName: string,
+  universeName: string | undefined = undefined
+) => {
   if (!projectName) throw new Error("Project name is not set");
 
-  const apiUrl = `/bt_studio/get_file_list?project_name=${encodeURIComponent(projectName)}`;
+  let apiUrl = `/bt_studio/get_file_list?project_name=${encodeURIComponent(projectName)}`;
+
+  if (universeName !== undefined) apiUrl += `&universe=${encodeURIComponent(universeName)}`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -43,11 +48,13 @@ const getFileList = async (projectName: string) => {
   }
 };
 
-const getFile = async (projectName: string, fileName: string) => {
+const getFile = async (projectName: string, fileName: string, universeName: string | undefined = undefined) => {
   if (!projectName) throw new Error("Project name is not set");
   if (!fileName) throw new Error("File name is not set");
 
-  const apiUrl = `/bt_studio/get_file?project_name=${encodeURIComponent(projectName)}&filename=${encodeURIComponent(fileName)}`;
+  let apiUrl = `/bt_studio/get_file?project_name=${encodeURIComponent(projectName)}&filename=${encodeURIComponent(fileName)}`;
+
+  if (universeName !== undefined) apiUrl += `&universe=${encodeURIComponent(universeName)}`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -70,20 +77,7 @@ const getUniverseFileList = async (
   if (!projectName) throw new Error("Project name is not set");
   if (!universeName) throw new Error("Universe name is not set");
 
-  const apiUrl = `/bt_studio/get_universe_file_list?project_name=${encodeURIComponent(projectName)}&universe_name=${encodeURIComponent(universeName)}`;
-
-  try {
-    const response = await axios.get(apiUrl);
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to get file list."); // Response error
-    }
-
-    return response.data.file_list;
-  } catch (error: unknown) {
-    throw error; // Rethrow
-  }
+  return await getFileList(projectName,  universeName);
 };
 
 const getUniverseFile = async (
@@ -95,20 +89,7 @@ const getUniverseFile = async (
   if (!universeName) throw new Error("Universe name is not set");
   if (!fileName) throw new Error("File name is not set");
 
-  const apiUrl = `/bt_studio/get_universe_file?project_name=${encodeURIComponent(projectName)}&universe_name=${encodeURIComponent(universeName)}&filename=${encodeURIComponent(fileName)}`;
-
-  try {
-    const response = await axios.get(apiUrl);
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to get file list."); // Response error
-    }
-
-    return response.data.content;
-  } catch (error: unknown) {
-    throw error; // Rethrow
-  }
+  return await getFile(projectName, fileName, universeName);
 };
 
 const getActionsList = async (projectName: string) => {
@@ -392,7 +373,7 @@ const getRoboticsBackendUniversePath = async (universeName: string) => {
       world: response.data.universe.world,
       robot: response.data.universe.robot,
       visualization: response.data.universe.visualization,
-      visualization_config: response.data.universe.visualization_config_path
+      visualization_config: response.data.universe.visualization_config_path,
     };
   } catch (error: unknown) {
     throw error; // Rethrow
