@@ -567,12 +567,64 @@ def upload_universe(request):
         },
     }
 
-    #TODO: add all new templates
-
     # Generate the json config
     config_path = fal.path_join(universe_path, "config.json")
     with open(config_path, "w") as config_file:
         json.dump(universe_config, config_file, ensure_ascii=False, indent=4)
+
+    return Response(
+        {"success": True, "message": "Universe uploaded successfully"},
+        status=status.HTTP_200_OK,
+    )
+
+
+@error_wrapper("POST", ["project_name", "universe_name"])
+def create_custom_universe(request):
+    # Get the name and the zip file from the request
+    project_name = request.data.get("project_name")
+    universe_name = request.data.get("universe_name")
+
+    # Make folder path relative to Django app
+    universes_path = fal.universes_path(project_name)
+    universe_path = fal.path_join(universes_path, universe_name)
+    universe_launch_path = fal.path_join(universe_path, "launch")
+    universe_world_path = fal.path_join(universe_path, "worlds")
+    universe_models_path = fal.path_join(universe_path, "models")
+
+    fal.mkdir(universe_path)
+    fal.mkdir(universe_launch_path)
+    fal.mkdir(universe_world_path)
+    fal.mkdir(universe_models_path)
+
+    # Fill the config dictionary of the universe
+    ram_launch_path = (
+        "/workspace/worlds/src/" + universe_name + "/launch/universe.launch.py"
+    )
+    ram_visualization_config_path = (
+        "/workspace/worlds/src/" + universe_name + "/gz.config"
+    )
+
+    universe_config = {
+        "name": universe_name,
+        "type": "custom",
+        "ram_config": {
+            "ros_version": "ROS2",
+            "world": "gazebo",
+            "launch_file_path": ram_launch_path,
+            "visualization_config_path": ram_visualization_config_path,
+        },
+    }
+
+    # Generate the json config
+    config_path = fal.path_join(universe_path, "config.json")
+
+    universe_data = json.dumps(universe_config, ensure_ascii=False, indent=4)
+    fal.create(config_path, universe_data)
+
+    templates = fal.get_universe_template(universe_name)
+
+    for t in templates:
+        fal.create(fal.path_join(universe_path, t["path"]), t["content"])
 
     return Response(
         {"success": True, "message": "Universe uploaded successfully"},
@@ -591,9 +643,7 @@ def add_docker_universe(request):
     universes_path = fal.universes_path(project_name)
     universe_path = fal.path_join(universes_path, universe_name)
 
-    # Create the folder if it doesn't exist
-    if not fal.exists(universe_path):
-        fal.mkdir(universe_path)
+    fal.mkdir(universe_path)
 
     # Fill the config dictionary of the universe
     universe_config = {"name": universe_name, "id": id, "type": "robotics_backend"}

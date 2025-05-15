@@ -6,17 +6,42 @@ urlpatterns = [
     path("create_project/", views.create_project, name="create_project"),
     path("delete_project/", views.delete_project, name="delete_project"),
     path("get_project_list/", views.get_project_list, name="get_project_list"),
-    path("save_project_configuration/",views.save_project_configuration,name="save_project_configuration"),
-    path("get_project_configuration/",views.get_project_configuration,name="get_project_configuration"),
+    path(
+        "save_project_configuration/",
+        views.save_project_configuration,
+        name="save_project_configuration",
+    ),
+    path(
+        "get_project_configuration/",
+        views.get_project_configuration,
+        name="get_project_configuration",
+    ),
     # Universe Management
     path("delete_universe/", views.delete_universe, name="delete_universe"),
-    path("get_universe_configuration/",views.get_universe_configuration,name="get_universe_configuration"),
+    path(
+        "get_universe_configuration/",
+        views.get_universe_configuration,
+        name="get_universe_configuration",
+    ),
     path("get_universes_list/", views.get_universes_list, name="get_universes_list"),
     ## Robotics Backend Universes
     path("add_docker_universe/", views.add_docker_universe, name="add_docker_universe"),
-    path("get_docker_universe_data/",views.get_docker_universe_data,name="get_docker_universe_data"),
-    path("list_docker_universes/",views.list_docker_universes,name="list_docker_universes",),
+    path(
+        "get_docker_universe_data/",
+        views.get_docker_universe_data,
+        name="get_docker_universe_data",
+    ),
+    path(
+        "list_docker_universes/",
+        views.list_docker_universes,
+        name="list_docker_universes",
+    ),
     ## Custom Universes
+    path(
+        "create_custom_universe/",
+        views.create_custom_universe,
+        name="create_custom_universe",
+    ),
     path("upload_universe/", views.upload_universe, name="upload_universe"),
     # Tree Management
     path("save_base_tree/", views.save_base_tree, name="save_base_tree"),
@@ -27,7 +52,11 @@ urlpatterns = [
     path("save_subtree/", views.save_subtree, name="save_subtree"),
     path("get_subtree/", views.get_subtree, name="get_subtree"),
     path("get_subtree_list/", views.get_subtree_list, name="get_subtree_list"),
-    path("get_subtree_structure/",views.get_subtree_structure,name="get_subtree_structure"),
+    path(
+        "get_subtree_structure/",
+        views.get_subtree_structure,
+        name="get_subtree_structure",
+    ),
     # File Management
     path("create_file/", views.create_file, name="create_file"),
     path("delete_file/", views.delete_file, name="delete_file"),
@@ -44,7 +73,11 @@ urlpatterns = [
     path("get_actions_list/", views.get_actions_list, name="get_actions_list"),
     # Generate App
     path("generate_local_app/", views.generate_local_app, name="generate_local_app"),
-    path("generate_dockerized_app/",views.generate_dockerized_app,name="generate_dockerized_app"),
+    path(
+        "generate_dockerized_app/",
+        views.generate_dockerized_app,
+        name="generate_dockerized_app",
+    ),
     # Other
     path("upload_code/", views.upload_code, name="upload_code"),
 ]

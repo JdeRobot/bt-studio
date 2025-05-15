@@ -906,6 +906,34 @@ const uploadUniverse = async (
   }
 };
 
+const createCustomUniverse = async (
+  projectName: string,
+  universeName: string,
+) => {
+  if (!projectName) throw new Error("Current Project name is not set");
+  if (!universeName) throw new Error("Universe name is not set");
+
+  const apiUrl = "/bt_studio/create_custom_universe/";
+
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        project_name: projectName,
+        universe_name: universeName,
+      },
+      axiosExtra
+    );
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to upload file."); // Response error
+    }
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 const listDockerUniverses = async () => {
   const apiUrl = `/bt_studio/list_docker_universes`;
 
@@ -1007,6 +1035,7 @@ const getSubtreeStructure = async (
 // Named export
 export {
   createAction,
+  createCustomUniverse,
   createFile,
   createFolder,
   createProject,
