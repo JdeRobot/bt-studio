@@ -4,14 +4,15 @@ import Modal from "../../Modal/Modal";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 import { ReactComponent as DeleteIcon } from "../../tree_editor/img/delete.svg";
 import CreatePage from "./universe/CreatePage";
-import UniverseUploadModal from "./UniverseUploadModal";
 import { deleteUniverse, listUniverses } from "../../../api_helper/TreeWrapper";
 import { useError } from "../../error_popup/ErrorModal";
 import CreateCustomPage from "./universe/CreateCustomPage";
+import ImportCustomPage from "./universe/ImportCustomPage";
 
 enum UniverseTypes {
   ROBOTICSBACKEND,
   CUSTOM,
+  ZIP,
 }
 
 const UniverseModal = ({
@@ -96,10 +97,14 @@ const UniverseModal = ({
     changeCreationType(UniverseTypes.ROBOTICSBACKEND);
   };
 
-  const importFromZip = () => {
-    // setUploadModalOpen(true);
+  const createCustomUniverse = () => {
     showCreationMenu(true);
     changeCreationType(UniverseTypes.CUSTOM);
+  };
+
+  const importFromZip = () => {
+    showCreationMenu(true);
+    changeCreationType(UniverseTypes.ZIP);
   };
 
   const handleCloseUploadUniverseModal = (universe_name: string) => {
@@ -113,13 +118,6 @@ const UniverseModal = ({
       isOpen={isOpen}
       onClose={onClose}
     >
-      <UniverseUploadModal
-        isOpen={uploadModalOpen}
-        onSubmit={(data: any) => {}}
-        onClose={handleCloseUploadUniverseModal}
-        currentProject={currentProject}
-        setUniverseAdded={setUniverseAdded}
-      />
       <form onSubmit={onSubmit} onReset={handleCancel}>
         {!creationMenu ? (
           <>
@@ -171,10 +169,18 @@ const UniverseModal = ({
                 <div
                   className="bt-project-modal-create-button"
                   onClick={() => {
-                    importFromZip();
+                    createCustomUniverse();
                   }}
                 >
                   New custom universe
+                </div>
+                <div
+                  className="bt-project-modal-create-button"
+                  onClick={() => {
+                    importFromZip();
+                  }}
+                >
+                  Import from zip
                 </div>
                 <div
                   className="bt-project-modal-create-button"
@@ -190,15 +196,24 @@ const UniverseModal = ({
           </>
         ) : (
           <>
-            {creationType === UniverseTypes.ROBOTICSBACKEND ? (
+            {creationType === UniverseTypes.ROBOTICSBACKEND && (
               <CreatePage
                 setVisible={showCreationMenu}
                 visible={creationMenu}
                 onClose={onClose}
                 currentProject={currentProject}
               />
-            ) : (
+            )}
+            {creationType === UniverseTypes.CUSTOM && (
               <CreateCustomPage
+                setVisible={showCreationMenu}
+                visible={creationMenu}
+                onClose={onClose}
+                currentProject={currentProject}
+              />
+            )}
+            {creationType === UniverseTypes.ZIP && (
+              <ImportCustomPage
                 setVisible={showCreationMenu}
                 visible={creationMenu}
                 onClose={onClose}

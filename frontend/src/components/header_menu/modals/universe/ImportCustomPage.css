@@ -1,0 +1,75 @@
+#universe-upload-modal {
+  width: 20%;
+  height: 30%;
+}
+
+.bt-upload-percentage {
+  display: flex;
+  font-size: 2em;
+  font-weight: 600;
+  justify-content: center;
+  color: white;
+}
+
+.bt-modal-button {
+  width: 350px;
+  border: 2px solid var(--buttons);
+  color: var(--text);
+  font-size: medium;
+  background-color: var(--background);
+  border-radius: 10px;
+  padding: 5px;
+  font-size: medium;
+  outline: none;
+
+  &::file-selector-button {
+    margin-right: 20px;
+    border: none;
+    background: var(--buttons);
+    padding: 10px 20px;
+    border-radius: 10px;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+  }
+
+  &::file-selector-button:hover {
+    background: var(--buttons-hover);
+  }
+}
+
+.bt-modal-drop-container {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 2px dashed var(--buttons);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background 0.2s ease-in-out,
+    border 0.2s ease-in-out;
+  &:hover {
+    background: var(--buttons);
+    border-color: var(--background);
+  }
+}
+
+.bt-modal-drop-container.bt-drag-active {
+  background: var(--buttons);
+  border-color: var(--background);
+}
+
+.bt-modal-drop-title {
+  color: var(--text);
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  transition: color 0.2s ease-in-out;
+}
