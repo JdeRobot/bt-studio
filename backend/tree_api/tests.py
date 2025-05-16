@@ -1562,6 +1562,7 @@ class SeleniumTests(StaticLiveServerTestCase):
             "/BtStudio/.test_logs/bt_create.png"
         )
 
+
 #     # def test_bt_execution(self):
 #     #     print(self.live_server_url)
 #     #     self.selenium.get(f"{self.live_server_url}/frontend/")

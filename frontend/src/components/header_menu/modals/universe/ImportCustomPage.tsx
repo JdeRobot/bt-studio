@@ -60,7 +60,6 @@ const ImportCustomPage = ({
       return;
     }
 
-
     if (uploadPercentage !== 100) {
       console.warn("Not yet uploaded!");
       return;
@@ -70,7 +69,6 @@ const ImportCustomPage = ({
 
     setVisible(false);
   };
-
 
   const handleAcceptedFiles = async (files: FileList | null) => {
     // TODO: Redo for directory
@@ -119,7 +117,10 @@ const ImportCustomPage = ({
     event.preventDefault();
     uploadAreaRef.current.classList.remove("bt-drag-active");
 
-    if (event.dataTransfer.files.length === 1 && event.dataTransfer.files[0].type === "application/zip") {
+    if (
+      event.dataTransfer.files.length === 1 &&
+      event.dataTransfer.files[0].type === "application/zip"
+    ) {
       uploadInputRef.current.files = event.dataTransfer.files;
       handleAcceptedFiles(uploadInputRef.current.files[0]);
     }
@@ -196,7 +197,7 @@ const ImportCustomPage = ({
               uploadAreaRef.current.classList.remove("bt-drag-active")
             }
             onDrop={(e) => handleDrop(e)}
-            style={{height: "300px",width: "75%", marginTop: "30px"}}
+            style={{ height: "300px", width: "75%", marginTop: "30px" }}
           >
             <span className="bt-modal-drop-title">Drop zip here</span>
             or
