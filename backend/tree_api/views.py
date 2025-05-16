@@ -96,7 +96,7 @@ def save_base_tree(request):
 
 
 @error_wrapper("GET", ["project_name"])
-def get_project_graph(request):
+def get_base_tree(request):
     project_name = request.GET.get("project_name")
 
     # Generate the paths
@@ -293,10 +293,15 @@ def get_universe_configuration(request):
 @error_wrapper("GET", ["project_name"])
 def get_file_list(request):
     project_name = request.GET.get("project_name")
+    universe = request.GET.get("universe")
 
-    code_path = fal.code_path(project_name)
+    if universe is not None:
+        universes_path = fal.universes_path(project_name)
+        path = fal.path_join(universes_path, universe)
+    else:
+        path = fal.code_path(project_name)
 
-    file_list = fal.list_formatted(code_path)
+    file_list = fal.list_formatted(path)
 
     # Return the list of files
     return Response({"file_list": EntryEncoder().encode(file_list)})
@@ -316,10 +321,15 @@ def get_actions_list(request):
 def get_file(request):
     project_name = request.GET.get("project_name", None)
     filename = request.GET.get("filename", None)
+    universe = request.GET.get("universe")
 
-    code_path = fal.code_path(project_name)
+    if universe is not None:
+        universes_path = fal.universes_path(project_name)
+        path = fal.path_join(universes_path, universe)
+    else:
+        path = fal.code_path(project_name)
 
-    file_path = fal.path_join(code_path, filename)
+    file_path = fal.path_join(path, filename)
     content = fal.read(file_path)
     serializer = FileContentSerializer({"content": content})
     return Response(serializer.data)
@@ -343,14 +353,18 @@ def create_action(request):
 
 @error_wrapper("POST", ["project_name", ("location", -1), "file_name"])
 def create_file(request):
-    # Get the file info
     project_name = request.data.get("project_name")
     location = request.data.get("location")
     filename = request.data.get("file_name")
+    universe = request.GET.get("universe")
 
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    create_path = fal.path_join(code_path, location)
+    if universe is not None:
+        universes_path = fal.universes_path(project_name)
+        path = fal.path_join(universes_path, universe)
+    else:
+        path = fal.code_path(project_name)
+
+    create_path = fal.path_join(path, location)
     file_path = fal.path_join(create_path, filename)
 
     fal.create(file_path, "")
@@ -359,14 +373,18 @@ def create_file(request):
 
 @error_wrapper("POST", ["project_name", ("location", -1), "folder_name"])
 def create_folder(request):
-    # Get the file info
     project_name = request.data.get("project_name")
     location = request.data.get("location")
     folder_name = request.data.get("folder_name")
+    universe = request.GET.get("universe")
 
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    create_path = fal.path_join(code_path, location)
+    if universe is not None:
+        universes_path = fal.universes_path(project_name)
+        path = fal.path_join(universes_path, universe)
+    else:
+        path = fal.code_path(project_name)
+
+    create_path = fal.path_join(path, location)
     folder_path = fal.path_join(create_path, folder_name)
 
     fal.mkdir(folder_path)
@@ -375,15 +393,19 @@ def create_folder(request):
 
 @error_wrapper("POST", ["project_name", "path", "rename_to"])
 def rename_file(request):
-    # Get the file info
     project_name = request.data.get("project_name")
     path = request.data.get("path")
     rename_path = request.data.get("rename_to")
+    universe = request.GET.get("universe")
 
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    file_path = fal.path_join(code_path, path)
-    new_path = fal.path_join(code_path, rename_path)
+    if universe is not None:
+        universes_path = fal.universes_path(project_name)
+        path = fal.path_join(universes_path, universe)
+    else:
+        path = fal.code_path(project_name)
+
+    file_path = fal.path_join(path, path)
+    new_path = fal.path_join(path, rename_path)
 
     fal.renamefile(file_path, new_path)
     return JsonResponse({"success": True})
@@ -391,15 +413,19 @@ def rename_file(request):
 
 @error_wrapper("POST", ["project_name", "path", "rename_to"])
 def rename_folder(request):
-    # Get the folder info
     project_name = request.data.get("project_name")
     path = request.data.get("path")
     rename_path = request.data.get("rename_to")
+    universe = request.GET.get("universe")
 
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    file_path = fal.path_join(code_path, path)
-    new_path = fal.path_join(code_path, rename_path)
+    if universe is not None:
+        universes_path = fal.universes_path(project_name)
+        path = fal.path_join(universes_path, universe)
+    else:
+        path = fal.code_path(project_name)
+
+    file_path = fal.path_join(path, path)
+    new_path = fal.path_join(path, rename_path)
 
     fal.renamedir(file_path, new_path)
     return JsonResponse({"success": True})
@@ -407,13 +433,17 @@ def rename_folder(request):
 
 @error_wrapper("POST", ["project_name", "path"])
 def delete_file(request):
-    # Get the file info
     project_name = request.data.get("project_name")
     path = request.data.get("path")
+    universe = request.GET.get("universe")
 
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    file_path = fal.path_join(code_path, path)
+    if universe is not None:
+        universes_path = fal.universes_path(project_name)
+        path = fal.path_join(universes_path, universe)
+    else:
+        path = fal.code_path(project_name)
+
+    file_path = fal.path_join(path, path)
 
     fal.removefile(file_path)
     return JsonResponse({"success": True})
@@ -421,13 +451,17 @@ def delete_file(request):
 
 @error_wrapper("POST", ["project_name", "path"])
 def delete_folder(request):
-    # Get the folder info
     project_name = request.data.get("project_name")
     path = request.data.get("path")
+    universe = request.GET.get("universe")
 
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    file_path = fal.path_join(code_path, path)
+    if universe is not None:
+        universes_path = fal.universes_path(project_name)
+        path = fal.path_join(universes_path, universe)
+    else:
+        path = fal.code_path(project_name)
+
+    file_path = fal.path_join(path, path)
 
     fal.removedir(file_path)
     return JsonResponse({"success": True})
@@ -438,9 +472,15 @@ def save_file(request):
     project_name = request.data.get("project_name")
     filename = request.data.get("filename")
     content = request.data.get("content")
+    universe = request.GET.get("universe")
 
-    code_path = fal.code_path(project_name)
-    file_path = fal.path_join(code_path, filename)
+    if universe is not None:
+        universes_path = fal.universes_path(project_name)
+        path = fal.path_join(universes_path, universe)
+    else:
+        path = fal.code_path(project_name)
+
+    file_path = fal.path_join(path, filename)
 
     fal.write(file_path, content)
     return Response({"success": True})
@@ -471,36 +511,6 @@ def generate_dockerized_app(request):
 
     final_tree, _ = app_generator.generate_app(fal, project_name, bt_order)
     return JsonResponse({"success": True, "tree": final_tree})
-
-
-@error_wrapper("GET", ["project_name", "universe_name"])
-def get_universe_file_list(request):
-    project_name = request.GET.get("project_name")
-    universe_name = request.GET.get("universe_name")
-
-    universes_path = fal.universes_path(project_name)
-    universe_path = fal.path_join(universes_path, universe_name)
-
-    file_list = fal.list_formatted(universe_path)
-
-    # Return the list of files
-    return Response({"file_list": EntryEncoder().encode(file_list)})
-
-
-@error_wrapper("GET", ["project_name", "universe_name", "filename"])
-def get_universe_file(request):
-    project_name = request.GET.get("project_name", None)
-    universe_name = request.GET.get("universe_name")
-    filename = request.GET.get("filename", None)
-
-    # Make folder path relative to Django app
-    universes_path = fal.universes_path(project_name)
-    universe_path = fal.path_join(universes_path, universe_name)
-
-    file_path = fal.path_join(universe_path, filename)
-    content = fal.read(file_path)
-    serializer = FileContentSerializer({"content": content})
-    return Response(serializer.data)
 
 
 @error_wrapper("POST", ["app_name", "universe_name", "zip_file"])
@@ -545,7 +555,7 @@ def upload_universe(request):
             return Response({"success": False, "message": "Server error"}, status=500)
 
     # Fill the config dictionary of the universe
-    ram_launch_path = "/workspace/worlds/" + universe_name + "/universe.launch.py"
+    ram_launch_path = "/workspace/worlds/src/" + universe_name + "/universe.launch.py"
     universe_config = {
         "name": universe_name,
         "type": "custom",
@@ -553,6 +563,7 @@ def upload_universe(request):
             "ros_version": "ROS2",
             "world": "gazebo",
             "launch_file_path": ram_launch_path,
+            "visualization_config_path": None,
         },
     }
 
@@ -560,6 +571,60 @@ def upload_universe(request):
     config_path = fal.path_join(universe_path, "config.json")
     with open(config_path, "w") as config_file:
         json.dump(universe_config, config_file, ensure_ascii=False, indent=4)
+
+    return Response(
+        {"success": True, "message": "Universe uploaded successfully"},
+        status=status.HTTP_200_OK,
+    )
+
+
+@error_wrapper("POST", ["project_name", "universe_name"])
+def create_custom_universe(request):
+    # Get the name and the zip file from the request
+    project_name = request.data.get("project_name")
+    universe_name = request.data.get("universe_name")
+
+    # Make folder path relative to Django app
+    universes_path = fal.universes_path(project_name)
+    universe_path = fal.path_join(universes_path, universe_name)
+    universe_launch_path = fal.path_join(universe_path, "launch")
+    universe_world_path = fal.path_join(universe_path, "worlds")
+    universe_models_path = fal.path_join(universe_path, "models")
+
+    fal.mkdir(universe_path)
+    fal.mkdir(universe_launch_path)
+    fal.mkdir(universe_world_path)
+    fal.mkdir(universe_models_path)
+
+    # Fill the config dictionary of the universe
+    ram_launch_path = (
+        "/workspace/worlds/src/" + universe_name + "/launch/universe.launch.py"
+    )
+    ram_visualization_config_path = (
+        "/workspace/worlds/src/" + universe_name + "/gz.config"
+    )
+
+    universe_config = {
+        "name": universe_name,
+        "type": "custom",
+        "ram_config": {
+            "ros_version": "ROS2",
+            "world": "gazebo",
+            "launch_file_path": ram_launch_path,
+            "visualization_config_path": ram_visualization_config_path,
+        },
+    }
+
+    # Generate the json config
+    config_path = fal.path_join(universe_path, "config.json")
+
+    universe_data = json.dumps(universe_config, ensure_ascii=False, indent=4)
+    fal.create(config_path, universe_data)
+
+    templates = fal.get_universe_template(universe_name)
+
+    for t in templates:
+        fal.create(fal.path_join(universe_path, t["path"]), t["content"])
 
     return Response(
         {"success": True, "message": "Universe uploaded successfully"},
@@ -578,9 +643,7 @@ def add_docker_universe(request):
     universes_path = fal.universes_path(project_name)
     universe_path = fal.path_join(universes_path, universe_name)
 
-    # Create the folder if it doesn't exist
-    if not fal.exists(universe_path):
-        fal.mkdir(universe_path)
+    fal.mkdir(universe_path)
 
     # Fill the config dictionary of the universe
     universe_config = {"name": universe_name, "id": id, "type": "robotics_backend"}
@@ -603,17 +666,16 @@ def upload_code(request):
     file_name = request.data.get("file_name")
     location = request.data.get("location")
     content = request.data.get("content")
+    universe = request.GET.get("universe")
 
-    # Make folder path relative to Django app
-    code_path = fal.code_path(project_name)
-    create_path = fal.path_join(code_path, location)
+    if universe is not None:
+        universes_path = fal.universes_path(project_name)
+        path = fal.path_join(universes_path, universe)
+    else:
+        path = fal.code_path(project_name)
+
+    create_path = fal.path_join(path, location)
     file_path = fal.path_join(create_path, file_name)
-
-    # If file exist simply return
-    if fal.exists(file_path):
-        return JsonResponse(
-            {"success": False, "message": "File already exists"}, status=409
-        )
 
     fal.create_binary(file_path, base64.b64decode(content))
     return Response({"success": True})
@@ -628,7 +690,7 @@ def list_docker_universes(request):
 
 
 @error_wrapper("GET", ["name"])
-def get_docker_universe_path(request):
+def get_docker_universe_data(request):
     name = request.GET.get("name")
 
     universe = Universe.objects.get(name=name)

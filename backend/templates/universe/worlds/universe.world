@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+
+<sdf version="1.9">
+  <world name="default">
+
+    <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <scene>
+      <shadows>false</shadows>
+    </scene>
+
+    <light type="directional" name="sun">
+      <!-- <cast_shadows>true</cast_shadows> -->
+      <pose>0 0 20 -1.3 0 0.5</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.01 0.01 0.01 1</specular>
+      <intensity>2</intensity>
+      <visualize>false</visualize>
+    </light>
+    
+    <include>
+      <name>Grass</name>
+      <uri>model://grasspatch</uri>
+    </include>
+  </world>
+</sdf>

@@ -132,6 +132,34 @@ class FAL:
         new_data = file_data.replace("ACTION", filename)
         return new_data
 
+    def get_universe_template(self, universe):
+        contents = []
+        templates_folder_path = self.path_join(self.base, "templates/universe")
+        launch_path = self.path_join(templates_folder_path, "launch/universe.launch.py")
+        world_path = self.path_join(templates_folder_path, "worlds/universe.world")
+        cmake_path = self.path_join(templates_folder_path, "CMakeLists.txt")
+        vis_config_path = self.path_join(templates_folder_path, "gz.config")
+        package_path = self.path_join(templates_folder_path, "package.xml")
+
+        file_data = self.read(launch_path)
+        new_data = file_data.replace("REPLACE", universe)
+        contents.append({"path": "launch/universe.launch.py", "content": new_data})
+
+        file_data = self.read(world_path)
+        contents.append({"path": "worlds/universe.world", "content": file_data})
+
+        file_data = self.read(vis_config_path)
+        contents.append({"path": "gz.config", "content": file_data})
+
+        file_data = self.read(cmake_path)
+        new_data = file_data.replace("REPLACE", universe)
+        contents.append({"path": "CMakeLists.txt", "content": new_data})
+
+        file_data = self.read(package_path)
+        new_data = file_data.replace("REPLACE", universe)
+        contents.append({"path": "package.xml", "content": new_data})
+        return contents
+
     def mkdir(self, path: str):
         if ".." in path:
             raise InvalidPath(path)
