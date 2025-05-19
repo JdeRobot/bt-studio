@@ -32,7 +32,8 @@ const getFileList = async (
 
   let apiUrl = `/bt_studio/get_file_list?project_name=${encodeURIComponent(projectName)}`;
 
-  if (universeName !== undefined) apiUrl += `&universe=${encodeURIComponent(universeName)}`;
+  if (universeName !== undefined)
+    apiUrl += `&universe=${encodeURIComponent(universeName)}`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -48,13 +49,18 @@ const getFileList = async (
   }
 };
 
-const getFile = async (projectName: string, fileName: string, universeName: string | undefined = undefined) => {
+const getFile = async (
+  projectName: string,
+  fileName: string,
+  universeName: string | undefined = undefined
+) => {
   if (!projectName) throw new Error("Project name is not set");
   if (!fileName) throw new Error("File name is not set");
 
   let apiUrl = `/bt_studio/get_file?project_name=${encodeURIComponent(projectName)}&filename=${encodeURIComponent(fileName)}`;
 
-  if (universeName !== undefined) apiUrl += `&universe=${encodeURIComponent(universeName)}`;
+  if (universeName !== undefined)
+    apiUrl += `&universe=${encodeURIComponent(universeName)}`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -77,7 +83,7 @@ const getUniverseFileList = async (
   if (!projectName) throw new Error("Project name is not set");
   if (!universeName) throw new Error("Universe name is not set");
 
-  return await getFileList(projectName,  universeName);
+  return await getFileList(projectName, universeName);
 };
 
 const getUniverseFile = async (
@@ -329,6 +335,36 @@ const getProjectGraph = async (currentProjectname: string) => {
 
 // Universe management
 
+const createEmptyUniverse = async (
+  projectName: string,
+  universeName: string
+) => {
+  if (!projectName) throw new Error("The universe name is not set");
+  if (!universeName) throw new Error("The universe name is not set");
+  if (!projectName.trim()) throw new Error("Project name cannot be empty.");
+  if (!universeName.trim()) throw new Error("Project name cannot be empty.");
+
+  const apiUrl = `/bt_studio/create_universe/`;
+
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        project_name: projectName,
+        universe: universeName,
+      },
+      axiosExtra
+    );
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to create project."); // Response error
+    }
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 const getUniverseConfig = async (
   universeName: string,
   currentProjectname: string
@@ -350,6 +386,35 @@ const getUniverseConfig = async (
     }
 
     return JSON.stringify(response.data.config);
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
+const createUniverseConfig = async (
+  currentProjectname: string,
+  universeName: string,
+) => {
+  if (!universeName) throw new Error("The universe name is not set");
+  if (!currentProjectname) throw new Error("Current Project name is not set");
+
+  const apiUrl = "/bt_studio/create_universe_configuration/";
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        project_name: currentProjectname,
+        universe_name: universeName,
+      },
+      axiosExtra
+    );
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(
+        response.data.message || "Failed to create universe config"
+      ); // Response error
+    }
   } catch (error: unknown) {
     throw error; // Rethrow
   }
@@ -619,7 +684,8 @@ const uploadFile = async (
   projectName: string,
   fileName: string,
   location: string,
-  content: string
+  content: string,
+  universeName: undefined | string = undefined
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
@@ -627,18 +693,18 @@ const uploadFile = async (
   if (!content) throw new Error("Content is not defined");
 
   const apiUrl = "/bt_studio/upload_code/";
+  let params = {
+    project_name: projectName,
+    file_name: fileName,
+    location: location,
+    content: content,
+  };
+
+  if (universeName !== undefined)
+    params = Object.assign({}, params, { universe: universeName });
 
   try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        project_name: projectName,
-        file_name: fileName,
-        location: location,
-        content: content,
-      },
-      axiosExtra
-    );
+    const response = await axios.post(apiUrl, params, axiosExtra);
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
@@ -647,6 +713,28 @@ const uploadFile = async (
   } catch (error: unknown) {
     throw error; // Rethrow
   }
+};
+
+const uploadFileUniverse = async (
+  projectName: string,
+  fileName: string,
+  location: string,
+  content: string,
+  universeName: string
+) => {
+  if (!projectName) throw new Error("Current Project name is not set");
+  if (!fileName) throw new Error("File name is not set");
+  if (!location === undefined) throw new Error("Location is not set");
+  if (!content) throw new Error("Content is not defined");
+  if (!universeName) throw new Error("Universe name is not set");
+
+  return await uploadFile(
+    projectName,
+    fileName,
+    location,
+    content,
+    universeName
+  );
 };
 
 const createAction = async (
@@ -726,7 +814,8 @@ const createFile = async (
 const createFolder = async (
   projectName: string,
   folderName: string,
-  location: string
+  location: string,
+  universeName: undefined | string = undefined
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!folderName) throw new Error("Folder name is not set");
@@ -734,14 +823,19 @@ const createFolder = async (
 
   const apiUrl = "/bt_studio/create_folder/";
 
+  let params = {
+    project_name: projectName,
+    location: location,
+    folder_name: folderName,
+  };
+
+  if (universeName !== undefined)
+    params = Object.assign({}, params, { universe: universeName });
+
   try {
     const response = await axios.post(
       apiUrl,
-      {
-        project_name: projectName,
-        location: location,
-        folder_name: folderName,
-      },
+      params,
       axiosExtra
     );
 
@@ -757,6 +851,20 @@ const createFolder = async (
     console.log(error);
     throw error; // Rethrow
   }
+};
+
+const createUniverseFolder = async (
+  projectName: string,
+  folderName: string,
+  location: string,
+  universeName: string
+) => {
+  if (!projectName) throw new Error("Current Project name is not set");
+  if (!folderName) throw new Error("Folder name is not set");
+  if (location === undefined) throw new Error("Location is not set");
+  if (!universeName) throw new Error("Universe name is not set");
+
+  return await createFolder(projectName, folderName, location, universeName);
 };
 
 const renameFile = async (
@@ -908,7 +1016,7 @@ const uploadUniverse = async (
 
 const createCustomUniverse = async (
   projectName: string,
-  universeName: string,
+  universeName: string
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!universeName) throw new Error("Universe name is not set");
@@ -1036,6 +1144,7 @@ const getSubtreeStructure = async (
 export {
   createAction,
   createCustomUniverse,
+  createEmptyUniverse,
   createFile,
   createFolder,
   createProject,
@@ -1070,5 +1179,8 @@ export {
   saveProjectConfig,
   saveSubtree,
   uploadFile,
+  uploadFileUniverse,
   uploadUniverse,
+  createUniverseFolder,
+  createUniverseConfig
 };

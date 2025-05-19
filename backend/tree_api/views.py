@@ -252,6 +252,18 @@ def get_subtree_list(request):
 # UNIVERSE MANAGEMENT
 
 
+@error_wrapper("POST", ["project_name", "universe"])
+def create_universe(request):
+    project_name = request.data.get("project_name")
+    universe_name = request.data.get("universe")
+
+    universes_path = fal.universes_path(project_name)
+    universe_path = fal.path_join(universes_path, universe_name)
+
+    fal.mkdir(universe_path)
+    return Response({"success": True}, status=200)
+
+
 @error_wrapper("POST", ["project_name", "universe_name"])
 def delete_universe(request):
     project_name = request.data.get("project_name")
@@ -272,6 +284,34 @@ def get_universes_list(request):
 
     universes_list = fal.listdirs(universes_path)
     return Response({"universes_list": universes_list})
+
+
+@error_wrapper("POST", ["project_name", "universe_name"])
+def create_universe_configuration(request):
+    project_name = request.data.get("project_name")
+    universe_name = request.data.get("universe_name")
+
+    universes_path = fal.universes_path(project_name)
+    universe_path = fal.path_join(universes_path, universe_name)
+    config_path = fal.path_join(universe_path, "config.json")
+
+    universe_config = {
+        "name": universe_name,
+        "type": "custom",
+        "ram_config": {
+            "ros_version": "ROS2",
+            "world": "gazebo",
+            "launch_file_path": "",
+            "visualization_config_path": "",
+        },
+    }
+
+    universe_data = json.dumps(universe_config, ensure_ascii=False, indent=4)
+    fal.create(config_path, universe_data)
+
+    return Response(
+        {"success": True, "message": "Universe config created successfully"}, status=200
+    )
 
 
 @error_wrapper("GET", ["project_name", "universe_name"])
@@ -356,7 +396,7 @@ def create_file(request):
     project_name = request.data.get("project_name")
     location = request.data.get("location")
     filename = request.data.get("file_name")
-    universe = request.GET.get("universe")
+    universe = request.data.get("universe")
 
     if universe is not None:
         universes_path = fal.universes_path(project_name)
@@ -376,7 +416,7 @@ def create_folder(request):
     project_name = request.data.get("project_name")
     location = request.data.get("location")
     folder_name = request.data.get("folder_name")
-    universe = request.GET.get("universe")
+    universe = request.data.get("universe")
 
     if universe is not None:
         universes_path = fal.universes_path(project_name)
@@ -396,7 +436,7 @@ def rename_file(request):
     project_name = request.data.get("project_name")
     path = request.data.get("path")
     rename_path = request.data.get("rename_to")
-    universe = request.GET.get("universe")
+    universe = request.data.get("universe")
 
     if universe is not None:
         universes_path = fal.universes_path(project_name)
@@ -416,7 +456,7 @@ def rename_folder(request):
     project_name = request.data.get("project_name")
     path = request.data.get("path")
     rename_path = request.data.get("rename_to")
-    universe = request.GET.get("universe")
+    universe = request.data.get("universe")
 
     if universe is not None:
         universes_path = fal.universes_path(project_name)
@@ -435,7 +475,7 @@ def rename_folder(request):
 def delete_file(request):
     project_name = request.data.get("project_name")
     path = request.data.get("path")
-    universe = request.GET.get("universe")
+    universe = request.data.get("universe")
 
     if universe is not None:
         universes_path = fal.universes_path(project_name)
@@ -453,7 +493,7 @@ def delete_file(request):
 def delete_folder(request):
     project_name = request.data.get("project_name")
     path = request.data.get("path")
-    universe = request.GET.get("universe")
+    universe = request.data.get("universe")
 
     if universe is not None:
         universes_path = fal.universes_path(project_name)
@@ -472,7 +512,7 @@ def save_file(request):
     project_name = request.data.get("project_name")
     filename = request.data.get("filename")
     content = request.data.get("content")
-    universe = request.GET.get("universe")
+    universe = request.data.get("universe")
 
     if universe is not None:
         universes_path = fal.universes_path(project_name)
@@ -659,14 +699,14 @@ def add_docker_universe(request):
     )
 
 
-@error_wrapper("POST", ["project_name", "file_name", "location", "content"])
+@error_wrapper("POST", ["project_name", "file_name", ("location", -1), "content"])
 def upload_code(request):
     # Get the name and the zip file from the request
     project_name = request.data.get("project_name")
     file_name = request.data.get("file_name")
     location = request.data.get("location")
     content = request.data.get("content")
-    universe = request.GET.get("universe")
+    universe = request.data.get("universe")
 
     if universe is not None:
         universes_path = fal.universes_path(project_name)

@@ -17,7 +17,13 @@ urlpatterns = [
         name="get_project_configuration",
     ),
     # Universe Management
+    path("create_universe/", views.create_universe, name="create_universe"),
     path("delete_universe/", views.delete_universe, name="delete_universe"),
+    path(
+        "create_universe_configuration/",
+        views.create_universe_configuration,
+        name="create_universe_configuration",
+    ),
     path(
         "get_universe_configuration/",
         views.get_universe_configuration,

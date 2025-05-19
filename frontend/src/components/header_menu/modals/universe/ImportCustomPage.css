@@ -73,3 +73,9 @@
   text-align: center;
   transition: color 0.2s ease-in-out;
 }
+
+.bt-modal-complex-input-row-container {
+  & .bt-progress-bar-container {
+    width: 75%;
+  }
+}

@@ -4,7 +4,7 @@
   <name>test_world</name>
   <version>0.0.0</version>
   <description>Package contains custom universe for BT Studio</description>
-  <maintainer email="test@test.com">root</maintainer>
+  <maintainer email="mail@mail.com">root</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

@@ -3,9 +3,15 @@ import "./CreatePage.css";
 import "./ImportCustomPage.css";
 import { ReactComponent as BackIcon } from "../../../Modal/img/back.svg";
 import { ReactComponent as CloseIcon } from "../../../Modal/img/close.svg";
-import { uploadUniverse } from "../../../../api_helper/TreeWrapper";
+import {
+  createEmptyUniverse,
+  createUniverseConfig,
+  createUniverseFolder,
+  uploadFileUniverse,
+} from "../../../../api_helper/TreeWrapper";
 import { useError } from "../../../error_popup/ErrorModal";
 import ProgressBar from "../../../progress_bar/ProgressBar";
+import JSZip from "jszip";
 
 const initialUniverseData = {
   universeName: "",
@@ -26,9 +32,7 @@ const ImportCustomPage = ({
 
   const focusInputRef = useRef<any>(null);
   const [formState, setFormState] = useState(initialUniverseData);
-  const [uploadedUniverse, setUploadedUniverse] = useState<string>("");
-  const [uploadStatus, setUploadStatus] = useState<string>("");
-  const [uploadPercentage, setUploadPercentage] = useState<number>(0);
+  const [uploadPercentage, setUploadPercentage] = useState(0);
 
   const uploadInputRef = useRef<any>(null);
   const uploadAreaRef = useRef<any>(null);
@@ -60,56 +64,61 @@ const ImportCustomPage = ({
       return;
     }
 
-    if (uploadPercentage !== 100) {
-      console.warn("Not yet uploaded!");
-      return;
+    await createEmptyUniverse(currentProject, formState.universeName);
+    await handleAcceptedFiles(uploadInputRef.current.files);
+    try {
+      await createUniverseConfig(currentProject, formState.universeName);
+    } catch {
+      console.log("Already had configuration");
     }
-
-    uploadUniverse(currentProject, formState.universeName, uploadedUniverse);
 
     setVisible(false);
   };
 
-  const handleAcceptedFiles = async (files: FileList | null) => {
-    // TODO: Redo for directory
+  const handleAcceptedFiles = async (files: FileList) => {
     if (files) {
-      handleZipFiles(Array.from(files));
+      await handleZipFiles(Array.from(files)[0]);
     }
   };
 
-  const handleZipFiles = async (file_array: File[]) => {
-    // TODO: check if files are valid
-    const n_files = file_array.length;
-    var n_files_uploaded = 0;
+  const handleZipFiles = async (zip: File) => {
+    await JSZip.loadAsync(zip).then(async function (zip) {
+      const files = Object.keys(zip.files);
+      const n_files = files.length;
+      var n_files_uploaded = 0;
 
-    file_array.forEach((file: File, index: number) => {
-      var reader = new FileReader();
-
-      reader.onprogress = (data) => {
-        if (data.lengthComputable) {
-          const progress = Math.round((data.loaded / data.total) * 100);
-          setUploadPercentage(progress * (n_files_uploaded / n_files));
-        }
-      };
-
-      reader.onload = (e: any) => {
-        const base64String = e.target.result.split(",")[1]; // Remove the data URL prefix
+      for (const index in files) {
+        const filename = files[index];
+        const file = zip.files[filename];
         try {
-          // uploadFile(currentProject, file.name, location, base64String);
-          console.log("Uploading file Completed");
+          if (file.dir) {
+            await createUniverseFolder(
+              currentProject,
+              filename,
+              "",
+              formState.universeName,
+            );
+          } else {
+            await file.async("base64").then(async function (fileData) {
+              await uploadFileUniverse(
+                currentProject,
+                filename,
+                "",
+                fileData,
+                formState.universeName,
+              );
+              console.log("Uploading file Completed");
+            });
+          }
         } catch (e) {
           if (e instanceof Error) {
-            console.error("Error uploading file" + e.message);
-            error("Error uploading file" + e.message);
+            console.error("Error creating folder" + e.message);
+            error("Error creating folder" + e.message);
           }
         }
-
-        setUploadStatus("Uploaded");
+        n_files_uploaded++;
         setUploadPercentage(100 * (n_files_uploaded / n_files));
-      };
-
-      reader.readAsDataURL(file);
-      n_files_uploaded++;
+      }
     });
   };
 
@@ -122,7 +131,6 @@ const ImportCustomPage = ({
       event.dataTransfer.files[0].type === "application/zip"
     ) {
       uploadInputRef.current.files = event.dataTransfer.files;
-      handleAcceptedFiles(uploadInputRef.current.files[0]);
     }
   };
 
@@ -205,7 +213,6 @@ const ImportCustomPage = ({
               ref={uploadInputRef}
               className="bt-modal-button"
               id="uploadDropInput"
-              onChange={(e) => handleAcceptedFiles(e.target.files)}
               type="file"
               accept="application/zip"
               name="img"
@@ -217,11 +224,7 @@ const ImportCustomPage = ({
         </div>
       </div>
       <div className="bt-modal-complex-input-row-container">
-        {uploadStatus !== "" && (
-          <ProgressBar completed={uploadPercentage} />
-          // <div className="bt-form-row">
-          // </div>
-        )}
+        <ProgressBar completed={uploadPercentage} />
       </div>
       <div className="bt-modal-complex-input-row-container">
         <div id="create-new-universe" onClick={() => handleCreate()}>
