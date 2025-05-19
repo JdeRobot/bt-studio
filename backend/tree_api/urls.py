@@ -48,7 +48,6 @@ urlpatterns = [
         views.create_custom_universe,
         name="create_custom_universe",
     ),
-    path("upload_universe/", views.upload_universe, name="upload_universe"),
     # Tree Management
     path("save_base_tree/", views.save_base_tree, name="save_base_tree"),
     path("get_base_tree/", views.get_base_tree, name="get_base_tree"),

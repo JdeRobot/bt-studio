@@ -1393,19 +1393,6 @@ class LocalTestFailedCase(TestCase):
         )
         self.assertEqual(response.status_code, self.no_files)
 
-    def test_incorrect_upload_universe(self):
-        """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/upload_universe/")
-        self.assertEqual(response.status_code, self.no_param)
-
-    def test_bad_zip_upload_universe(self):
-        """Test if error appears when no paramters are passed"""
-        response = self.c.post(
-            "/bt_studio/upload_universe/",
-            {"app_name": "test", "universe_name": "test", "zip_file": "a"},
-        )
-        self.assertEqual(response.status_code, self.bad_data)
-
     def test_incorrect_add_docker_universe(self):
         """Test if error appears when no paramters are passed"""
         response = self.c.post("/bt_studio/add_docker_universe/")

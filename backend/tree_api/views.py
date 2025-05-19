@@ -1,4 +1,3 @@
-import zipfile
 import shutil
 import json
 import base64
@@ -551,71 +550,6 @@ def generate_dockerized_app(request):
 
     final_tree, _ = app_generator.generate_app(fal, project_name, bt_order)
     return JsonResponse({"success": True, "tree": final_tree})
-
-
-@error_wrapper("POST", ["app_name", "universe_name", "zip_file"])
-def upload_universe(request):
-    # Get the name and the zip file from the request
-    universe_name = request.data.get("universe_name")
-    app_name = request.data.get("app_name")
-    zip_file = request.data.get("zip_file")
-
-    # Make folder path relative to Django app
-    base_path = fal.base_path()
-    project_path = fal.path_join(base_path, app_name)
-    universes_path = fal.path_join(project_path, "universes")
-    universe_path = fal.path_join(universes_path, universe_name)
-
-    # Create the folder if it doesn't exist
-    if not fal.exists(universe_path):
-        fal.mkdir(universe_path)
-
-    try:
-        zip_file_data = base64.b64decode(zip_file)
-    except (TypeError, ValueError):
-        return Response({"error": "Invalid zip file data."}, status=422)
-
-    # Save the zip file temporarily
-    temp_zip_path = fal.path_join(universe_path, "temp.zip")
-    with open(temp_zip_path, "wb") as temp_zip_file:
-        temp_zip_file.write(zip_file_data)
-
-    # Unzip the file
-    try:
-        with zipfile.ZipFile(temp_zip_path, "r") as zip_ref:
-            zip_ref.extractall(universe_path)
-    except zipfile.BadZipFile:
-        return Response(
-            {"error": "Invalid zip file."}, status=status.HTTP_400_BAD_REQUEST
-        )
-    finally:
-        try:
-            fal.removefile(temp_zip_path)
-        except Exception as e:
-            return Response({"success": False, "message": "Server error"}, status=500)
-
-    # Fill the config dictionary of the universe
-    ram_launch_path = "/workspace/worlds/src/" + universe_name + "/universe.launch.py"
-    universe_config = {
-        "name": universe_name,
-        "type": "custom",
-        "ram_config": {
-            "ros_version": "ROS2",
-            "world": "gazebo",
-            "launch_file_path": ram_launch_path,
-            "visualization_config_path": None,
-        },
-    }
-
-    # Generate the json config
-    config_path = fal.path_join(universe_path, "config.json")
-    with open(config_path, "w") as config_file:
-        json.dump(universe_config, config_file, ensure_ascii=False, indent=4)
-
-    return Response(
-        {"success": True, "message": "Universe uploaded successfully"},
-        status=status.HTTP_200_OK,
-    )
 
 
 @error_wrapper("POST", ["project_name", "universe_name"])

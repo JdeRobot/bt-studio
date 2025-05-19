@@ -393,7 +393,7 @@ const getUniverseConfig = async (
 
 const createUniverseConfig = async (
   currentProjectname: string,
-  universeName: string,
+  universeName: string
 ) => {
   if (!universeName) throw new Error("The universe name is not set");
   if (!currentProjectname) throw new Error("Current Project name is not set");
@@ -833,11 +833,7 @@ const createFolder = async (
     params = Object.assign({}, params, { universe: universeName });
 
   try {
-    const response = await axios.post(
-      apiUrl,
-      params,
-      axiosExtra
-    );
+    const response = await axios.post(apiUrl, params, axiosExtra);
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
@@ -970,37 +966,6 @@ const deleteFolder = async (projectName: string, path: string) => {
       {
         project_name: projectName,
         path: path,
-      },
-      axiosExtra
-    );
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to upload file."); // Response error
-    }
-  } catch (error: unknown) {
-    throw error; // Rethrow
-  }
-};
-
-const uploadUniverse = async (
-  projectName: string,
-  universeName: string,
-  uploadedUniverse: string
-) => {
-  if (!projectName) throw new Error("Current Project name is not set");
-  if (!universeName) throw new Error("Universe name is not set");
-  if (!uploadedUniverse) throw new Error("Content is not set");
-
-  const apiUrl = "/bt_studio/upload_universe/";
-
-  try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        universe_name: universeName,
-        zip_file: uploadedUniverse,
-        app_name: projectName,
       },
       axiosExtra
     );
@@ -1150,6 +1115,8 @@ export {
   createProject,
   createRoboticsBackendUniverse,
   createSubtree,
+  createUniverseConfig,
+  createUniverseFolder,
   deleteFile,
   deleteFolder,
   deleteProject,
@@ -1180,7 +1147,4 @@ export {
   saveSubtree,
   uploadFile,
   uploadFileUniverse,
-  uploadUniverse,
-  createUniverseFolder,
-  createUniverseConfig
 };
