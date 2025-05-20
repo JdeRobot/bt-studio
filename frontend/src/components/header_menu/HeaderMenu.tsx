@@ -7,7 +7,7 @@ import {
   generateLocalApp,
   generateDockerizedApp,
   getUniverseConfig,
-  getRoboticsBackendUniversePath,
+  getRoboticsBackendUniverse,
   getUniverseFile,
   getUniverseFileList,
 } from "../../api_helper/TreeWrapper";
@@ -153,7 +153,7 @@ const HeaderMenu = ({
 
     try {
       if (configJson.type === "robotics_backend") {
-        const dockerUniverseInfo = await getRoboticsBackendUniversePath(
+        const dockerUniverseInfo = await getRoboticsBackendUniverse(
           configJson.id,
         );
 

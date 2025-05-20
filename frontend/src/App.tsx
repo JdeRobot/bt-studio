@@ -11,7 +11,7 @@ import ErrorModal, { ErrorProvider } from "./components/error_popup/ErrorModal";
 import { useError } from "./components/error_popup/ErrorModal";
 import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
 import CommsManager from "./api_helper/CommsManager";
-import { loadProjectConfig } from "./api_helper/TreeWrapper";
+import { getProjectConfig } from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
 import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
@@ -145,7 +145,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
 
   useEffect(() => {
     if (currentProjectname !== "") {
-      loadProjectConfig(currentProjectname, settings);
+      getProjectConfig(currentProjectname, settings);
     }
   }, [currentProjectname]); // Reload project configuration
 

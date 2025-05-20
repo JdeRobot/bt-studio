@@ -2,7 +2,7 @@ import React, { useContext, useRef } from "react";
 import { useState, useEffect } from "react";
 import TreeEditor from "./TreeEditor";
 import {
-  getProjectGraph,
+  getBaseTree,
   getSubtree,
   saveSubtree,
   saveBaseTree,
@@ -70,7 +70,7 @@ const MainTreeEditorContainer = ({
     try {
       const graph_json = subTreeName
         ? await getSubtree(subTreeName, projectName)
-        : await getProjectGraph(projectName);
+        : await getBaseTree(projectName);
       setInitialJson(graph_json);
     } catch (e: unknown) {
       if (e instanceof Error) {
