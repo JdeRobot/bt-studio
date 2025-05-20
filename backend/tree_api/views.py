@@ -439,12 +439,12 @@ def rename_file(request):
 
     if universe is not None:
         universes_path = fal.universes_path(project_name)
-        path = fal.path_join(universes_path, universe)
+        base_path = fal.path_join(universes_path, universe)
     else:
-        path = fal.code_path(project_name)
+        base_path = fal.code_path(project_name)
 
-    file_path = fal.path_join(path, path)
-    new_path = fal.path_join(path, rename_path)
+    file_path = fal.path_join(base_path, path)
+    new_path = fal.path_join(base_path, rename_path)
 
     fal.renamefile(file_path, new_path)
     return JsonResponse({"success": True})
@@ -459,12 +459,12 @@ def rename_folder(request):
 
     if universe is not None:
         universes_path = fal.universes_path(project_name)
-        path = fal.path_join(universes_path, universe)
+        base_path = fal.path_join(universes_path, universe)
     else:
-        path = fal.code_path(project_name)
+        base_path = fal.code_path(project_name)
 
-    file_path = fal.path_join(path, path)
-    new_path = fal.path_join(path, rename_path)
+    file_path = fal.path_join(base_path, path)
+    new_path = fal.path_join(base_path, rename_path)
 
     fal.renamedir(file_path, new_path)
     return JsonResponse({"success": True})
@@ -478,11 +478,11 @@ def delete_file(request):
 
     if universe is not None:
         universes_path = fal.universes_path(project_name)
-        path = fal.path_join(universes_path, universe)
+        base_path = fal.path_join(universes_path, universe)
     else:
-        path = fal.code_path(project_name)
+        base_path = fal.code_path(project_name)
 
-    file_path = fal.path_join(path, path)
+    file_path = fal.path_join(base_path, path)
 
     fal.removefile(file_path)
     return JsonResponse({"success": True})
@@ -496,11 +496,11 @@ def delete_folder(request):
 
     if universe is not None:
         universes_path = fal.universes_path(project_name)
-        path = fal.path_join(universes_path, universe)
+        base_path = fal.path_join(universes_path, universe)
     else:
-        path = fal.code_path(project_name)
+        base_path = fal.code_path(project_name)
 
-    file_path = fal.path_join(path, path)
+    file_path = fal.path_join(base_path, path)
 
     fal.removedir(file_path)
     return JsonResponse({"success": True})

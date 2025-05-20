@@ -1409,7 +1409,7 @@ class LocalTestFailedCase(TestCase):
                 "project_name": "test",
                 "location": "dir",
                 "file_name": "file.txt",
-                "content": "a",
+                "content": "asff",
             },
         )
         self.assertEqual(response.status_code, self.dup_file)
