@@ -4,9 +4,16 @@ import Modal from "../../Modal/Modal";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 import { ReactComponent as DeleteIcon } from "../../tree_editor/img/delete.svg";
 import CreatePage from "./universe/CreatePage";
-import UniverseUploadModal from "./UniverseUploadModal";
 import { deleteUniverse, listUniverses } from "../../../api_helper/TreeWrapper";
 import { useError } from "../../error_popup/ErrorModal";
+import CreateCustomPage from "./universe/CreateCustomPage";
+import ImportCustomPage from "./universe/ImportCustomPage";
+
+enum UniverseTypes {
+  ROBOTICSBACKEND,
+  CUSTOM,
+  ZIP,
+}
 
 const UniverseModal = ({
   onSubmit,
@@ -26,6 +33,9 @@ const UniverseModal = ({
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [universeAdded, setUniverseAdded] = useState(false);
   const [creationMenu, showCreationMenu] = useState<boolean>(false);
+  const [creationType, changeCreationType] = useState<UniverseTypes>(
+    UniverseTypes.CUSTOM,
+  );
 
   const loadUniverseList = async () => {
     try {
@@ -83,13 +93,18 @@ const UniverseModal = ({
   };
 
   const importFromRoboticsBackend = () => {
-    console.log("Create from RB");
-    //TODO: need to get the name and open a dropdown to select the universe
     showCreationMenu(true);
+    changeCreationType(UniverseTypes.ROBOTICSBACKEND);
+  };
+
+  const createCustomUniverse = () => {
+    showCreationMenu(true);
+    changeCreationType(UniverseTypes.CUSTOM);
   };
 
   const importFromZip = () => {
-    setUploadModalOpen(true);
+    showCreationMenu(true);
+    changeCreationType(UniverseTypes.ZIP);
   };
 
   const handleCloseUploadUniverseModal = (universe_name: string) => {
@@ -103,13 +118,6 @@ const UniverseModal = ({
       isOpen={isOpen}
       onClose={onClose}
     >
-      <UniverseUploadModal
-        isOpen={uploadModalOpen}
-        onSubmit={(data: any) => {}}
-        onClose={handleCloseUploadUniverseModal}
-        currentProject={currentProject}
-        setUniverseAdded={setUniverseAdded}
-      />
       <form onSubmit={onSubmit} onReset={handleCancel}>
         {!creationMenu ? (
           <>
@@ -161,6 +169,14 @@ const UniverseModal = ({
                 <div
                   className="bt-project-modal-create-button"
                   onClick={() => {
+                    createCustomUniverse();
+                  }}
+                >
+                  New custom universe
+                </div>
+                <div
+                  className="bt-project-modal-create-button"
+                  onClick={() => {
                     importFromZip();
                   }}
                 >
@@ -175,18 +191,35 @@ const UniverseModal = ({
                 >
                   Import from Robotics Backend library
                 </div>
-                {/* <div className='bt-project-modal-create-button'>Other</div> */}
               </div>
             </div>
           </>
         ) : (
           <>
-            <CreatePage
-              setVisible={showCreationMenu}
-              visible={creationMenu}
-              onClose={onClose}
-              currentProject={currentProject}
-            />
+            {creationType === UniverseTypes.ROBOTICSBACKEND && (
+              <CreatePage
+                setVisible={showCreationMenu}
+                visible={creationMenu}
+                onClose={onClose}
+                currentProject={currentProject}
+              />
+            )}
+            {creationType === UniverseTypes.CUSTOM && (
+              <CreateCustomPage
+                setVisible={showCreationMenu}
+                visible={creationMenu}
+                onClose={onClose}
+                currentProject={currentProject}
+              />
+            )}
+            {creationType === UniverseTypes.ZIP && (
+              <ImportCustomPage
+                setVisible={showCreationMenu}
+                visible={creationMenu}
+                onClose={onClose}
+                currentProject={currentProject}
+              />
+            )}
           </>
         )}
       </form>

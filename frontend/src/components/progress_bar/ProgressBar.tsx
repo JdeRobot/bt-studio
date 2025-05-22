@@ -7,7 +7,7 @@ const ProgressBar = ({ completed }: { completed: number }) => {
         className="bt-progress-bar-filler"
         style={{ width: `${completed}%` }}
       >
-        <span className="bt-progress-bar-percentage">{`${completed}%`}</span>
+        <span className="bt-progress-bar-percentage">{`${completed.toFixed(2)}%`}</span>
       </div>
     </div>
   );

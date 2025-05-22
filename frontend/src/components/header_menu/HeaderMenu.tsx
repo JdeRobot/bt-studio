@@ -7,7 +7,7 @@ import {
   generateLocalApp,
   generateDockerizedApp,
   getUniverseConfig,
-  getRoboticsBackendUniversePath,
+  getRoboticsBackendUniverse,
   getUniverseFile,
   getUniverseFileList,
 } from "../../api_helper/TreeWrapper";
@@ -153,7 +153,7 @@ const HeaderMenu = ({
 
     try {
       if (configJson.type === "robotics_backend") {
-        const dockerUniverseInfo = await getRoboticsBackendUniversePath(
+        const dockerUniverseInfo = await getRoboticsBackendUniverse(
           configJson.id,
         );
 
@@ -181,9 +181,6 @@ const HeaderMenu = ({
         );
         console.log("Viz ready!");
       } else {
-        console.log("Custom universe rework underway");
-        console.warn("Custom universe rework underway");
-
         const file_list = await getUniverseFileList(
           currentProjectname,
           configJson.name,
@@ -234,9 +231,17 @@ const HeaderMenu = ({
           robot: robot_config,
         };
 
+        const visualization_config = configJson.ram_config
+          .visualization_config_path
+          ? configJson.ram_config.visualization_config_path
+          : null;
+
         await manager.launchWorld(universe_config);
         console.log("RB universe launched!");
-        await manager.prepareVisualization("gzsim_rae", null);
+        await manager.prepareVisualization(
+          "bt_studio_gz",
+          visualization_config,
+        );
         console.log("Viz ready!");
       }
     } catch (e: unknown) {

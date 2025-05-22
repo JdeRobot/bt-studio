@@ -80,8 +80,8 @@ def select_RB_universe(self):
 def check_RB_universe(self):
     # - Seleccionar un Universo: Seleccionar el universo "test"
     response = self.c.get(
-        "/bt_studio/get_universe_file_list/",
-        {"project_name": "test", "universe_name": "test"},
+        "/bt_studio/get_file_list/",
+        {"project_name": "test", "universe": "test"},
     )
     self.assertEqual(response.json(), self.base_rb_universe_content)
 
@@ -259,7 +259,7 @@ def delete_folder(self, dir):
 
 def get_tree(self, exepected):
     response = self.c.get(
-        "/bt_studio/get_project_graph/",
+        "/bt_studio/get_base_tree/",
         {"project_name": "test"},
     )
     self.assertEqual(response.status_code, 200)
@@ -420,7 +420,7 @@ class LocalTestCase(TestCase):
         self.assertEqual("Follow Person" in response.json()["universes"], True)
 
         response = self.c.get(
-            "/bt_studio/get_docker_universe_path/", {"name": "Follow Person"}
+            "/bt_studio/get_docker_universe_data/", {"name": "Follow Person"}
         )
         self.assertEqual(response.status_code, 200)
 
@@ -432,10 +432,10 @@ class LocalTestCase(TestCase):
         select_RB_universe(self)
         check_RB_universe(self)
         response = self.c.get(
-            "/bt_studio/get_universe_file/",
+            "/bt_studio/get_file/",
             {
                 "project_name": "test",
-                "universe_name": "test",
+                "universe": "test",
                 "filename": "config.json",
             },
         )
@@ -911,12 +911,12 @@ class LocalTestFailedCase(TestCase):
 
     def test_incorrect_get_main_tree(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_project_graph/")
+        response = self.c.get("/bt_studio/get_base_tree/")
         self.assertEqual(response.status_code, self.no_param)
 
     def test_no_find_get_main_tree(self):
         """Test if error appears when paramters are wrong"""
-        response = self.c.get("/bt_studio/get_project_graph/", {"project_name": "test"})
+        response = self.c.get("/bt_studio/get_base_tree/", {"project_name": "test"})
         self.assertEqual(response.status_code, self.no_files)
 
     def test_bad_json_get_main_tree(self):
@@ -924,7 +924,7 @@ class LocalTestFailedCase(TestCase):
         create_proyect(self)
         write_to_file(self, "trees", "main.json", "{[]}")
         check_file(self, "trees", "main.json", "{[]}")
-        response = self.c.get("/bt_studio/get_project_graph/", {"project_name": "test"})
+        response = self.c.get("/bt_studio/get_base_tree/", {"project_name": "test"})
         self.assertEqual(response.status_code, self.bad_data)
         delete_proyect(self)
 
@@ -1369,42 +1369,29 @@ class LocalTestFailedCase(TestCase):
 
     def test_incorrect_get_universe_file_list(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_universe_file_list/")
+        response = self.c.get("/bt_studio/get_file_list/")
         self.assertEqual(response.status_code, self.no_param)
 
     def test_no_find_get_universe_file_list(self):
         """Test if error appears when no paramters are passed"""
         response = self.c.get(
-            "/bt_studio/get_universe_file_list/",
-            {"project_name": "test", "universe_name": "test"},
+            "/bt_studio/get_file_list/",
+            {"project_name": "test", "universe": "test"},
         )
         self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_get_universe_file(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_universe_file/")
+        response = self.c.get("/bt_studio/get_file/")
         self.assertEqual(response.status_code, self.no_param)
 
     def test_no_find_get_universe_file(self):
         """Test if error appears when no paramters are passed"""
         response = self.c.get(
-            "/bt_studio/get_universe_file/",
-            {"project_name": "test", "universe_name": "test", "filename": "a"},
+            "/bt_studio/get_file/",
+            {"project_name": "test", "universe": "test", "filename": "a"},
         )
         self.assertEqual(response.status_code, self.no_files)
-
-    def test_incorrect_upload_universe(self):
-        """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/upload_universe/")
-        self.assertEqual(response.status_code, self.no_param)
-
-    def test_bad_zip_upload_universe(self):
-        """Test if error appears when no paramters are passed"""
-        response = self.c.post(
-            "/bt_studio/upload_universe/",
-            {"app_name": "test", "universe_name": "test", "zip_file": "a"},
-        )
-        self.assertEqual(response.status_code, self.bad_data)
 
     def test_incorrect_add_docker_universe(self):
         """Test if error appears when no paramters are passed"""
@@ -1422,7 +1409,7 @@ class LocalTestFailedCase(TestCase):
                 "project_name": "test",
                 "location": "dir",
                 "file_name": "file.txt",
-                "content": "a",
+                "content": "asff",
             },
         )
         self.assertEqual(response.status_code, self.dup_file)
@@ -1451,7 +1438,7 @@ class LocalTestFailedCase(TestCase):
 
     def test_incorrect_get_docker_universe_path(self):
         """Test if error appears when no paramters are passed"""
-        response = self.c.get("/bt_studio/get_docker_universe_path/")
+        response = self.c.get("/bt_studio/get_docker_universe_data/")
         self.assertEqual(response.status_code, self.no_param)
 
 
@@ -1561,6 +1548,7 @@ class SeleniumTests(StaticLiveServerTestCase):
         self.selenium.get_full_page_screenshot_as_file(
             "/BtStudio/.test_logs/bt_create.png"
         )
+
 
 #     # def test_bt_execution(self):
 #     #     print(self.live_server_url)
