@@ -292,9 +292,7 @@ const NodeMenu = ({
             className="bt-node-action-button"
             onClick={() => {
               openInNewTab(
-                new URL(
-                  "https://jderobot.github.io/bt-studio/documentation/",
-                ),
+                new URL("https://jderobot.github.io/bt-studio/documentation/"),
               );
             }}
             title="Help"
