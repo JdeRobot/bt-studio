@@ -76,12 +76,8 @@ jobs:
     steps:
       - name: Save the version tag
         run: echo "TAG=${TAG#v}" >> $GITHUB_ENV
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@master
-        with:
-          root-reserve-mb: 512
-          swap-size-mb: 1024
-          remove-dotnet: 'true'
+      - name: Free disk space
+        run: curl -fsSL https://raw.githubusercontent.com/kou/arrow/e49d8ae15583ceff03237571569099a6ad62be32/ci/scripts/util_free_space.sh | bash
       - name: Check out the repo # checking our the code at current commit that triggers the workflow
         uses: actions/checkout@v3
         with:
