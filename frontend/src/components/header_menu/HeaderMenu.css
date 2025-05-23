@@ -29,9 +29,10 @@
 
 .bt-header-button-container {
   display: flex;
-  width: 85%;
+  width: 75%;
   justify-content: flex-end;
   align-items: center;
+  margin-left: auto;
 }
 
 .bt-header-button {

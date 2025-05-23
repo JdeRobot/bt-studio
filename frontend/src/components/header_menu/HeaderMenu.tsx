@@ -518,7 +518,7 @@ const HeaderMenu = ({
         ) : (
           <LogoIcon className="bt-jde-icon" fill="var(--icon)" />
         )}
-        <h1 className="bt-Header-text">BT Studio IDE</h1>
+        <h1 className="bt-Header-text">{isUnibotics ? "Projects" : "BT Studio IDE"}</h1>
         <ProjectModal
           isOpen={isProjectModalOpen}
           onSubmit={onSubmit}
