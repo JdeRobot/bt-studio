@@ -52,7 +52,7 @@ const NodeMenuMinimal = ({
             onClick={() => {
               openInNewTab(
                 new URL(
-                  "https://github.com/JdeRobot/bt-studio/tree/unibotics-devel/documentation",
+                  "https://jderobot.github.io/bt-studio/documentation/",
                 ),
               );
             }}
