@@ -281,7 +281,12 @@ const UniverseBrowser = ({
       try {
         console.log(renameEntry);
         if (renameEntry.is_dir) {
-          await renameFolder(currentProjectname, renameEntry.path, new_path, "");
+          await renameFolder(
+            currentProjectname,
+            renameEntry.path,
+            new_path,
+            "",
+          );
         } else {
           await renameFile(currentProjectname, renameEntry.path, new_path, "");
         }

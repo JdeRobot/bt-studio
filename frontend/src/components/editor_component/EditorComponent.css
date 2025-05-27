@@ -55,7 +55,8 @@
   user-select: none;
   z-index: 99;
   background-color: var(--primary-200);
-  &:hover, :active {
+  &:hover,
+  :active {
     background-color: var(--primary-300);
   }
 }
@@ -70,7 +71,8 @@
   user-select: none;
   z-index: 99;
   background-color: var(--primary-200);
-  &:hover, :active {
+  &:hover,
+  :active {
     background-color: var(--primary-300);
   }
 }

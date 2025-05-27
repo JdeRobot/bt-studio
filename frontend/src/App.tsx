@@ -58,16 +58,16 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     addUser();
     console.log(
       "Now the updated value of users connected is: ",
-      currentUsers.current
+      currentUsers.current,
     );
     console.log(
       "Current value of UsersAtMaxCapacity: ",
-      btAtMaxCapacity.current
+      btAtMaxCapacity.current,
     );
     updateBtAtMaxCapacity(currentUsers.current);
     console.log(
       "Updated value of UsersAtMaxCapacity: ",
-      btAtMaxCapacity.current
+      btAtMaxCapacity.current,
     );
 
     const manager = CommsManager.getInstance();
@@ -106,7 +106,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       console.log("Too much users!");
       btAtMaxCapacity.current = true;
       error_critical(
-        "There's not enough room for you to enter BT-studio. Please try again later."
+        "There's not enough room for you to enter BT-studio. Please try again later.",
       );
     } else {
       console.log("The user can go in");

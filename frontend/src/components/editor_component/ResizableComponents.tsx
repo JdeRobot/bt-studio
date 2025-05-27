@@ -106,7 +106,7 @@ export const ResizableColumn = ({ children }: { children: any[] }) => {
   if (children.length === 2) {
     return (
       <div className="ide-column-container">
-        <ResizableVert height={100/children.length} max={100} snap={[0]}>
+        <ResizableVert height={100 / children.length} max={100} snap={[0]}>
           {children[0]}
         </ResizableVert>
         <div className="ide-column-filler-container">{children[1]}</div>
