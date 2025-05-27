@@ -21,6 +21,7 @@
     "d3-drag": "^3.0.0",
     "install": "^0.13.0",
     "jszip": "^3.10.1",
+    "re-resizable": "^6.11.2",
     "react": "^18.2.0",
     "react-color-palette": "^7.1.1",
     "react-d3-graph": "^2.6.0",

@@ -16,6 +16,8 @@ import { getProjectConfig } from "./api_helper/TreeWrapper";
 import { OptionsContext } from "./components/options/Options";
 import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
 import StatusBar from "./components/status_bar/StatusBar";
+import UniverseBrowser from "./components/file_browser/UniverseBrowser";
+import EditorComponent from "./components/editor_component/EditorComponent";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
@@ -56,16 +58,16 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     addUser();
     console.log(
       "Now the updated value of users connected is: ",
-      currentUsers.current,
+      currentUsers.current
     );
     console.log(
       "Current value of UsersAtMaxCapacity: ",
-      btAtMaxCapacity.current,
+      btAtMaxCapacity.current
     );
     updateBtAtMaxCapacity(currentUsers.current);
     console.log(
       "Updated value of UsersAtMaxCapacity: ",
-      btAtMaxCapacity.current,
+      btAtMaxCapacity.current
     );
 
     const manager = CommsManager.getInstance();
@@ -104,7 +106,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       console.log("Too much users!");
       btAtMaxCapacity.current = true;
       error_critical(
-        "There's not enough room for you to enter BT-studio. Please try again later.",
+        "There's not enough room for you to enter BT-studio. Please try again later."
       );
     } else {
       console.log("The user can go in");
@@ -203,6 +205,69 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
           isUnibotics={isUnibotics}
         />
 
+        <EditorComponent
+          commsManager={manager}
+          explorers={[
+            <FileBrowser
+              setCurrentFilename={setCurrentFilename}
+              currentFilename={currentFilename}
+              currentProjectname={currentProjectname}
+              setProjectChanges={setProjectChanges}
+              setAutosave={setAutosave}
+              forceSaveCurrent={forceSaveCurrent}
+              setForcedSaveCurrent={setForcedSaveCurrent}
+              forceUpdate={{
+                value: updateFileExplorer,
+                callback: setUpdateFileExplorer,
+              }}
+              setSaveCurrentDiagram={setSaveCurrentDiagram}
+            />,
+            <UniverseBrowser
+              setCurrentFilename={setCurrentFilename}
+              currentFilename={currentFilename}
+              currentProjectname={currentProjectname}
+              setProjectChanges={setProjectChanges}
+              setAutosave={setAutosave}
+              forceSaveCurrent={forceSaveCurrent}
+              setForcedSaveCurrent={setForcedSaveCurrent}
+              forceUpdate={{
+                value: updateFileExplorer,
+                callback: setUpdateFileExplorer,
+              }}
+              setSaveCurrentDiagram={setSaveCurrentDiagram}
+            />,
+          ]}
+          extra_editors={[]}
+          viewers={[]}
+          options={[]}
+        />
+      </>
+    </div>
+  );
+
+  return (
+    <div
+      className="bt-App"
+      data-theme={settings.theme.value}
+      style={{ display: "flex" }}
+    >
+      <ErrorModal />
+      <>
+        <HeaderMenu
+          currentProjectname={currentProjectname}
+          setCurrentProjectname={setCurrentProjectname}
+          currentUniverseName={currentUniverseName}
+          setCurrentUniverseName={setCurrentUniverseName}
+          setSaveCurrentDiagram={setSaveCurrentDiagram}
+          projectChanges={projectChanges}
+          setProjectChanges={setProjectChanges}
+          gazeboEnabled={gazeboEnabled}
+          setGazeboEnabled={setGazeboEnabled}
+          manager={manager}
+          showVNCViewer={showVNCViewer}
+          isUnibotics={isUnibotics}
+        />
+
         <div className="bt-App-main">
           <Resizable
             width={fileBrowserWidth}
@@ -218,8 +283,22 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
                 flexDirection: "column",
               }}
             >
-              <div className="bt-sideBar">
+              <div className="bt-sidebar">
                 <FileBrowser
+                  setCurrentFilename={setCurrentFilename}
+                  currentFilename={currentFilename}
+                  currentProjectname={currentProjectname}
+                  setProjectChanges={setProjectChanges}
+                  setAutosave={setAutosave}
+                  forceSaveCurrent={forceSaveCurrent}
+                  setForcedSaveCurrent={setForcedSaveCurrent}
+                  forceUpdate={{
+                    value: updateFileExplorer,
+                    callback: setUpdateFileExplorer,
+                  }}
+                  setSaveCurrentDiagram={setSaveCurrentDiagram}
+                />
+                <UniverseBrowser
                   setCurrentFilename={setCurrentFilename}
                   currentFilename={currentFilename}
                   currentProjectname={currentProjectname}

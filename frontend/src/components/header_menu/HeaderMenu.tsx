@@ -9,7 +9,7 @@ import {
   getUniverseConfig,
   getRoboticsBackendUniverse,
   getUniverseFile,
-  getUniverseFileList,
+  getFileList
 } from "../../api_helper/TreeWrapper";
 import CommsManager from "../../api_helper/CommsManager";
 
@@ -181,7 +181,7 @@ const HeaderMenu = ({
         );
         console.log("Viz ready!");
       } else {
-        const file_list = await getUniverseFileList(
+        const file_list = await getFileList(
           currentProjectname,
           configJson.name,
         );

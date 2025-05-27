@@ -1031,16 +1031,6 @@ const getFileList = async (
   }
 };
 
-const getUniverseFileList = async (
-  projectName: string,
-  universeName: string
-) => {
-  if (!projectName) throw new Error("Project name is not set");
-  if (!universeName) throw new Error("Universe name is not set");
-
-  return await getFileList(projectName, universeName);
-};
-
 const getActionsList = async (projectName: string) => {
   if (!projectName) throw new Error("Project name is not set");
 
@@ -1240,7 +1230,6 @@ export {
   getTreeStructure,
   getUniverseConfig,
   getUniverseFile,
-  getUniverseFileList,
   listDockerUniverses,
   listProjects,
   listUniverses,

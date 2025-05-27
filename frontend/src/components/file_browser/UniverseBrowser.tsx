@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import JSZip from "jszip";
-import "./ExplorerContainer.css";
+import "./FileBrowser.css";
 import NewFileModal, { newFileModalData } from "./modals/NewFileModal";
 import RenameModal from "./modals/RenameModal";
 import NewFolderModal from "./modals/NewFolderModal";
@@ -46,7 +46,7 @@ function getParentDir(file: Entry) {
   return split_path.slice(0, split_path.length - 1).join("/");
 }
 
-const ExplorerContainer = ({
+const UniverseBrowser = ({
   setCurrentFilename,
   currentFilename,
   currentProjectname,
@@ -108,7 +108,7 @@ const ExplorerContainer = ({
     console.log("Fecthing file list, the project name is:", currentProjectname);
     if (currentProjectname !== "") {
       try {
-        const file_list = await getFileList(currentProjectname);
+        const file_list = await getFileList(currentProjectname, "");
         const files = JSON.parse(file_list);
         setFileList(files);
       } catch (e) {
@@ -145,19 +145,7 @@ const ExplorerContainer = ({
 
     if (data.fileName !== "") {
       try {
-        switch (data.fileType) {
-          case "actions":
-            publish("updateActionList");
-            await createAction(
-              currentProjectname,
-              data.fileName,
-              data.templateType,
-            );
-            break;
-          default:
-            await createFile(currentProjectname, data.fileName, location);
-            break;
-        }
+        await createFile(currentProjectname, data.fileName, location, "");
         setProjectChanges(true);
         fetchFileList(); // Update the file list
       } catch (e) {
@@ -197,9 +185,9 @@ const ExplorerContainer = ({
     if (deleteEntry) {
       try {
         if (deleteType) {
-          await deleteFolder(currentProjectname, deleteEntry);
+          await deleteFolder(currentProjectname, deleteEntry, "");
         } else {
-          await deleteFile(currentProjectname, deleteEntry);
+          await deleteFile(currentProjectname, deleteEntry, "");
         }
 
         setProjectChanges(true);
@@ -256,7 +244,7 @@ const ExplorerContainer = ({
   ) => {
     if (folder_name !== "") {
       try {
-        await createFolder(currentProjectname, folder_name, location);
+        await createFolder(currentProjectname, folder_name, location, "");
         setProjectChanges(true);
         fetchFileList(); // Update the file list
       } catch (e) {
@@ -293,9 +281,9 @@ const ExplorerContainer = ({
       try {
         console.log(renameEntry);
         if (renameEntry.is_dir) {
-          await renameFolder(currentProjectname, renameEntry.path, new_path);
+          await renameFolder(currentProjectname, renameEntry.path, new_path, "");
         } else {
-          await renameFile(currentProjectname, renameEntry.path, new_path);
+          await renameFile(currentProjectname, renameEntry.path, new_path, "");
         }
 
         setProjectChanges(true);
@@ -350,7 +338,7 @@ const ExplorerContainer = ({
 
   ///////////////// DOWNLOAD ///////////////////////////////////////////////////
   const zipFile = async (zip: JSZip, file_path: string, file_name: string) => {
-    var content = await getFile(currentProjectname, file_path);
+    var content = await getFile(currentProjectname, file_path, "");
     zip.file(file_name, content);
   };
 
@@ -405,21 +393,66 @@ const ExplorerContainer = ({
   };
 
   return (
-    <>
-      <FileExplorer
-        setCurrentFilename={setCurrentFilename}
-        currentFilename={currentFilename}
-        currentProjectname={currentProjectname}
-        setSelectedEntry={setSelectedEntry}
-        fileList={fileList}
-        fetchFileList={fetchFileList}
-        onDelete={handleDeleteModal}
-        onCreateFile={handleCreateFile}
-        onCreateFolder={handleCreateFolder}
-        onUpload={handleUpload}
-        onDownload={handleDownload}
-        onRename={handleRename}
-      />
+    <div className="bt-sidebar-content">
+      <div className="bt-sidebar-entry">
+        <div className="bt-sidebar-entry-menu">
+          <button
+            className="bt-sidebar-button"
+            id="create-file-open"
+            onClick={() => handleCreateFile(undefined)}
+            title="Create a new file"
+          >
+            <AddIcon className="bt-icon" fill={"var(--icon)"} />
+          </button>
+          <button
+            className="bt-sidebar-button"
+            onClick={() => handleCreateFolder(undefined)}
+            title="Create a new folder"
+          >
+            <AddFolderIcon className="bt-icon" stroke={"var(--icon)"} />
+          </button>
+          <button
+            className="bt-sidebar-button"
+            onClick={() => fetchFileList()}
+            title="Refresh View"
+          >
+            <RefreshIcon className="bt-icon" stroke={"var(--icon)"} />
+          </button>
+          <div style={{ marginLeft: "auto" }} />
+          {currentFilename !== "" && (
+            <>
+              <button
+                className="bt-sidebar-button"
+                onClick={handleRenameCurrentFile}
+                title="Rename file"
+              >
+                <RenameIcon className="bt-icon" stroke={"var(--icon)"} />
+              </button>
+              <button
+                className="bt-sidebar-button"
+                onClick={handleDeleteCurrentFile}
+                title="Delete file"
+              >
+                <DeleteIcon className="bt-icon" fill={"var(--icon)"} />
+              </button>
+            </>
+          )}
+        </div>
+        <FileExplorer
+          setCurrentFilename={setCurrentFilename}
+          currentFilename={currentFilename}
+          currentProjectname={currentProjectname}
+          setSelectedEntry={setSelectedEntry}
+          fileList={fileList}
+          fetchFileList={fetchFileList}
+          onDelete={handleDeleteModal}
+          onCreateFile={handleCreateFile}
+          onCreateFolder={handleCreateFolder}
+          onUpload={handleUpload}
+          onDownload={handleDownload}
+          onRename={handleRename}
+        />
+      </div>
       <NewFileModal
         isOpen={isNewFileModalOpen}
         onSubmit={handleNewActionSubmit}
@@ -454,8 +487,8 @@ const ExplorerContainer = ({
         onClose={handleCloseDeleteModal}
         selectedEntry={deleteEntry}
       />
-    </>
+    </div>
   );
 };
 
-export default ExplorerContainer;
+export default UniverseBrowser;
