@@ -1,0 +1,39 @@
+#delete-modal {
+  width: fit-content;
+}
+
+.bt-delete-modal-prompt {
+  color: var(--text);
+}
+
+.bt-button-row {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 10px;
+}
+
+.bt-button-row button {
+  width: 100px;
+  display: block;
+  border: none;
+  color: var(--text);
+  font-size: medium;
+  background-color: var(--buttons);
+  opacity: 0.6;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  height: 2em;
+  font-size: medium;
+
+  &:hover:enabled {
+    opacity: 1;
+  }
+}
+
+#delete-selected-button {
+  opacity: 0.6;
+  background-color: var(--error);
+}

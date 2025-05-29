@@ -1,0 +1,91 @@
+.bt-form-row select,
+.bt-form-row button {
+  width: 100%;
+  display: block;
+  border: none;
+  color: var(--text);
+  font-size: medium;
+}
+
+.bt-form-row button {
+  background-color: var(--buttons);
+  margin-bottom: 10px;
+  border-radius: 10px;
+  height: 2em;
+  font-size: medium;
+  opacity: 0.6;
+
+  &:hover:enabled {
+    opacity: 1;
+  }
+}
+
+#templates-list {
+  height: 170px;
+}
+
+#create-new-action {
+  width: 100px;
+  background-color: var(--create-button);
+}
+
+.bt-templates-col {
+  float: left; /* Float the buttons side by side */
+  width: 30%;
+  border-radius: 10px;
+}
+
+.bt-templates-col div {
+  border-radius: 10px;
+  cursor: pointer; /* Pointer/hand icon */
+  text-align: center;
+  margin: 3px;
+  padding: 5px;
+}
+
+.bt-templates-col:hover div {
+  background-color: var(--buttons-hover);
+}
+
+.bt-templates-col .bt-icon {
+  height: 90px;
+  width: 30px;
+}
+
+.bt-templates-col p {
+  margin: 3px !important;
+  color: var(--text);
+}
+
+.bt-templates-col input[type="radio"] {
+  display: none;
+  z-index: 100;
+}
+
+.bt-templates-col input[type="radio"]:checked + div {
+  /* background-color: var(--secondary) !important; */
+  background: linear-gradient(
+    -45deg,
+    var(--primary) 0%,
+    var(--secondary) 50%,
+    var(--accent) 100%
+  ) !important;
+}
+
+.bt-templates-list-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.bt-templates-list-title {
+  width: 100%;
+  display: block;
+  border: none;
+  color: var(--text);
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}

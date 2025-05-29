@@ -105,7 +105,7 @@ class FAL:
 
         return [d for d in os.listdir(path) if self.isfile(self.path_join(path, d))]
 
-    def list_formatted(self, path: str):
+    def list_formatted(self, path: str, base_group: str):
         if ".." in path:
             raise InvalidPath(path)
 
@@ -115,7 +115,7 @@ class FAL:
         if not self.isdir(path):
             raise ResourceNotExists(path)
 
-        return list_dir(path, path)
+        return list_dir(path, path, base_group=base_group)
 
     def get_base_tree_template(self):
         init_graph_path = self.path_join(self.base, "templates/graph.json")

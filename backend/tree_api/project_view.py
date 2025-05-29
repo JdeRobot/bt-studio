@@ -3,10 +3,14 @@ import os
 
 
 class Entry:
-    def __init__(self, is_dir=False, name="", path="/", files=[]):
+    def __init__(
+        self, is_dir=False, name="", path="/", group="", access=True, files=[]
+    ):
         self.is_dir = is_dir
         self.name = name
         self.path = path
+        self.group = group
+        self.access = access
         self.files = files
 
     def __str__(self):
@@ -22,15 +26,31 @@ class EntryEncoder(JSONEncoder):
         return o.__dict__
 
 
-def list_dir(base_dir, directory):
+def list_dir(base_dir, directory, access_old=True, base_group=""):
     entries = os.listdir(directory)
     values = []
     for entry in entries:
+        access = access_old
+        group = base_group
         entry_path = os.path.join(directory, entry)
         rel_path = os.path.relpath(entry_path, base_dir)
         if os.path.isfile(entry_path):
-            values.append(Entry(False, entry, rel_path))
+            values.append(Entry(False, entry, rel_path, group, access))
         else:
-            values.append(Entry(True, entry, rel_path, list_dir(base_dir, entry_path)))
+            if entry == "Tree":
+                group = "Trees"
+                access = False
+            elif entry == "Actions":
+                group = "Actions"
+            values.append(
+                Entry(
+                    True,
+                    entry,
+                    rel_path,
+                    group,
+                    access,
+                    list_dir(base_dir, entry_path, access, group),
+                )
+            )
     values.sort(key=lambda x: (not x.is_dir, x.name.lower()))
     return values

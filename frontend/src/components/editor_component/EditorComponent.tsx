@@ -3,7 +3,8 @@ import CommsManager from "../../api_helper/CommsManager";
 
 import "./EditorComponent.css";
 import { ResizableColumn, ResizableHoriz } from "./ResizableComponents";
-import FileEditor from "../file_editor/FileEditor";
+import FileEditor from "./file_editor/FileEditor";
+import Explorer, { Entry, ExplorerEntry } from "./explorer/Explorer";
 
 interface ViewersEntry {
   component: JSX.Element;
@@ -15,53 +16,60 @@ interface ViewersEntry {
 
 const EditorComponent = ({
   commsManager,
+  project,
   explorers,
   extra_editors,
   viewers,
+  layout,
   options,
 }: {
   commsManager: CommsManager | null;
-  explorers: any[];
+  project: string;
+  explorers: ExplorerEntry[];
   extra_editors: any[];
   viewers: ViewersEntry[];
+  layout: string;
   options: any;
 }) => {
-  const [currentFile, setCurrentFile] = useState<string | undefined>(undefined);
-  const [autosaveEnabled, setAutosave] = useState<boolean>(true);
-  const [forceSaveCurrent, setForcedSaveCurrent] = useState<boolean>(false);
+  const [currentFile, setCurrentFile] = useState<Entry | undefined>(undefined);
 
   return (
     <div className="ide-container-horiz">
       <div className="ide-container">
         {explorers.length > 0 && (
           <ResizableHoriz width={20} max={40} snap={[0]}>
-            <ResizableColumn>{explorers}</ResizableColumn>
+            <ResizableColumn>
+              {explorers.map((explorer) => (
+                <Explorer
+                  setCurrentFile={setCurrentFile}
+                  currentFile={currentFile}
+                  project={project}
+                  api={explorer}
+                />
+              ))}
+            </ResizableColumn>
           </ResizableHoriz>
         )}
         <ResizableHoriz width={40} max={60} snap={[0]}>
           <div className="ide-column-container">
             <FileEditor
-              currentFilename={"actions/Turn.py"}
-              currentProjectname={"laser_bump_and_go"}
-              setProjectChanges={() => {}}
+              currentFile={currentFile}
+              currentProjectname={project}
               isUnibotics={false}
-              autosaveEnabled={autosaveEnabled}
-              setAutosave={setAutosave}
-              forceSaveCurrent={forceSaveCurrent}
+              autosave={true}
               manager={commsManager}
+              api={options}
             />
           </div>
         </ResizableHoriz>
         <div className="ide-viewers-container">
           <FileEditor
-            currentFilename={"actions/Turn.py"}
-            currentProjectname={"laser_bump_and_go"}
-            setProjectChanges={() => {}}
+            currentFile={undefined}
+            currentProjectname={project}
             isUnibotics={false}
-            autosaveEnabled={autosaveEnabled}
-            setAutosave={setAutosave}
-            forceSaveCurrent={forceSaveCurrent}
+            autosave={true}
             manager={commsManager}
+            api={options}
           />
         </div>
       </div>

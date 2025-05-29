@@ -334,14 +334,18 @@ def get_file_list(request):
     project_name = request.GET.get("project_name")
     universe = request.GET.get("universe")
 
+    base_group = "Code" 
+
     if universe is not None:
         path = fal.universes_path(project_name)
+        base_group = "Universes"
         if universe == "":
             path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
 
-    file_list = fal.list_formatted(path)
+    file_list = fal.list_formatted(path, base_group)
+    print(EntryEncoder().encode(file_list))
 
     # Return the list of files
     return Response({"file_list": EntryEncoder().encode(file_list)})
@@ -361,7 +365,7 @@ def get_actions_list(request):
 def get_file(request):
     project_name = request.GET.get("project_name", None)
     filename = request.GET.get("filename", None)
-    universe = request.GET.get("universe")
+    universe = request.GET.get("universe", None)
 
     if universe is not None:
         path = fal.universes_path(project_name)

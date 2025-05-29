@@ -11,13 +11,28 @@ import ErrorModal, { ErrorProvider } from "./components/error_popup/ErrorModal";
 import { useError } from "./components/error_popup/ErrorModal";
 import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
 import CommsManager from "./api_helper/CommsManager";
-import { getProjectConfig } from "./api_helper/TreeWrapper";
+import {
+  createAction,
+  createFile,
+  createFolder,
+  deleteFile,
+  deleteFolder,
+  getFile,
+  getFileList,
+  getProjectConfig,
+  renameFile,
+  renameFolder,
+  saveFile,
+} from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
 import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
 import StatusBar from "./components/status_bar/StatusBar";
 import UniverseBrowser from "./components/file_browser/UniverseBrowser";
 import EditorComponent from "./components/editor_component/EditorComponent";
+import { newFileModalData } from "./components/editor_component/explorer/modals/NewFileModal";
+import { publish } from "./components/helper/TreeEditorHelper";
+import { Entry } from "./components/editor_component/explorer/Explorer";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
@@ -182,6 +197,129 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     }
   };
 
+  const fileExplorer = {
+    name: "Code",
+    list: (project: string) => {
+      return getFileList(project);
+    },
+    file: {
+      create: (project: string, location: string, data: newFileModalData) => {
+        if (data.fileType === "actions") {
+          publish("updateActionList");
+          return createAction(project, data.fileName, data.templateType);
+        } else {
+          return createFile(project, data.fileName, location);
+        }
+      },
+      get: (project: string, path: string) => {
+        return getFile(project, path);
+      },
+      rename: (project: string, oldPath: string, newPath: string) => {
+        return renameFile(project, oldPath, newPath);
+      },
+      delete: (project: string, path: string) => {
+        return deleteFile(project, path);
+      },
+    },
+    folder: {
+      create: (project: string, location: string, name: string) => {
+        return createFolder(project, name, location);
+      },
+      rename: (project: string, oldPath: string, newPath: string) => {
+        return renameFolder(project, oldPath, newPath);
+      },
+      delete: (project: string, path: string) => {
+        return deleteFolder(project, path);
+      },
+    },
+  };
+
+  const universeExplorer = {
+    name: "Universes",
+    list: (project: string) => {
+      return getFileList(project, "");
+    },
+    file: {
+      create: (project: string, location: string, data: newFileModalData) => {
+        return createFile(project, data.fileName, location, "");
+      },
+      get: (project: string, path: string) => {
+        return getFile(project, path, "");
+      },
+      rename: (project: string, oldPath: string, newPath: string) => {
+        return renameFile(project, oldPath, newPath, "");
+      },
+      delete: (project: string, path: string) => {
+        return deleteFile(project, path, "");
+      },
+    },
+    folder: {
+      create: (project: string, location: string, name: string) => {
+        return createFolder(project, name, location, "");
+      },
+      rename: (project: string, oldPath: string, newPath: string) => {
+        return renameFolder(project, oldPath, newPath, "");
+      },
+      delete: (project: string, path: string) => {
+        return deleteFolder(project, path, "");
+      },
+    },
+  };
+
+  const api = {
+    list: (project: string) => {
+      return getFileList(project, "");
+    },
+    file: {
+      create: (project: string, location: string, data: newFileModalData) => {
+        return createFile(project, data.fileName, location, "");
+      },
+      get: (project: string, path: string) => {
+        return getFile(project, path, "");
+      },
+      save: (project: string, file: Entry, content: string) => {
+        if (file.group === "Universes") {
+          return saveFile(project, file.path, content, "");
+        }
+        return saveFile(project, file.path, content);
+      },
+      rename: (project: string, oldPath: string, newPath: string) => {
+        return renameFile(project, oldPath, newPath, "");
+      },
+      delete: (project: string, path: string) => {
+        return deleteFile(project, path, "");
+      },
+    },
+    folder: {
+      create: (project: string, location: string, name: string) => {
+        return createFolder(project, name, location, "");
+      },
+      rename: (project: string, oldPath: string, newPath: string) => {
+        return renameFolder(project, oldPath, newPath, "");
+      },
+      delete: (project: string, path: string) => {
+        return deleteFolder(project, path, "");
+      },
+    },
+  };
+
+  const opto = {
+    file: {
+      get: (project: string, file: Entry) => {
+        if (file.group === "Universes") {
+          return getFile(project, file.path, "");
+        }
+        return getFile(project, file.path);
+      },
+      save: (project: string, file: Entry, content: string) => {
+        if (file.group === "Universes") {
+          return saveFile(project, file.path, content, "");
+        }
+        return saveFile(project, file.path, content);
+      },
+    },
+  };
+
   return (
     <div
       className="bt-App"
@@ -207,39 +345,12 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
 
         <EditorComponent
           commsManager={manager}
-          explorers={[
-            <FileBrowser
-              setCurrentFilename={setCurrentFilename}
-              currentFilename={currentFilename}
-              currentProjectname={currentProjectname}
-              setProjectChanges={setProjectChanges}
-              setAutosave={setAutosave}
-              forceSaveCurrent={forceSaveCurrent}
-              setForcedSaveCurrent={setForcedSaveCurrent}
-              forceUpdate={{
-                value: updateFileExplorer,
-                callback: setUpdateFileExplorer,
-              }}
-              setSaveCurrentDiagram={setSaveCurrentDiagram}
-            />,
-            <UniverseBrowser
-              setCurrentFilename={setCurrentFilename}
-              currentFilename={currentFilename}
-              currentProjectname={currentProjectname}
-              setProjectChanges={setProjectChanges}
-              setAutosave={setAutosave}
-              forceSaveCurrent={forceSaveCurrent}
-              setForcedSaveCurrent={setForcedSaveCurrent}
-              forceUpdate={{
-                value: updateFileExplorer,
-                callback: setUpdateFileExplorer,
-              }}
-              setSaveCurrentDiagram={setSaveCurrentDiagram}
-            />,
-          ]}
+          project={currentProjectname}
+          explorers={[fileExplorer, universeExplorer]}
           extra_editors={[]}
           viewers={[]}
-          options={[]}
+          options={opto}
+          layout="a"
         />
       </>
     </div>

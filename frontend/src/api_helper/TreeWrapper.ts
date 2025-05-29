@@ -1009,7 +1009,7 @@ const uploadFileUniverse = async (
 const getFileList = async (
   projectName: string,
   universeName: string | undefined = undefined
-) => {
+) : Promise<string> => {
   if (!projectName) throw new Error("Project name is not set");
 
   let apiUrl = `/bt_studio/get_file_list?project_name=${encodeURIComponent(projectName)}`;
