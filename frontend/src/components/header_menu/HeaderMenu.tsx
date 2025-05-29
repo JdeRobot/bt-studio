@@ -510,7 +510,13 @@ const HeaderMenu = ({
 
   return (
     <AppBar position="static">
-      <Toolbar style={{ backgroundColor: "var(--header)" }}>
+      <Toolbar
+        style={{
+          backgroundColor: "var(--header)",
+          height: "40px",
+          minHeight: "40px",
+        }}
+      >
         {isUnibotics ? (
           <a href="/apps">
             <LogoUniboticsIcon className="bt-jde-icon" fill="var(--icon)" />

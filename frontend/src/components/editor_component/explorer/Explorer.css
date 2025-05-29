@@ -21,7 +21,7 @@
 .bt-sidebar-entry-menu {
   display: flex;
   align-items: center;
-  height: 32px; 
+  height: 32px;
   padding: 0 10px 0 10px;
   gap: 4px;
   background-color: var(--control-bar);
