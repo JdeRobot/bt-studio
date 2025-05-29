@@ -54,10 +54,10 @@
   cursor: ew-resize !important;
   user-select: none;
   z-index: 99;
-  background-color: var(--primary-200);
+  background-color: var(--primary-100);
   &:hover,
   :active {
-    background-color: var(--primary-300);
+    background-color: var(--primary-200);
   }
 }
 
@@ -69,9 +69,9 @@
   cursor: ns-resize !important;
   user-select: none;
   z-index: 99;
-  background-color: var(--primary-200);
+  background-color: var(--primary-100);
   &:hover,
   :active {
-    background-color: var(--primary-300);
+    background-color: var(--primary-200);
   }
 }

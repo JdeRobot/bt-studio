@@ -21,9 +21,7 @@
 .bt-sidebar-entry-menu {
   display: flex;
   align-items: center;
-  /* height: 32px;  */
-  height: 50px;
-  max-height: 50px;
+  height: 32px; 
   padding: 0 10px 0 10px;
   gap: 4px;
   background-color: var(--control-bar);
@@ -37,8 +35,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   background-color: var(--control-bar);
   border: 0;
   padding: 0 0 0 0;
@@ -51,8 +49,8 @@
 .bt-menu-button {
   display: flex;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   background-color: var(--buttons-invisible);
   border: 0;
   margin-left: 3px;
