@@ -414,7 +414,7 @@ const FileEditor = ({
         <Editor
           className="file-editor"
           width="100%"
-          height="calc(100% - 50px)"
+          height="calc(100% - 32px)"
           defaultLanguage="python"
           defaultValue=""
           language={language}
