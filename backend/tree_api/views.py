@@ -334,7 +334,7 @@ def get_file_list(request):
     project_name = request.GET.get("project_name")
     universe = request.GET.get("universe")
 
-    base_group = "Code" 
+    base_group = "Code"
 
     if universe is not None:
         path = fal.universes_path(project_name)
@@ -345,7 +345,6 @@ def get_file_list(request):
         path = fal.code_path(project_name)
 
     file_list = fal.list_formatted(path, base_group)
-    print(EntryEncoder().encode(file_list))
 
     # Return the list of files
     return Response({"file_list": EntryEncoder().encode(file_list)})
