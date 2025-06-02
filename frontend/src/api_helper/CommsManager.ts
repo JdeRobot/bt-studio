@@ -12,6 +12,11 @@ export default class CommsManager {
   private ws: WebSocket;
   private observers: { [id: string]: Function[] } = {};
   private pendingPromises: Map<string, PromiseHandlers> = new Map();
+  private hostData?: {
+    gpu_avaliable: string;
+    robotics_backend_version: string;
+    ros_version: string;
+  } 
 
   // Private constructor to only allow single instatiation
   private constructor(address: string) {
@@ -39,6 +44,9 @@ export default class CommsManager {
         const subscriptions = this.observers[msg.command] || [];
         let length = subscriptions.length;
         while (length--) {
+          if (msg.command === events.INTROSPECTION) {
+            this.hostData = msg.data
+          }
           subscriptions[length](msg);
         }
       }
@@ -131,6 +139,11 @@ export default class CommsManager {
   }
 
   // Connect to the ws
+  public getHostData() {
+    return this.hostData;
+  }
+
+  // Connect to the ws
   public connect() {
     return this.send("connect");
   }
@@ -202,12 +215,12 @@ export default class CommsManager {
   }
 }
 
-// const events = {
-//   RESPONSES: ["ack", "error"],
-//   UPDATE: "update",
-//   STATE_CHANGED: "state-changed",
-//   INTROSPECTION: "introspection",
-//   CODE_FORMAT: "code-format",
-//   CODE_ANALYSIS: "code-analysis",
-//   CODE_AUTOCOMPLETE: "code-autocomplete",
-// };
+const events = {
+  RESPONSES: ["ack", "error"],
+  UPDATE: "update",
+  STATE_CHANGED: "state-changed",
+  INTROSPECTION: "introspection",
+  CODE_FORMAT: "code-format",
+  CODE_ANALYSIS: "code-analysis",
+  CODE_AUTOCOMPLETE: "code-autocomplete",
+};

@@ -1,0 +1,102 @@
+.bt-status-bar-container {
+  height: 24px;
+  width: 100%;
+  background-color: var(--status-bar);
+  display: flex;
+  flex-direction: row;
+}
+
+.bt-status-bar-button {
+  margin: 0 0 0 0;
+  padding: 10px 0 10px 0;
+  height: 24px;
+  min-width: 100px;
+  width: fit-content;
+  border: none;
+  background-color: transparent;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  & .bt-status-bar-label {
+    font-size: 18px;
+  }
+
+  &:hover {
+    background-color: var(--primary-300);
+  }
+}
+
+.bt-status-bar-div {
+  margin: 0 0 0 0;
+  padding: 10px 0 10px 0;
+  height: 24px;
+  min-width: 100px;
+  width: fit-content;
+  border: none;
+  background-color: transparent;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 50%;
+
+  &:hover {
+    opacity: 100%;
+  }
+}
+
+.bt-status-bar-button-active {
+  margin: 0 0 0 0;
+  padding: 10px 0 10px 0;
+  height: 24px;
+  min-width: 100px;
+  width: fit-content;
+  border: none;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--success);
+
+  & .bt-status-bar-label {
+    font-size: 18px;
+  }
+
+  &:hover {
+    background-color: var(--success-hover);
+  }
+}
+
+.bt-status-bar-icon {
+  height: 24px;
+  margin: 0 0 0 0;
+  /* padding: 2px 2px 2px 2px; */
+}
+
+.bt-status-bar-label {
+  height: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 14px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+}
+
+#reset-connection {
+  background-color: var(--running);
+
+  & .bt-status-bar-label {
+    font-size: 18px;
+  }
+
+  &:hover {
+    background-color: var(--running-hover);
+  }
+}

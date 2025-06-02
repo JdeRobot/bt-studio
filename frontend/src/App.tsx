@@ -266,44 +266,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     },
   };
 
-  const api = {
-    list: (project: string) => {
-      return getFileList(project, "");
-    },
-    file: {
-      create: (project: string, location: string, data: newFileModalData) => {
-        return createFile(project, data.fileName, location, "");
-      },
-      get: (project: string, path: string) => {
-        return getFile(project, path, "");
-      },
-      save: (project: string, file: Entry, content: string) => {
-        if (file.group === "Universes") {
-          return saveFile(project, file.path, content, "");
-        }
-        return saveFile(project, file.path, content);
-      },
-      rename: (project: string, oldPath: string, newPath: string) => {
-        return renameFile(project, oldPath, newPath, "");
-      },
-      delete: (project: string, path: string) => {
-        return deleteFile(project, path, "");
-      },
-    },
-    folder: {
-      create: (project: string, location: string, name: string) => {
-        return createFolder(project, name, location, "");
-      },
-      rename: (project: string, oldPath: string, newPath: string) => {
-        return renameFolder(project, oldPath, newPath, "");
-      },
-      delete: (project: string, path: string) => {
-        return deleteFolder(project, path, "");
-      },
-    },
-  };
-
-  const opto = {
+  const editorApi = {
     file: {
       get: (project: string, file: Entry) => {
         if (file.group === "Universes") {
@@ -347,9 +310,10 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
           commsManager={manager}
           project={currentProjectname}
           explorers={[fileExplorer, universeExplorer]}
+          editorApi={editorApi}
           extra_editors={[]}
           viewers={[]}
-          options={opto}
+          options={[]}
           layout="both"
         />
       </>

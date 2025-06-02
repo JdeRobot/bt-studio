@@ -8,6 +8,7 @@ import {
 } from "./ResizableComponents";
 import FileEditor from "./file_editor/FileEditor";
 import Explorer, { Entry, ExplorerEntry } from "./explorer/Explorer";
+import StatusBar from "./status_bar/StatusBar";
 
 interface ViewersEntry {
   component: JSX.Element;
@@ -21,6 +22,7 @@ const EditorComponent = ({
   commsManager,
   project,
   explorers,
+  editorApi,
   extra_editors,
   viewers,
   layout,
@@ -29,6 +31,7 @@ const EditorComponent = ({
   commsManager: CommsManager | null;
   project: string;
   explorers: ExplorerEntry[];
+  editorApi: any;
   extra_editors: any[];
   viewers: ViewersEntry[];
   layout: "only-editor" | "only-viewers" | "both";
@@ -63,25 +66,16 @@ const EditorComponent = ({
             isUnibotics={false}
             autosave={true}
             manager={commsManager}
-            api={options}
+            api={editorApi}
           />
         </div>
         <div className="ide-column-container">
-          <FileEditor
-            currentFile={undefined}
-            currentProjectname={project}
-            isUnibotics={false}
-            autosave={true}
-            manager={commsManager}
-            api={options}
-          />
         </div>
       </ResizableRow>
-      {/* <StatusBar
-        dockerData={dockerData}
-        resetManager={resetManager}
-        /> */}
-      <div className="bt-status-bar-container"></div>
+      <StatusBar
+        commsManager={commsManager}
+        resetManager={() =>{}}
+        />
     </div>
   );
 };
