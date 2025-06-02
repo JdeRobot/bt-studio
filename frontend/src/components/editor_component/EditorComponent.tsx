@@ -2,7 +2,10 @@ import { useState } from "react";
 import CommsManager from "../../api_helper/CommsManager";
 
 import "./EditorComponent.css";
-import { ResizableColumn, ResizableHoriz } from "./ResizableComponents";
+import {
+  ResizableColumn,
+  ResizableRow,
+} from "./ResizableComponents";
 import FileEditor from "./file_editor/FileEditor";
 import Explorer, { Entry, ExplorerEntry } from "./explorer/Explorer";
 
@@ -28,41 +31,42 @@ const EditorComponent = ({
   explorers: ExplorerEntry[];
   extra_editors: any[];
   viewers: ViewersEntry[];
-  layout: string;
+  layout: "only-editor" | "only-viewers" | "both";
   options: any;
 }) => {
   const [currentFile, setCurrentFile] = useState<Entry | undefined>(undefined);
 
   return (
     <div className="ide-container-horiz">
-      <div className="ide-container">
+      <ResizableRow
+        baseWidth={[20, 40, 40]}
+        maxWidth={[40, 60, 60]}
+        showExplorer={explorers.length > 0}
+        layout={layout}
+      >
         {explorers.length > 0 && (
-          <ResizableHoriz width={20} max={40} snap={[0]}>
-            <ResizableColumn>
-              {explorers.map((explorer) => (
-                <Explorer
-                  setCurrentFile={setCurrentFile}
-                  currentFile={currentFile}
-                  project={project}
-                  api={explorer}
-                />
-              ))}
-            </ResizableColumn>
-          </ResizableHoriz>
+          <ResizableColumn>
+            {explorers.map((explorer) => (
+              <Explorer
+                setCurrentFile={setCurrentFile}
+                currentFile={currentFile}
+                project={project}
+                api={explorer}
+              />
+            ))}
+          </ResizableColumn>
         )}
-        <ResizableHoriz width={40} max={60} snap={[0]}>
-          <div className="ide-column-container">
-            <FileEditor
-              currentFile={currentFile}
-              currentProjectname={project}
-              isUnibotics={false}
-              autosave={true}
-              manager={commsManager}
-              api={options}
-            />
-          </div>
-        </ResizableHoriz>
-        <div className="ide-viewers-container">
+        <div className="ide-column-container">
+          <FileEditor
+            currentFile={currentFile}
+            currentProjectname={project}
+            isUnibotics={false}
+            autosave={true}
+            manager={commsManager}
+            api={options}
+          />
+        </div>
+        <div className="ide-column-container">
           <FileEditor
             currentFile={undefined}
             currentProjectname={project}
@@ -72,12 +76,8 @@ const EditorComponent = ({
             api={options}
           />
         </div>
-      </div>
+      </ResizableRow>
       {/* <StatusBar
-        showSim={showSim}
-        setSimVisible={showVNCSim}
-        showTerminal={showTerminal}
-        setTerminalVisible={showVNCTerminal}
         dockerData={dockerData}
         resetManager={resetManager}
         /> */}

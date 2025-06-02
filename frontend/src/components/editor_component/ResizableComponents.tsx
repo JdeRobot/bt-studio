@@ -84,7 +84,7 @@ export const ResizableVert = ({
       }}
       maxHeight={`${max}%`}
       minHeight={`${min}%`}
-      snap={{ x: snap }}
+      snap={{ y: snap }}
       snapGap={100}
     >
       {children}
@@ -115,4 +115,57 @@ export const ResizableColumn = ({ children }: { children: any[] }) => {
   }
 
   return <div className="ide-column-container"></div>;
+};
+
+export const ResizableRow = ({
+  baseWidth,
+  maxWidth,
+  showExplorer,
+  layout,
+  children,
+}: {
+  baseWidth: number[];
+  maxWidth: number[];
+  showExplorer: boolean;
+  layout: string;
+  children: any[];
+}) => {
+
+  if (layout === "only-editor") {
+    // Remove viewers == Remove last element
+    children.pop()
+    baseWidth.pop()
+    maxWidth.pop()
+  }
+
+  if (layout === "only-viewers") {
+    // Remove editors == Remove middle element
+    children.splice(1,1)
+    baseWidth.splice(1,1)
+    maxWidth.splice(1,1)
+  }
+
+  if (!showExplorer) {
+    // Remove explorers == Remove first element
+    children.shift()
+    baseWidth.shift()
+    maxWidth.shift()
+  }
+
+  if (children.length === 1) {
+    return <div className="ide-container">{children[0]}</div>;
+  }
+
+  return (
+    <div className="ide-container">
+      {children.slice(0, children.length - 1).map((comp, i) => (
+        <ResizableHoriz width={baseWidth[i]} max={maxWidth[i]} snap={[0]}>
+          {comp}
+        </ResizableHoriz>
+      ))}
+      <div className="ide-filler-container">
+        {children[children.length - 1]}
+      </div>
+    </div>
+  );
 };

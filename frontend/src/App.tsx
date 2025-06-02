@@ -350,7 +350,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
           extra_editors={[]}
           viewers={[]}
           options={opto}
-          layout="a"
+          layout="both"
         />
       </>
     </div>

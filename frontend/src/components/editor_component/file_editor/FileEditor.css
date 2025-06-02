@@ -1,18 +1,27 @@
 /* FileEditor.css */
 
 .bt-editor-container {
-  position: relative; /* Establish a stacking context */
+  position: relative;
+  /* Establish a stacking context */
   /* padding-right: 2px; */
   height: 100%;
   background-color: var(--app-background);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .bt-zoom-buttons {
-  position: absolute; /* Absolute positioning relative to .bt-editor-container */
-  bottom: 20px; /* From the bottom */
-  right: 5px; /* From the right */
-  z-index: 1; /* Ensure it's above the editor content */
+  position: absolute;
+  /* Absolute positioning relative to .bt-editor-container */
+  bottom: 20px;
+  /* From the bottom */
+  right: 5px;
+  /* From the right */
+  z-index: 1;
+  /* Ensure it's above the editor content */
   width: 75px;
   display: flex;
   justify-content: space-evenly;
@@ -40,6 +49,7 @@
   height: 32px;
   max-height: 32px;
   background-color: var(--control-bar);
+  width: 100%;
 }
 
 .bt-editor-buttons {
@@ -64,7 +74,8 @@
 
 .bt-save-button:hover {
   background-color: var(--buttons-hover);
-  border-radius: 5px; /* Circular highlight */
+  border-radius: 5px;
+  /* Circular highlight */
 }
 
 .bt-unsaved-dot {
@@ -81,8 +92,6 @@
 }
 
 .bt-splash-icon {
-  --size: 400px;
-  margin-top: calc(50% - var(--size) / 2);
-  margin-left: calc(50% - var(--size) / 2);
-  width: var(--size);
+  width: 33vh;
+  height: 100%;
 }

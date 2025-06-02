@@ -6,6 +6,28 @@
   background-color: var(--app-background);
 }
 
+.ide-filler-container {
+  position: relative;
+  user-select: auto;
+  height: auto;
+  max-width: 100%;
+  min-width: 0%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  flex-grow: 1;
+  background-color: var(--app-background);
+  z-index: 1;
+  /* position: relative;
+  user-select: auto;
+  height: auto;
+  max-width: 100%;
+  min-width: 0%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  flex: 1 1 0%; */
+}
+
+
 .ide-container-horiz {
   flex-grow: 1;
   display: flex;
@@ -22,6 +44,7 @@
   gap: 5px;
   background-color: var(--app-background);
   flex-grow: 1;
+  z-index: 2;
 }
 
 .ide-column-filler-container {
@@ -32,6 +55,9 @@
   min-height: 0%;
   box-sizing: border-box;
   flex-shrink: 0;
+  flex-grow: 1;
+  background-color: var(--app-background);
+  z-index: 1;
 }
 
 .ide-viewers-container {
