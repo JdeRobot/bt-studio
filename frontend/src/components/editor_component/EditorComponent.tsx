@@ -106,11 +106,11 @@ const ViewersContainer = ({
 
   return (
     <div className="ide-editor-container">
-      <div className="bt-editor-menu">
-        <div className="bt-editor-buttons">
+      <div className="ide-viewer-menu">
+        <div className="ide-viewer-buttons">
           {viewers.map((viewer, index) => (
             <button
-              className="bt-save-button"
+              className={`ide-viewer-toggle-button ${(visibility[index]) ? 'active' : ''}`}
               onClick={() => toggleVisibility(index)}
             >
               {viewer.icon}

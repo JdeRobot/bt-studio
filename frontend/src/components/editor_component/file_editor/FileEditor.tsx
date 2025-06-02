@@ -391,7 +391,7 @@ const FileEditor = ({
   }, [fileContent]);
 
   return (
-    <div className="bt-editor-container">
+    <div className="ide-editor-container">
       <div className="bt-editor-menu">
         <div className="bt-editor-buttons">
           {hasUnsavedChanges && <div className="bt-unsaved-dot"></div>}

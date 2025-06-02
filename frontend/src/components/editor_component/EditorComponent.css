@@ -43,7 +43,7 @@
   gap: 5px;
   background-color: var(--app-background);
   flex-grow: 1;
-  z-index: 2;
+  z-index: 3;
 }
 
 .ide-column-filler-container {
@@ -110,4 +110,46 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.ide-viewer-buttons {
+  align-items: center;
+  display: flex;
+  height: 100%;
+}
+
+.ide-viewer-menu {
+  align-items: center;
+  background-color: var(--control-bar);
+  display: flex;
+  height: 32px;
+  justify-content: space-between;
+  max-height: 32px;
+  width: 100%;
+  z-index: 5;
+}
+
+.ide-viewer-toggle-button {
+  display: flex;
+  justify-content: center;
+  width: 40px;
+  height: 100%;
+  background-color: var(--control-bar);
+  border: 0;
+  padding: 0 0 0 0;
+  align-content: center;
+  flex-wrap: wrap;
+
+  & svg {
+    fill: white;
+    opacity: 30%;
+  }
+}
+
+.active {
+  background-color: green;
+
+  & svg {
+    opacity: 100%;
+  }
 }

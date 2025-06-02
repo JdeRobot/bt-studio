@@ -11,6 +11,7 @@ import ErrorModal, { ErrorProvider } from "./components/error_popup/ErrorModal";
 import { useError } from "./components/error_popup/ErrorModal";
 import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
 import { ReactComponent as SimulatorIcon } from "./components/status_bar/img/gazebo.svg";
+import { ReactComponent as TerminalIcon } from "./components/status_bar/img/terminal.svg";
 import CommsManager from "./api_helper/CommsManager";
 import {
   createAction,
@@ -282,12 +283,12 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     activate: setSimVisible,
   };
 
-  const gazeboViewer2 = {
-    component: <VncViewer gazeboEnabled={false} />,
-    icon: <SimulatorIcon />,
-    name: "Gazebo",
-    active: showSim,
-    activate: setSimVisible,
+  const terminalViewer = {
+    component: <TerminalViewer gazeboEnabled={false} />,
+    icon: <TerminalIcon />,
+    name: "Terminal",
+    active: showTerminal,
+    activate: setTerminalVisible,
   };
 
   return (
@@ -296,7 +297,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       data-theme={settings.theme.value}
       style={{ display: "flex" }}
     >
-      <ErrorModal />
+      <ErrorModal/>
       <HeaderMenu
         currentProjectname={currentProjectname}
         setCurrentProjectname={setCurrentProjectname}
@@ -318,7 +319,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         explorers={[fileExplorer, universeExplorer]}
         editorApi={editorApi}
         extra_editors={[]}
-        viewers={[gazeboViewer, gazeboViewer2]}
+        viewers={[gazeboViewer, terminalViewer]}
         options={[]}
         layout="both"
       />
