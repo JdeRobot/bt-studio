@@ -56,12 +56,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const btAtMaxCapacity = React.useRef<boolean>(false);
   const { error_critical } = useError();
 
-  const [dockerData, setDockerData] = useState<{
-    gpu_avaliable: string;
-    robotics_backend_version: string;
-    ros_version: string;
-  } | null>(null);
-
   const settings = React.useContext(OptionsContext);
   //////////////////////////s////////////////////////////
 
@@ -99,10 +93,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     CommsManager.deleteInstance();
     const manager = CommsManager.getInstance();
     setManager(manager);
-  };
-
-  const introspectionCallback = (msg: any) => {
-    setDockerData(msg.data);
   };
 
   /////////////////////////////Functions only used in Unibotics///////////////////////////////////////////////////
@@ -148,7 +138,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   useEffect(() => {
     if (manager) {
       console.log("The manager is up!");
-      manager.subscribeOnce("introspection", introspectionCallback);
+      manager.subscribeOnce("introspection", () => {});
       connectWithRetry();
     }
   }, [manager]);
@@ -290,172 +280,170 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       style={{ display: "flex" }}
     >
       <ErrorModal />
-      <>
-        <HeaderMenu
-          currentProjectname={currentProjectname}
-          setCurrentProjectname={setCurrentProjectname}
-          currentUniverseName={currentUniverseName}
-          setCurrentUniverseName={setCurrentUniverseName}
-          setSaveCurrentDiagram={setSaveCurrentDiagram}
-          projectChanges={projectChanges}
-          setProjectChanges={setProjectChanges}
-          gazeboEnabled={gazeboEnabled}
-          setGazeboEnabled={setGazeboEnabled}
-          manager={manager}
-          showVNCViewer={showVNCViewer}
-          isUnibotics={isUnibotics}
-        />
+      <HeaderMenu
+        currentProjectname={currentProjectname}
+        setCurrentProjectname={setCurrentProjectname}
+        currentUniverseName={currentUniverseName}
+        setCurrentUniverseName={setCurrentUniverseName}
+        setSaveCurrentDiagram={setSaveCurrentDiagram}
+        projectChanges={projectChanges}
+        setProjectChanges={setProjectChanges}
+        gazeboEnabled={gazeboEnabled}
+        setGazeboEnabled={setGazeboEnabled}
+        manager={manager}
+        showVNCViewer={showVNCViewer}
+        isUnibotics={isUnibotics}
+      />
 
-        <EditorComponent
-          commsManager={manager}
-          project={currentProjectname}
-          explorers={[fileExplorer, universeExplorer]}
-          editorApi={editorApi}
-          extra_editors={[]}
-          viewers={[]}
-          options={[]}
-          layout="both"
-        />
-      </>
+      <EditorComponent
+        commsManager={manager}
+        project={currentProjectname}
+        explorers={[fileExplorer, universeExplorer]}
+        editorApi={editorApi}
+        extra_editors={[]}
+        viewers={[]}
+        options={[]}
+        layout="both"
+      />
     </div>
   );
 
-  return (
-    <div
-      className="bt-App"
-      data-theme={settings.theme.value}
-      style={{ display: "flex" }}
-    >
-      <ErrorModal />
-      <>
-        <HeaderMenu
-          currentProjectname={currentProjectname}
-          setCurrentProjectname={setCurrentProjectname}
-          currentUniverseName={currentUniverseName}
-          setCurrentUniverseName={setCurrentUniverseName}
-          setSaveCurrentDiagram={setSaveCurrentDiagram}
-          projectChanges={projectChanges}
-          setProjectChanges={setProjectChanges}
-          gazeboEnabled={gazeboEnabled}
-          setGazeboEnabled={setGazeboEnabled}
-          manager={manager}
-          showVNCViewer={showVNCViewer}
-          isUnibotics={isUnibotics}
-        />
+  // return (
+  //   <div
+  //     className="bt-App"
+  //     data-theme={settings.theme.value}
+  //     style={{ display: "flex" }}
+  //   >
+  //     <ErrorModal />
+  //     <>
+  //       <HeaderMenu
+  //         currentProjectname={currentProjectname}
+  //         setCurrentProjectname={setCurrentProjectname}
+  //         currentUniverseName={currentUniverseName}
+  //         setCurrentUniverseName={setCurrentUniverseName}
+  //         setSaveCurrentDiagram={setSaveCurrentDiagram}
+  //         projectChanges={projectChanges}
+  //         setProjectChanges={setProjectChanges}
+  //         gazeboEnabled={gazeboEnabled}
+  //         setGazeboEnabled={setGazeboEnabled}
+  //         manager={manager}
+  //         showVNCViewer={showVNCViewer}
+  //         isUnibotics={isUnibotics}
+  //       />
 
-        <div className="bt-App-main">
-          <Resizable
-            width={fileBrowserWidth}
-            height={0}
-            onResize={(e, { size }) => onResize("fileBrowserWidth", size)}
-            minConstraints={[200, 200]}
-            maxConstraints={[400, 400]}
-          >
-            <div
-              style={{
-                width: `${fileBrowserWidth}px`,
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <div className="bt-sidebar">
-                <FileBrowser
-                  setCurrentFilename={setCurrentFilename}
-                  currentFilename={currentFilename}
-                  currentProjectname={currentProjectname}
-                  setProjectChanges={setProjectChanges}
-                  setAutosave={setAutosave}
-                  forceSaveCurrent={forceSaveCurrent}
-                  setForcedSaveCurrent={setForcedSaveCurrent}
-                  forceUpdate={{
-                    value: updateFileExplorer,
-                    callback: setUpdateFileExplorer,
-                  }}
-                  setSaveCurrentDiagram={setSaveCurrentDiagram}
-                />
-                <UniverseBrowser
-                  setCurrentFilename={setCurrentFilename}
-                  currentFilename={currentFilename}
-                  currentProjectname={currentProjectname}
-                  setProjectChanges={setProjectChanges}
-                  setAutosave={setAutosave}
-                  forceSaveCurrent={forceSaveCurrent}
-                  setForcedSaveCurrent={setForcedSaveCurrent}
-                  forceUpdate={{
-                    value: updateFileExplorer,
-                    callback: setUpdateFileExplorer,
-                  }}
-                  setSaveCurrentDiagram={setSaveCurrentDiagram}
-                />
-              </div>
-            </div>
-          </Resizable>
+  //       <div className="bt-App-main">
+  //         <Resizable
+  //           width={fileBrowserWidth}
+  //           height={0}
+  //           onResize={(e, { size }) => onResize("fileBrowserWidth", size)}
+  //           minConstraints={[200, 200]}
+  //           maxConstraints={[400, 400]}
+  //         >
+  //           <div
+  //             style={{
+  //               width: `${fileBrowserWidth}px`,
+  //               display: "flex",
+  //               flexDirection: "column",
+  //             }}
+  //           >
+  //             <div className="bt-sidebar">
+  //               <FileBrowser
+  //                 setCurrentFilename={setCurrentFilename}
+  //                 currentFilename={currentFilename}
+  //                 currentProjectname={currentProjectname}
+  //                 setProjectChanges={setProjectChanges}
+  //                 setAutosave={setAutosave}
+  //                 forceSaveCurrent={forceSaveCurrent}
+  //                 setForcedSaveCurrent={setForcedSaveCurrent}
+  //                 forceUpdate={{
+  //                   value: updateFileExplorer,
+  //                   callback: setUpdateFileExplorer,
+  //                 }}
+  //                 setSaveCurrentDiagram={setSaveCurrentDiagram}
+  //               />
+  //               <UniverseBrowser
+  //                 setCurrentFilename={setCurrentFilename}
+  //                 currentFilename={currentFilename}
+  //                 currentProjectname={currentProjectname}
+  //                 setProjectChanges={setProjectChanges}
+  //                 setAutosave={setAutosave}
+  //                 forceSaveCurrent={forceSaveCurrent}
+  //                 setForcedSaveCurrent={setForcedSaveCurrent}
+  //                 forceUpdate={{
+  //                   value: updateFileExplorer,
+  //                   callback: setUpdateFileExplorer,
+  //                 }}
+  //                 setSaveCurrentDiagram={setSaveCurrentDiagram}
+  //               />
+  //             </div>
+  //           </div>
+  //         </Resizable>
 
-          <Resizable
-            width={editorWidth}
-            height={0}
-            onResize={(e, { size }) => onResize("editorWidth", size)}
-            minConstraints={[400, 400]}
-            maxConstraints={[800, 900]}
-          >
-            <div
-              style={{
-                width: `${editorWidth}px`,
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px",
-                backgroundColor: "var(--control-bar)",
-              }}
-            >
-              <FileEditor
-                currentFilename={currentFilename}
-                currentProjectname={currentProjectname}
-                setProjectChanges={setProjectChanges}
-                isUnibotics={isUnibotics}
-                autosaveEnabled={autosaveEnabled}
-                setAutosave={setAutosave}
-                forceSaveCurrent={forceSaveCurrent}
-                manager={manager}
-              />
-              {showTerminal && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
-            </div>
-          </Resizable>
+  //         <Resizable
+  //           width={editorWidth}
+  //           height={0}
+  //           onResize={(e, { size }) => onResize("editorWidth", size)}
+  //           minConstraints={[400, 400]}
+  //           maxConstraints={[800, 900]}
+  //         >
+  //           <div
+  //             style={{
+  //               width: `${editorWidth}px`,
+  //               display: "flex",
+  //               flexDirection: "column",
+  //               gap: "5px",
+  //               backgroundColor: "var(--control-bar)",
+  //             }}
+  //           >
+  //             <FileEditor
+  //               currentFilename={currentFilename}
+  //               currentProjectname={currentProjectname}
+  //               setProjectChanges={setProjectChanges}
+  //               isUnibotics={isUnibotics}
+  //               autosaveEnabled={autosaveEnabled}
+  //               setAutosave={setAutosave}
+  //               forceSaveCurrent={forceSaveCurrent}
+  //               manager={manager}
+  //             />
+  //             {showTerminal && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
+  //           </div>
+  //         </Resizable>
 
-          <div
-            style={{
-              flex: "1 1 0%",
-              display: "flex",
-              flexDirection: "column",
-              flexWrap: "nowrap",
-              gap: "5px",
-              backgroundColor: "var(--control-bar)",
-            }}
-          >
-            {currentProjectname ? (
-              <MainTreeEditorContainer
-                projectName={currentProjectname}
-                setProjectEdited={setProjectChanges}
-                saveCurrentDiagram={saveCurrentDiagram}
-                setSaveCurrentDiagram={setSaveCurrentDiagram}
-                updateFileExplorer={setUpdateFileExplorer}
-              />
-            ) : (
-              <p>Loading...</p>
-            )}
-            {showSim && <VncViewer gazeboEnabled={gazeboEnabled} />}
-          </div>
-        </div>
-        <StatusBar
-          showSim={showSim}
-          setSimVisible={showVNCSim}
-          showTerminal={showTerminal}
-          setTerminalVisible={showVNCTerminal}
-          dockerData={dockerData}
-          resetManager={resetManager}
-        />
-      </>
-    </div>
-  );
+  //         <div
+  //           style={{
+  //             flex: "1 1 0%",
+  //             display: "flex",
+  //             flexDirection: "column",
+  //             flexWrap: "nowrap",
+  //             gap: "5px",
+  //             backgroundColor: "var(--control-bar)",
+  //           }}
+  //         >
+  //           {currentProjectname ? (
+  //             <MainTreeEditorContainer
+  //               projectName={currentProjectname}
+  //               setProjectEdited={setProjectChanges}
+  //               saveCurrentDiagram={saveCurrentDiagram}
+  //               setSaveCurrentDiagram={setSaveCurrentDiagram}
+  //               updateFileExplorer={setUpdateFileExplorer}
+  //             />
+  //           ) : (
+  //             <p>Loading...</p>
+  //           )}
+  //           {showSim && <VncViewer gazeboEnabled={gazeboEnabled} />}
+  //         </div>
+  //       </div>
+  //       <StatusBar
+  //         showSim={showSim}
+  //         setSimVisible={showVNCSim}
+  //         showTerminal={showTerminal}
+  //         setTerminalVisible={showVNCTerminal}
+  //         dockerData={dockerData}
+  //         resetManager={resetManager}
+  //       />
+  //     </>
+  //   </div>
+  // );
 };
 
 export default App;

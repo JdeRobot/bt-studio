@@ -2,10 +2,7 @@ import { useState } from "react";
 import CommsManager from "../../api_helper/CommsManager";
 
 import "./EditorComponent.css";
-import {
-  ResizableColumn,
-  ResizableRow,
-} from "./ResizableComponents";
+import { ResizableColumn, ResizableRow } from "./ResizableComponents";
 import FileEditor from "./file_editor/FileEditor";
 import Explorer, { Entry, ExplorerEntry } from "./explorer/Explorer";
 import StatusBar from "./status_bar/StatusBar";
@@ -69,13 +66,9 @@ const EditorComponent = ({
             api={editorApi}
           />
         </div>
-        <div className="ide-column-container">
-        </div>
+        <div className="ide-column-container"></div>
       </ResizableRow>
-      <StatusBar
-        commsManager={commsManager}
-        resetManager={() =>{}}
-        />
+      <StatusBar commsManager={commsManager} resetManager={() => {}} />
     </div>
   );
 };

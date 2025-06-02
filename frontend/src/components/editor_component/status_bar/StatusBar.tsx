@@ -10,7 +10,7 @@ const StatusBar = ({
   commsManager: CommsManager | null;
   resetManager: Function;
 }) => {
-  var dockerData = commsManager?.getHostData()
+  var dockerData = commsManager?.getHostData();
 
   return (
     <div className="bt-status-bar-container">

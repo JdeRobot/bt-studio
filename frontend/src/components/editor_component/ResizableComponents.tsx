@@ -130,26 +130,25 @@ export const ResizableRow = ({
   layout: string;
   children: any[];
 }) => {
-
   if (layout === "only-editor") {
     // Remove viewers == Remove last element
-    children.pop()
-    baseWidth.pop()
-    maxWidth.pop()
+    children.pop();
+    baseWidth.pop();
+    maxWidth.pop();
   }
 
   if (layout === "only-viewers") {
     // Remove editors == Remove middle element
-    children.splice(1,1)
-    baseWidth.splice(1,1)
-    maxWidth.splice(1,1)
+    children.splice(1, 1);
+    baseWidth.splice(1, 1);
+    maxWidth.splice(1, 1);
   }
 
   if (!showExplorer) {
     // Remove explorers == Remove first element
-    children.shift()
-    baseWidth.shift()
-    maxWidth.shift()
+    children.shift();
+    baseWidth.shift();
+    maxWidth.shift();
   }
 
   if (children.length === 1) {
