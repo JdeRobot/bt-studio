@@ -1,5 +1,5 @@
 import { Resizable } from "re-resizable";
-
+import { ReactComponent as SplashIcon } from "./file_editor/img/logo_jderobot_monocolor.svg";
 import "./EditorComponent.css";
 
 export const ResizableHoriz = ({
@@ -99,6 +99,7 @@ ResizableVert.defaultProps = {
 };
 
 export const ResizableColumn = ({ children }: { children: any[] }) => {
+  console.log(children);
   if (children.length === 1) {
     return <div className="ide-column-container">{children[0]}</div>;
   }
@@ -167,4 +168,35 @@ export const ResizableRow = ({
       </div>
     </div>
   );
+};
+
+export const CollapsableResizableColumn = ({
+  state,
+  children,
+}: {
+  state: boolean[];
+  children: any[];
+}) => {
+  for (let index = state.length - 1; index >= 0; index--) {
+    if (!state[index]) {
+      children.splice(index, 1);
+    }
+  }
+
+  if (children.length === 1) {
+    return <div className="ide-column-container">{children[0]}</div>;
+  }
+
+  if (children.length === 2) {
+    return (
+      <div className="ide-column-container">
+        <ResizableVert height={100 / children.length} max={100} snap={[0]}>
+          {children[0]}
+        </ResizableVert>
+        <div className="ide-column-filler-container">{children[1]}</div>
+      </div>
+    );
+  }
+
+  return <SplashIcon className="bt-splash-icon" fill="var(--header)" />;
 };

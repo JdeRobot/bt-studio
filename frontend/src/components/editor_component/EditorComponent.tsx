@@ -2,7 +2,11 @@ import { useState } from "react";
 import CommsManager from "../../api_helper/CommsManager";
 
 import "./EditorComponent.css";
-import { ResizableColumn, ResizableRow } from "./ResizableComponents";
+import {
+  CollapsableResizableColumn,
+  ResizableColumn,
+  ResizableRow,
+} from "./ResizableComponents";
 import FileEditor from "./file_editor/FileEditor";
 import Explorer, { Entry, ExplorerEntry } from "./explorer/Explorer";
 import StatusBar from "./status_bar/StatusBar";
@@ -66,7 +70,9 @@ const EditorComponent = ({
             api={editorApi}
           />
         </div>
-        <div className="ide-column-container"></div>
+        <div className="ide-column-container">
+          <ViewersContainer viewers={viewers} options={options} />
+        </div>
       </ResizableRow>
       <StatusBar commsManager={commsManager} resetManager={() => {}} />
     </div>
@@ -74,3 +80,47 @@ const EditorComponent = ({
 };
 
 export default EditorComponent;
+
+const ViewersContainer = ({
+  viewers,
+  options,
+}: {
+  viewers: ViewersEntry[];
+  options: any;
+}) => {
+  const [visibility, setVisibility] = useState<boolean[]>(
+    Array(viewers.length).fill(false),
+  );
+
+  const toggleVisibility = (index: number) => {
+    setVisibility(
+      visibility.map((state, i) => {
+        if (index === i) {
+          return !state;
+        } else {
+          return state;
+        }
+      }),
+    );
+  };
+
+  return (
+    <div className="ide-editor-container">
+      <div className="bt-editor-menu">
+        <div className="bt-editor-buttons">
+          {viewers.map((viewer, index) => (
+            <button
+              className="bt-save-button"
+              onClick={() => toggleVisibility(index)}
+            >
+              {viewer.icon}
+            </button>
+          ))}
+        </div>
+      </div>
+      <CollapsableResizableColumn state={visibility}>
+        {viewers.map((viewer) => viewer.component)}
+      </CollapsableResizableColumn>
+    </div>
+  );
+};

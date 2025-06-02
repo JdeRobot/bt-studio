@@ -10,6 +10,7 @@ import VncViewer from "./components/vnc_viewer/VncViewer";
 import ErrorModal, { ErrorProvider } from "./components/error_popup/ErrorModal";
 import { useError } from "./components/error_popup/ErrorModal";
 import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
+import { ReactComponent as SimulatorIcon } from "./components/status_bar/img/gazebo.svg";
 import CommsManager from "./api_helper/CommsManager";
 import {
   createAction,
@@ -273,6 +274,22 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     },
   };
 
+  const gazeboViewer = {
+    component: <VncViewer gazeboEnabled={false} />,
+    icon: <SimulatorIcon />,
+    name: "Gazebo",
+    active: showSim,
+    activate: setSimVisible,
+  };
+
+  const gazeboViewer2 = {
+    component: <VncViewer gazeboEnabled={false} />,
+    icon: <SimulatorIcon />,
+    name: "Gazebo",
+    active: showSim,
+    activate: setSimVisible,
+  };
+
   return (
     <div
       className="bt-App"
@@ -301,7 +318,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         explorers={[fileExplorer, universeExplorer]}
         editorApi={editorApi}
         extra_editors={[]}
-        viewers={[]}
+        viewers={[gazeboViewer, gazeboViewer2]}
         options={[]}
         layout="both"
       />
