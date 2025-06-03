@@ -6,21 +6,30 @@ type PromiseHandlers = {
   reject: (reason?: any) => void;
 };
 
+interface ManagerMsg {
+  id: string;
+  command: string;
+  data: any;
+}
+
 type Events = string | string[];
 export default class CommsManager {
   private static instance: CommsManager | undefined;
   private ws: WebSocket;
   private observers: { [id: string]: Function[] } = {};
   private pendingPromises: Map<string, PromiseHandlers> = new Map();
-  private hostData?: {
+  private static state?: string;
+  private static hostData?: {
     gpu_avaliable: string;
     robotics_backend_version: string;
     ros_version: string;
-  } 
+  };
 
   // Private constructor to only allow single instatiation
   private constructor(address: string) {
     this.ws = new WebSocket(address);
+    this.subscribe(events.STATE_CHANGED, this.setManagerState);
+    this.subscribeOnce(events.INTROSPECTION, this.setHostData);
 
     // Message callback
     this.ws.onmessage = (event) => {
@@ -44,9 +53,6 @@ export default class CommsManager {
         const subscriptions = this.observers[msg.command] || [];
         let length = subscriptions.length;
         while (length--) {
-          if (msg.command === events.INTROSPECTION) {
-            this.hostData = msg.data
-          }
           subscriptions[length](msg);
         }
       }
@@ -138,9 +144,20 @@ export default class CommsManager {
     });
   }
 
-  // Connect to the ws
+  private setManagerState(msg: ManagerMsg) {
+    CommsManager.state = msg.data.state;
+  }
+
+  public getState() {
+    return CommsManager.state;
+  }
+
+  private setHostData(msg: ManagerMsg) {
+    CommsManager.hostData = msg.data;
+  }
+
   public getHostData() {
-    return this.hostData;
+    return CommsManager.hostData;
   }
 
   // Connect to the ws
@@ -152,11 +169,17 @@ export default class CommsManager {
     return this.send("launch_world", cfg);
   }
 
-  public prepareVisualization(visualization_type: string, visualization_config: string | null) {
+  public prepareVisualization(
+    visualization_type: string,
+    visualization_config: string | null
+  ) {
     if (visualization_config === null || visualization_config === undefined) {
-      visualization_config = "None"
+      visualization_config = "None";
     }
-    return this.send("prepare_visualization", {type: visualization_type, file: visualization_config});
+    return this.send("prepare_visualization", {
+      type: visualization_type,
+      file: visualization_config,
+    });
   }
 
   public run(cfg: Object) {
@@ -196,11 +219,11 @@ export default class CommsManager {
   }
 
   public style_check(code: string) {
-    return this.send("style_check", {code: code});
+    return this.send("style_check", { code: code });
   }
 
   public code_format(code: string) {
-    return this.send("code_format", {code: code});
+    return this.send("code_format", { code: code });
   }
 
   public code_analysis(code: string, disable_errors: string[]) {
@@ -210,8 +233,8 @@ export default class CommsManager {
     });
   }
 
-  public code_autocomplete(code: string, line:number, col:number) {
-    return this.send("code_autocomplete", {code: code, line:line, col:col});
+  public code_autocomplete(code: string, line: number, col: number) {
+    return this.send("code_autocomplete", { code: code, line: line, col: col });
   }
 }
 

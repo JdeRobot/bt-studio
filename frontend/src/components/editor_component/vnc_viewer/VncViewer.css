@@ -1,0 +1,25 @@
+.bt-viewer {
+  height: 100%;
+  width: 100%;
+  background-color: var(--app-background);
+}
+
+.bt-terminal {
+  height: 50%;
+  width: 100%;
+  background-color: var(--app-background);
+}
+
+.bt-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.bt-loader-terminal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50%;
+}

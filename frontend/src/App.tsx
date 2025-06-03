@@ -6,7 +6,6 @@ import HeaderMenu from "./components/header_menu/HeaderMenu";
 import FileBrowser from "./components/file_browser/FileBrowser";
 import FileEditor from "./components/file_editor/FileEditor";
 import "./App.css";
-import VncViewer from "./components/vnc_viewer/VncViewer";
 import ErrorModal, { ErrorProvider } from "./components/error_popup/ErrorModal";
 import { useError } from "./components/error_popup/ErrorModal";
 import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
@@ -32,6 +31,7 @@ import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
 import StatusBar from "./components/status_bar/StatusBar";
 import UniverseBrowser from "./components/file_browser/UniverseBrowser";
 import EditorComponent from "./components/editor_component/EditorComponent";
+import VncViewer from "./components/editor_component/vnc_viewer/VncViewer";
 import { newFileModalData } from "./components/editor_component/explorer/modals/NewFileModal";
 import { publish } from "./components/helper/TreeEditorHelper";
 import { Entry } from "./components/editor_component/explorer/Explorer";
@@ -129,7 +129,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     }
     try {
       await manager.connect();
-      console.log("Connected!");
+      console.log("Connected!", manager.getState());
       connected.current = true;
     } catch (error) {
       console.log("Connection failed, trying again!");
@@ -140,7 +140,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   useEffect(() => {
     if (manager) {
       console.log("The manager is up!");
-      manager.subscribeOnce("introspection", () => {});
       connectWithRetry();
     }
   }, [manager]);
@@ -276,7 +275,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   };
 
   const gazeboViewer = {
-    component: <VncViewer gazeboEnabled={false} />,
+    component: <VncViewer commsManager={manager} port={6080} />,
     icon: <SimulatorIcon />,
     name: "Gazebo",
     active: showSim,
@@ -284,7 +283,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   };
 
   const terminalViewer = {
-    component: <TerminalViewer gazeboEnabled={false} />,
+    component: <VncViewer commsManager={manager} port={1108} />,
     icon: <TerminalIcon />,
     name: "Terminal",
     active: showTerminal,
