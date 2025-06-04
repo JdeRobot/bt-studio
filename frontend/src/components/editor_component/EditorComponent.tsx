@@ -21,6 +21,7 @@ interface ViewersEntry {
 
 const EditorComponent = ({
   commsManager,
+  resetManager,
   project,
   explorers,
   editorApi,
@@ -30,6 +31,7 @@ const EditorComponent = ({
   options,
 }: {
   commsManager: CommsManager | null;
+  resetManager: Function;
   project: string;
   explorers: ExplorerEntry[];
   editorApi: any;
@@ -74,7 +76,7 @@ const EditorComponent = ({
           <ViewersContainer viewers={viewers} options={options} />
         </div>
       </ResizableRow>
-      <StatusBar commsManager={commsManager} resetManager={() => {}} />
+      <StatusBar commsManager={commsManager} resetManager={resetManager} />
     </div>
   );
 };

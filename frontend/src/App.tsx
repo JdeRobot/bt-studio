@@ -314,6 +314,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
 
       <EditorComponent
         commsManager={manager}
+        resetManager={resetManager}
         project={currentProjectname}
         explorers={[fileExplorer, universeExplorer]}
         editorApi={editorApi}

@@ -18,7 +18,7 @@ export default class CommsManager {
   private ws: WebSocket;
   private observers: { [id: string]: Function[] } = {};
   private pendingPromises: Map<string, PromiseHandlers> = new Map();
-  private static state?: string;
+  private static state: string = "idle";
   private static hostData?: {
     gpu_avaliable: string;
     robotics_backend_version: string;
