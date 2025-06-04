@@ -39,7 +39,6 @@ const FileEditor = ({
   setFileContent,
   saveFile,
   language,
-  contentChange,
   zoomLevel,
 }: {
   commsManager: CommsManager | null;
@@ -47,7 +46,6 @@ const FileEditor = ({
   setFileContent: Function;
   saveFile: Function;
   language: string;
-  contentChange: Function;
   zoomLevel: number;
 }) => {
   const settings = React.useContext(OptionsContext);
@@ -259,7 +257,6 @@ const FileEditor = ({
       theme={`${settings.theme.value}-theme`}
       onChange={(newContent: any) => {
         setFileContent(newContent);
-        contentChange(true); // Set the unsaved changes flag
       }}
       options={editorOptions}
       beforeMount={handleEditorDidMount}

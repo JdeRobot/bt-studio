@@ -7,7 +7,7 @@ import {
   ResizableColumn,
   ResizableRow,
 } from "./ResizableComponents";
-import FileEditor from "./file_editor/FileEditor";
+import FileEditor, { EditorsEntry } from "./file_editor/FileEditor";
 import Explorer, { Entry, ExplorerEntry } from "./explorer/Explorer";
 import StatusBar from "./status_bar/StatusBar";
 
@@ -25,7 +25,7 @@ const EditorComponent = ({
   project,
   explorers,
   editorApi,
-  extra_editors,
+  extraEditors,
   viewers,
   layout,
   options,
@@ -35,7 +35,7 @@ const EditorComponent = ({
   project: string;
   explorers: ExplorerEntry[];
   editorApi: any;
-  extra_editors: any[];
+  extraEditors: EditorsEntry[];
   viewers: ViewersEntry[];
   layout: "only-editor" | "only-viewers" | "both";
   options: any;
@@ -70,6 +70,7 @@ const EditorComponent = ({
             autosave={true}
             manager={commsManager}
             api={editorApi}
+            extraEditors={extraEditors}
           />
         </div>
         <div className="ide-column-container">

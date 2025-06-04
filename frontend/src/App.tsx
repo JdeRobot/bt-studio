@@ -8,7 +8,7 @@ import FileEditor from "./components/file_editor/FileEditor";
 import "./App.css";
 import ErrorModal, { ErrorProvider } from "./components/error_popup/ErrorModal";
 import { useError } from "./components/error_popup/ErrorModal";
-import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
+import MainTreeEditorContainer from "./components/new_tree_editor/MainTreeEditorContainer";
 import { ReactComponent as SimulatorIcon } from "./components/status_bar/img/gazebo.svg";
 import { ReactComponent as TerminalIcon } from "./components/status_bar/img/terminal.svg";
 import CommsManager from "./api_helper/CommsManager";
@@ -290,6 +290,12 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     activate: setTerminalVisible,
   };
 
+  const treeEditor = {
+    component: MainTreeEditorContainer,
+    name: "Tree editor",
+    trigger: [{ group: "Trees", extension: "json" }],
+  };
+
   return (
     <div
       className="bt-App"
@@ -318,7 +324,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         project={currentProjectname}
         explorers={[fileExplorer, universeExplorer]}
         editorApi={editorApi}
-        extra_editors={[]}
+        extraEditors={[treeEditor]}
         viewers={[gazeboViewer, terminalViewer]}
         options={[]}
         layout="both"

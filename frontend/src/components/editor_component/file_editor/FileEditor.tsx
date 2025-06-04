@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./FileEditor.css";
 
 import { ReactComponent as SaveIcon } from "./img/save.svg";
@@ -9,6 +9,12 @@ import { OptionsContext } from "../../options/Options";
 import CommsManager from "../../../api_helper/CommsManager";
 import { Entry } from "../explorer/Explorer";
 import TextEditor from "./TextEditor";
+
+export interface EditorsEntry {
+  component: any;
+  name: string;
+  trigger: { group: string; extension: string }[];
+}
 
 const fileTypes = {
   json: "json",
@@ -30,6 +36,7 @@ const FileEditor = ({
   autosave,
   manager,
   api,
+  extraEditors,
 }: {
   currentFile: Entry | undefined;
   currentProjectname: string;
@@ -37,22 +44,33 @@ const FileEditor = ({
   autosave: boolean;
   manager: CommsManager | null;
   api: any;
+  extraEditors: EditorsEntry[];
 }) => {
-  const { error } = useError();
+  const { error, warning } = useError();
   const settings = React.useContext(OptionsContext);
 
-  const [fileContent, setFileContent] = useState<string | null>(null);
+  const [fileContent, setFileContent] = useState<string | undefined>(undefined);
   const [zoomLevel, changeZoomLevel] = useState(0);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [fileToSave, setFileToSave] = useState<Entry | undefined>(undefined);
   const [language, setLanguage] = useState("python");
   const [projectToSave, setProjectToSave] = useState(currentProjectname);
 
+  // extraEditors.forEach((editor) => {
+  //   editor.component.props.commsManager = manager;
+  //   editor.component.props.fileContent = fileContent;
+  //   editor.component.props.setFileContent = setFileContent;
+  //   editor.component.props.saveFile = autoSave;
+  //   editor.component.props.language = language;
+  //   editor.component.props.zoomLevel = zoomLevel;
+  // });
+
   const initFile = async (file: Entry) => {
     try {
       const content = await api.file.get(currentProjectname, currentFile);
-      setFileContent(content);
       const extension = file.name.split(".").pop();
+      var customEditor = undefined;
+      setFileContent(content);
       var fileType = "textplain";
       if (extension) {
         for (const key in fileTypes) {
@@ -62,6 +80,7 @@ const FileEditor = ({
           }
         }
       }
+
       setLanguage(fileType);
       setHasUnsavedChanges(false); // Reset the unsaved changes flag when a new file is loaded
     } catch (e) {
@@ -85,9 +104,9 @@ const FileEditor = ({
       return;
     }
 
-    if (currentFile.access === false) {
+    if (fileToSave.access === false) {
       console.log("File is Read-Only");
-      alert("File is Read-Only");
+      warning("File is Read-Only");
       return;
     }
 
@@ -109,6 +128,10 @@ const FileEditor = ({
   };
 
   useEffect(() => {
+    setHasUnsavedChanges(true);
+  }, [fileContent]);
+
+  useEffect(() => {
     if (currentFile) {
       initFile(currentFile);
       if (fileToSave && autosave) {
@@ -116,7 +139,7 @@ const FileEditor = ({
       }
       setFileToSave(currentFile);
     } else {
-      setFileContent(null);
+      setFileContent(undefined);
       setHasUnsavedChanges(false);
     }
   }, [currentFile]);
@@ -127,7 +150,7 @@ const FileEditor = ({
       handleSaveFile();
     }
     setProjectToSave(currentProjectname);
-    setFileContent(null);
+    setFileContent(undefined);
   }, [currentProjectname]);
 
   const handleSaveFile = async () => {
@@ -138,13 +161,13 @@ const FileEditor = ({
 
     if (currentFile === undefined) {
       console.log("No file is currently selected");
-      alert("No file is currently selected.");
+      warning("No file is currently selected.");
       return;
     }
 
     if (currentFile.access === false) {
       console.log("File is Read-Only");
-      alert("File is Read-Only");
+      warning("File is Read-Only");
       return;
     }
 
@@ -187,16 +210,40 @@ const FileEditor = ({
           </button>
         </div>
       </div>
-      {fileContent !== null ? (
-        <TextEditor
-          commsManager={manager}
-          fileContent={fileContent}
-          setFileContent={setFileContent}
-          saveFile={autoSave}
-          language={language}
-          contentChange={setHasUnsavedChanges}
-          zoomLevel={zoomLevel}
-        />
+      {fileContent ? (
+        <>
+          {(() => {
+            for (const editor of extraEditors) {
+              for (const entry of editor.trigger) {
+                if (
+                  entry.group === currentFile?.group &&
+                  entry.extension === currentFile?.name.split(".").pop()
+                ) {
+                  return (
+                    <editor.component
+                      commsManager={manager}
+                      fileContent={fileContent!}
+                      setFileContent={setFileContent}
+                      saveFile={autoSave}
+                      language={language}
+                      zoomLevel={zoomLevel}
+                    />
+                  );
+                }
+              }
+              return (
+                <TextEditor
+                  commsManager={manager}
+                  fileContent={fileContent!}
+                  setFileContent={setFileContent}
+                  saveFile={autoSave}
+                  language={language}
+                  zoomLevel={zoomLevel}
+                />
+              );
+            }
+          })()}
+        </>
       ) : (
         <>
           {isUnibotics ? (
