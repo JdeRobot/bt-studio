@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import Editor, { Monaco } from "@monaco-editor/react";
+import React, { useEffect, useState } from "react";
 import "./FileEditor.css";
 
 import { ReactComponent as SaveIcon } from "./img/save.svg";
@@ -8,7 +7,6 @@ import { ReactComponent as SplashIconUnibotics } from "./img/logo_unibotics_mono
 import { useError } from "../../error_popup/ErrorModal";
 import { OptionsContext } from "../../options/Options";
 import CommsManager from "../../../api_helper/CommsManager";
-import { monacoEditorSnippet } from "./extras";
 import { Entry } from "../explorer/Explorer";
 import TextEditor from "./TextEditor";
 
@@ -46,9 +44,7 @@ const FileEditor = ({
   const [fileContent, setFileContent] = useState<string | null>(null);
   const [zoomLevel, changeZoomLevel] = useState(0);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [filenameToSave, setFilenameToSave] = useState<Entry | undefined>(
-    undefined,
-  );
+  const [fileToSave, setFileToSave] = useState<Entry | undefined>(undefined);
   const [language, setLanguage] = useState("python");
   const [projectToSave, setProjectToSave] = useState(currentProjectname);
 
@@ -84,7 +80,7 @@ const FileEditor = ({
       return;
     }
 
-    if (filenameToSave === undefined) {
+    if (fileToSave === undefined) {
       console.log("No file to save");
       return;
     }
@@ -96,7 +92,7 @@ const FileEditor = ({
     }
 
     try {
-      await api.file.save(currentProjectname, filenameToSave, fileContent);
+      await api.file.save(currentProjectname, fileToSave, fileContent);
       setHasUnsavedChanges(false); // Reset the unsaved changes flag
       console.log("Auto save completed");
     } catch (e) {
@@ -115,10 +111,10 @@ const FileEditor = ({
   useEffect(() => {
     if (currentFile) {
       initFile(currentFile);
-      if (filenameToSave && autosave) {
+      if (fileToSave && autosave) {
         autoSave();
       }
-      setFilenameToSave(currentFile);
+      setFileToSave(currentFile);
     } else {
       setFileContent(null);
       setHasUnsavedChanges(false);
@@ -126,7 +122,7 @@ const FileEditor = ({
   }, [currentFile]);
 
   useEffect(() => {
-    setFilenameToSave(undefined);
+    setFileToSave(undefined);
     if (currentFile) {
       handleSaveFile();
     }
