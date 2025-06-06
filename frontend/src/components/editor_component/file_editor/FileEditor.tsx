@@ -99,7 +99,7 @@ const FileEditor = ({
   const autoSave = async () => {
     console.log("Auto saving file...");
 
-    if (currentFile === undefined || fileContent === null) {
+    if (fileContent === null) {
       console.log("No content to save");
       return;
     }
@@ -123,7 +123,6 @@ const FileEditor = ({
 
     try {
       await api.file.save(currentProjectname, fileToSave, content);
-      setHasUnsavedChanges(false); // Reset the unsaved changes flag
       console.log("Auto save completed");
     } catch (e) {
       if (e instanceof Error) {
@@ -139,17 +138,18 @@ const FileEditor = ({
   };
 
   useEffect(() => {
-    setHasUnsavedChanges(true);
+    setHasUnsavedChanges(fileContent !== undefined);
   }, [fileContent]);
 
   useEffect(() => {
     const func = async () =>  {
       if (currentFile) {
-        initFile(currentFile);
         if (fileToSave && autosave) {
           await autoSave();
         }
         extraContent.current = ""
+        setFileContent(undefined);
+        await initFile(currentFile);
         setFileToSave(currentFile);
       } else {
         setFileContent(undefined);

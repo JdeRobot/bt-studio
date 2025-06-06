@@ -35,7 +35,6 @@ const MainTreeEditorContainer = ({
   const [treeHierarchy, setTreeHierarchy] = useState<string[]>([]);
   const [goBack, setGoBack] = useState(false);
   const [wentBack, setWentBack] = useState(false);
-  // const resultJson = useRef<string>("");
 
   // HELPERS
 
@@ -60,13 +59,6 @@ const MainTreeEditorContainer = ({
     // Fetch the new subtree or project graph
     console.log("Getting graph!", language);;
   }, [file]);
-
-  // useEffect(() => {
-  //   console.log("Called", resultJson.current);
-  //   if (resultJson.current) {
-  //     setFileContent(resultJson.current);
-  //   }
-  // }, [resultJson.current]);
 
   useEffect(() => {
     if (subTreeName && !wentBack) {
