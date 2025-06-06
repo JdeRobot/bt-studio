@@ -13,6 +13,7 @@ import TextEditor from "./TextEditor";
 export interface EditorsEntry {
   component: any;
   name: string;
+  language: string;
   trigger: { group: string; extension: string }[];
 }
 
@@ -56,20 +57,10 @@ const FileEditor = ({
   const [language, setLanguage] = useState("python");
   const [projectToSave, setProjectToSave] = useState(currentProjectname);
 
-  // extraEditors.forEach((editor) => {
-  //   editor.component.props.commsManager = manager;
-  //   editor.component.props.fileContent = fileContent;
-  //   editor.component.props.setFileContent = setFileContent;
-  //   editor.component.props.saveFile = autoSave;
-  //   editor.component.props.language = language;
-  //   editor.component.props.zoomLevel = zoomLevel;
-  // });
-
   const initFile = async (file: Entry) => {
     try {
       const content = await api.file.get(currentProjectname, currentFile);
       const extension = file.name.split(".").pop();
-      var customEditor = undefined;
       setFileContent(content);
       var fileType = "textplain";
       if (extension) {
@@ -81,8 +72,20 @@ const FileEditor = ({
         }
       }
 
-      setLanguage(fileType);
       setHasUnsavedChanges(false); // Reset the unsaved changes flag when a new file is loaded
+
+      for (const editor of extraEditors) {
+        for (const entry of editor.trigger) {
+          if (
+            entry.group === currentFile?.group &&
+            entry.extension === currentFile?.name.split(".").pop()
+          ) {
+            return setLanguage(editor.language);
+          }
+        }
+      }
+
+      setLanguage(fileType);
     } catch (e) {
       if (e instanceof Error) {
         console.error("Error fetching file content: " + e.message);
@@ -214,34 +217,30 @@ const FileEditor = ({
         <>
           {(() => {
             for (const editor of extraEditors) {
-              for (const entry of editor.trigger) {
-                if (
-                  entry.group === currentFile?.group &&
-                  entry.extension === currentFile?.name.split(".").pop()
-                ) {
-                  return (
-                    <editor.component
-                      commsManager={manager}
-                      fileContent={fileContent!}
-                      setFileContent={setFileContent}
-                      saveFile={autoSave}
-                      language={language}
-                      zoomLevel={zoomLevel}
-                    />
-                  );
-                }
+              if (editor.language === language) {
+                return (
+                  <editor.component
+                    commsManager={manager}
+                    file={currentFile}
+                    fileContent={fileContent}
+                    setFileContent={setFileContent}
+                    saveFile={autoSave}
+                    language={language}
+                    zoomLevel={zoomLevel}
+                  />
+                );
               }
-              return (
-                <TextEditor
-                  commsManager={manager}
-                  fileContent={fileContent!}
-                  setFileContent={setFileContent}
-                  saveFile={autoSave}
-                  language={language}
-                  zoomLevel={zoomLevel}
-                />
-              );
             }
+            return (
+              <TextEditor
+                commsManager={manager}
+                fileContent={fileContent}
+                setFileContent={setFileContent}
+                saveFile={autoSave}
+                language={language}
+                zoomLevel={zoomLevel}
+              />
+            );
           })()}
         </>
       ) : (

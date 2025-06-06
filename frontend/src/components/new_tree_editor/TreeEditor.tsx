@@ -5,6 +5,7 @@ import createEngine, {
   DiagramEngine,
   DiagramModel,
   DiagramModelGenerics,
+  DragNewLinkState,
   NodeModel,
 } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
@@ -62,10 +63,10 @@ const TreeEditor = memo(
 
     // Model and Engine for models use
     const [modalModel, setModalModel] = useState<DiagramModel | undefined>(
-      undefined,
+      undefined
     );
     const [modalEngine, setModalEngine] = useState<DiagramEngine | undefined>(
-      undefined,
+      undefined
     );
 
     useEffect(() => {
@@ -157,7 +158,7 @@ const TreeEditor = memo(
         </button>
       </>
     );
-  },
+  }
 );
 
 const DiagramEditor = memo(
@@ -210,6 +211,7 @@ const DiagramEditor = memo(
 
           setSubTreeName(node.getName());
         } else {
+          console.log("open")
           actionEditor(node);
         }
       } else if (node instanceof TagNodeModel) {
@@ -255,7 +257,7 @@ const DiagramEditor = memo(
 
     // Updates the json state
     const updateJsonState = () => {
-      setFileContent(model.current.serialize());
+      setFileContent(JSON.stringify(model.current.serialize()));
     };
 
     // Deletes the last clicked node
@@ -526,7 +528,7 @@ const DiagramEditor = memo(
         )}
       </>
     );
-  },
+  }
 );
 
 export default TreeEditor;

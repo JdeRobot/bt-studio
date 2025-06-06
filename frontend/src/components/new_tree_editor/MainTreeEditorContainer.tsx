@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import TreeEditor from "./TreeEditor";
 import CommsManager from "../../api_helper/CommsManager";
+import { Entry } from "../file_browser/FileBrowser";
 
 type Props = {
   commsManager: CommsManager | null;
@@ -13,6 +14,7 @@ type Props = {
 
 const MainTreeEditorContainer = ({
   commsManager,
+  file,
   fileContent,
   setFileContent,
   saveFile,
@@ -20,6 +22,7 @@ const MainTreeEditorContainer = ({
   zoomLevel,
 }: {
   commsManager: CommsManager | null;
+  file: Entry;
   fileContent: string;
   setFileContent: Function;
   saveFile: Function;
@@ -28,6 +31,7 @@ const MainTreeEditorContainer = ({
 }) => {
   const [subTreeName, setSubTreeName] = useState("");
   const [treeHierarchy, setTreeHierarchy] = useState<string[]>([]);
+  const [resultJson, setResultJson] = useState("");
   const [goBack, setGoBack] = useState(false);
   const [wentBack, setWentBack] = useState(false);
 
@@ -48,8 +52,14 @@ const MainTreeEditorContainer = ({
     setSubTreeName("");
 
     // Fetch the new subtree or project graph
-    console.log("Getting graph!");
-  }, []);
+    console.log("Getting graph!", language);
+  }, [file]);
+
+  useEffect(() => {
+    if (resultJson) {
+      setFileContent(resultJson);
+    }
+  }, [resultJson]);
 
   useEffect(() => {
     if (subTreeName && !wentBack) {
@@ -92,19 +102,14 @@ const MainTreeEditorContainer = ({
   }, [goBack]);
 
   return (
-    <div
-      id="editor-container"
-      style={{ height: "100%", display: "flex", flexDirection: "column" }}
-    >
-      <TreeEditor
-        fileContent={fileContent}
-        setFileContent={setFileContent}
-        hasSubtrees={true}
-        setSubTreeName={setSubTreeName}
-        subTreeName={subTreeName}
-        setGoBack={setGoBack}
-      />
-    </div>
+    <TreeEditor
+      fileContent={JSON.parse(JSON.parse(JSON.stringify(fileContent)))}
+      setFileContent={setResultJson}
+      hasSubtrees={true}
+      setSubTreeName={setSubTreeName}
+      subTreeName={subTreeName}
+      setGoBack={setGoBack}
+    />
   );
 };
 

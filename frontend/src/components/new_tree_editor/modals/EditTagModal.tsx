@@ -30,7 +30,7 @@ const EditTagModal = ({
   const [formState, setFormState] = useState(initialEditTagModalData);
 
   const updateJsonState = () => {
-    setFileContent(model.serialize());
+    setFileContent(JSON.stringify(model.serialize()));
   };
 
   const handleInputChange = (event: any) => {
@@ -50,7 +50,7 @@ const EditTagModal = ({
     document.getElementById("tag-editor-modal")!.focus();
     if (currentActionNode) {
       var tagName: HTMLInputElement | null = document.getElementById(
-        "tagName",
+        "tagName"
       ) as HTMLInputElement;
       if (tagName) {
         tagName.value = currentActionNode.getName();

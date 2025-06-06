@@ -293,6 +293,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const treeEditor = {
     component: MainTreeEditorContainer,
     name: "Tree editor",
+    language: "custom_tree_editor",
     trigger: [{ group: "Trees", extension: "json" }],
   };
 

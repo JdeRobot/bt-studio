@@ -53,7 +53,7 @@ const EditActionModal = ({
   const [update, setUpdate] = React.useState(false);
 
   const updateJsonState = () => {
-    setFileContent(model.serialize());
+    setFileContent(JSON.stringify(model.serialize()));
   };
 
   const handleInputChange = (event: any) => {
@@ -64,7 +64,7 @@ const EditActionModal = ({
     }));
     setAllowCreation(
       (name === "newInputName" && isInputNameValid(value)) ||
-        (name === "newOutputName" && isOutputNameValid(value)),
+        (name === "newOutputName" && isOutputNameValid(value))
     );
   };
 
@@ -109,7 +109,7 @@ const EditActionModal = ({
         engine,
         model,
         () => {},
-        updateJsonState,
+        updateJsonState
       );
     }
   }, [color]);
@@ -154,11 +154,11 @@ const EditActionModal = ({
 
   const isInputNameValid = (name: string) => {
     var inputPorts = Object.entries(currentActionNode.getPorts()).filter(
-      (item) => item[1] instanceof InputPortModel,
+      (item) => item[1] instanceof InputPortModel
     );
     var merged = [].concat.apply(
       inputPorts.map((x) => x[0]),
-      [],
+      []
     );
     return (
       name !== "" && !name.includes(" ") && !merged.includes(name as never)
@@ -167,11 +167,11 @@ const EditActionModal = ({
 
   const isOutputNameValid = (name: string) => {
     var outputPorts = Object.entries(currentActionNode.getPorts()).filter(
-      (item) => item[1] instanceof OutputPortModel,
+      (item) => item[1] instanceof OutputPortModel
     );
     var merged = [].concat.apply(
       outputPorts.map((x) => x[0]),
-      [],
+      []
     );
     return (
       name !== "" && !name.includes(" ") && !merged.includes(name as never)
@@ -191,7 +191,7 @@ const EditActionModal = ({
         engine,
         model,
         () => {},
-        updateJsonState,
+        updateJsonState
       );
     }
     setInputName(false);
@@ -211,7 +211,7 @@ const EditActionModal = ({
         engine,
         model,
         () => {},
-        updateJsonState,
+        updateJsonState
       );
     }
     setOutputName(false);
@@ -228,7 +228,7 @@ const EditActionModal = ({
       engine,
       model,
       () => {},
-      updateJsonState,
+      updateJsonState
     );
 
     setUpdate(true);
@@ -244,7 +244,7 @@ const EditActionModal = ({
       engine,
       model,
       () => {},
-      updateJsonState,
+      updateJsonState
     );
 
     setUpdate(true);
@@ -345,7 +345,7 @@ const EditActionModal = ({
                       );
                     }
                     return <></>;
-                  },
+                  }
                 )}
                 {inputName ? (
                   <div className="bt-node-editor-io-name-entry-container">
@@ -478,7 +478,7 @@ const EditActionModal = ({
                       );
                     }
                     return <></>;
-                  },
+                  }
                 )}
                 {outputName ? (
                   <div className="bt-node-editor-io-name-entry-container">
