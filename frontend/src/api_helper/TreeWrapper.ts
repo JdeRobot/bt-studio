@@ -807,11 +807,6 @@ const saveFile = async (
   if (!fileName) throw new Error("Current File name is not set");
   if (!content) throw new Error("Content does not exist");
 
-  if (fileName.split("/")[0] === "trees") {
-    console.log(fileName + " is Read Only.");
-    return;
-  }
-
   const apiUrl = "/bt_studio/save_file/";
 
   let params = {

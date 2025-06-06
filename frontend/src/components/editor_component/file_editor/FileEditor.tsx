@@ -9,6 +9,7 @@ import { OptionsContext } from "../../options/Options";
 import CommsManager from "../../../api_helper/CommsManager";
 import { Entry } from "../explorer/Explorer";
 import TextEditor from "./TextEditor";
+import { file } from "jszip";
 
 export interface EditorsEntry {
   component: any;
@@ -56,6 +57,7 @@ const FileEditor = ({
   const [fileToSave, setFileToSave] = useState<Entry | undefined>(undefined);
   const [language, setLanguage] = useState("python");
   const [projectToSave, setProjectToSave] = useState(currentProjectname);
+  const extraContent = useRef<string>(""); // In case some editors cannot update states
 
   const initFile = async (file: Entry) => {
     try {
@@ -113,8 +115,14 @@ const FileEditor = ({
       return;
     }
 
+    var content = fileContent
+
+    if (extraContent.current !== "") {
+      content = extraContent.current
+    }
+
     try {
-      await api.file.save(currentProjectname, fileToSave, fileContent);
+      await api.file.save(currentProjectname, fileToSave, content);
       setHasUnsavedChanges(false); // Reset the unsaved changes flag
       console.log("Auto save completed");
     } catch (e) {
@@ -135,16 +143,21 @@ const FileEditor = ({
   }, [fileContent]);
 
   useEffect(() => {
-    if (currentFile) {
-      initFile(currentFile);
-      if (fileToSave && autosave) {
-        autoSave();
+    const func = async () =>  {
+      if (currentFile) {
+        initFile(currentFile);
+        if (fileToSave && autosave) {
+          await autoSave();
+        }
+        extraContent.current = ""
+        setFileToSave(currentFile);
+      } else {
+        setFileContent(undefined);
+        extraContent.current = ""
+        setHasUnsavedChanges(false);
       }
-      setFileToSave(currentFile);
-    } else {
-      setFileContent(undefined);
-      setHasUnsavedChanges(false);
     }
+    func()
   }, [currentFile]);
 
   useEffect(() => {
@@ -154,6 +167,7 @@ const FileEditor = ({
     }
     setProjectToSave(currentProjectname);
     setFileContent(undefined);
+    extraContent.current = ""
   }, [currentProjectname]);
 
   const handleSaveFile = async () => {
@@ -224,6 +238,7 @@ const FileEditor = ({
                     file={currentFile}
                     fileContent={fileContent}
                     setFileContent={setFileContent}
+                    extraContent={extraContent}
                     saveFile={autoSave}
                     language={language}
                     zoomLevel={zoomLevel}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import TreeEditor from "./TreeEditor";
 import CommsManager from "../../api_helper/CommsManager";
 import { Entry } from "../file_browser/FileBrowser";
@@ -17,6 +17,7 @@ const MainTreeEditorContainer = ({
   file,
   fileContent,
   setFileContent,
+  extraContent,
   saveFile,
   language,
   zoomLevel,
@@ -25,17 +26,22 @@ const MainTreeEditorContainer = ({
   file: Entry;
   fileContent: string;
   setFileContent: Function;
+  extraContent: React.MutableRefObject<string>;
   saveFile: Function;
   language: string;
   zoomLevel: number;
 }) => {
   const [subTreeName, setSubTreeName] = useState("");
   const [treeHierarchy, setTreeHierarchy] = useState<string[]>([]);
-  const [resultJson, setResultJson] = useState("");
   const [goBack, setGoBack] = useState(false);
   const [wentBack, setWentBack] = useState(false);
+  // const resultJson = useRef<string>("");
 
   // HELPERS
+
+  const setResultJson = (data: string) => {
+    extraContent.current = data;
+  };
 
   const trackTreeHierarchy = (newSubTreeName: string) => {
     if (newSubTreeName && !treeHierarchy.includes(newSubTreeName)) {
@@ -52,14 +58,15 @@ const MainTreeEditorContainer = ({
     setSubTreeName("");
 
     // Fetch the new subtree or project graph
-    console.log("Getting graph!", language);
+    console.log("Getting graph!", language);;
   }, [file]);
 
-  useEffect(() => {
-    if (resultJson) {
-      setFileContent(resultJson);
-    }
-  }, [resultJson]);
+  // useEffect(() => {
+  //   console.log("Called", resultJson.current);
+  //   if (resultJson.current) {
+  //     setFileContent(resultJson.current);
+  //   }
+  // }, [resultJson.current]);
 
   useEffect(() => {
     if (subTreeName && !wentBack) {
