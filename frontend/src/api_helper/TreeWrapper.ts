@@ -581,6 +581,26 @@ const getSubtree = async (subtreeName: string, projectName: string) => {
   }
 };
 
+const getSubtreePath = async (projectName: string,subtreeName: string) => {
+  if (!subtreeName) throw new Error("Subtree name is not set");
+  if (!projectName) throw new Error("Project name is not set");
+
+  const apiUrl = `/bt_studio/get_subtree_path?project_name=${encodeURIComponent(projectName)}&subtree_name=${encodeURIComponent(subtreeName)}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get subtree."); // Response error
+    }
+
+    return response.data.subtree;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 const saveSubtree = async (
   modelJson: string,
   currentProjectname: string,
@@ -1239,4 +1259,5 @@ export {
   saveUniverseFile,
   uploadFile,
   uploadFileUniverse,
+  getSubtreePath
 };

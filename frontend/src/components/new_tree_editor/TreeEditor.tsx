@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
 import { useRef, memo } from "react";
 
 import createEngine, {
-  DiagramEngine,
   DiagramModel,
   DiagramModelGenerics,
-  DragNewLinkState,
   NodeModel,
 } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
@@ -21,145 +18,9 @@ import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutput
 import {
   configureEngine,
   isActionNode,
-  TreeViewType,
-  resetActionFrames,
   addActionFrame,
   getActionFrame,
 } from "../helper/TreeEditorHelper";
-
-import NodeMenu from "./NodeMenu";
-import EditActionModal from "./modals/EditActionModal";
-import EditTagModal from "./modals/EditTagModal";
-
-import CommsManager from "../../api_helper/CommsManager";
-import { OptionsContext } from "../options/Options";
-
-import "./TreeEditor.css";
-
-const TreeEditor = memo(
-  ({
-    fileContent,
-    setFileContent,
-    hasSubtrees,
-    setSubTreeName,
-    subTreeName,
-    setGoBack,
-  }: {
-    fileContent: any;
-    setFileContent: Function;
-    hasSubtrees: boolean;
-    setSubTreeName: Function;
-    subTreeName: string;
-    setGoBack: Function;
-  }) => {
-    const settings = React.useContext(OptionsContext);
-
-    const [editActionModalOpen, setEditActionModalOpen] = useState(false);
-    const [currentNode, setCurrentNode] = useState<
-      BasicNodeModel | TagNodeModel | undefined
-    >(undefined);
-    const [editTagModalOpen, setEditTagModalOpen] = useState(false);
-    const [btOrder, setBtOrder] = useState(settings.btOrder.default_value);
-
-    // Model and Engine for models use
-    const [modalModel, setModalModel] = useState<DiagramModel | undefined>(
-      undefined
-    );
-    const [modalEngine, setModalEngine] = useState<DiagramEngine | undefined>(
-      undefined
-    );
-
-    useEffect(() => {
-      setBtOrder(settings.btOrder.value);
-    }, [settings.btOrder.value]);
-
-    // useEffect(() => {
-    //   // TODO: move this to App.tsx
-    //   resetActionFrames();
-    // }, [projectName]);
-
-    const onEditActionModalClose = () => {
-      setEditActionModalOpen(false);
-      setCurrentNode(undefined);
-    };
-
-    const onEditTagModalClose = () => {
-      setEditTagModalOpen(false);
-      setCurrentNode(undefined);
-    };
-
-    return (
-      <>
-        {currentNode && modalModel && modalEngine && (
-          <>
-            {currentNode instanceof BasicNodeModel && (
-              <EditActionModal
-                setFileContent={setFileContent}
-                isOpen={editActionModalOpen}
-                onClose={onEditActionModalClose}
-                currentActionNode={currentNode}
-                model={modalModel}
-                engine={modalEngine}
-              />
-            )}
-            {currentNode instanceof TagNodeModel && (
-              <EditTagModal
-                setFileContent={setFileContent}
-                isOpen={editTagModalOpen}
-                onClose={onEditTagModalClose}
-                currentActionNode={currentNode}
-                model={modalModel}
-                engine={modalEngine}
-              />
-            )}
-          </>
-        )}
-        <DiagramEditor
-          fileContent={fileContent}
-          setFileContent={setFileContent}
-          hasSubtrees={hasSubtrees}
-          setModalModel={setModalModel}
-          setModalEngine={setModalEngine}
-          setSubTreeName={setSubTreeName}
-          setEditActionModalOpen={setEditActionModalOpen}
-          setEditTagModalOpen={setEditTagModalOpen}
-          setCurrentNode={setCurrentNode}
-          setGoBack={setGoBack}
-          subTreeName={subTreeName}
-        />
-        <button className="bt-order-indicator" title={"BT Order: " + btOrder}>
-          <svg
-            className="w-6 h-6 text-gray-800 dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            {btOrder === "bottom-to-top" ? (
-              <path
-                stroke="var(--icon)"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v13m0-13 4 4m-4-4-4 4"
-              />
-            ) : (
-              <path
-                stroke="var(--icon)"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 19V5m0 14-4-4m4 4 4-4"
-              />
-            )}
-          </svg>
-        </button>
-      </>
-    );
-  }
-);
 
 const DiagramEditor = memo(
   ({
@@ -168,33 +29,27 @@ const DiagramEditor = memo(
     hasSubtrees,
     setModalModel,
     setModalEngine,
-    setSubTreeName,
+    enterSubtree,
     setEditActionModalOpen,
     setEditTagModalOpen,
     setCurrentNode,
-    setGoBack,
-    subTreeName,
   }: {
     fileContent: any;
     setFileContent: Function;
     hasSubtrees: boolean;
     setModalModel: Function;
     setModalEngine: Function;
-    setSubTreeName: Function;
+    enterSubtree: Function;
     setEditActionModalOpen: Function;
     setEditTagModalOpen: Function;
     setCurrentNode: Function;
-    setGoBack: Function;
-    subTreeName: string;
   }) => {
     // VARS
-
     // Initialize position and the last clicked node
     var lastMovedNodePosition = { x: 100, y: 100 };
     var lastClickedNodeId = "";
 
     // REFS
-
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
     const engine = useRef(createEngine());
@@ -208,10 +63,8 @@ const DiagramEditor = memo(
         if (node.getIsSubtree()) {
           // Save the current subtree json
           updateJsonState();
-
-          setSubTreeName(node.getName());
+          enterSubtree(node.getName());
         } else {
-          console.log("open")
           actionEditor(node);
         }
       } else if (node instanceof TagNodeModel) {
@@ -257,7 +110,7 @@ const DiagramEditor = memo(
 
     // Updates the json state
     const updateJsonState = () => {
-      setFileContent(JSON.stringify(model.current.serialize()));
+      setFileContent(JSON.stringify(model.current.serialize(), null, 4));
     };
 
     // Deletes the last clicked node
@@ -521,14 +374,13 @@ const DiagramEditor = memo(
           onEditAction={onNodeEditor}
           hasSubtrees={hasSubtrees}
           setGoBack={setGoBack}
-          subTreeName={subTreeName}
         /> */}
         {engine.current && (
           <CanvasWidget className="bt-canvas" engine={engine.current} />
         )}
       </>
     );
-  }
+  },
 );
 
-export default TreeEditor;
+export default DiagramEditor;

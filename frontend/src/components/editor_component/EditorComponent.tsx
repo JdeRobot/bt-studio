@@ -65,6 +65,7 @@ const EditorComponent = ({
         <div className="ide-column-container">
           <FileEditor
             currentFile={currentFile}
+            changeCurrentFile={setCurrentFile}
             currentProjectname={project}
             isUnibotics={false}
             autosave={true}

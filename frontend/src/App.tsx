@@ -8,7 +8,6 @@ import FileEditor from "./components/file_editor/FileEditor";
 import "./App.css";
 import ErrorModal, { ErrorProvider } from "./components/error_popup/ErrorModal";
 import { useError } from "./components/error_popup/ErrorModal";
-import MainTreeEditorContainer from "./components/new_tree_editor/MainTreeEditorContainer";
 import { ReactComponent as SimulatorIcon } from "./components/status_bar/img/gazebo.svg";
 import { ReactComponent as TerminalIcon } from "./components/status_bar/img/terminal.svg";
 import CommsManager from "./api_helper/CommsManager";
@@ -35,6 +34,7 @@ import VncViewer from "./components/editor_component/vnc_viewer/VncViewer";
 import { newFileModalData } from "./components/editor_component/explorer/modals/NewFileModal";
 import { publish } from "./components/helper/TreeEditorHelper";
 import { Entry } from "./components/editor_component/explorer/Explorer";
+import TreeEditor from "./components/new_tree_editor/MainTreeEditorContainer";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
@@ -291,7 +291,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   };
 
   const treeEditor = {
-    component: MainTreeEditorContainer,
+    component: TreeEditor,
     name: "Tree editor",
     language: "custom_tree_editor",
     trigger: [{ group: "Trees", extension: "json" }],

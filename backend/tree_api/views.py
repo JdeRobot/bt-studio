@@ -1,3 +1,4 @@
+import os
 import shutil
 import json
 import base64
@@ -234,6 +235,19 @@ def get_subtree(request):
 
     subtree = json.loads(fal.read(subtree_path))
     return Response({"subtree": subtree}, status=status.HTTP_200_OK)
+
+
+@error_wrapper("GET", ["project_name", "subtree_name"])
+def get_subtree_path(request):
+    project_name = request.GET.get("project_name")
+    subtree_name = request.GET.get("subtree_name")
+
+    subtrees_path = fal.subtrees_path(project_name)
+    subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
+    rel_path = os.path.relpath(subtree_path, fal.code_path(project_name))
+    print(rel_path)
+
+    return Response({"subtree": rel_path}, status=status.HTTP_200_OK)
 
 
 @error_wrapper("GET", ["project_name"])

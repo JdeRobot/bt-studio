@@ -33,6 +33,7 @@ const fileTypes = {
 
 const FileEditor = ({
   currentFile,
+  changeCurrentFile,
   currentProjectname,
   isUnibotics,
   autosave,
@@ -41,6 +42,7 @@ const FileEditor = ({
   extraEditors,
 }: {
   currentFile: Entry | undefined;
+  changeCurrentFile: Function;
   currentProjectname: string;
   isUnibotics: boolean;
   autosave: boolean;
@@ -115,10 +117,10 @@ const FileEditor = ({
       return;
     }
 
-    var content = fileContent
+    var content = fileContent;
 
     if (extraContent.current !== "") {
-      content = extraContent.current
+      content = extraContent.current;
     }
 
     try {
@@ -130,7 +132,6 @@ const FileEditor = ({
           error("Error saving file: " + "You're using too much AWS space!");
         } else {
           console.log("Error saving file: " + e.message);
-          //error("Error saving file: " + e.message);
           error("Error saving file: " + "I'm entering through the bad one");
         }
       }
@@ -142,22 +143,22 @@ const FileEditor = ({
   }, [fileContent]);
 
   useEffect(() => {
-    const func = async () =>  {
+    const func = async () => {
       if (currentFile) {
         if (fileToSave && autosave) {
           await autoSave();
         }
-        extraContent.current = ""
+        extraContent.current = "";
         setFileContent(undefined);
         await initFile(currentFile);
         setFileToSave(currentFile);
       } else {
         setFileContent(undefined);
-        extraContent.current = ""
+        extraContent.current = "";
         setHasUnsavedChanges(false);
       }
-    }
-    func()
+    };
+    func();
   }, [currentFile]);
 
   useEffect(() => {
@@ -167,7 +168,7 @@ const FileEditor = ({
     }
     setProjectToSave(currentProjectname);
     setFileContent(undefined);
-    extraContent.current = ""
+    extraContent.current = "";
   }, [currentProjectname]);
 
   const handleSaveFile = async () => {
@@ -235,7 +236,9 @@ const FileEditor = ({
                 return (
                   <editor.component
                     commsManager={manager}
+                    project={currentProjectname}
                     file={currentFile}
+                    changeFile={changeCurrentFile}
                     fileContent={fileContent}
                     setFileContent={setFileContent}
                     extraContent={extraContent}

@@ -4,7 +4,7 @@ import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
 import Modal from "../../Modal/Modal";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 
-import { TagNodeModel } from "../nodes/tag_node/TagNodeModel";
+import { TagNodeModel } from "../../tree_editor/nodes/tag_node/TagNodeModel";
 
 const initialEditTagModalData = {
   tagName: "",
@@ -29,10 +29,6 @@ const EditTagModal = ({
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialEditTagModalData);
 
-  const updateJsonState = () => {
-    setFileContent(JSON.stringify(model.serialize()));
-  };
-
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
     setFormState((prevFormData) => ({
@@ -41,7 +37,7 @@ const EditTagModal = ({
     }));
     currentActionNode.setName(value);
 
-    updateJsonState();
+    setFileContent();
     engine.repaintCanvas();
   };
 
@@ -50,7 +46,7 @@ const EditTagModal = ({
     document.getElementById("tag-editor-modal")!.focus();
     if (currentActionNode) {
       var tagName: HTMLInputElement | null = document.getElementById(
-        "tagName"
+        "tagName",
       ) as HTMLInputElement;
       if (tagName) {
         tagName.value = currentActionNode.getName();
