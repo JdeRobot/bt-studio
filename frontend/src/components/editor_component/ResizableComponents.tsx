@@ -99,7 +99,6 @@ ResizableVert.defaultProps = {
 };
 
 export const ResizableColumn = ({ children }: { children: any[] }) => {
-  console.log(children);
   if (children.length === 1) {
     return <div className="ide-column-container">{children[0]}</div>;
   }
