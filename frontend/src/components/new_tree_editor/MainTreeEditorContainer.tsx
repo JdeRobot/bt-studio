@@ -37,7 +37,7 @@ const TreeEditor = ({
 
   const [editActionModalOpen, setEditActionModalOpen] = useState(false);
   const [node, setNode] = useState<BasicNodeModel | TagNodeModel | undefined>(
-    undefined
+    undefined,
   );
   const [editTagModalOpen, setEditTagModalOpen] = useState(false);
   const [btOrder, setBtOrder] = useState(settings.btOrder.default_value);
