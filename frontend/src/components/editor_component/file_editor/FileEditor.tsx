@@ -63,6 +63,7 @@ const FileEditor = ({
 
   const initFile = async (file: Entry) => {
     try {
+      console.log("Loading new file...");
       const content = await api.file.get(currentProjectname, currentFile);
       const extension = file.name.split(".").pop();
       setFileContent(content);
@@ -84,12 +85,14 @@ const FileEditor = ({
             entry.group === currentFile?.group &&
             entry.extension === currentFile?.name.split(".").pop()
           ) {
+            console.log("Loading new file ended");
             return setLanguage(editor.language);
           }
         }
       }
 
       setLanguage(fileType);
+      console.log("Loading new file ended");
     } catch (e) {
       if (e instanceof Error) {
         console.error("Error fetching file content: " + e.message);
