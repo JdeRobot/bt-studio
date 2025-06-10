@@ -245,7 +245,13 @@ const FileEditor = ({
           {(() => {
             for (const editor of extraEditors) {
               if (editor.language === language) {
-                return <>{editor.buttons}</>;
+                var list: any[] = [];
+                for (const b of editor.buttons) {
+                  list.push(
+                    <div className="bt-editor-buttons-container">{b}</div>,
+                  );
+                }
+                return <>{list}</>;
               }
             }
             return <></>;

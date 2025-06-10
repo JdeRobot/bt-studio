@@ -1,9 +1,4 @@
-import React, {
-  MouseEventHandler,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./NodeMenu.css";
 
 import { ReactComponent as DeleteIcon } from "./img/del_node.svg";
@@ -25,8 +20,6 @@ import { useError } from "../error_popup/ErrorModal";
 import { OptionsContext } from "../options/Options";
 
 export const BTSelectorButtons = ({ project }: { project: string }) => {
-  const { error } = useError();
-
   var NODE_MENU_ITEMS: Record<string, string[]> = {
     Sequences: ["Sequence", "ReactiveSequence", "SequenceWithMemory"],
     Fallbacks: ["Fallback", "ReactiveFallback"],
@@ -41,7 +34,6 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
       "Delay",
     ],
     Actions: [],
-    Subtrees: [],
     "Port values": ["Input port value", "Output port value"],
   };
 
@@ -49,7 +41,6 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
   const [menuLabel, setMenuLabel] = useState<string>();
   const [menuList, setMenuList] = useState<string[]>([]);
   const [actionsList, updateActionsList] = useState<string[]>([]);
-  const [subtreesList, updateSubtreesList] = useState<string[]>([]);
 
   const fetchActionList = async () => {
     console.log("Fetching actions...");
@@ -60,41 +51,22 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
     } catch (e) {
       if (e instanceof Error) {
         console.error("Error fetching files:", e.message);
-        // error("Failed to fetch files: " + e.message);
       }
       updateActionsList([]);
     }
   };
 
-  const fetchSubtreeList = async () => {
-    console.log("Fetching subtrees...");
-    try {
-      const subtreeList = await getSubtreeList(project);
-      console.log("Subtree list:", subtreeList);
-      updateSubtreesList(subtreeList);
-    } catch (e) {
-      if (e instanceof Error) {
-        console.error("Error fetching subtrees:", e.message);
-        // error("Failed to fetch subtrees: " + e.message);
-      }
-      updateSubtreesList([]);
-    }
-  };
-
   useEffect(() => {
     subscribe("updateActionList", fetchActionList);
-    subscribe("updateSubtreeList", fetchSubtreeList);
 
     return () => {
       unsubscribe("updateActionList", () => {});
-      unsubscribe("updateSubtreeList", () => {});
     };
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       await fetchActionList();
-      await fetchSubtreeList();
     };
 
     fetchData();
@@ -108,8 +80,6 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
     setMenuLabel(label);
     if (label === "Actions") {
       setMenuList(actionsList);
-    } else if (label === "Subtrees") {
-      setMenuList(subtreesList);
     } else {
       setMenuList(NODE_MENU_ITEMS[label]);
     }
@@ -123,8 +93,6 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
 
     if (menuLabel === "Actions") {
       nodeType = "Actions";
-    } else if (menuLabel === "Subtrees") {
-      nodeType = "Subtrees";
     } else {
       nodeType = Object.keys(NODE_MENU_ITEMS).find((key) =>
         NODE_MENU_ITEMS[key].includes(nodeName),
@@ -178,6 +146,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
   const { error } = useError();
 
   const [subtreesList, updateSubtreesList] = useState<string[]>([]);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isNewSubtreeModalOpen, setNewSubtreeModalOpen] =
     useState<boolean>(false);
 
@@ -190,7 +159,6 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
     } catch (e) {
       if (e instanceof Error) {
         console.error("Error fetching subtrees:", e.message);
-        // error("Failed to fetch subtrees: " + e.message);
       }
       updateSubtreesList([]);
     }
@@ -211,6 +179,17 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
 
     fetchData();
   }, [project]);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => setAnchorEl(null);
+
+  const handleSelect = (nodeName: string) => {
+    publish("addBTNode", { type: "Subtrees", name: nodeName });
+    handleClose();
+  };
 
   const handleCreateSubtree = () => {
     setNewSubtreeModalOpen(true);
@@ -243,22 +222,38 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
 
   return (
     <>
-      <div className="bt-node-header-container">
-        <div className="bt-action-buttons">
-          <button
-            id="bt-node-action-subtree-button"
-            className="bt-node-action-button"
-            onClick={() => {
-              handleCreateSubtree();
-            }}
-            title="Create Subtree"
-          >
-            <SubtreeIcon
-              className="bt-icon bt-action-icon"
-              fill={"var(--icon)"}
-            />
-          </button>
-        </div>
+      <div className="bt-button-container">
+        <button
+          key={"Subtrees"}
+          id={"Subtrees"}
+          className="bt-node-button"
+          onClick={(e) => handleClick(e)}
+        >
+          {"Subtrees"}
+        </button>
+      </div>
+
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+        {subtreesList.map((item) => (
+          <MenuItem key={item} id={item} onClick={() => handleSelect(item)}>
+            {item}
+          </MenuItem>
+        ))}
+      </Menu>
+      <div className="bt-action-buttons">
+        <button
+          id="bt-node-action-subtree-button"
+          className="bt-node-action-button"
+          onClick={() => {
+            handleCreateSubtree();
+          }}
+          title="Create Subtree"
+        >
+          <SubtreeIcon
+            className="bt-icon bt-action-icon"
+            fill={"var(--icon)"}
+          />
+        </button>
       </div>
       <AddSubtreeModal
         onSubmit={handleCreateSubtreeSubmit}

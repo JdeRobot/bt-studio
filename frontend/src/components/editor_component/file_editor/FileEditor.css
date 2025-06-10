@@ -94,3 +94,9 @@
   width: 33vh;
   height: 100%;
 }
+
+.bt-editor-buttons-container {
+  border-left: 1px solid white;
+  display: flex;
+  flex-direction: row;
+}

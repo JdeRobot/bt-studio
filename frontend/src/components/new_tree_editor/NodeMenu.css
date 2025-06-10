@@ -6,7 +6,6 @@
 .bt-node-button {
   width: 100px;
   height: 32px;
-  margin-right: 10px;
   color: var(--text);
   border: none;
   font-size: 16px;
