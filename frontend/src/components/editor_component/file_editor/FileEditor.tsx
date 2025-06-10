@@ -9,10 +9,23 @@ import { OptionsContext } from "../../options/Options";
 import CommsManager from "../../../api_helper/CommsManager";
 import { Entry } from "../explorer/Explorer";
 import TextEditor from "./TextEditor";
-import { file } from "jszip";
+
+export interface ExtraEditorProps {
+  commsManager: CommsManager | null;
+  project: string;
+  file: Entry;
+  changeFile: Function;
+  fileContent: string;
+  setFileContent: Function;
+  contentRef: React.MutableRefObject<string>;
+  saveFile: Function;
+  language: string;
+  zoomLevel: number;
+}
 
 export interface EditorsEntry {
   component: any;
+  buttons: any[];
   name: string;
   language: string;
   trigger: { group: string; extension: string }[];
@@ -59,7 +72,7 @@ const FileEditor = ({
   const [fileToSave, setFileToSave] = useState<Entry | undefined>(undefined);
   const [language, setLanguage] = useState("python");
   const [projectToSave, setProjectToSave] = useState(currentProjectname);
-  const extraContent = useRef<string>(""); // In case some editors cannot update states
+  const contentRef = useRef<string>(""); // In case some editors cannot update states
 
   const initFile = async (file: Entry) => {
     try {
@@ -122,8 +135,8 @@ const FileEditor = ({
 
     var content = fileContent;
 
-    if (extraContent.current !== "") {
-      content = extraContent.current;
+    if (contentRef.current !== "") {
+      content = contentRef.current;
     }
 
     try {
@@ -151,13 +164,13 @@ const FileEditor = ({
         if (fileToSave && autosave) {
           await autoSave();
         }
-        extraContent.current = "";
+        contentRef.current = "";
         setFileContent(undefined);
         await initFile(currentFile);
         setFileToSave(currentFile);
       } else {
         setFileContent(undefined);
-        extraContent.current = "";
+        contentRef.current = "";
         setHasUnsavedChanges(false);
       }
     };
@@ -171,7 +184,7 @@ const FileEditor = ({
     }
     setProjectToSave(currentProjectname);
     setFileContent(undefined);
-    extraContent.current = "";
+    contentRef.current = "";
   }, [currentProjectname]);
 
   const handleSaveFile = async () => {
@@ -229,6 +242,14 @@ const FileEditor = ({
           <button className="bt-save-button" onClick={handleZoomOut}>
             -
           </button>
+          {(() => {
+            for (const editor of extraEditors) {
+              if (editor.language === language) {
+                return <>{editor.buttons}</>;
+              }
+            }
+            return <></>;
+          })()}
         </div>
       </div>
       {fileContent ? (
@@ -244,7 +265,7 @@ const FileEditor = ({
                     changeFile={changeCurrentFile}
                     fileContent={fileContent}
                     setFileContent={setFileContent}
-                    extraContent={extraContent}
+                    contentRef={contentRef}
                     saveFile={autoSave}
                     language={language}
                     zoomLevel={zoomLevel}

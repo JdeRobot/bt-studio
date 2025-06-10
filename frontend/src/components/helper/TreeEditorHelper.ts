@@ -148,7 +148,7 @@ export const addActionFrame = (name: string, color:string, ports:{ [s: string]: 
   actionFrames.push(newActionFrame);
 };
 
-export function subscribe(eventName: string, listener: () => void) {
+export function subscribe(eventName: string, listener: (e:any) => void) {
   document.addEventListener(eventName, listener);
 }
 
@@ -156,8 +156,8 @@ export function unsubscribe(eventName: string, listener: () => void) {
   document.removeEventListener(eventName, listener);
 }
 
-export function publish(eventName: string) {
-  const event = new CustomEvent(eventName);
+export function publish(eventName:string, extra: any = undefined) {
+  const event = new CustomEvent(eventName, {detail: extra});
   document.dispatchEvent(event);
 }
 

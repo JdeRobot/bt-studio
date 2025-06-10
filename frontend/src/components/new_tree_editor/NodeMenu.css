@@ -5,13 +5,12 @@
 
 .bt-node-button {
   width: 100px;
-  height: 30px;
+  height: 32px;
   margin-right: 10px;
-  background-color: var(--buttons);
   color: var(--text);
   border: none;
-  border-radius: 4px;
   font-size: 16px;
+  background-color: transparent;
 }
 
 .bt-node-button:hover {

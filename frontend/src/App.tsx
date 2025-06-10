@@ -35,6 +35,11 @@ import { newFileModalData } from "./components/editor_component/explorer/modals/
 import { publish } from "./components/helper/TreeEditorHelper";
 import { Entry } from "./components/editor_component/explorer/Explorer";
 import TreeEditor from "./components/new_tree_editor/MainTreeEditorContainer";
+import {
+  AddSubtreeButton,
+  BTSelectorButtons,
+  OtherButtons,
+} from "./components/new_tree_editor/NodeMenu";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
@@ -292,6 +297,11 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
 
   const treeEditor = {
     component: TreeEditor,
+    buttons: [
+      <BTSelectorButtons project={currentProjectname} />,
+      <AddSubtreeButton project={currentProjectname} />,
+      <OtherButtons project={currentProjectname} />,
+    ],
     name: "Tree editor",
     language: "custom_tree_editor",
     trigger: [{ group: "Trees", extension: "json" }],

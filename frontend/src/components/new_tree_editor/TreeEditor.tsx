@@ -1,4 +1,4 @@
-import { useRef, memo } from "react";
+import { useRef, memo, MutableRefObject } from "react";
 
 import createEngine, {
   DiagramModel,
@@ -9,11 +9,11 @@ import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
 import "./TreeEditor.css";
 import { BasicNodeModel } from "./../tree_editor/nodes/basic_node/BasicNodeModel";
-import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
-import { ChildrenPortModel } from "./nodes/basic_node/ports/children_port/ChildrenPortModel";
-import { ParentPortModel } from "./nodes/basic_node/ports/parent_port/ParentPortModel";
-import { InputPortModel } from "./nodes/basic_node/ports/input_port/InputPortModel";
-import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutputPortModel";
+import { TagNodeModel } from "./../tree_editor/nodes/tag_node/TagNodeModel";
+import { ChildrenPortModel } from "./../tree_editor/nodes/basic_node/ports/children_port/ChildrenPortModel";
+import { ParentPortModel } from "./../tree_editor/nodes/basic_node/ports/parent_port/ParentPortModel";
+import { InputPortModel } from "./../tree_editor/nodes/basic_node/ports/input_port/InputPortModel";
+import { TagOutputPortModel } from "./../tree_editor/nodes/tag_node/ports/output_port/TagOutputPortModel";
 
 import {
   configureEngine,
@@ -26,28 +26,36 @@ const DiagramEditor = memo(
   ({
     fileContent,
     setFileContent,
-    hasSubtrees,
     setModalModel,
     setModalEngine,
     enterSubtree,
     setEditActionModalOpen,
     setEditTagModalOpen,
     setCurrentNode,
+    deleteCurrentCallbackRef,
+    editCurrentCallbackRef,
+    homeZoomCallbackRef,
+    addNodeCallbackRef,
+    render,
   }: {
     fileContent: any;
     setFileContent: Function;
-    hasSubtrees: boolean;
     setModalModel: Function;
     setModalEngine: Function;
     enterSubtree: Function;
     setEditActionModalOpen: Function;
     setEditTagModalOpen: Function;
     setCurrentNode: Function;
+    deleteCurrentCallbackRef: MutableRefObject<(e: any) => void>;
+    editCurrentCallbackRef: MutableRefObject<(e: any) => void>;
+    homeZoomCallbackRef: MutableRefObject<(e: any) => void>;
+    addNodeCallbackRef: MutableRefObject<(e: any) => void>;
+    render: MutableRefObject<boolean>;
   }) => {
     // VARS
     // Initialize position and the last clicked node
     var lastMovedNodePosition = { x: 100, y: 100 };
-    var lastClickedNodeId = "";
+    const lastClickedNodeId = useRef<string>("");
 
     // REFS
     // Initialize the model and the engine
@@ -56,8 +64,8 @@ const DiagramEditor = memo(
 
     // MODAL MANAGEMENT
     const modalManager = () => {
-      const node = model.current.getNode(lastClickedNodeId);
-      lastClickedNodeId = "";
+      const node = model.current.getNode(lastClickedNodeId.current);
+      lastClickedNodeId.current = "";
       model.current.clearSelection();
       if (node instanceof BasicNodeModel) {
         if (node.getIsSubtree()) {
@@ -115,14 +123,16 @@ const DiagramEditor = memo(
 
     // Deletes the last clicked node
     const deleteLastClickedNode = () => {
-      if (model.current && lastClickedNodeId) {
-        const node: NodeModel = model.current.getNode(lastClickedNodeId);
+      if (model.current && lastClickedNodeId.current) {
+        const node: NodeModel = model.current.getNode(
+          lastClickedNodeId.current,
+        );
         if (node) {
           node.remove();
           engine.current.repaintCanvas();
           updateJsonState();
         }
-        lastClickedNodeId = "";
+        lastClickedNodeId.current = "";
       }
     };
 
@@ -132,8 +142,8 @@ const DiagramEditor = memo(
     };
 
     const onNodeEditor = () => {
-      const node = model.current.getNode(lastClickedNodeId);
-      lastClickedNodeId = "";
+      const node = model.current.getNode(lastClickedNodeId.current);
+      lastClickedNodeId.current = "";
       model.current.clearSelection();
       if (node instanceof BasicNodeModel) {
         actionEditor(node);
@@ -173,7 +183,7 @@ const DiagramEditor = memo(
       node.registerListener({
         selectionChanged: (event: any) => {
           if (event.isSelected) {
-            lastClickedNodeId = node.getID();
+            lastClickedNodeId.current = node.getID();
             node.selectNode();
           } else {
             node.deselectNode();
@@ -316,54 +326,65 @@ const DiagramEditor = memo(
     };
 
     // Select which node to add depending on the name
-    const nodeTypeSelector = (nodeType: string, nodeName: string) => {
-      console.log("Adding node:", nodeName);
+    const nodeTypeSelector = (e: any) => {
+      const name = e.detail.name;
+      const type = e.detail.type;
+
+      console.log("Adding node:", name);
       // Unselect the previous node
-      const node = model.current.getNode(lastClickedNodeId);
+      const node = model.current.getNode(lastClickedNodeId.current);
       if (node) node.setSelected(false);
 
       // Set the project edited flag and update the state so it can be properly saved
       updateJsonState();
 
       // Select depending on the name
-      if (nodeType === "Port values") addTagNode(nodeName);
-      else addBasicNode(nodeType, nodeName);
+      if (type === "Port values") addTagNode(name);
+      else addBasicNode(type, name);
     };
 
-    // Configure the engine
-    configureEngine(engine, modalManager, modalManager);
+    if (render.current) {
+      // Configure the engine
+      configureEngine(engine, modalManager, modalManager);
 
-    // Deserialize and load the model
-    model.current.deserializeModel(fileContent, engine.current);
-    attachLinkListener(model.current);
-    attachNodesListener(model.current);
-    engine.current.setModel(model.current);
+      // Deserialize and load the model
+      model.current.deserializeModel(fileContent, engine.current);
+      attachLinkListener(model.current);
+      attachNodesListener(model.current);
+      engine.current.setModel(model.current);
 
-    // After deserialization, attach listeners to each node
-    const nodes = model.current.getNodes();
-    nodes.forEach((node) => {
-      if (node instanceof BasicNodeModel || node instanceof TagNodeModel) {
-        attachPositionListener(node);
-        attachClickListener(node);
-        node.setSelected(false);
-        if (
-          node instanceof BasicNodeModel &&
-          isActionNode(node.getName()) &&
-          !node.getIsSubtree()
-        ) {
-          addActionFrame(node.getName(), node.getColor(), node.getPorts());
+      // After deserialization, attach listeners to each node
+      const nodes = model.current.getNodes();
+      nodes.forEach((node) => {
+        if (node instanceof BasicNodeModel || node instanceof TagNodeModel) {
+          attachPositionListener(node);
+          attachClickListener(node);
+          node.setSelected(false);
+          if (
+            node instanceof BasicNodeModel &&
+            isActionNode(node.getName()) &&
+            !node.getIsSubtree()
+          ) {
+            addActionFrame(node.getName(), node.getColor(), node.getPorts());
+          }
         }
-      }
-    });
+      });
 
-    setModalModel(model.current);
-    setModalEngine(engine.current);
+      setModalModel(model.current);
+      setModalEngine(engine.current);
 
-    // Fixes uncomplete first serialization
-    setTimeout(() => {
-      console.log("Rendered!");
-      updateJsonState();
-    }, 1);
+      // Fixes uncomplete first serialization
+      setTimeout(() => {
+        console.log("Rendered!");
+        updateJsonState();
+      }, 1);
+      render.current = false;
+    }
+
+    deleteCurrentCallbackRef.current = deleteLastClickedNode;
+    editCurrentCallbackRef.current = onNodeEditor;
+    homeZoomCallbackRef.current = zoomToFit;
+    addNodeCallbackRef.current = nodeTypeSelector;
 
     return (
       <>
