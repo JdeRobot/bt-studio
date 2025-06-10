@@ -61,6 +61,7 @@ const TreeEditor = ({
 
   const enterSubtree = async (name?: string) => {
     if (name) {
+      showRef.current = false;
       changeFile({
         name: `${name}.json`,
         is_dir: false,
