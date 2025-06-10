@@ -315,4 +315,5 @@ h3 {
   --bt-status-invalid: #494949;
 
   --status-bar: var(--primary-100);
+  --border-radius: 5px;
 }

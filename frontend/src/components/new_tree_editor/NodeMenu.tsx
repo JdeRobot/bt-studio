@@ -110,34 +110,28 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
 
   return (
     <>
-      <div className="bt-node-header-container">
-        <div className="bt-button-container">
-          {Object.keys(NODE_MENU_ITEMS).map((label) => {
-            return (
-              <button
-                key={label}
-                id={label}
-                className="bt-node-button"
-                onClick={(e) => handleClick(e, label)}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          {menuList.map((item) => (
-            <MenuItem key={item} id={item} onClick={() => handleSelect(item)}>
-              {item}
-            </MenuItem>
-          ))}
-        </Menu>
+      <div className="bt-button-container">
+        {Object.keys(NODE_MENU_ITEMS).map((label) => {
+          return (
+            <button
+              key={label}
+              id={label}
+              className="bt-node-button bt-button"
+              onClick={(e) => handleClick(e, label)}
+            >
+              {label}
+            </button>
+          );
+        })}
       </div>
+
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+        {menuList.map((item) => (
+          <MenuItem key={item} id={item} onClick={() => handleSelect(item)}>
+            {item}
+          </MenuItem>
+        ))}
+      </Menu>
     </>
   );
 };
@@ -226,7 +220,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
         <button
           key={"Subtrees"}
           id={"Subtrees"}
-          className="bt-node-button"
+          className="bt-node-button bt-button"
           onClick={(e) => handleClick(e)}
         >
           {"Subtrees"}
@@ -240,21 +234,16 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
           </MenuItem>
         ))}
       </Menu>
-      <div className="bt-action-buttons">
-        <button
-          id="bt-node-action-subtree-button"
-          className="bt-node-action-button"
-          onClick={() => {
-            handleCreateSubtree();
-          }}
-          title="Create Subtree"
-        >
-          <SubtreeIcon
-            className="bt-icon bt-action-icon"
-            fill={"var(--icon)"}
-          />
-        </button>
-      </div>
+      <button
+        id="bt-node-action-subtree-button"
+        className="bt-node-action-button bt-button"
+        onClick={() => {
+          handleCreateSubtree();
+        }}
+        title="Create Subtree"
+      >
+        <SubtreeIcon className="bt-icon bt-action-icon" fill={"var(--icon)"} />
+      </button>
       <AddSubtreeModal
         onSubmit={handleCreateSubtreeSubmit}
         onClose={handleCloseCreateSubtree}
@@ -285,87 +274,89 @@ export const OtherButtons = ({ project }: { project: string }) => {
 
   return (
     <>
-      <div className="bt-node-header-container">
-        <div className="bt-action-buttons">
-          <button
-            id="bt-node-action-delete-button"
-            className="bt-node-action-button"
-            onClick={() => publish("BTEditorDeleteCurrent")}
-            title="Delete"
+      <div className="bt-action-buttons">
+        <button
+          id="bt-node-action-delete-button"
+          className="bt-node-action-button bt-button"
+          onClick={() => publish("BTEditorDeleteCurrent")}
+          title="Delete"
+        >
+          <DeleteIcon className="bt-icon bt-action-icon" fill={"var(--icon)"} />
+        </button>
+        <button
+          id="node-action-edit-button"
+          className="bt-node-action-button bt-button"
+          onClick={() => publish("BTEditorEditCurrent")}
+          title="Edit"
+        >
+          <EditActionIcon
+            className="bt-icon bt-action-icon"
+            stroke={"var(--icon)"}
+          />
+        </button>
+        <button
+          id="bt-node-action-zoom-button"
+          className="bt-node-action-button bt-button"
+          onClick={() => publish("BTEditorHomeZoom")}
+          title="Zoom To Fit"
+        >
+          <ZoomToFitIcon
+            className="bt-icon bt-action-icon"
+            fill={"var(--icon)"}
+          />
+        </button>
+        <button
+          id="bt-node-action-help-button"
+          className="bt-node-action-button bt-button"
+          onClick={() => {
+            openInNewTab(
+              new URL("https://jderobot.github.io/bt-studio/documentation/"),
+            );
+          }}
+          title="Help"
+        >
+          <HelpIcon className="bt-icon bt-action-icon" fill={"var(--icon)"} />
+        </button>
+        <button
+          id="bt-node-action-help-button"
+          className="bt-node-action-button bt-button"
+          title={"BT Order: " + btOrder}
+          onClick={() => {
+            if (settings.btOrder.value === "bottom-to-top") {
+              settings.btOrder.setter("top-to-bottom");
+            } else {
+              settings.btOrder.setter("bottom-to-top");
+            }
+          }}
+        >
+          <svg
+            className="w-6 h-6 text-gray-800 dark:text-white"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
           >
-            <DeleteIcon
-              className="bt-icon bt-action-icon"
-              fill={"var(--icon)"}
-            />
-          </button>
-          <button
-            id="node-action-edit-button"
-            className="bt-node-action-button"
-            onClick={() => publish("BTEditorEditCurrent")}
-            title="Edit"
-          >
-            <EditActionIcon
-              className="bt-icon bt-action-icon"
-              stroke={"var(--icon)"}
-            />
-          </button>
-          <button
-            id="bt-node-action-zoom-button"
-            className="bt-node-action-button"
-            onClick={() => publish("BTEditorHomeZoom")}
-            title="Zoom To Fit"
-          >
-            <ZoomToFitIcon
-              className="bt-icon bt-action-icon"
-              fill={"var(--icon)"}
-            />
-          </button>
-          <button
-            id="bt-node-action-help-button"
-            className="bt-node-action-button"
-            onClick={() => {
-              openInNewTab(
-                new URL("https://jderobot.github.io/bt-studio/documentation/"),
-              );
-            }}
-            title="Help"
-          >
-            <HelpIcon className="bt-icon bt-action-icon" fill={"var(--icon)"} />
-          </button>
-          <button
-            id="bt-node-action-help-button"
-            className="bt-node-action-button"
-            title={"BT Order: " + btOrder}
-          >
-            <svg
-              className="w-6 h-6 text-gray-800 dark:text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              {btOrder === "bottom-to-top" ? (
-                <path
-                  stroke="var(--icon)"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 6v13m0-13 4 4m-4-4-4 4"
-                />
-              ) : (
-                <path
-                  stroke="var(--icon)"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 19V5m0 14-4-4m4 4 4-4"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
+            {btOrder === "bottom-to-top" ? (
+              <path
+                stroke="var(--icon)"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 6v13m0-13 4 4m-4-4-4 4"
+              />
+            ) : (
+              <path
+                stroke="var(--icon)"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 19V5m0 14-4-4m4 4 4-4"
+              />
+            )}
+          </svg>
+        </button>
       </div>
     </>
   );

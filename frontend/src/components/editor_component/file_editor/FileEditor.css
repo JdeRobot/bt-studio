@@ -54,7 +54,7 @@
 .bt-editor-buttons {
   display: flex;
   align-items: center;
-  margin-right: 30px;
+  height: 100%;
 }
 
 .bt-save-button {
@@ -96,7 +96,8 @@
 }
 
 .bt-editor-buttons-container {
-  border-left: 1px solid white;
+  border-left: 1px solid var(--buttons-hover);
   display: flex;
   flex-direction: row;
+  height: 100%;
 }

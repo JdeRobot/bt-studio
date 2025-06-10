@@ -162,35 +162,10 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     }
   }, [currentProjectname]); // Reload project configuration
 
-  const onResize = (key: string, size: { width: number; height: number }) => {
-    switch (key) {
-      case "editorWidth":
-        setEditorWidth(size.width);
-        break;
-      case "fileBrowserWidth":
-        setFileBrowserWidth(size.width);
-        break;
-      default:
-        break;
-    }
-  };
-
   // Show VNC viewers
   const showVNCViewer = () => {
     setSimVisible(true);
     setTerminalVisible(true);
-  };
-
-  const showVNCTerminal = (show: boolean) => {
-    if (gazeboEnabled) {
-      setTerminalVisible(show);
-    }
-  };
-
-  const showVNCSim = (show: boolean) => {
-    if (gazeboEnabled) {
-      setSimVisible(show);
-    }
   };
 
   const fileExplorer = {

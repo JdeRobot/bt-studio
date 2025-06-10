@@ -2,6 +2,7 @@ import "./StatusBar.css";
 
 import { ReactComponent as ResetIcon } from "./img/reset.svg";
 import CommsManager from "../../../api_helper/CommsManager";
+import { useState } from "react";
 
 const StatusBar = ({
   commsManager,
@@ -10,7 +11,22 @@ const StatusBar = ({
   commsManager: CommsManager | null;
   resetManager: Function;
 }) => {
-  var dockerData = commsManager?.getHostData();
+  const [dockerData, setDockerData] = useState<any>(
+    commsManager?.getHostData(),
+  );
+
+  const connectWithRetry = async () => {
+    const data = commsManager?.getHostData();
+    if (data) {
+      setDockerData(data);
+      return;
+    }
+    setTimeout(connectWithRetry, 1000);
+  };
+
+  if (dockerData === undefined) {
+    connectWithRetry();
+  }
 
   return (
     <div className="bt-status-bar-container">
