@@ -40,6 +40,7 @@ import {
   BTSelectorButtons,
   OtherButtons,
 } from "./components/new_tree_editor/NodeMenu";
+import TreeMonitor from "./components/tree_monitor/TreeMonitorContainer";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
@@ -55,6 +56,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
   const [manager, setManager] = useState<CommsManager | null>(null);
   const [showSim, setSimVisible] = useState<boolean>(false);
+  const [showMonitor, setMonitorVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
 
   //Only needed in Unibotics
@@ -254,6 +256,16 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     },
   };
 
+  const treeMonitor = {
+    component: (
+      <TreeMonitor commsManager={manager} project={currentProjectname} />
+    ),
+    icon: <SimulatorIcon />,
+    name: "Tree Monitor",
+    active: showMonitor,
+    activate: setMonitorVisible,
+  };
+
   const gazeboViewer = {
     component: <VncViewer commsManager={manager} port={6080} />,
     icon: <SimulatorIcon />,
@@ -311,7 +323,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         explorers={[fileExplorer, universeExplorer]}
         editorApi={editorApi}
         extraEditors={[treeEditor]}
-        viewers={[gazeboViewer, terminalViewer]}
+        viewers={[treeMonitor, gazeboViewer, terminalViewer]}
         options={[]}
         layout="both"
       />
