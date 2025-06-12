@@ -4,8 +4,8 @@ import HeaderMenu from "./components/header_menu/HeaderMenu";
 import "./App.css";
 import ErrorModal from "./components/error_popup/ErrorModal";
 import { useError } from "./components/error_popup/ErrorModal";
-import { ReactComponent as SimulatorIcon } from "./components/status_bar/img/gazebo.svg";
-import { ReactComponent as TerminalIcon } from "./components/status_bar/img/terminal.svg";
+import { ReactComponent as SimulatorIcon } from "./components/icons/gazebo.svg";
+import { ReactComponent as TerminalIcon } from "./components/icons/terminal.svg";
 import CommsManager from "./api_helper/CommsManager";
 import {
   createAction,

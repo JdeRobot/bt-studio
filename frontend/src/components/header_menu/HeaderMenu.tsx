@@ -13,12 +13,11 @@ import {
 } from "../../api_helper/TreeWrapper";
 import CommsManager from "../../api_helper/CommsManager";
 
-import { ReactComponent as LogoIcon } from "../file_editor/img/logo_jderobot_monocolor.svg";
-import { ReactComponent as LogoUniboticsIcon } from "../file_editor/img/logo_unibotics_monocolor.svg";
+import { ReactComponent as LogoIcon } from "../icons/logo_jderobot_monocolor.svg";
+import { ReactComponent as LogoUniboticsIcon } from "../icons/logo_unibotics_monocolor.svg";
 
 import "./HeaderMenu.css";
 import { ReactComponent as ProjectsIcon } from "./img/change_project.svg";
-import { ReactComponent as SaveIcon } from "./img/save_project.svg";
 import { ReactComponent as UniversesIcon } from "./img/universes.svg";
 import { ReactComponent as SettingsIcon } from "./img/settings.svg";
 import { ReactComponent as DownloadIcon } from "./img/download.svg";
@@ -33,7 +32,13 @@ import { OptionsContext } from "../options/Options";
 import RosTemplates from "./../../templates/RosTemplates";
 import TreeGardener from "./../../templates/TreeGardener";
 import { useError } from "../error_popup/ErrorModal";
-import { Entry } from "../file_browser/FileBrowser";
+
+interface Entry {
+  name: string;
+  is_dir: boolean;
+  path: string;
+  files: Entry[];
+}
 
 const HeaderMenu = ({
   currentProjectname,
