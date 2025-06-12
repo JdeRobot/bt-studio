@@ -148,12 +148,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     }
   }, [currentProjectname]); // Reload project configuration
 
-  // Show VNC viewers
-  const showVNCViewer = () => {
-    setSimVisible(true);
-    setTerminalVisible(true);
-  };
-
   const fileExplorer = {
     name: "Code",
     list: (project: string) => {
