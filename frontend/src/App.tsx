@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-// import useLocalStorage from 'use-local-storage'
 import { useUnload } from "./hooks/useUnload";
-import { Resizable } from "react-resizable";
 import HeaderMenu from "./components/header_menu/HeaderMenu";
-import FileBrowser from "./components/file_browser/FileBrowser";
-import FileEditor from "./components/file_editor/FileEditor";
 import "./App.css";
-import ErrorModal, { ErrorProvider } from "./components/error_popup/ErrorModal";
+import ErrorModal from "./components/error_popup/ErrorModal";
 import { useError } from "./components/error_popup/ErrorModal";
 import { ReactComponent as SimulatorIcon } from "./components/status_bar/img/gazebo.svg";
 import { ReactComponent as TerminalIcon } from "./components/status_bar/img/terminal.svg";
@@ -26,34 +22,22 @@ import {
 } from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
-import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
-import StatusBar from "./components/status_bar/StatusBar";
-import UniverseBrowser from "./components/file_browser/UniverseBrowser";
 import EditorComponent from "./components/editor_component/EditorComponent";
 import VncViewer from "./components/editor_component/vnc_viewer/VncViewer";
 import { newFileModalData } from "./components/editor_component/explorer/modals/NewFileModal";
 import { publish } from "./components/helper/TreeEditorHelper";
 import { Entry } from "./components/editor_component/explorer/Explorer";
-import TreeEditor from "./components/new_tree_editor/MainTreeEditorContainer";
+import TreeEditor from "./components/tree_editor/TreeEditorContainer";
 import {
   AddSubtreeButton,
   BTSelectorButtons,
   OtherButtons,
-} from "./components/new_tree_editor/NodeMenu";
+} from "./components/tree_editor/TreeEditorMenu";
 import TreeMonitor from "./components/tree_monitor/TreeMonitorContainer";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
-  const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
-  const [editorWidth, setEditorWidth] = useState<number>(800);
-  const [currentFilename, setCurrentFilename] = useState<string>("");
-  const [autosaveEnabled, setAutosave] = useState<boolean>(true);
-  const [forceSaveCurrent, setForcedSaveCurrent] = useState<boolean>(false);
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
   const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
-  const [saveCurrentDiagram, setSaveCurrentDiagram] = useState<boolean>(false);
-  const [updateFileExplorer, setUpdateFileExplorer] = useState<boolean>(false);
-  const [projectChanges, setProjectChanges] = useState<boolean>(false);
-  const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
   const [manager, setManager] = useState<CommsManager | null>(null);
   const [showSim, setSimVisible] = useState<boolean>(false);
   const [showMonitor, setMonitorVisible] = useState<boolean>(false);
@@ -306,13 +290,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         setCurrentProjectname={setCurrentProjectname}
         currentUniverseName={currentUniverseName}
         setCurrentUniverseName={setCurrentUniverseName}
-        setSaveCurrentDiagram={setSaveCurrentDiagram}
-        projectChanges={projectChanges}
-        setProjectChanges={setProjectChanges}
-        gazeboEnabled={gazeboEnabled}
-        setGazeboEnabled={setGazeboEnabled}
         manager={manager}
-        showVNCViewer={showVNCViewer}
         isUnibotics={isUnibotics}
       />
 
@@ -329,143 +307,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       />
     </div>
   );
-
-  // return (
-  //   <div
-  //     className="bt-App"
-  //     data-theme={settings.theme.value}
-  //     style={{ display: "flex" }}
-  //   >
-  //     <ErrorModal />
-  //     <>
-  //       <HeaderMenu
-  //         currentProjectname={currentProjectname}
-  //         setCurrentProjectname={setCurrentProjectname}
-  //         currentUniverseName={currentUniverseName}
-  //         setCurrentUniverseName={setCurrentUniverseName}
-  //         setSaveCurrentDiagram={setSaveCurrentDiagram}
-  //         projectChanges={projectChanges}
-  //         setProjectChanges={setProjectChanges}
-  //         gazeboEnabled={gazeboEnabled}
-  //         setGazeboEnabled={setGazeboEnabled}
-  //         manager={manager}
-  //         showVNCViewer={showVNCViewer}
-  //         isUnibotics={isUnibotics}
-  //       />
-
-  //       <div className="bt-App-main">
-  //         <Resizable
-  //           width={fileBrowserWidth}
-  //           height={0}
-  //           onResize={(e, { size }) => onResize("fileBrowserWidth", size)}
-  //           minConstraints={[200, 200]}
-  //           maxConstraints={[400, 400]}
-  //         >
-  //           <div
-  //             style={{
-  //               width: `${fileBrowserWidth}px`,
-  //               display: "flex",
-  //               flexDirection: "column",
-  //             }}
-  //           >
-  //             <div className="bt-sidebar">
-  //               <FileBrowser
-  //                 setCurrentFilename={setCurrentFilename}
-  //                 currentFilename={currentFilename}
-  //                 currentProjectname={currentProjectname}
-  //                 setProjectChanges={setProjectChanges}
-  //                 setAutosave={setAutosave}
-  //                 forceSaveCurrent={forceSaveCurrent}
-  //                 setForcedSaveCurrent={setForcedSaveCurrent}
-  //                 forceUpdate={{
-  //                   value: updateFileExplorer,
-  //                   callback: setUpdateFileExplorer,
-  //                 }}
-  //                 setSaveCurrentDiagram={setSaveCurrentDiagram}
-  //               />
-  //               <UniverseBrowser
-  //                 setCurrentFilename={setCurrentFilename}
-  //                 currentFilename={currentFilename}
-  //                 currentProjectname={currentProjectname}
-  //                 setProjectChanges={setProjectChanges}
-  //                 setAutosave={setAutosave}
-  //                 forceSaveCurrent={forceSaveCurrent}
-  //                 setForcedSaveCurrent={setForcedSaveCurrent}
-  //                 forceUpdate={{
-  //                   value: updateFileExplorer,
-  //                   callback: setUpdateFileExplorer,
-  //                 }}
-  //                 setSaveCurrentDiagram={setSaveCurrentDiagram}
-  //               />
-  //             </div>
-  //           </div>
-  //         </Resizable>
-
-  //         <Resizable
-  //           width={editorWidth}
-  //           height={0}
-  //           onResize={(e, { size }) => onResize("editorWidth", size)}
-  //           minConstraints={[400, 400]}
-  //           maxConstraints={[800, 900]}
-  //         >
-  //           <div
-  //             style={{
-  //               width: `${editorWidth}px`,
-  //               display: "flex",
-  //               flexDirection: "column",
-  //               gap: "5px",
-  //               backgroundColor: "var(--control-bar)",
-  //             }}
-  //           >
-  //             <FileEditor
-  //               currentFilename={currentFilename}
-  //               currentProjectname={currentProjectname}
-  //               setProjectChanges={setProjectChanges}
-  //               isUnibotics={isUnibotics}
-  //               autosaveEnabled={autosaveEnabled}
-  //               setAutosave={setAutosave}
-  //               forceSaveCurrent={forceSaveCurrent}
-  //               manager={manager}
-  //             />
-  //             {showTerminal && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
-  //           </div>
-  //         </Resizable>
-
-  //         <div
-  //           style={{
-  //             flex: "1 1 0%",
-  //             display: "flex",
-  //             flexDirection: "column",
-  //             flexWrap: "nowrap",
-  //             gap: "5px",
-  //             backgroundColor: "var(--control-bar)",
-  //           }}
-  //         >
-  //           {currentProjectname ? (
-  //             <MainTreeEditorContainer
-  //               projectName={currentProjectname}
-  //               setProjectEdited={setProjectChanges}
-  //               saveCurrentDiagram={saveCurrentDiagram}
-  //               setSaveCurrentDiagram={setSaveCurrentDiagram}
-  //               updateFileExplorer={setUpdateFileExplorer}
-  //             />
-  //           ) : (
-  //             <p>Loading...</p>
-  //           )}
-  //           {showSim && <VncViewer gazeboEnabled={gazeboEnabled} />}
-  //         </div>
-  //       </div>
-  //       <StatusBar
-  //         showSim={showSim}
-  //         setSimVisible={showVNCSim}
-  //         showTerminal={showTerminal}
-  //         setTerminalVisible={showVNCTerminal}
-  //         dockerData={dockerData}
-  //         resetManager={resetManager}
-  //       />
-  //     </>
-  //   </div>
-  // );
 };
 
 export default App;

@@ -30,21 +30,19 @@ const initialEditActionModalData = {
 };
 
 const EditActionModal = ({
+  setFileContent,
   isOpen,
   onClose,
   currentActionNode,
   model,
   engine,
-  updateJsonState,
-  setDiagramEdited,
 }: {
+  setFileContent: Function;
   isOpen: boolean;
   onClose: Function;
   currentActionNode: BasicNodeModel;
   model: DiagramModel;
   engine: DiagramEngine;
-  updateJsonState: Function;
-  setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const focusInputRef = useRef(null);
   const [color, setColor] = useState<IColor | undefined>(undefined);
@@ -106,8 +104,8 @@ const EditActionModal = ({
         currentActionNode,
         engine,
         model,
-        setDiagramEdited,
-        updateJsonState,
+        () => {},
+        setFileContent,
       );
     }
   }, [color]);
@@ -188,8 +186,8 @@ const EditActionModal = ({
         ActionNodePortType.Input,
         engine,
         model,
-        setDiagramEdited,
-        updateJsonState,
+        () => {},
+        setFileContent,
       );
     }
     setInputName(false);
@@ -208,8 +206,8 @@ const EditActionModal = ({
         ActionNodePortType.Output,
         engine,
         model,
-        setDiagramEdited,
-        updateJsonState,
+        () => {},
+        setFileContent,
       );
     }
     setOutputName(false);
@@ -225,8 +223,8 @@ const EditActionModal = ({
       currentActionNode,
       engine,
       model,
-      setDiagramEdited,
-      updateJsonState,
+      () => {},
+      setFileContent,
     );
 
     setUpdate(true);
@@ -241,8 +239,8 @@ const EditActionModal = ({
       currentActionNode,
       engine,
       model,
-      setDiagramEdited,
-      updateJsonState,
+      () => {},
+      setFileContent,
     );
 
     setUpdate(true);

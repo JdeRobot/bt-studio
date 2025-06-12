@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useRef, memo } from "react";
+import { useRef, memo, MutableRefObject } from "react";
 
 import createEngine, {
-  DiagramEngine,
   DiagramModel,
   DiagramModelGenerics,
   NodeModel,
@@ -20,258 +18,66 @@ import { TagOutputPortModel } from "./nodes/tag_node/ports/output_port/TagOutput
 import {
   configureEngine,
   isActionNode,
-  TreeViewType,
-  resetActionFrames,
   addActionFrame,
   getActionFrame,
 } from "../helper/TreeEditorHelper";
 
-import NodeMenu from "./NodeMenu";
-import EditActionModal from "./modals/EditActionModal";
-import EditTagModal from "./modals/EditTagModal";
-
-import DiagramVisualizer from "./DiagramVisualizer";
-import CommsManager from "../../api_helper/CommsManager";
-import { OptionsContext } from "../options/Options";
-
-import "./TreeEditor.css";
-
 const TreeEditor = memo(
   ({
-    modelJson,
-    setResultJson,
-    projectName,
-    setDiagramEdited,
-    hasSubtrees,
-    treeStructure,
-    view,
-    changeView,
-    setSubTreeName,
-    subTreeName,
-    setGoBack,
-    subTreeStructure,
-    updateFileExplorer,
-  }: {
-    modelJson: any;
-    setResultJson: Function;
-    projectName: string;
-    setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
-    hasSubtrees: boolean;
-    treeStructure: any;
-    view: TreeViewType;
-    changeView: Function;
-    setSubTreeName: Function;
-    subTreeName: string;
-    setGoBack: Function;
-    subTreeStructure: number[];
-    updateFileExplorer: Function;
-  }) => {
-    const settings = React.useContext(OptionsContext);
-
-    const [editActionModalOpen, setEditActionModalOpen] = useState(false);
-    const [currentNode, setCurrentNode] = useState<
-      BasicNodeModel | TagNodeModel | undefined
-    >(undefined);
-    const [editTagModalOpen, setEditTagModalOpen] = useState(false);
-    const [btOrder, setBtOrder] = useState(settings.btOrder.default_value);
-
-    // Model and Engine for models use
-    const [modalModel, setModalModel] = useState<DiagramModel | undefined>(
-      undefined,
-    );
-    const [modalEngine, setModalEngine] = useState<DiagramEngine | undefined>(
-      undefined,
-    );
-
-    useEffect(() => {
-      setBtOrder(settings.btOrder.value);
-    }, [settings.btOrder.value]);
-
-    useEffect(() => {
-      resetActionFrames();
-    }, [projectName]);
-
-    const updateJsonState = () => {
-      if (modalModel) {
-        setResultJson(modalModel.serialize());
-      }
-    };
-
-    const onEditActionModalClose = () => {
-      setEditActionModalOpen(false);
-      setCurrentNode(undefined);
-    };
-
-    const onEditTagModalClose = () => {
-      setEditTagModalOpen(false);
-      setCurrentNode(undefined);
-    };
-
-    return (
-      <>
-        {currentNode && modalModel && modalEngine && (
-          <>
-            {currentNode instanceof BasicNodeModel && (
-              <EditActionModal
-                isOpen={editActionModalOpen}
-                onClose={onEditActionModalClose}
-                currentActionNode={currentNode}
-                model={modalModel}
-                engine={modalEngine}
-                updateJsonState={updateJsonState}
-                setDiagramEdited={setDiagramEdited}
-              />
-            )}
-            {currentNode instanceof TagNodeModel && (
-              <EditTagModal
-                isOpen={editTagModalOpen}
-                onClose={onEditTagModalClose}
-                currentActionNode={currentNode}
-                model={modalModel}
-                engine={modalEngine}
-                updateJsonState={updateJsonState}
-                setDiagramEdited={setDiagramEdited}
-              />
-            )}
-          </>
-        )}
-        {view === TreeViewType.Visualizer ? (
-          <DiagramVisualizer
-            modelJson={modelJson}
-            setResultJson={setResultJson}
-            manager={CommsManager.getInstance()}
-            treeStructure={treeStructure}
-            view={view}
-            changeView={changeView}
-            setGoBack={setGoBack}
-            subTreeName={subTreeName}
-            subTreeStructure={subTreeStructure}
-            setSubTreeName={setSubTreeName}
-          />
-        ) : (
-          <DiagramEditor
-            modelJson={modelJson}
-            setResultJson={setResultJson}
-            projectName={projectName}
-            setDiagramEdited={setDiagramEdited}
-            view={view}
-            changeView={changeView}
-            hasSubtrees={hasSubtrees}
-            setModalModel={setModalModel}
-            setModalEngine={setModalEngine}
-            setSubTreeName={setSubTreeName}
-            setEditActionModalOpen={setEditActionModalOpen}
-            setEditTagModalOpen={setEditTagModalOpen}
-            setCurrentNode={setCurrentNode}
-            setGoBack={setGoBack}
-            subTreeName={subTreeName}
-            updateFileExplorer={updateFileExplorer}
-          />
-        )}
-        <button className="bt-order-indicator" title={"BT Order: " + btOrder}>
-          <svg
-            className="w-6 h-6 text-gray-800 dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            {btOrder === "bottom-to-top" ? (
-              <path
-                stroke="var(--icon)"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v13m0-13 4 4m-4-4-4 4"
-              />
-            ) : (
-              <path
-                stroke="var(--icon)"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 19V5m0 14-4-4m4 4 4-4"
-              />
-            )}
-          </svg>
-        </button>
-      </>
-    );
-  },
-);
-
-const DiagramEditor = memo(
-  ({
-    modelJson,
-    setResultJson,
-    projectName,
-    setDiagramEdited,
-    view,
-    changeView,
-    hasSubtrees,
+    fileContent,
+    setFileContent,
     setModalModel,
     setModalEngine,
-    setSubTreeName,
+    enterSubtree,
     setEditActionModalOpen,
     setEditTagModalOpen,
     setCurrentNode,
-    setGoBack,
-    subTreeName,
-    updateFileExplorer,
+    deleteCurrentCallbackRef,
+    editCurrentCallbackRef,
+    homeZoomCallbackRef,
+    addNodeCallbackRef,
+    render,
   }: {
-    modelJson: any;
-    setResultJson: Function;
-    projectName: string;
-    setDiagramEdited: React.Dispatch<React.SetStateAction<boolean>>;
-    view: TreeViewType;
-    changeView: Function;
-    hasSubtrees: boolean;
+    fileContent: any;
+    setFileContent: Function;
     setModalModel: Function;
     setModalEngine: Function;
-    setSubTreeName: Function;
+    enterSubtree: Function;
     setEditActionModalOpen: Function;
     setEditTagModalOpen: Function;
     setCurrentNode: Function;
-    setGoBack: Function;
-    subTreeName: string;
-    updateFileExplorer: Function;
+    deleteCurrentCallbackRef: MutableRefObject<(e: any) => void>;
+    editCurrentCallbackRef: MutableRefObject<(e: any) => void>;
+    homeZoomCallbackRef: MutableRefObject<(e: any) => void>;
+    addNodeCallbackRef: MutableRefObject<(e: any) => void>;
+    render: MutableRefObject<boolean>;
   }) => {
     // VARS
-
     // Initialize position and the last clicked node
     var lastMovedNodePosition = { x: 100, y: 100 };
-    var lastClickedNodeId = "";
+    const lastClickedNodeId = useRef<string>("");
 
     // REFS
-
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
     const engine = useRef(createEngine());
 
     // MODAL MANAGEMENT
     const modalManager = () => {
-      const node = model.current.getNode(lastClickedNodeId);
-      lastClickedNodeId = "";
+      const node = model.current.getNode(lastClickedNodeId.current);
+      lastClickedNodeId.current = "";
       model.current.clearSelection();
       if (node instanceof BasicNodeModel) {
         if (node.getIsSubtree()) {
           // Save the current subtree json
           updateJsonState();
-
-          setSubTreeName(node.getName());
+          enterSubtree(node.getName());
         } else {
           actionEditor(node);
         }
       } else if (node instanceof TagNodeModel) {
         tagEditor(node);
       }
-    };
-
-    const changeViewExpanded = (view: TreeViewType) => {
-      updateJsonState();
-      changeView(view);
     };
 
     // HELPERS
@@ -312,20 +118,21 @@ const DiagramEditor = memo(
 
     // Updates the json state
     const updateJsonState = () => {
-      setResultJson(model.current.serialize());
+      setFileContent(JSON.stringify(model.current.serialize(), null, 4));
     };
 
     // Deletes the last clicked node
     const deleteLastClickedNode = () => {
-      if (model.current && lastClickedNodeId) {
-        const node: NodeModel = model.current.getNode(lastClickedNodeId);
+      if (model.current && lastClickedNodeId.current) {
+        const node: NodeModel = model.current.getNode(
+          lastClickedNodeId.current,
+        );
         if (node) {
           node.remove();
-          setDiagramEdited(true);
           engine.current.repaintCanvas();
           updateJsonState();
         }
-        lastClickedNodeId = "";
+        lastClickedNodeId.current = "";
       }
     };
 
@@ -335,8 +142,8 @@ const DiagramEditor = memo(
     };
 
     const onNodeEditor = () => {
-      const node = model.current.getNode(lastClickedNodeId);
-      lastClickedNodeId = "";
+      const node = model.current.getNode(lastClickedNodeId.current);
+      lastClickedNodeId.current = "";
       model.current.clearSelection();
       if (node instanceof BasicNodeModel) {
         actionEditor(node);
@@ -366,7 +173,6 @@ const DiagramEditor = memo(
       node.registerListener({
         positionChanged: (event: any) => {
           lastMovedNodePosition = event.entity.getPosition();
-          setDiagramEdited(true);
           updateJsonState();
         },
       });
@@ -377,7 +183,7 @@ const DiagramEditor = memo(
       node.registerListener({
         selectionChanged: (event: any) => {
           if (event.isSelected) {
-            lastClickedNodeId = node.getID();
+            lastClickedNodeId.current = node.getID();
             node.selectNode();
           } else {
             node.deselectNode();
@@ -417,11 +223,9 @@ const DiagramEditor = memo(
                 }
               }
               updateJsonState();
-              setDiagramEdited(true);
             },
           });
           updateJsonState();
-          setDiagramEdited(true);
         },
       });
     };
@@ -430,7 +234,6 @@ const DiagramEditor = memo(
       model.registerListener({
         nodesUpdated: (event: any) => {
           updateJsonState();
-          setDiagramEdited(true);
         },
       });
     };
@@ -523,71 +326,68 @@ const DiagramEditor = memo(
     };
 
     // Select which node to add depending on the name
-    const nodeTypeSelector = (nodeType: string, nodeName: string) => {
-      console.log("Adding node:", nodeName);
+    const nodeTypeSelector = (e: any) => {
+      const name = e.detail.name;
+      const type = e.detail.type;
+
+      console.log("Adding node:", name);
       // Unselect the previous node
-      const node = model.current.getNode(lastClickedNodeId);
+      const node = model.current.getNode(lastClickedNodeId.current);
       if (node) node.setSelected(false);
 
       // Set the project edited flag and update the state so it can be properly saved
-      setDiagramEdited(true);
       updateJsonState();
 
       // Select depending on the name
-      if (nodeType === "Port values") addTagNode(nodeName);
-      else addBasicNode(nodeType, nodeName);
+      if (type === "Port values") addTagNode(name);
+      else addBasicNode(type, name);
     };
 
-    // Configure the engine
-    configureEngine(engine, modalManager, modalManager);
+    if (render.current) {
+      // Configure the engine
+      configureEngine(engine, modalManager, modalManager);
 
-    // Deserialize and load the model
-    model.current.deserializeModel(modelJson, engine.current);
-    attachLinkListener(model.current);
-    attachNodesListener(model.current);
-    engine.current.setModel(model.current);
+      // Deserialize and load the model
+      model.current.deserializeModel(fileContent, engine.current);
+      attachLinkListener(model.current);
+      attachNodesListener(model.current);
+      engine.current.setModel(model.current);
 
-    // After deserialization, attach listeners to each node
-    const nodes = model.current.getNodes();
-    nodes.forEach((node) => {
-      if (node instanceof BasicNodeModel || node instanceof TagNodeModel) {
-        attachPositionListener(node);
-        attachClickListener(node);
-        node.setSelected(false);
-        if (
-          node instanceof BasicNodeModel &&
-          isActionNode(node.getName()) &&
-          !node.getIsSubtree()
-        ) {
-          addActionFrame(node.getName(), node.getColor(), node.getPorts());
+      // After deserialization, attach listeners to each node
+      const nodes = model.current.getNodes();
+      nodes.forEach((node) => {
+        if (node instanceof BasicNodeModel || node instanceof TagNodeModel) {
+          attachPositionListener(node);
+          attachClickListener(node);
+          node.setSelected(false);
+          if (
+            node instanceof BasicNodeModel &&
+            isActionNode(node.getName()) &&
+            !node.getIsSubtree()
+          ) {
+            addActionFrame(node.getName(), node.getColor(), node.getPorts());
+          }
         }
-      }
-    });
+      });
 
-    setModalModel(model.current);
-    setModalEngine(engine.current);
+      setModalModel(model.current);
+      setModalEngine(engine.current);
 
-    // Fixes uncomplete first serialization
-    setTimeout(() => {
-      console.log("Rendered!");
-      updateJsonState();
-    }, 1);
+      // Fixes uncomplete first serialization
+      setTimeout(() => {
+        console.log("Rendered!");
+        updateJsonState();
+      }, 1);
+      render.current = false;
+    }
+
+    deleteCurrentCallbackRef.current = deleteLastClickedNode;
+    editCurrentCallbackRef.current = onNodeEditor;
+    homeZoomCallbackRef.current = zoomToFit;
+    addNodeCallbackRef.current = nodeTypeSelector;
 
     return (
       <>
-        <NodeMenu
-          projectName={projectName}
-          onAddNode={nodeTypeSelector}
-          onDeleteNode={deleteLastClickedNode}
-          onZoomToFit={zoomToFit}
-          onEditAction={onNodeEditor}
-          hasSubtrees={hasSubtrees}
-          view={view}
-          changeView={changeViewExpanded}
-          setGoBack={setGoBack}
-          subTreeName={subTreeName}
-          updateFileExplorer={updateFileExplorer}
-        />
         {engine.current && (
           <CanvasWidget className="bt-canvas" engine={engine.current} />
         )}

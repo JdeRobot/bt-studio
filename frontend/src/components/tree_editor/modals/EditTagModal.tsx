@@ -11,21 +11,20 @@ const initialEditTagModalData = {
 };
 
 const EditTagModal = ({
+  setFileContent,
   isOpen,
   onClose,
   currentActionNode,
   model,
   engine,
-  updateJsonState,
-  setDiagramEdited,
 }: {
+  setFileContent: Function;
   isOpen: boolean;
   onClose: Function;
   currentActionNode: TagNodeModel;
-  model: DiagramModel;
+  model: any;
+  // model: DiagramModel;
   engine: DiagramEngine;
-  updateJsonState: Function;
-  setDiagramEdited: Function;
 }) => {
   const focusInputRef = useRef(null);
   const [formState, setFormState] = useState(initialEditTagModalData);
@@ -38,8 +37,7 @@ const EditTagModal = ({
     }));
     currentActionNode.setName(value);
 
-    setDiagramEdited(true);
-    updateJsonState();
+    setFileContent();
     engine.repaintCanvas();
   };
 

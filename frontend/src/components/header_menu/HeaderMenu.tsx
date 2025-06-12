@@ -40,26 +40,14 @@ const HeaderMenu = ({
   setCurrentProjectname,
   currentUniverseName,
   setCurrentUniverseName,
-  setSaveCurrentDiagram,
-  projectChanges,
-  setProjectChanges,
-  gazeboEnabled,
-  setGazeboEnabled,
   manager,
-  showVNCViewer,
   isUnibotics,
 }: {
   currentProjectname: string;
   setCurrentProjectname: Function;
   currentUniverseName: string;
   setCurrentUniverseName: Function;
-  setSaveCurrentDiagram: Function;
-  projectChanges: boolean;
-  setProjectChanges: Function;
-  gazeboEnabled: boolean;
-  setGazeboEnabled: Function;
   manager: CommsManager | null;
-  showVNCViewer: Function;
   isUnibotics: boolean;
 }) => {
   const { warning, error } = useError();
@@ -269,9 +257,6 @@ const HeaderMenu = ({
       // Project exists, proceed to change
       setCurrentProjectname(projectName);
 
-      // Proper simulation loading
-      setGazeboEnabled(false);
-
       // Terminate the universe
       if (currentUniverseName) {
         await terminateUniverse();
@@ -285,29 +270,10 @@ const HeaderMenu = ({
     }
   };
 
-  const onSaveProject = async () => {
-    if (!projectChanges) {
-      return;
-    }
-    try {
-      //TODO: check if possible concurrency problems
-      setSaveCurrentDiagram(true);
-      setProjectChanges(false);
-      console.log("Project saved");
-    } catch (e) {
-      if (e instanceof Error) {
-        console.error("Error saving project: " + e.message);
-        error(e.message);
-      }
-    }
-  };
-
   // App handling
 
   const onDownloadApp = async () => {
     try {
-      await onSaveProject();
-
       // Get the blob from the API wrapper
       const appFiles = await generateLocalApp(
         currentProjectname,
@@ -357,15 +323,17 @@ const HeaderMenu = ({
       return;
     }
 
-    if (!gazeboEnabled) {
+    if (
+      manager.getState() !== "visualization_ready" &&
+      manager.getState() !== "application_running" &&
+      manager.getState() !== "paused"
+    ) {
       console.error("Simulation is not ready!");
       warning(
         "Failed to found a running simulation. Please make sure an universe is selected.",
       );
       return;
     }
-
-    await onSaveProject();
 
     if (!appRunning) {
       try {
@@ -429,7 +397,11 @@ const HeaderMenu = ({
       return;
     }
 
-    if (!gazeboEnabled) {
+    if (
+      manager.getState() !== "visualization_ready" &&
+      manager.getState() !== "application_running" &&
+      manager.getState() !== "paused"
+    ) {
       console.error("Simulation is not ready!");
       warning(
         "Failed to found a running simulation. Please make sure an universe is selected.",
@@ -446,7 +418,6 @@ const HeaderMenu = ({
 
   const onOpenProjectModal = (e: any) => {
     setProjectModalOpen(true);
-    onSaveProject();
   };
 
   const onCloseProjectModal = async (projectName: string) => {
@@ -458,7 +429,6 @@ const HeaderMenu = ({
 
   const onOpenUniverseModal = (e: any) => {
     setUniversesModalOpen(true);
-    onSaveProject();
   };
 
   const onCloseUniverseModal = async (universeName: string) => {
@@ -479,9 +449,7 @@ const HeaderMenu = ({
           if (currentUniverseName) await terminateUniverse();
           await launchUniverse(universeConfig);
           console.log("Launch universe successful");
-          setGazeboEnabled(true);
           setCurrentUniverseName(universeName);
-          showVNCViewer();
         }
       } catch (e: unknown) {
         if (e instanceof Error) {
@@ -499,7 +467,6 @@ const HeaderMenu = ({
 
   const onOpenSettingsModal = (e: any) => {
     setSettingsModalOpen(true);
-    onSaveProject();
   };
 
   const onCloseSettingsModal = () => {
@@ -560,7 +527,6 @@ const HeaderMenu = ({
                     ? currentUniverseName
                     : "No Universe selected")}
               </div>
-              {projectChanges && <div className="bt-small-text">Unsaved</div>}
             </span>
           )}
           <button
@@ -586,14 +552,6 @@ const HeaderMenu = ({
             title="Settings"
           >
             <SettingsIcon className="bt-header-icon" fill={"var(--icon)"} />
-          </button>
-          <button
-            className="bt-header-button"
-            id="save-bt-changes"
-            onClick={onSaveProject}
-            title="Save project"
-          >
-            <SaveIcon className="bt-header-icon" fill={"var(--icon)"} />
           </button>
           <button
             className="bt-header-button"

@@ -4,12 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
 import EditActionModal from "./modals/EditActionModal";
 import EditTagModal from "./modals/EditTagModal";
-import { BasicNodeModel } from "../tree_editor/nodes/basic_node/BasicNodeModel";
-import { TagNodeModel } from "../tree_editor/nodes/tag_node/TagNodeModel";
-import DiagramEditor from "./TreeEditor";
+import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
+import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
+import TreeEditor from "./TreeEditor";
 import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 
-const TreeEditor = ({
+const TreeEditorContainer = ({
   commsManager,
   project,
   file,
@@ -114,7 +114,7 @@ const TreeEditor = ({
           )}
         </>
       )}
-      <DiagramEditor
+      <TreeEditor
         fileContent={JSON.parse(JSON.parse(JSON.stringify(fileContent)))}
         setFileContent={setResultJson}
         setModalModel={setModel}
@@ -133,4 +133,4 @@ const TreeEditor = ({
   );
 };
 
-export default TreeEditor;
+export default TreeEditorContainer;

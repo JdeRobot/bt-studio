@@ -25,7 +25,7 @@ export const BasicNodeWidget = ({
     background: node.getColor() || "var(--bt-action-default-color)",
     color: showLightText ? "var(--bt-light-text)" : "var(--bt-dark-text)",
     ...(node.isSelected() && {
-      boxShadow: "0 0 12px #fff", // Add a shadow to highlight the selection
+      boxShadow: "0 0 12px var(--bt-selected-shadow-color)", // Add a shadow to highlight the selection
     }),
   };
 

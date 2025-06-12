@@ -182,20 +182,24 @@ export const CollapsableResizableColumn = ({
     }
   }
 
+  if (children.length === 0) {
+    return <SplashIcon className="bt-splash-icon" fill="var(--header)" />;
+  }
+
   if (children.length === 1) {
     return <div className="ide-column-container">{children[0]}</div>;
   }
 
-  if (children.length === 2) {
-    return (
-      <div className="ide-column-container">
+  return (
+    <div className="ide-column-container">
+      {children.slice(0, children.length - 1).map((comp, i) => (
         <ResizableVert height={100 / children.length} max={100} snap={[0]}>
-          {children[0]}
+          {comp}
         </ResizableVert>
-        <div className="ide-column-filler-container">{children[1]}</div>
+      ))}
+      <div className="ide-column-filler-container">
+        {children[children.length - 1]}
       </div>
-    );
-  }
-
-  return <SplashIcon className="bt-splash-icon" fill="var(--header)" />;
+    </div>
+  );
 };

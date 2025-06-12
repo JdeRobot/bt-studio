@@ -1,21 +1,22 @@
 .bt-button-container {
   display: flex;
   justify-content: left;
+  align-self: center;
 }
 
 .bt-node-button {
-  width: 100px;
-  height: 30px;
-  margin-right: 10px;
-  background-color: var(--buttons);
+  height: 24px;
   color: var(--text);
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
+  font-size: 15px;
+  background-color: transparent;
+  margin: 0 5px 0 5px;
+  white-space: nowrap;
 }
 
-.bt-node-button:hover {
+.bt-button:hover {
   background-color: var(--buttons-hover);
+  border-radius: var(--border-radius);
 }
 
 .bt-node-header-container {
@@ -35,21 +36,15 @@
 }
 
 .bt-node-action-button {
-  display: flex;
+  display: inline-flex;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  align-items: center;
+  width: 24px;
+  height: 24px;
   background-color: var(--control-bar);
   border: 0;
-}
-
-.bt-node-action-button:hover {
-  background-color: var(--buttons-hover);
-  border-radius: 50%; /* Circular highlight */
-}
-
-.bt-action-icon {
-  margin-top: 4px;
+  align-self: center;
+  margin: 0 2px 0 2px;
 }
 
 /* Dropdown menus */
@@ -65,6 +60,6 @@
 }
 
 .css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root {
-  border-radius: 4px !important;
+  border-radius: var(--border-radius) !important;
   margin: 4px !important;
 }

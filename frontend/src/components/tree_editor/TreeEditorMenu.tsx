@@ -6,7 +6,6 @@ import { ReactComponent as SubtreeIcon } from "./img/subtree.svg";
 import { ReactComponent as EditActionIcon } from "./img/edit_action.svg";
 import { ReactComponent as HelpIcon } from "./img/help.svg";
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
-import { ReactComponent as ReturnIcon } from "./img/return.svg";
 import { Menu, MenuItem } from "@mui/material";
 
 import {
