@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import CommsManager from "../../../api_helper/CommsManager";
 import "./VncViewer.css";
 import BounceLoader from "react-spinners/BounceLoader";
+import { subscribe, unsubscribe } from "../../helper/TreeEditorHelper";
 
 const enabled = (state?: string): boolean => {
   if (
@@ -21,7 +23,21 @@ const VncViewer = ({
   commsManager: CommsManager | null;
   port: number;
 }) => {
-  var state = commsManager?.getState();
+  const [state, setState] = useState<string | undefined>(
+    commsManager?.getState(),
+  );
+
+  const updateState = (e: any) => {
+    setState(e.detail.state);
+  };
+
+  useEffect(() => {
+    subscribe("CommsManagerStateChange", updateState);
+
+    return () => {
+      unsubscribe("CommsManagerStateChange", () => {});
+    };
+  }, []);
 
   return (
     <div className="bt-viewer">

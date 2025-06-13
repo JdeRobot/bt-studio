@@ -12,11 +12,13 @@
 .bt-project-name-box {
   display: flex;
   flex-direction: column;
-  background-color: none; /* Transparent background */
+  background-color: none;
+  /* Transparent background */
   color: var(--text);
   padding: 10px;
   justify-content: center;
   /* Other styling as needed */
+  margin-left: auto;
 }
 
 .bt-project-name {
@@ -24,12 +26,12 @@
 }
 
 .bt-small-text {
-  font-size: 0.7rem; /* Adjust the size as needed */
+  font-size: 0.7rem;
+  /* Adjust the size as needed */
 }
 
 .bt-header-button-container {
   display: flex;
-  width: 75%;
   justify-content: flex-end;
   align-items: center;
   margin-left: auto;
@@ -51,7 +53,8 @@
 
 .bt-header-button:hover {
   background-color: var(--buttons-hover);
-  border-radius: 50%; /* Circular highlight */
+  border-radius: 50%;
+  /* Circular highlight */
 }
 
 .bt-show {
@@ -64,4 +67,43 @@
 .bt-css-hip9hq-MuiPaper-root-MuiAppBar-root {
   background-color: var(--header) !important;
   box-shadow: none !important;
+}
+
+.bt-dropdown-list {
+  background-color: initial;
+  border-radius: 5px;
+  display: flex;
+  position: absolute;
+  z-index: 3;
+  flex-direction: column;
+  background-color: var(--header) !important;
+  border: 1px black solid;
+  margin-top: 10px;
+
+  & button {
+    border-radius: 0 !important;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    margin-bottom: 0 !important;
+    opacity: 1 !important;
+    background-color: var(--header);
+    color: var(--text);
+    border: 0;
+    padding: 5px 5px 5px 5px;
+    font-size: 16px;
+
+    &:first-of-type {
+      border-top-left-radius: 5px !important;
+      border-top-right-radius: 5px !important;
+    }
+
+    &:last-of-type {
+      border-bottom-left-radius: 5px !important;
+      border-bottom-right-radius: 5px !important;
+    }
+
+    &:hover {
+      background-color: var(--buttons-hover);
+    }
+  }
 }

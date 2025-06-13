@@ -78,7 +78,11 @@ const EditorComponent = ({
           <ViewersContainer viewers={viewers} options={options} />
         </div>
       </ResizableRow>
-      <StatusBar commsManager={commsManager} resetManager={resetManager} />
+      <StatusBar
+        project={project}
+        commsManager={commsManager}
+        resetManager={resetManager}
+      />
     </div>
   );
 };

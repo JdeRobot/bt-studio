@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { Children, useContext, useRef, useState } from "react";
 import JSZip from "jszip";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -43,17 +43,15 @@ interface Entry {
 const HeaderMenu = ({
   currentProjectname,
   setCurrentProjectname,
-  currentUniverseName,
-  setCurrentUniverseName,
   manager,
   isUnibotics,
+  setLayout,
 }: {
   currentProjectname: string;
   setCurrentProjectname: Function;
-  currentUniverseName: string;
-  setCurrentUniverseName: Function;
   manager: CommsManager | null;
   isUnibotics: boolean;
+  setLayout: Function;
 }) => {
   const { warning, error } = useError();
 
@@ -68,7 +66,6 @@ const HeaderMenu = ({
 
   // Modal state
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
-  const [isUniversesModalOpen, setUniversesModalOpen] = useState(false);
   const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
 
   // RB helpers
@@ -220,6 +217,7 @@ const HeaderMenu = ({
         };
 
         const universe_config = {
+          name: configJson.name,
           world: world_config,
           robot: robot_config,
         };
@@ -263,10 +261,9 @@ const HeaderMenu = ({
       setCurrentProjectname(projectName);
 
       // Terminate the universe
-      if (currentUniverseName) {
+      if (manager?.getUniverse()) {
         await terminateUniverse();
       }
-      setCurrentUniverseName("");
       console.log(`Switched to project ${projectName}`);
       console.log("Universe terminated!");
     } else {
@@ -432,44 +429,6 @@ const HeaderMenu = ({
     setProjectModalOpen(false);
   };
 
-  const onOpenUniverseModal = (e: any) => {
-    setUniversesModalOpen(true);
-  };
-
-  const onCloseUniverseModal = async (universeName: string) => {
-    // First, close the modal for reactivity
-    setUniversesModalOpen(false);
-
-    if (!universeName) return;
-
-    // Get the config from the backend
-    try {
-      const universeConfig = await getUniverseConfig(
-        universeName,
-        currentProjectname,
-      );
-      try {
-        // Launch if new universe selected
-        if (universeName !== currentUniverseName) {
-          if (currentUniverseName) await terminateUniverse();
-          await launchUniverse(universeConfig);
-          console.log("Launch universe successful");
-          setCurrentUniverseName(universeName);
-        }
-      } catch (e: unknown) {
-        if (e instanceof Error) {
-          console.error("Unable to launch selected universe: " + e.message);
-          error("Unable to launch selected universe: " + e.message);
-        }
-      }
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        console.error("Unable to retrieve universe config: " + e.message);
-        error("Unable to retrieve universe config: " + e.message);
-      }
-    }
-  };
-
   const onOpenSettingsModal = (e: any) => {
     setSettingsModalOpen(true);
   };
@@ -508,12 +467,6 @@ const HeaderMenu = ({
           setExistingProjects={setExistingProjects}
           createProject={onCreateProject}
         />
-        <UniversesModal
-          isOpen={isUniversesModalOpen}
-          onSubmit={onSubmit}
-          onClose={onCloseUniverseModal}
-          currentProject={currentProjectname}
-        />
 
         <SettingsModal
           isOpen={isSettingsModalOpen}
@@ -522,18 +475,10 @@ const HeaderMenu = ({
           currentProjectname={currentProjectname}
         />
 
+        <span className="bt-project-name-box">
+          <div className="bt-project-name">{currentProjectname}</div>
+        </span>
         <div className="bt-header-button-container">
-          {currentProjectname && (
-            <span className="bt-project-name-box">
-              <div className="bt-project-name">
-                {currentProjectname +
-                  " ~ " +
-                  (currentUniverseName
-                    ? currentUniverseName
-                    : "No Universe selected")}
-              </div>
-            </span>
-          )}
           <button
             className="bt-header-button"
             id="open-project-manager"
@@ -544,20 +489,21 @@ const HeaderMenu = ({
           </button>
           <button
             className="bt-header-button"
-            id="open-universe-manager"
-            onClick={onOpenUniverseModal}
-            title="Universe menu"
-          >
-            <UniversesIcon className="bt-header-icon" fill={"var(--icon)"} />
-          </button>
-          <button
-            className="bt-header-button"
             id="open-settings-manager"
             onClick={onOpenSettingsModal}
             title="Settings"
           >
             <SettingsIcon className="bt-header-icon" fill={"var(--icon)"} />
           </button>
+          <Dropdown
+            className="bt-header-button"
+            id="open-settings-manager"
+            title="Layout"
+            setter={setLayout}
+            possibleValues={["only-editor", "only-viewers", "both"]}
+          >
+            <SettingsIcon className="bt-header-icon" fill={"var(--icon)"} />
+          </Dropdown>
           <button
             className="bt-header-button"
             id="download-app"
@@ -593,3 +539,58 @@ const HeaderMenu = ({
 };
 
 export default HeaderMenu;
+
+const Dropdown = ({
+  className,
+  id,
+  title,
+  setter,
+  possibleValues,
+  children,
+}: {
+  className: string;
+  id: string;
+  title: string;
+  setter: Function;
+  possibleValues: any[];
+  children: any;
+}) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const dropdown = useRef<HTMLDivElement>(null);
+
+  const changeValue = (e: any, value: any) => {
+    e.preventDefault();
+    setter(value);
+  };
+
+  const closeOpenMenus = (e: any) => {
+    if (open && !dropdown.current?.contains(e.target)) {
+      setOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", closeOpenMenus);
+
+  return (
+    <div ref={dropdown}>
+      <button
+        className={className}
+        id={id}
+        title={title}
+        onClick={(e) => {
+          e.preventDefault();
+          setOpen(!open);
+        }}
+      >
+        {children}
+      </button>
+      {open && (
+        <div className="bt-dropdown-list">
+          {possibleValues.map((name, index) => (
+            <button onClick={(e: any) => changeValue(e, name)}>{name}</button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};

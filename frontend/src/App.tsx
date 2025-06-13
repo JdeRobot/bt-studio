@@ -37,11 +37,13 @@ import TreeMonitor from "./components/tree_monitor/TreeMonitorContainer";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
-  const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
   const [manager, setManager] = useState<CommsManager | null>(null);
   const [showSim, setSimVisible] = useState<boolean>(false);
   const [showMonitor, setMonitorVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
+  const [layout, setLayout] = useState<"only-editor" | "only-viewers" | "both">(
+    "both",
+  );
 
   //Only needed in Unibotics
   const maxUsers = 15;
@@ -282,10 +284,9 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       <HeaderMenu
         currentProjectname={currentProjectname}
         setCurrentProjectname={setCurrentProjectname}
-        currentUniverseName={currentUniverseName}
-        setCurrentUniverseName={setCurrentUniverseName}
         manager={manager}
         isUnibotics={isUnibotics}
+        setLayout={setLayout}
       />
 
       <EditorComponent
@@ -297,7 +298,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         extraEditors={[treeEditor]}
         viewers={[treeMonitor, gazeboViewer, terminalViewer]}
         options={[]}
-        layout="both"
+        layout={layout}
       />
     </div>
   );

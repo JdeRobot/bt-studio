@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import { publish } from "../components/helper/TreeEditorHelper";
 
 // Define types for the resolve and reject functions
 type PromiseHandlers = {
@@ -12,6 +13,29 @@ interface ManagerMsg {
   data: any;
 }
 
+interface WorldConfig {
+  name: string;
+  launch_file_path: string;
+  ros_version: string;
+  world: string;
+  zip?: unknown;
+}
+
+interface RobotConfig {
+  name: string | null;
+  launch_file_path: string | null;
+  ros_version: string | null;
+  visualization: string | null;
+  world: string | null;
+  start_pose: string | null;
+}
+
+interface UniverseConfig {
+  name: string;
+  world: WorldConfig;
+  robot: RobotConfig;
+}
+
 type Events = string | string[];
 export default class CommsManager {
   private static instance: CommsManager | undefined;
@@ -19,6 +43,7 @@ export default class CommsManager {
   private observers: { [id: string]: Function[] } = {};
   private pendingPromises: Map<string, PromiseHandlers> = new Map();
   private static state: string = "idle";
+  private static universe?: string;
   private static hostData?: {
     gpu_avaliable: string;
     robotics_backend_version: string;
@@ -145,7 +170,11 @@ export default class CommsManager {
   }
 
   private setManagerState(msg: ManagerMsg) {
+    publish("CommsManagerStateChange", {state: msg.data.state})
     CommsManager.state = msg.data.state;
+    if (msg.data.state === "connected") {
+      CommsManager.universe = undefined
+    }
   }
 
   public getState() {
@@ -160,12 +189,17 @@ export default class CommsManager {
     return CommsManager.hostData;
   }
 
+  public getUniverse() {
+    return CommsManager.universe;
+  }
+
   // Connect to the ws
   public connect() {
     return this.send("connect");
   }
 
-  public launchWorld(cfg: Object) {
+  public launchWorld(cfg: UniverseConfig) {
+    CommsManager.universe = cfg.name
     return this.send("launch_world", cfg);
   }
 
@@ -246,4 +280,13 @@ const events = {
   CODE_FORMAT: "code-format",
   CODE_ANALYSIS: "code-analysis",
   CODE_AUTOCOMPLETE: "code-autocomplete",
+};
+
+const states = {
+  INTROSPECTION: "idle",
+  CODE_FORMAT: "connected",
+  CODE_ANALYSIS: "world_ready",
+  RESPONSES: "visualization_ready",
+  UPDATE: "application_running",
+  STATE_CHANGED: "paused",
 };

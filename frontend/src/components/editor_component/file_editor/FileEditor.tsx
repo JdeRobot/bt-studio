@@ -144,12 +144,8 @@ const FileEditor = ({
       console.log("Auto save completed");
     } catch (e) {
       if (e instanceof Error) {
-        if ((e.message = "Request failed with status code 507")) {
-          error("Error saving file: " + "You're using too much AWS space!");
-        } else {
-          console.log("Error saving file: " + e.message);
-          error("Error saving file: " + "I'm entering through the bad one");
-        }
+        console.error("Error saving file: " + e.message);
+        error("Error saving file: " + e.message);
       }
     }
   };
@@ -188,7 +184,8 @@ const FileEditor = ({
   }, [currentProjectname]);
 
   const handleSaveFile = async () => {
-    if (fileContent === null) {
+    console.log(fileContent, currentFile);
+    if (fileContent === undefined) {
       console.log("No content to save");
       return;
     }
@@ -210,12 +207,8 @@ const FileEditor = ({
       setHasUnsavedChanges(false); // Reset the unsaved changes flag
     } catch (e) {
       if (e instanceof Error) {
-        if ((e.message = "Request failed with status code 507")) {
-          error("Error saving file: " + "You're using too much AWS space");
-        } else {
-          console.error("Error saving file: " + e.message);
-          error("Error saving file: " + e.message);
-        }
+        console.error("Error saving file: " + e.message);
+        error("Error saving file: " + e.message);
       }
     }
   };
