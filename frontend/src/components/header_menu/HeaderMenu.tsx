@@ -499,6 +499,8 @@ const HeaderMenu = ({
             className="bt-header-button"
             id="open-settings-manager"
             title="Layout"
+            width={120}
+            down
             setter={setLayout}
             possibleValues={["only-editor", "only-viewers", "both"]}
           >
@@ -544,6 +546,8 @@ const Dropdown = ({
   className,
   id,
   title,
+  width,
+  down,
   setter,
   possibleValues,
   children,
@@ -551,21 +555,38 @@ const Dropdown = ({
   className: string;
   id: string;
   title: string;
+  width: number;
+  down: boolean;
   setter: Function;
   possibleValues: any[];
   children: any;
 }) => {
   const [open, setOpen] = useState<boolean>(false);
+  const [right, setRight] = useState<any>(width / 2 + 13);
   const dropdown = useRef<HTMLDivElement>(null);
 
   const changeValue = (e: any, value: any) => {
     e.preventDefault();
     setter(value);
+    setOpen(false);
   };
 
   const closeOpenMenus = (e: any) => {
     if (open && !dropdown.current?.contains(e.target)) {
       setOpen(false);
+    }
+  };
+
+  const checkPosition = (x: number) => {
+    if (x + width / 2 > window.innerWidth) {
+      // To the left
+      setRight(x);
+    } else if (x < width / 2) {
+      // To the right
+      setRight(x - width);
+    } else {
+      // In the middle
+      setRight(x - width / 2 + 13);
     }
   };
 
@@ -578,6 +599,7 @@ const Dropdown = ({
         id={id}
         title={title}
         onClick={(e) => {
+          checkPosition(e.clientX);
           e.preventDefault();
           setOpen(!open);
         }}
@@ -585,7 +607,10 @@ const Dropdown = ({
         {children}
       </button>
       {open && (
-        <div className="bt-dropdown-list">
+        <div
+          className="bt-dropdown-list"
+          style={{ width: `${width}px`, left: `${right}px` }}
+        >
           {possibleValues.map((name, index) => (
             <button onClick={(e: any) => changeValue(e, name)}>{name}</button>
           ))}
