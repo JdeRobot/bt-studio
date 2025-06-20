@@ -7,7 +7,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@material-ui/types": "^5.1.0",
-    "@monaco-editor/react": "^4.6.0",
+    "@monaco-editor/react": "4.6.0",
     "@mui/icons-material": "^6.1.0",
     "@mui/material": "^5.14.11",
     "@projectstorm/react-diagrams": "^7.0.3",
@@ -20,12 +20,14 @@
     "beautiful-react-ui": "^0.57.1",
     "d3-drag": "^3.0.0",
     "install": "^0.13.0",
+    "jderobot-commsmanager": "0.1.6",
+    "jderobot-ide-interface": "0.1.13",
     "jszip": "^3.10.1",
     "re-resizable": "^6.11.2",
-    "react": "^18.2.0",
+    "react": "18.2.0",
     "react-color-palette": "^7.1.1",
     "react-d3-graph": "^2.6.0",
-    "react-dom": "^18.2.0",
+    "react-dom": "18.2.0",
     "react-resizable": "^3.0.5",
     "react-scripts": "5.0.1",
     "react-spinners": "^0.13.8",
@@ -61,7 +63,6 @@
     ]
   },
   "devDependencies": {
-    "@types/uuid": "^10.0.0",
     "prettier": "^3.5.3",
     "typescript": "^5.2.2"
   }

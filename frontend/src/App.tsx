@@ -6,7 +6,7 @@ import ErrorModal from "./components/error_popup/ErrorModal";
 import { useError } from "./components/error_popup/ErrorModal";
 import { ReactComponent as SimulatorIcon } from "./components/icons/gazebo.svg";
 import { ReactComponent as TerminalIcon } from "./components/icons/terminal.svg";
-import CommsManager from "./api_helper/CommsManager";
+import { CommsManager, events } from "jderobot-commsmanager";
 import {
   createAction,
   createFile,
@@ -22,11 +22,12 @@ import {
 } from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
-import EditorComponent from "./components/editor_component/EditorComponent";
-import VncViewer from "./components/editor_component/vnc_viewer/VncViewer";
-import { newFileModalData } from "./components/editor_component/explorer/modals/NewFileModal";
+import IdeInterface, {
+  VncViewer,
+  Entry,
+  newFileData,
+} from "jderobot-ide-interface";
 import { publish } from "./components/helper/TreeEditorHelper";
-import { Entry } from "./components/editor_component/explorer/Explorer";
 import TreeEditor from "./components/tree_editor/TreeEditorContainer";
 import {
   AddSubtreeButton,
@@ -74,8 +75,9 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       btAtMaxCapacity.current,
     );
 
+    console.log(events);
     const manager = CommsManager.getInstance();
-    if (btAtMaxCapacity.current == false) {
+    if (btAtMaxCapacity.current === false) {
       setManager(manager);
     }
 
@@ -156,7 +158,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       return getFileList(project);
     },
     file: {
-      create: (project: string, location: string, data: newFileModalData) => {
+      create: (project: string, location: string, data: newFileData) => {
         if (data.fileType === "actions") {
           publish("updateActionList");
           return createAction(project, data.fileName, data.templateType);
@@ -193,7 +195,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       return getFileList(project, "");
     },
     file: {
-      create: (project: string, location: string, data: newFileModalData) => {
+      create: (project: string, location: string, data: newFileData) => {
         return createFile(project, data.fileName, location, "");
       },
       get: (project: string, path: string) => {
@@ -289,7 +291,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         setLayout={setLayout}
       />
 
-      <EditorComponent
+      <IdeInterface
         commsManager={manager}
         resetManager={resetManager}
         project={currentProjectname}

@@ -72,7 +72,7 @@ export class ActionFrame {
     this.color = color;
   }
 
-  public getColor() : string {
+  public getColor(): string {
     return this.color;
   }
 
@@ -100,11 +100,11 @@ export class ActionFrame {
     }
   }
 
-  public getInputs() : string[] {
+  public getInputs(): string[] {
     return this.inputs;
   }
 
-  public getOutputs() : string[] {
+  public getOutputs(): string[] {
     return this.outputs;
   }
 }
@@ -126,7 +126,11 @@ export const resetActionFrames = () => {
   actionFrames = [];
 };
 
-export const addActionFrame = (name: string, color:string, ports:{ [s: string]: PortModel; } ) => {
+export const addActionFrame = (
+  name: string,
+  color: string,
+  ports: { [s: string]: PortModel }
+) => {
   if (getActionFrame(name) !== undefined) {
     return; // Already exists
   }
@@ -136,19 +140,19 @@ export const addActionFrame = (name: string, color:string, ports:{ [s: string]: 
 
   Object.values(ports).forEach((port) => {
     if (port instanceof InputPortModel) {
-      inputs.push(port.getName())
+      inputs.push(port.getName());
     } else if (port instanceof OutputPortModel) {
-      outputs.push(port.getName())
+      outputs.push(port.getName());
     }
   });
 
   var newActionFrame = new ActionFrame(name, color, inputs, outputs);
 
-  publish("updateAccentColor");
+  publish("updateAccentColor", { name: name, color: color });
   actionFrames.push(newActionFrame);
 };
 
-export function subscribe(eventName: string, listener: (e:any) => void) {
+export function subscribe(eventName: string, listener: (e: any) => void) {
   document.addEventListener(eventName, listener);
 }
 
@@ -156,8 +160,8 @@ export function unsubscribe(eventName: string, listener: () => void) {
   document.removeEventListener(eventName, listener);
 }
 
-export function publish(eventName:string, extra: any = undefined) {
-  const event = new CustomEvent(eventName, {detail: extra});
+export function publish(eventName: string, extra: any = undefined) {
+  const event = new CustomEvent(eventName, { detail: extra });
   document.dispatchEvent(event);
 }
 
@@ -300,28 +304,20 @@ export const changeColorNode = (
   > = () => {},
   updateJsonState: Function = () => {}
 ) => {
-  node.setColor(
+  const color =
     "rgb(" +
-      Math.round(rgb[0]) +
-      "," +
-      Math.round(rgb[1]) +
-      "," +
-      Math.round(rgb[2]) +
-      ")"
-  );
+    Math.round(rgb[0]) +
+    "," +
+    Math.round(rgb[1]) +
+    "," +
+    Math.round(rgb[2]) +
+    ")";
+  node.setColor(color);
 
   if (action) {
-    action.changeColor(
-      "rgb(" +
-        Math.round(rgb[0]) +
-        "," +
-        Math.round(rgb[1]) +
-        "," +
-        Math.round(rgb[2]) +
-        ")"
-    );
-    publish("updateAccentColor");
-    
+    action.changeColor(color);
+    publish("updateAccentColor", { name: node.getName(), color: color });
+
     model.getNodes().forEach((oldNode: NodeModel) => {
       var convNode;
       var name;
@@ -340,7 +336,6 @@ export const changeColorNode = (
       }
     });
   }
-
 
   diagramEditedCallback(true);
   updateJsonState();

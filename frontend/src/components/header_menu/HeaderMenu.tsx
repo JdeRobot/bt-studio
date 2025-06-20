@@ -1,4 +1,4 @@
-import { Children, useContext, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import JSZip from "jszip";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -6,26 +6,23 @@ import {
   createProject,
   generateLocalApp,
   generateDockerizedApp,
-  getUniverseConfig,
   getRoboticsBackendUniverse,
   getUniverseFile,
   getFileList,
 } from "../../api_helper/TreeWrapper";
-import CommsManager from "../../api_helper/CommsManager";
+import { CommsManager } from "jderobot-commsmanager";
 
 import { ReactComponent as LogoIcon } from "../icons/logo_jderobot_monocolor.svg";
 import { ReactComponent as LogoUniboticsIcon } from "../icons/logo_unibotics_monocolor.svg";
 
 import "./HeaderMenu.css";
 import { ReactComponent as ProjectsIcon } from "./img/change_project.svg";
-import { ReactComponent as UniversesIcon } from "./img/universes.svg";
 import { ReactComponent as SettingsIcon } from "./img/settings.svg";
 import { ReactComponent as DownloadIcon } from "./img/download.svg";
 import { ReactComponent as RunIcon } from "./img/run.svg";
 import { ReactComponent as StopIcon } from "./img/stop.svg";
 import { ReactComponent as ResetIcon } from "./img/reset.svg";
 import ProjectModal from "./modals/ProjectModal";
-import UniversesModal from "./modals/UniverseModal";
 import SettingsModal from "../settings_popup/SettingsModal";
 import { OptionsContext } from "../options/Options";
 
@@ -123,121 +120,6 @@ const HeaderMenu = ({
         reader.readAsDataURL(content);
       });
     });
-  };
-
-  const launchUniverse = async (universeConfig: string) => {
-    if (!manager) {
-      warning(
-        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
-      );
-      return;
-    }
-
-    if (currentProjectname === "") {
-      error("Failed to find the current project name.");
-      return;
-    }
-
-    console.log("UC: " + universeConfig);
-    const configJson = JSON.parse(universeConfig);
-
-    try {
-      if (configJson.type === "robotics_backend") {
-        const dockerUniverseInfo = await getRoboticsBackendUniverse(
-          configJson.id,
-        );
-
-        let visualization = "bt_studio";
-
-        if (dockerUniverseInfo.visualization === "gzsim_rae") {
-          visualization = "bt_studio_gz";
-        }
-
-        const world_config = dockerUniverseInfo.world;
-
-        const robot_config = dockerUniverseInfo.robot;
-
-        const universe_config = {
-          name: configJson.name,
-          world: world_config,
-          robot: robot_config,
-        };
-
-        await manager.launchWorld(universe_config);
-        console.log("RB universe launched!");
-        await manager.prepareVisualization(
-          visualization,
-          dockerUniverseInfo.visualization_config,
-        );
-        console.log("Viz ready!");
-      } else {
-        const file_list = await getFileList(
-          currentProjectname,
-          configJson.name,
-        );
-
-        const files: Entry[] = JSON.parse(file_list);
-
-        const universe: Entry = {
-          name: configJson.name,
-          is_dir: true,
-          path: "",
-          files: files,
-        };
-
-        const zip = new JSZip();
-
-        for (let index = 0; index < universe.files.length; index++) {
-          const element = universe.files[index];
-          console.log(element);
-          if (element.is_dir) {
-            await zipFolder(zip, element, universe.name);
-          } else {
-            await zipFile(zip, universe.name, element.path, element.name);
-          }
-        }
-
-        const base64data = await zipToData(zip);
-
-        const world_config = {
-          name: configJson.name,
-          launch_file_path: configJson.ram_config.launch_file_path,
-          ros_version: configJson.ram_config.ros_version,
-          world: configJson.ram_config.world,
-          zip: base64data,
-        };
-
-        const robot_config = {
-          name: null,
-          launch_file_path: null,
-          ros_version: null,
-          visualization: null,
-          world: null,
-          start_pose: null,
-        };
-
-        const universe_config = {
-          name: configJson.name,
-          world: world_config,
-          robot: robot_config,
-        };
-
-        const visualization_config = configJson.ram_config
-          .visualization_config_path
-          ? configJson.ram_config.visualization_config_path
-          : null;
-
-        await manager.launchWorld(universe_config);
-        console.log("RB universe launched!");
-        await manager.prepareVisualization(
-          "bt_studio_gz",
-          visualization_config,
-        );
-        console.log("Viz ready!");
-      }
-    } catch (e: unknown) {
-      throw e; // rethrow
-    }
   };
 
   // Project handling

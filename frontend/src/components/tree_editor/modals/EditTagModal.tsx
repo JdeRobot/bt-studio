@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
+import { DiagramEngine } from "@projectstorm/react-diagrams";
 
 import Modal from "../../Modal/Modal";
 import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";

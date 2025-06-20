@@ -13,7 +13,7 @@ import { TagNodeModel } from "./../tree_editor/nodes/tag_node/TagNodeModel";
 
 import "./TreeMonitor.css";
 import TreeMonitorMenu from "./TreeMonitorMenu";
-import CommsManager from "../../api_helper/CommsManager";
+import { CommsManager } from "jderobot-commsmanager";
 
 const setTreeStatus = (
   model: DiagramModel,
@@ -44,7 +44,6 @@ const setStatusNode = (
   baseTree: any,
   index: number = 0,
 ) => {
-  var nodeName = baseTree["name"];
   var nodeId = baseTree["id"];
 
   var nodeChilds;

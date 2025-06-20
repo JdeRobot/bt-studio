@@ -145,12 +145,7 @@ const saveProjectConfig = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507) {
-        console.log("Entering right thorugh max user size limit");
-        throw new Error("You're using too much AWS space!");
-      } else {
-        throw new Error(response.data.message || "Failed to create project."); // Response error
-      }
+      throw new Error(response.data.message || "Failed to create project."); // Response error
     }
   } catch (error: unknown) {
     console.log(error);
@@ -468,12 +463,7 @@ const saveBaseTree = async (modelJson: string, currentProjectname: string) => {
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507) {
-        console.log("Entering right thorugh max user size limit");
-        throw new Error("You're using too much AWS space!");
-      } else {
-        throw new Error(response.data.message || "Failed to create project."); // Response error
-      }
+      throw new Error(response.data.message || "Failed to create project."); // Response error
     }
   } catch (error: unknown) {
     console.log(error);
@@ -548,12 +538,7 @@ const createSubtree = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507) {
-        console.log("Entering right thorugh max user size limit");
-        throw new Error("You're using too much AWS space!");
-      } else {
-        throw new Error(response.data.message || "Failed to create project."); // Response error
-      }
+      throw new Error(response.data.message || "Failed to create project."); // Response error
     }
   } catch (error: unknown) {
     console.log(error);
@@ -624,12 +609,7 @@ const saveSubtree = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507) {
-        console.log("Entering right thorugh max user size limit");
-        throw new Error("You're using too much AWS space!");
-      } else {
-        throw new Error(response.data.message || "Failed to create project."); // Response error
-      }
+      throw new Error(response.data.message || "Failed to create project."); // Response error
     }
   } catch (error: unknown) {
     console.log(error);
@@ -714,12 +694,7 @@ const createFile = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507) {
-        console.log("Entering right thorugh max user size limit");
-        throw new Error("You're using too much AWS space!");
-      } else {
-        throw new Error(response.data.message || "Failed to create project."); // Response error
-      }
+      throw new Error(response.data.message || "Failed to create project."); // Response error
     }
   } catch (error: unknown) {
     console.log(error);
@@ -765,12 +740,7 @@ const createAction = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507) {
-        console.log("Entering right thorugh max user size limit");
-        throw new Error("You're using too much AWS space!");
-      } else {
-        throw new Error(response.data.message || "Failed to create project."); // Response error
-      }
+      throw new Error(response.data.message || "Failed to create project."); // Response error
     }
   } catch (error: unknown) {
     console.log(error);
@@ -843,13 +813,7 @@ const saveFile = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507) {
-        console.log("Entering right thorugh max user size limit");
-        //throw new Error("You're using too much AWS space!" ||  response.data.message)
-        throw new Error("You're using too much AWS space!");
-      } else {
-        throw new Error(response.data.message || "Failed to create project."); // Response error
-      }
+      throw new Error(response.data.message || "Failed to create project."); // Response error
     }
   } catch (error) {
     console.log(error);
@@ -1097,11 +1061,7 @@ const createFolder = async (
 
     // Handle unsuccessful response status (e.g., non-2xx status)
     if (!isSuccessful(response)) {
-      if (response.status == 507) {
-        throw new Error("You're using too much AWS space!");
-      } else {
-        throw new Error(response.data.message || "Failed to create project."); // Response error
-      }
+      throw new Error(response.data.message || "Failed to create project."); // Response error
     }
   } catch (error: unknown) {
     console.log(error);

@@ -1,0 +1,43 @@
+import { Events, UniverseConfig } from "../types";
+export default class CommsManager {
+    private static instance;
+    private ws;
+    private observers;
+    private pendingPromises;
+    private static state;
+    private static universe?;
+    private static hostData?;
+    private constructor();
+    static getInstance(): CommsManager;
+    static deleteInstance(): void;
+    subscribe: (events: Events, callback: Function) => void;
+    subscribeOnce: (event: Events, callback: Function) => void;
+    unsubscribe: (events: Events, callback: Function) => void;
+    unsuscribeAll: () => void;
+    send(message: string, data?: Object): Promise<any>;
+    private setManagerState;
+    getState(): string;
+    private setHostData;
+    getHostData(): {
+        gpu_avaliable: string;
+        robotics_backend_version: string;
+        ros_version: string;
+    };
+    getUniverse(): string;
+    connect(): Promise<any>;
+    launchWorld(cfg: UniverseConfig): Promise<any>;
+    prepareVisualization(visualization_type: string, visualization_config: string | null): Promise<any>;
+    run(cfg: Object): Promise<any>;
+    stop(): Promise<any>;
+    pause(): Promise<any>;
+    resume(): Promise<any>;
+    reset(): Promise<any>;
+    terminateApplication(): Promise<any>;
+    terminateVisualization(): Promise<any>;
+    terminateUniverse(): Promise<any>;
+    disconnect(): Promise<any>;
+    style_check(code: string): Promise<any>;
+    code_format(code: string): Promise<any>;
+    code_analysis(code: string, disable_errors: string[]): Promise<any>;
+    code_autocomplete(code: string, line: number, col: number): Promise<any>;
+}

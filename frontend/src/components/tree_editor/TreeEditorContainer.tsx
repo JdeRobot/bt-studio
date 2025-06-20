@@ -1,4 +1,4 @@
-import { ExtraEditorProps } from "../editor_component/file_editor/FileEditor";
+import { ExtraEditorProps } from "jderobot-ide-interface";
 import { getSubtreePath } from "../../api_helper/TreeWrapper";
 import { useEffect, useRef, useState } from "react";
 import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
