@@ -1,0 +1,1 @@
+{"version":3,"file":"ModelGeometryInterface.js","sourceRoot":"","sources":["../../src/core/ModelGeometryInterface.ts"],"names":[],"mappings":"","sourcesContent":["import { Rectangle } from '@projectstorm/geometry';\n\nexport interface ModelGeometryInterface {\n\tgetBoundingBox(): Rectangle;\n}\n"]}

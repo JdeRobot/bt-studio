@@ -1898,6 +1898,13 @@
   dependencies:
     lodash "^4.17.21"
 
+"@projectstorm/geometry@7.0.3":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@projectstorm/geometry/-/geometry-7.0.3.tgz#0e24f56fccf38dd3fc2cc9c2899b8f04266db270"
+  integrity sha512-cwQ9IiOcLhMwVh9NsX0srcACGkpasXY1NA6659Tc9PeSYtAGySH5XC8DfL/nvPMXEdrBYS0S5zAdPC3RPcewog==
+  dependencies:
+    lodash "^4.17.21"
+
 "@projectstorm/react-canvas-core@7.0.2":
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/@projectstorm/react-canvas-core/-/react-canvas-core-7.0.2.tgz#b101efef0f782af1428cb5289305a74aa0f22112"
@@ -1906,6 +1913,17 @@
     "@emotion/react" "^11.11.1"
     "@emotion/styled" "^11.11.0"
     "@projectstorm/geometry" "7.0.2"
+    lodash "^4.17.21"
+    react "^18.2.0"
+
+"@projectstorm/react-canvas-core@^7.0.3":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@projectstorm/react-canvas-core/-/react-canvas-core-7.0.3.tgz#9151a0ce07240f71a050f568c63b9a99f4d45b62"
+  integrity sha512-Vm19AprUGx3ea0uWSMPFfpTRclaEW/7s1/hbnRDFu9WSF1VScYhw2f/cVC95qfiedip/usn4YMsg3Av6M84d0g==
+  dependencies:
+    "@emotion/react" "^11.11.1"
+    "@emotion/styled" "^11.11.0"
+    "@projectstorm/geometry" "7.0.3"
     lodash "^4.17.21"
     react "^18.2.0"
 
