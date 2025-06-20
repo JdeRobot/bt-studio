@@ -487,7 +487,7 @@ var runtime = (function (exports) {
   };
 
   function values(iterable) {
-    if (iterable || iterable === "") {
+    if (iterable) {
       var iteratorMethod = iterable[iteratorSymbol];
       if (iteratorMethod) {
         return iteratorMethod.call(iterable);
@@ -517,7 +517,8 @@ var runtime = (function (exports) {
       }
     }
 
-    throw new TypeError(typeof iterable + " is not iterable");
+    // Return an iterator with no values.
+    return { next: doneResult };
   }
   exports.values = values;
 
