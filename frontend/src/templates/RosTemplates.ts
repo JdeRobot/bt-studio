@@ -33,9 +33,10 @@ class TreeExecutor(Node):
         # Get the path to the root of the package
         ws_path = "/workspace/code"
         tree_path = os.path.join(ws_path, "self_contained_tree.xml")
+        actions_path = os.path.join(ws_path, "actions")
 
         factory = tree_factory.TreeFactory()
-        self.tree = factory.create_tree_from_file(tree_path)
+        self.tree = factory.create_tree_from_file(tree_path, actions_path)
         snapshot_visitor = py_trees.visitors.SnapshotVisitor()
         self.tree.add_post_tick_handler(
             functools.partial(self.post_tick_handler, snapshot_visitor)

@@ -32,7 +32,6 @@ def generate_app(fal, project_name, bt_order):
     subtree_path = fal.subtrees_path(project_name)
 
     subtrees = []
-    actions = []
 
     # Check if the project exists
     graph_data = fal.read(tree_path)
@@ -54,16 +53,5 @@ def generate_app(fal, project_name, bt_order):
     except:
         print("No subtrees")
 
-    # 3. Get all possible actions name and content
-    actions_list = fal.listfiles(action_path)
-    actions_list.sort()
-    for action_file in actions_list:
-        if action_file.endswith(".py"):
-            action_name = fal.filename(action_file)
-            path = fal.path_join(action_path, action_file)
-            action_content = fal.read(path)
-
-            actions.append({"name": action_name, "content": action_content})
-
     # 4. Generate a self-contained tree
-    return tree_generator.generate(main_tree, subtrees, actions), actions
+    return tree_generator.generate(main_tree, subtrees)
