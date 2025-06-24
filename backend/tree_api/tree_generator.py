@@ -9,24 +9,13 @@ from .json_translator import prettify_xml
 
 
 # Fix the indentation in a xml string
-def fix_indentation(xml_string, actions):
+def fix_indentation(xml_string):
 
     lines = xml_string.split("\n")
     processed_lines = list()
 
-    code_section = False
-
     for line in lines:
-
-        if "Code>" in line:
-            code_section = not code_section
-
-        new_line = line
-        if code_section and "Code>" not in line:
-            if all(action + ">" not in line for action in actions):
-                new_line = " " * 6 + new_line
-
-        processed_lines.append(new_line)
+        processed_lines.append(line)
 
     pretty_str = "\n".join(line for line in processed_lines)
     return pretty_str
@@ -145,24 +134,16 @@ def replace_all_subtrees_(tree, all_subtrees, depth=0, max_depth=15):
     replace_all_subtrees_(tree, all_subtrees, depth + 1, max_depth)
 
 
-def parse_tree_(tree_xml, subtrees, all_actions):
+def parse_tree_(tree_xml, subtrees):
     # Parse the tree file
     tree = get_bt_structure(tree_xml)
 
     # Obtain the defined subtrees recursively
     replace_all_subtrees_(tree, subtrees)
 
-    # Obtain the defined actions
-    possible_actions = [x["name"] for x in all_actions]
-    actions = get_action_set(tree, possible_actions)
-    actions = sorted(actions)
-
-    # Add subsections for the action code
-    add_actions_code_(tree, actions, all_actions)
-
     # Serialize the modified XML to a properly formatted string
     formatted_tree = prettify_xml(tree)
-    formatted_tree = fix_indentation(formatted_tree, actions)
+    formatted_tree = fix_indentation(formatted_tree)
 
     return formatted_tree
 
@@ -172,10 +153,10 @@ def parse_tree_(tree_xml, subtrees, all_actions):
 ##############################################################################
 
 
-def generate(tree_xml, subtrees, actions):
+def generate(tree_xml, subtrees):
 
     # Get a formatted self-contained tree string
-    formatted_xml = parse_tree_(tree_xml, subtrees, actions)
+    formatted_xml = parse_tree_(tree_xml, subtrees)
 
     # Return the xml string
     return formatted_xml
