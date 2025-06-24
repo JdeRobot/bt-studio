@@ -385,13 +385,15 @@ def add_actions_to_factory(src_path):
 
     files = os.listdir(src_path)
     for file in files:
-        if file not in ['__init__.py', '__pycache__']:
-            if file[-3:] != '.py':
+        if file not in ["__init__.py", "__pycache__"]:
+            if file[-3:] != ".py":
                 continue
-        
+
             file_name = file[:-3]
-            module_name = src_path + '.' + file_name
-            for name, cls in inspect.getmembers(importlib.import_module(module_name), inspect.isclass):
+            module_name = src_path + "." + file_name
+            for name, cls in inspect.getmembers(
+                importlib.import_module(module_name), inspect.isclass
+            ):
                 if cls.__module__ == module_name and name == file_name:
                     # Extract formatted code
                     class_name = name
@@ -409,6 +411,7 @@ def add_actions_to_factory(src_path):
                     # Access the class from the namespace and create an instance
                     class_ref = namespace[class_name]
                     factory[class_name] = class_ref
+
 
 ##############################################################################
 # Tree factory
