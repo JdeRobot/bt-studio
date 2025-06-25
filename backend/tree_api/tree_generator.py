@@ -8,14 +8,14 @@ from .json_translator import prettify_xml
 ##############################################################################
 
 
-# Fix the indentation in a xml string
 def fix_indentation(xml_string):
 
     lines = xml_string.split("\n")
     processed_lines = list()
 
     for line in lines:
-        processed_lines.append(line)
+        if len(line.strip(" ")) > 0:
+            processed_lines.append(line)
 
     pretty_str = "\n".join(line for line in processed_lines)
     return pretty_str

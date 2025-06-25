@@ -85,7 +85,7 @@ const HeaderMenu = ({
   const terminateUniverse = async () => {
     if (!manager) {
       warning(
-        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
+        "Failed to connect with the Robotics Backend docker. Please make sure it is connected."
       );
       return;
     }
@@ -99,12 +99,12 @@ const HeaderMenu = ({
     zip: JSZip,
     universe_name: string,
     file_path: string,
-    file_name: string,
+    file_name: string
   ) => {
     var content = await getUniverseFile(
       currentProjectname,
       universe_name,
-      file_path,
+      file_path
     );
     zip.file(file_name, content);
   };
@@ -140,7 +140,7 @@ const HeaderMenu = ({
   const launchUniverse = async (universeConfig: string) => {
     if (!manager) {
       warning(
-        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
+        "Failed to connect with the Robotics Backend docker. Please make sure it is connected."
       );
       return;
     }
@@ -156,7 +156,7 @@ const HeaderMenu = ({
     try {
       if (configJson.type === "robotics_backend") {
         const dockerUniverseInfo = await getRoboticsBackendUniverse(
-          configJson.id,
+          configJson.id
         );
 
         let visualization = "bt_studio";
@@ -179,13 +179,13 @@ const HeaderMenu = ({
         console.log("RB universe launched!");
         await manager.prepareVisualization(
           visualization,
-          dockerUniverseInfo.visualization_config,
+          dockerUniverseInfo.visualization_config
         );
         console.log("Viz ready!");
       } else {
         const file_list = await getUniverseFileList(
           currentProjectname,
-          configJson.name,
+          configJson.name
         );
 
         const files: Entry[] = JSON.parse(file_list);
@@ -242,7 +242,7 @@ const HeaderMenu = ({
         console.log("RB universe launched!");
         await manager.prepareVisualization(
           "bt_studio_gz",
-          visualization_config,
+          visualization_config
         );
         console.log("Viz ready!");
       }
@@ -313,7 +313,7 @@ const HeaderMenu = ({
       // Get the blob from the API wrapper
       const appFiles = await generateLocalApp(
         currentProjectname,
-        settings.btOrder.value,
+        settings.btOrder.value
       );
 
       // Create the zip with the files
@@ -326,8 +326,31 @@ const HeaderMenu = ({
         zip,
         currentProjectname,
         appFiles.tree,
-        appFiles.dependencies,
+        appFiles.dependencies
       );
+
+      const project_dir = zip.folder(currentProjectname);
+
+      if (project_dir === null) {
+        throw Error("Project directory could not be found");
+      }
+
+      const file_list = await getFileList(currentProjectname);
+
+      const files: Entry[] = JSON.parse(file_list);
+
+      var actions = undefined;
+      for (const file of files) {
+        if (file.is_dir && file.name === "actions") {
+          actions = file;
+        }
+      }
+
+      if (actions === undefined) {
+        throw Error("Action directory not found");
+      }
+
+      await zipCodeFolder(project_dir, actions);
 
       zip.generateAsync({ type: "blob" }).then(function (content) {
         // Create a download link and trigger download
@@ -350,12 +373,16 @@ const HeaderMenu = ({
     }
   };
 
-  const zipFile2 = async (zip: JSZip, file_path: string, file_name: string) => {
+  const zipCodeFile = async (
+    zip: JSZip,
+    file_path: string,
+    file_name: string
+  ) => {
     var content = await getFile(currentProjectname, file_path);
     zip.file(file_name, content);
   };
 
-  const zipFolder2 = async (zip: JSZip, file: Entry) => {
+  const zipCodeFolder = async (zip: JSZip, file: Entry) => {
     const folder = zip.folder(file.name);
 
     if (folder === null) {
@@ -365,9 +392,9 @@ const HeaderMenu = ({
     for (let index = 0; index < file.files.length; index++) {
       const element = file.files[index];
       if (element.is_dir) {
-        await zipFolder2(folder, element);
+        await zipCodeFolder(folder, element);
       } else {
-        await zipFile2(folder, element.path, element.name);
+        await zipCodeFile(folder, element.path, element.name);
       }
     }
   };
@@ -376,7 +403,7 @@ const HeaderMenu = ({
     if (!manager) {
       console.error("Manager is not running");
       warning(
-        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
+        "Failed to connect with the Robotics Backend docker. Please make sure it is connected."
       );
       return;
     }
@@ -384,7 +411,7 @@ const HeaderMenu = ({
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
       warning(
-        "Failed to found a running simulation. Please make sure an universe is selected.",
+        "Failed to found a running simulation. Please make sure an universe is selected."
       );
       return;
     }
@@ -396,7 +423,7 @@ const HeaderMenu = ({
         // Get the blob from the API wrapper
         const appFiles = await generateDockerizedApp(
           currentProjectname,
-          settings.btOrder.value,
+          settings.btOrder.value
         );
 
         // Create the zip with the files
@@ -421,7 +448,7 @@ const HeaderMenu = ({
           throw Error("Action directory not found");
         }
 
-        await zipFolder2(zip, actions);
+        await zipCodeFolder(zip, actions);
 
         // Convert the blob to base64 using FileReader
         const reader = new FileReader();
@@ -465,7 +492,7 @@ const HeaderMenu = ({
     if (!manager) {
       console.error("Manager is not running");
       warning(
-        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
+        "Failed to connect with the Robotics Backend docker. Please make sure it is connected."
       );
       return;
     }
@@ -473,7 +500,7 @@ const HeaderMenu = ({
     if (!gazeboEnabled) {
       console.error("Simulation is not ready!");
       warning(
-        "Failed to found a running simulation. Please make sure an universe is selected.",
+        "Failed to found a running simulation. Please make sure an universe is selected."
       );
       return;
     }
@@ -512,7 +539,7 @@ const HeaderMenu = ({
     try {
       const universeConfig = await getUniverseConfig(
         universeName,
-        currentProjectname,
+        currentProjectname
       );
       try {
         // Launch if new universe selected

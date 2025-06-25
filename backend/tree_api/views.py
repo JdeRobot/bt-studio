@@ -532,8 +532,7 @@ def generate_local_app(request):
     bt_order = request.data.get("bt_order")
 
     final_tree = app_generator.generate_app(fal, project_name, bt_order)
-    # unique_imports = app_generator.get_unique_imports(actions)
-    unique_imports = []
+    unique_imports = app_generator.get_unique_imports(fal, project_name)
     return JsonResponse(
         {
             "success": True,

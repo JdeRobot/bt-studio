@@ -1,7 +1,6 @@
-import JSZip from "jszip"
+import JSZip from "jszip";
 
-const executeDocker = 
-`import functools
+const executeDocker = `import functools
 import sys
 import rclpy
 import py_trees
@@ -79,7 +78,7 @@ def main():
 
 
 main()
-`
+`;
 
 const thirdparty = `repositories:
   ThirdParty/tb4_sim:
@@ -90,21 +89,28 @@ const thirdparty = `repositories:
     type: git
     url: https://github.com/splintered-reality/py_trees_ros_viewer.git
     version: devel
-`
+`;
 
-const setupConfig = (name:string) => {
-  return `[develop]
+const setupConfig = (name: string) => {
+  return (
+    `[develop]
 script_dir=$base/lib/ros_template
 [install]
-install_scripts=$base/lib/`+name+`
+install_scripts=$base/lib/` +
+    name +
+    `
 `
-}
+  );
+};
 
-const setupPython = (name:string) => {
-  return `from setuptools import setup
+const setupPython = (name: string) => {
+  return (
+    `from setuptools import setup
 from setuptools import find_packages
 
-package_name = "`+name+`"
+package_name = "` +
+    name +
+    `"
 
 setup(
     name=package_name,
@@ -143,9 +149,10 @@ setup(
     },
 )
   `
-}
+  );
+};
 
-const executeLocal = (name:string) => {
+const executeLocal = (name: string) => {
   return `import rclpy
 from rclpy.node import Node
 from tree_gardener import tree_factory
@@ -159,11 +166,12 @@ class TreeExecutor(Node):
         super().__init__("tree_executor_node")
 
         # Get the path to the root of the package
-        pkg_share_dir = get_package_share_directory("`+name+`")
+        pkg_share_dir = get_package_share_directory("ros_template")
         tree_path = os.path.join(pkg_share_dir, "resource", "app_tree.xml")
+        actions_path = os.path.join(pkg_share_dir, "actions")
 
         factory = tree_factory.TreeFactory()
-        self.tree = factory.create_tree_from_file(tree_path)
+        self.tree = factory.create_tree_from_file(tree_path, actions_path)
         self.tree.tick_tock(period_ms=50)
 
     def spin_tree(self):
@@ -184,29 +192,35 @@ def main():
 
     # Spin the tree
     executor.spin_tree()
-  `
-}
+  `;
+};
 
-const packageInfo = (name:string, extraDependencies: string[]) => {
+const packageInfo = (name: string, extraDependencies: string[]) => {
   //TODO: add also more user info
-  var dependStr = `<exec_depend>rclpy</exec_depend>`
+  var dependStr = `<exec_depend>rclpy</exec_depend>`;
 
-  extraDependencies.forEach(depend => {
-    dependStr += `
-  <exec_depend>`+ depend +`</exec_depend>`
-  }); 
+  extraDependencies.forEach((depend) => {
+    dependStr +=
+      `
+  <exec_depend>` +
+      depend +
+      `</exec_depend>`;
+  });
 
-  return `<?xml version="1.0"?>
+  return (
+    `<?xml version="1.0"?>
 <package format="3">
-  <name>`+name+`</name>
+  <name>` +
+    name +
+    `</name>
   <version>0.1.0</version>
   <description>A ROS2 app generated BT Studio</description>
   <maintainer email="mantainer@mail.com">Mantainer</maintainer>
   <license>GPLv3</license>
 
-  `
-  + dependStr +
-  `
+  ` +
+    dependStr +
+    `
 
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
@@ -217,21 +231,27 @@ const packageInfo = (name:string, extraDependencies: string[]) => {
   </export>
 </package>
   `
-}
+  );
+};
 
 namespace RosTemplates {
-  export function addDockerFiles(zip:JSZip ) {
+  export function addDockerFiles(zip: JSZip) {
     zip.file("execute_docker.py", executeDocker);
   }
 
-  export function addLocalFiles(zip:JSZip, project_name: string, tree_xml:string, depend: string[]) {
+  export function addLocalFiles(
+    zip: JSZip,
+    project_name: string,
+    tree_xml: string,
+    depend: string[]
+  ) {
     const loc = zip.folder(project_name);
 
     if (loc == null) {
-        return
-    } 
+      return;
+    }
 
-    loc.file("resource/"+project_name, "");
+    loc.file("resource/" + project_name, "");
     loc.file("resource/app_tree.xml", tree_xml);
 
     loc.file(project_name + "/execute.py", executeLocal(project_name));
