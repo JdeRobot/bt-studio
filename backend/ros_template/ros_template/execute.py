@@ -13,9 +13,10 @@ class TreeExecutor(Node):
         # Get the path to the root of the package
         pkg_share_dir = get_package_share_directory("ros_template")
         tree_path = os.path.join(pkg_share_dir, "resource", "app_tree.xml")
+        actions_path = os.path.join(pkg_share_dir, "actions")
 
         factory = tree_factory.TreeFactory()
-        self.tree = factory.create_tree_from_file(tree_path)
+        self.tree = factory.create_tree_from_file(tree_path, actions_path)
         self.tree.tick_tock(period_ms=50)
 
     def spin_tree(self):
