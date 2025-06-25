@@ -69,7 +69,7 @@ const HeaderMenu = ({
   const terminateUniverse = async () => {
     if (!manager) {
       warning(
-        "Failed to connect with the Robotics Backend docker. Please make sure it is connected."
+        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
       );
       return;
     }
@@ -118,7 +118,7 @@ const HeaderMenu = ({
       // Get the blob from the API wrapper
       const appFiles = await generateLocalApp(
         currentProjectname,
-        settings.btOrder.value
+        settings.btOrder.value,
       );
 
       // Create the zip with the files
@@ -131,7 +131,7 @@ const HeaderMenu = ({
         zip,
         currentProjectname,
         appFiles.tree,
-        appFiles.dependencies
+        appFiles.dependencies,
       );
 
       const project_dir = zip.folder(currentProjectname);
@@ -181,7 +181,7 @@ const HeaderMenu = ({
   const zipCodeFile = async (
     zip: JSZip,
     file_path: string,
-    file_name: string
+    file_name: string,
   ) => {
     var content = await getFile(currentProjectname, file_path);
     zip.file(file_name, content);
@@ -208,7 +208,7 @@ const HeaderMenu = ({
     if (!manager) {
       console.error("Manager is not running");
       warning(
-        "Failed to connect with the Robotics Backend docker. Please make sure it is connected."
+        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
       );
       return;
     }
@@ -220,7 +220,7 @@ const HeaderMenu = ({
     ) {
       console.error("Simulation is not ready!");
       warning(
-        "Failed to found a running simulation. Please make sure an universe is selected."
+        "Failed to found a running simulation. Please make sure an universe is selected.",
       );
       return;
     }
@@ -230,7 +230,7 @@ const HeaderMenu = ({
         // Get the blob from the API wrapper
         const appFiles = await generateDockerizedApp(
           currentProjectname,
-          settings.btOrder.value
+          settings.btOrder.value,
         );
 
         // Create the zip with the files
@@ -302,7 +302,7 @@ const HeaderMenu = ({
     if (!manager) {
       console.error("Manager is not running");
       warning(
-        "Failed to connect with the Robotics Backend docker. Please make sure it is connected."
+        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
       );
       return;
     }
@@ -314,7 +314,7 @@ const HeaderMenu = ({
     ) {
       console.error("Simulation is not ready!");
       warning(
-        "Failed to found a running simulation. Please make sure an universe is selected."
+        "Failed to found a running simulation. Please make sure an universe is selected.",
       );
       return;
     }
