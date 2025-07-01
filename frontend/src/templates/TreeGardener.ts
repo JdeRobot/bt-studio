@@ -142,6 +142,9 @@ const treeFactory = `###########################################################
 # Imports
 ##############################################################################
 
+import importlib
+import inspect
+import os
 import py_trees
 import py_trees_ros.trees
 import py_trees.console as console
@@ -518,27 +521,34 @@ def construct_behaviour_tree_from_xml(doc):
     return root_behaviour
 
 
-def add_actions_to_factory(doc):
+def add_actions_to_factory(src_path):
 
-    code_element = doc.find(".//Code")
+    files = os.listdir(src_path)
+    for file in files:
+        if file not in ['__init__.py', '__pycache__']:
+            if file[-3:] != '.py':
+                continue
+        
+            file_name = file[:-3]
+            module_name = "actions" + '.' + file_name
+            for name, cls in inspect.getmembers(importlib.import_module(module_name), inspect.isclass):
+                if cls.__module__ == module_name and name == file_name:
+                    # Extract formatted code
+                    class_name = name
+                    with open(os.path.join(src_path, file), "r") as f:
+                        code_text = f.read()
 
-    for element in code_element:
+                    formatted_code = autopep8.fix_code(code_text)
 
-        # Extract formatted code
-        class_name = element.tag
-        code_text = textwrap.dedent(element.text)
-        formatted_code = autopep8.fix_code(code_text)
+                    # Copy current global namespace for safety
+                    namespace = globals().copy()
 
-        # Copy current global namespace for safety
-        namespace = globals().copy()
+                    # Execute in the copied namespace (because of closure, classes may access their imports)
+                    exec(formatted_code, namespace)
 
-        # Execute in the copied namespace (because of closure, classes may access their imports)
-        exec(formatted_code, namespace)
-
-        # Access the class from the namespace and create an instance
-        class_ref = namespace[class_name]
-        factory[class_name] = class_ref
-
+                    # Access the class from the namespace and create an instance
+                    class_ref = namespace[class_name]
+                    factory[class_name] = class_ref
 
 ##############################################################################
 # Tree factory
@@ -550,7 +560,7 @@ class TreeFactory(rclpy.node.Node):
 
         super().__init__("Factory")
 
-    def create_tree_from_file(self, tree_path, timeout=1000):
+    def create_tree_from_file(self, tree_path, actions_path, timeout=1000):
 
         # Open the self contained xml file
         self_file = open(tree_path, "r")
@@ -558,7 +568,7 @@ class TreeFactory(rclpy.node.Node):
         xml_doc = ET.fromstring(self_contained_tree)
 
         # Add actions to factory
-        add_actions_to_factory(xml_doc)
+        add_actions_to_factory(actions_path)
 
         # Init tree
         root = construct_behaviour_tree_from_xml(xml_doc)

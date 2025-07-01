@@ -531,8 +531,8 @@ def generate_local_app(request):
     project_name = request.data.get("app_name")
     bt_order = request.data.get("bt_order")
 
-    final_tree, actions = app_generator.generate_app(fal, project_name, bt_order)
-    unique_imports = app_generator.get_unique_imports(actions)
+    final_tree = app_generator.generate_app(fal, project_name, bt_order)
+    unique_imports = app_generator.get_unique_imports(fal, project_name)
     return JsonResponse(
         {
             "success": True,
@@ -548,7 +548,7 @@ def generate_dockerized_app(request):
     project_name = request.data.get("app_name")
     bt_order = request.data.get("bt_order")
 
-    final_tree, _ = app_generator.generate_app(fal, project_name, bt_order)
+    final_tree = app_generator.generate_app(fal, project_name, bt_order)
     return JsonResponse({"success": True, "tree": final_tree})
 
 
