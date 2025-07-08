@@ -702,17 +702,18 @@ def get_docker_universe_data(request):
             "name": universe.world.name,
             "launch_file_path": universe.world.launch_file_path,
             "ros_version": universe.world.ros_version,
-            "world": universe.world.world,
+            "type": universe.world.type,
+            "tools_config": {},
         },
         "robot": {
             "name": universe.robot.name,
             "launch_file_path": universe.robot.launch_file_path,
             "ros_version": universe.world.ros_version,
-            "world": universe.world.world,
+            "type": universe.world.type,
             "start_pose": universe.world.start_pose,
         },
-        "visualization": universe.world.visualization,
-        "visualization_config_path": universe.world.visualization_config_path,
+        "tools": ["console", "simulator", "state_monitor"],
+        "tools_config": {},
     }
 
     # Return the list of projects

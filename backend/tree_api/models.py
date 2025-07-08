@@ -7,26 +7,29 @@ StatusChoice = (
     ("PROTOTYPE", "PROTOTYPE"),
 )
 
-VisualizationType = (
-    ("none", "None"),
-    ("console", "Console"),
-    ("gazebo_gra", "Gazebo GRA"),
-    ("gazebo_rae", "Gazebo RAE"),
-    ("gzsim_gra", "Gz Sim GRA"),
-    ("gzsim_rae", "Gz Sim RAE"),
-    ("physic_gra", "Physic GRA"),
-    ("physic_rae", "Physic RAE"),
-)
-
 UniverseType = (
     ("none", "None"),
     ("gazebo", "Gazebo"),
-    ("drones", "Gazebo Drones"),
+    ("gz", "Gazebo Harmonic"),
     ("physical", "Physical"),
 )
 
 RosVersion = (("ROS", "ROS"), ("ROS2", "ROS2"))
 
+
+class Tool(models.Model):
+    """
+    Modelo Tool para Robotics Academy
+    """
+
+    name = models.CharField(max_length=50, blank=False, unique=True, primary_key=True)
+    base_config = models.CharField(max_length=200, blank=False)
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        db_table = '"tools"'
 
 class Robot(models.Model):
     """
@@ -50,12 +53,9 @@ class World(models.Model):
 
     name = models.CharField(max_length=100, blank=False, unique=True)
     launch_file_path = models.CharField(max_length=200, blank=False)
-    visualization_config_path = models.CharField(max_length=200, blank=False)
+    tools_config = models.CharField(max_length=200, blank=False)
     ros_version = models.CharField(max_length=4, choices=RosVersion, default="none")
-    visualization = models.CharField(
-        max_length=50, choices=VisualizationType, default="none", blank=False
-    )
-    world = models.CharField(
+    type = models.CharField(
         max_length=50, choices=UniverseType, default="none", blank=False
     )
 
@@ -66,7 +66,6 @@ class World(models.Model):
             )
         )
     )
-
     def __str__(self):
         return str(self.name)
 
