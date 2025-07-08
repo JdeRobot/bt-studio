@@ -1898,13 +1898,6 @@
   dependencies:
     lodash "^4.17.21"
 
-"@projectstorm/geometry@7.0.3":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/@projectstorm/geometry/-/geometry-7.0.3.tgz#0e24f56fccf38dd3fc2cc9c2899b8f04266db270"
-  integrity sha512-cwQ9IiOcLhMwVh9NsX0srcACGkpasXY1NA6659Tc9PeSYtAGySH5XC8DfL/nvPMXEdrBYS0S5zAdPC3RPcewog==
-  dependencies:
-    lodash "^4.17.21"
-
 "@projectstorm/react-canvas-core@7.0.2":
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/@projectstorm/react-canvas-core/-/react-canvas-core-7.0.2.tgz#b101efef0f782af1428cb5289305a74aa0f22112"
@@ -1913,17 +1906,6 @@
     "@emotion/react" "^11.11.1"
     "@emotion/styled" "^11.11.0"
     "@projectstorm/geometry" "7.0.2"
-    lodash "^4.17.21"
-    react "^18.2.0"
-
-"@projectstorm/react-canvas-core@^7.0.3":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/@projectstorm/react-canvas-core/-/react-canvas-core-7.0.3.tgz#9151a0ce07240f71a050f568c63b9a99f4d45b62"
-  integrity sha512-Vm19AprUGx3ea0uWSMPFfpTRclaEW/7s1/hbnRDFu9WSF1VScYhw2f/cVC95qfiedip/usn4YMsg3Av6M84d0g==
-  dependencies:
-    "@emotion/react" "^11.11.1"
-    "@emotion/styled" "^11.11.0"
-    "@projectstorm/geometry" "7.0.3"
     lodash "^4.17.21"
     react "^18.2.0"
 
@@ -1967,7 +1949,7 @@
     paths-js "^0.4.11"
     react "^18.2.0"
 
-"@projectstorm/react-diagrams@^7.0.3":
+"@projectstorm/react-diagrams@7.0.3":
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams/-/react-diagrams-7.0.3.tgz#0b3450e6b744b6c515ee37f2cd9f73219c152f48"
   integrity sha512-latfSxchvd7CiyKWPnblfuC4yeSBW/fKu3aMKhlqhET/eeQOoDtX16hBI1Hu7z+s9/mv3X3ggrJacKxHqjriVg==
@@ -2042,6 +2024,24 @@
   integrity sha512-OAPJUAtgeINhh/TAlUID4QTs53Njm7xzddaVlEs/SXwgtiD1tW22zAB/W1wdqfrpmikgaWQ9Fw6Ws+hsiRm5Vg==
   dependencies:
     "@sinonjs/commons" "^1.7.0"
+
+"@storybook/global@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@storybook/global/-/global-5.0.0.tgz#b793d34b94f572c1d7d9e0f44fac4e0dbc9572ed"
+  integrity sha512-FcOqPAXACP0I3oJ/ws6/rrPT9WGhu915Cg8D02a9YxLo0DE9zI+a9A5gRGvmQ09fiWPukqI8ZAEoQEdWUKMQdQ==
+
+"@storybook/react-dom-shim@9.0.15":
+  version "9.0.15"
+  resolved "https://registry.yarnpkg.com/@storybook/react-dom-shim/-/react-dom-shim-9.0.15.tgz#5c98ad2a3ead9c4ac1136d75d4e1e08e25fc6443"
+  integrity sha512-X5VlYKoZSIMU9HEshIwtNzp41nPt4kiJtJ2c5HzFa5F6M8rEHM5n059CGcCZQqff3FnZtK/y6v/kCVZO+8oETA==
+
+"@storybook/react@^9.0.12":
+  version "9.0.15"
+  resolved "https://registry.yarnpkg.com/@storybook/react/-/react-9.0.15.tgz#e59913879baf6043dd2828cf1818d33f8839588c"
+  integrity sha512-hewpSH8Ij4Bg7S9Tfw7ecfGPv7YDycRxsfpsDX7Mw3JhLuCdqjpmmTL2RgoNojg7TAW3FPdixcgQi/b4PH50ag==
+  dependencies:
+    "@storybook/global" "^5.0.0"
+    "@storybook/react-dom-shim" "9.0.15"
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
@@ -5881,22 +5881,24 @@ jake@^10.8.5:
     filelist "^1.0.4"
     minimatch "^3.1.2"
 
-jderobot-commsmanager@0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/jderobot-commsmanager/-/jderobot-commsmanager-0.1.6.tgz#5c795c1232e0772535aeadc46e0274decbf51cb7"
-  integrity sha512-4Ic1Vj2oMZp5UCDuaAsthTNYUKe5DIo1XHVYk2tZw0Q3u/WCsx1zg+cdSqn2svbF8haGYGN4x0fnJxAklZ8cyg==
+jderobot-commsmanager@1.0.3, jderobot-commsmanager@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/jderobot-commsmanager/-/jderobot-commsmanager-1.0.3.tgz#b39f6e4128b2f32ce0fd7ffe74f49e9f8db512e3"
+  integrity sha512-PA14QX3jXvAQKHC96vz3zYer+ILiOUL7g3PbqAAs7WFZMdTSjv243E63N33P/GeYHs8Ivd2R8m4KBaqrNeoHVw==
   dependencies:
     uuid "^11.1.0"
 
-jderobot-ide-interface@0.1.13:
-  version "0.1.13"
-  resolved "https://registry.yarnpkg.com/jderobot-ide-interface/-/jderobot-ide-interface-0.1.13.tgz#9f216d46e72bfc98af64f85d691831bf4b573037"
-  integrity sha512-DMCgn/24MLQRlVuKCV1hEvGL5jM3AMhOLpDpz0eRp77QdItooO3oMPY/UyYv01GOAfdgpNjWxrlNwDWnYQPmzw==
+jderobot-ide-interface@0.1.32:
+  version "0.1.32"
+  resolved "https://registry.yarnpkg.com/jderobot-ide-interface/-/jderobot-ide-interface-0.1.32.tgz#2677c29761a99fe8e7ef06732f63bcacc849f8cf"
+  integrity sha512-DdLj8yztUTu7iAMKW3sEtVvUkNOecCSct3HqKIxRiH6GBDk5DEF+YD0L5TV752Nhcv0Wrzr2KF1NKwiM3eRbLg==
   dependencies:
     "@monaco-editor/react" "^4.7.0"
-    jderobot-commsmanager "0.1.6"
+    "@storybook/react" "^9.0.12"
+    jderobot-commsmanager "^1.0.3"
     jszip "^3.10.1"
     lodash "^4.17.21"
+    monaco-editor "^0.52.2"
     re-resizable "^6.11.2"
     react-spinners "^0.17.0"
 
@@ -6923,6 +6925,11 @@ mkdirp@~0.5.1:
   integrity sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==
   dependencies:
     minimist "^1.2.6"
+
+monaco-editor@^0.52.2:
+  version "0.52.2"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.52.2.tgz#53c75a6fcc6802684e99fd1b2700299857002205"
+  integrity sha512-GEQWEZmfkOGLdd3XK8ryrfWz3AIP8YymVXiPHEdewrUq7mh0qrKrfHLNCXcbB6sTnMLnOZ3ztSiKcciFUkIJwQ==
 
 ms@2.0.0:
   version "2.0.0"

@@ -257,8 +257,8 @@ const getRoboticsBackendUniverse = async (universeName: string) => {
     return {
       world: response.data.universe.world,
       robot: response.data.universe.robot,
-      visualization: response.data.universe.visualization,
-      visualization_config: response.data.universe.visualization_config_path,
+      tools: response.data.universe.tools,
+      tools_config: response.data.universe.tools_config,
     };
   } catch (error: unknown) {
     throw error; // Rethrow

@@ -6,7 +6,7 @@ import ErrorModal from "./components/error_popup/ErrorModal";
 import { useError } from "./components/error_popup/ErrorModal";
 import { ReactComponent as SimulatorIcon } from "./components/icons/gazebo.svg";
 import { ReactComponent as TerminalIcon } from "./components/icons/terminal.svg";
-import { CommsManager, events } from "jderobot-commsmanager";
+import { CommsManager } from "jderobot-commsmanager";
 import {
   createAction,
   createFile,
@@ -16,9 +16,13 @@ import {
   getFile,
   getFileList,
   getProjectConfig,
+  getRoboticsBackendUniverse,
+  getUniverseConfig,
+  listUniverses,
   renameFile,
   renameFolder,
   saveFile,
+  uploadFile,
 } from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
@@ -26,6 +30,8 @@ import IdeInterface, {
   VncViewer,
   Entry,
   newFileData,
+  StatusBarComponents,
+  ExtraApi,
 } from "jderobot-ide-interface";
 import { publish } from "./components/helper/TreeEditorHelper";
 import TreeEditor from "./components/tree_editor/TreeEditorContainer";
@@ -35,6 +41,7 @@ import {
   OtherButtons,
 } from "./components/tree_editor/TreeEditorMenu";
 import TreeMonitor from "./components/tree_monitor/TreeMonitorContainer";
+import { createCustomUniverseConfig } from "./components/helper/customUniverseHelper";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
@@ -75,7 +82,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       btAtMaxCapacity.current,
     );
 
-    console.log(events);
     const manager = CommsManager.getInstance();
     if (btAtMaxCapacity.current === false) {
       setManager(manager);
@@ -175,6 +181,14 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       delete: (project: string, path: string) => {
         return deleteFile(project, path);
       },
+      upload: (
+        project: string,
+        path: string,
+        name: string,
+        content: string,
+      ) => {
+        return uploadFile(project, name, path, content);
+      },
     },
     folder: {
       create: (project: string, location: string, name: string) => {
@@ -207,6 +221,14 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       delete: (project: string, path: string) => {
         return deleteFile(project, path, "");
       },
+      upload: (
+        project: string,
+        path: string,
+        name: string,
+        content: string,
+      ) => {
+        return uploadFile(project, name, path, content, "");
+      },
     },
     folder: {
       create: (project: string, location: string, name: string) => {
@@ -217,23 +239,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       },
       delete: (project: string, path: string) => {
         return deleteFolder(project, path, "");
-      },
-    },
-  };
-
-  const editorApi = {
-    file: {
-      get: (project: string, file: Entry) => {
-        if (file.group === "Universes") {
-          return getFile(project, file.path, "");
-        }
-        return getFile(project, file.path);
-      },
-      save: (project: string, file: Entry, content: string) => {
-        if (file.group === "Universes") {
-          return saveFile(project, file.path, content, "");
-        }
-        return saveFile(project, file.path, content);
       },
     },
   };
@@ -276,6 +281,42 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     trigger: [{ group: "Trees", extension: "json" }],
   };
 
+  const api: ExtraApi = {
+    file: {
+      get: (project: string, file: Entry) => {
+        if (file.group === "Universes") {
+          return getFile(project, file.path, "");
+        }
+        return getFile(project, file.path);
+      },
+      save: (project: string, file: Entry, content: string) => {
+        if (file.group === "Universes") {
+          return saveFile(project, file.path, content, "");
+        }
+        return saveFile(project, file.path, content);
+      },
+    },
+    universes: {
+      list: (project: string) => {
+        return listUniverses(project);
+      },
+      get_config: async (project: string, universe: string) => {
+        const config = await getUniverseConfig(universe, project);
+        const configJson = JSON.parse(config);
+
+        if (configJson.type === "robotics_backend") {
+          return getRoboticsBackendUniverse(configJson.id);
+        }
+        // Get custom universe config
+        return createCustomUniverseConfig(project, configJson);
+      },
+    },
+  };
+
+  const statusBar: StatusBarComponents = {
+    extras: [],
+  };
+
   return (
     <div
       className="bt-App"
@@ -296,11 +337,12 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         resetManager={resetManager}
         project={currentProjectname}
         explorers={[fileExplorer, universeExplorer]}
-        editorApi={editorApi}
+        api={api}
         extraEditors={[treeEditor]}
         viewers={[treeMonitor, gazeboViewer, terminalViewer]}
         options={[]}
         layout={layout}
+        statusBarComponents={statusBar}
       />
     </div>
   );

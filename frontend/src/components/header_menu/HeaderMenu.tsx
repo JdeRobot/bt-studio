@@ -6,9 +6,6 @@ import {
   createProject,
   generateLocalApp,
   generateDockerizedApp,
-  getRoboticsBackendUniverse,
-  getUniverseFile,
-  getFileList,
 } from "../../api_helper/TreeWrapper";
 import { CommsManager } from "jderobot-commsmanager";
 
@@ -76,50 +73,8 @@ const HeaderMenu = ({
     }
     // Down the RB ladder
     await manager.terminateApplication();
-    await manager.terminateVisualization();
+    await manager.terminateTools();
     await manager.terminateUniverse();
-  };
-
-  const zipFile = async (
-    zip: JSZip,
-    universe_name: string,
-    file_path: string,
-    file_name: string,
-  ) => {
-    var content = await getUniverseFile(
-      currentProjectname,
-      universe_name,
-      file_path,
-    );
-    zip.file(file_name, content);
-  };
-
-  const zipFolder = async (zip: JSZip, file: Entry, universe_name: string) => {
-    const folder = zip.folder(file.name);
-
-    if (folder === null) {
-      return;
-    }
-
-    for (let index = 0; index < file.files.length; index++) {
-      const element = file.files[index];
-      console.log(element);
-      if (element.is_dir) {
-        await zipFolder(folder, element, universe_name);
-      } else {
-        await zipFile(folder, universe_name, element.path, element.name);
-      }
-    }
-  };
-
-  const zipToData = (zip: JSZip) => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      zip.generateAsync({ type: "blob" }).then(function (content) {
-        reader.readAsDataURL(content);
-      });
-    });
   };
 
   // Project handling
@@ -208,7 +163,7 @@ const HeaderMenu = ({
     }
 
     if (
-      manager.getState() !== "visualization_ready" &&
+      manager.getState() !== "tools_ready" &&
       manager.getState() !== "application_running" &&
       manager.getState() !== "paused"
     ) {
@@ -239,11 +194,14 @@ const HeaderMenu = ({
         reader.onloadend = async () => {
           const base64data = reader.result; // Get the zip in base64
           // Send the base64 encoded blob
-          await manager.run({
-            type: "bt-studio",
-            code: base64data,
-          });
-          console.log("Dockerized app started successfully");
+          if (base64data) {
+            await manager.run(
+              "/workspace/code/execute_docker.py",
+              ["actions/*.py"],
+              base64data as string,
+            );
+            console.log("Dockerized app started successfully");
+          }
         };
 
         zip.generateAsync({ type: "blob" }).then(function (content) {
