@@ -4,7 +4,12 @@ import {
   listDockerUniverses,
 } from "../../api_helper/TreeWrapper";
 import { useError } from "../error_popup/ErrorModal";
-import { ModalInputBox, ModalInputDropdown, ModalRow, ModalTitlebar } from "jderobot-ide-interface";
+import {
+  ModalInputBox,
+  ModalInputDropdown,
+  ModalRow,
+  ModalTitlebar,
+} from "jderobot-ide-interface";
 
 const initialUniverseData = {
   universeName: "",
@@ -79,7 +84,7 @@ const CreatePage = ({
     createRoboticsBackendUniverse(
       currentProject,
       formState.universeName,
-      formState.dockerUniverseName
+      formState.dockerUniverseName,
     );
     setVisible(false);
   };
@@ -132,8 +137,7 @@ const CreatePage = ({
           onChange={handleInputChange}
           type="text"
           required
-        >
-        </ModalInputDropdown>
+        ></ModalInputDropdown>
       </ModalRow>
       <ModalRow type="buttons">
         <button

@@ -37,7 +37,7 @@ const UniverseModal = ({
   const [universeAdded, setUniverseAdded] = useState(false);
   const [creationMenu, showCreationMenu] = useState<boolean>(false);
   const [creationType, changeCreationType] = useState<UniverseTypes>(
-    UniverseTypes.CUSTOM
+    UniverseTypes.CUSTOM,
   );
 
   const loadUniverseList = async () => {
@@ -88,7 +88,7 @@ const UniverseModal = ({
         } else {
           // Handle other statuses or general API errors
           error(
-            "Unable to connect with the backend server. Please check the backend status."
+            "Unable to connect with the backend server. Please check the backend status.",
           );
         }
       }
@@ -145,13 +145,25 @@ const UniverseModal = ({
             />
           </ModalRow>
           <ModalRow type="buttons" id="universe-buttons">
-            <button type="button" onClick={createCustomUniverse} style={{width: "180px", height: "3em"}}>
+            <button
+              type="button"
+              onClick={createCustomUniverse}
+              style={{ width: "180px", height: "3em" }}
+            >
               New custom universe
             </button>
-            <button type="button" onClick={importFromZip} style={{width: "180px", height: "3em"}}>
+            <button
+              type="button"
+              onClick={importFromZip}
+              style={{ width: "180px", height: "3em" }}
+            >
               Import from zip
             </button>
-            <button type="button" onClick={importFromRoboticsBackend} style={{width: "180px", height: "3em"}}>
+            <button
+              type="button"
+              onClick={importFromRoboticsBackend}
+              style={{ width: "180px", height: "3em" }}
+            >
               Import from Robotics Backend library
             </button>
           </ModalRow>
