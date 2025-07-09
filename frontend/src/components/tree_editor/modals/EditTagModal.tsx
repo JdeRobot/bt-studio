@@ -1,8 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { DiagramEngine } from "@projectstorm/react-diagrams";
 
-import Modal from "../../Modal/Modal";
-import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
+import {
+  Modal,
+  ModalInputBox,
+  ModalRow,
+  ModalTitlebar,
+} from "jderobot-ide-interface";
 
 import { TagNodeModel } from "../nodes/tag_node/TagNodeModel";
 
@@ -65,46 +69,27 @@ const EditTagModal = ({
   // };
 
   return (
-    <Modal
-      id="tag-editor-modal"
-      hasCloseBtn={true}
-      isOpen={isOpen}
-      onClose={onClose}
-    >
-      <div className="bt-modal-titlebar">
-        <label
-          className="bt-modal-titlebar-title"
-          htmlFor="actionName"
-          style={{ textAlign: "center" }}
-        >
-          Edit port value
-        </label>
-        <CloseIcon
-          className="bt-modal-titlebar-close icon"
-          onClick={() => {
-            onClose();
-          }}
-          fill={"var(--icon)"}
+    <Modal id="tag-editor-modal" isOpen={isOpen} onClose={onClose}>
+      <ModalTitlebar
+        title="Edit port value"
+        htmlFor="actionName"
+        hasClose
+        handleClose={() => {
+          onClose();
+        }}
+      />
+      <ModalRow type="input">
+        <ModalInputBox
+          isInputValid={true}
+          ref={focusInputRef}
+          id="tagName"
+          placeholder="Tag Name"
+          onChange={handleInputChange}
+          type="text"
+          autoComplete="off"
+          required
         />
-      </div>
-      <div className="bt-modal-complex-input-row-container">
-        <div className="bt-modal-complex-input-container">
-          <input
-            ref={focusInputRef}
-            type="text"
-            id="tagName"
-            name="tagName"
-            className="bt-modal-complex-input"
-            onChange={handleInputChange}
-            autoComplete="off"
-            placeholder="Tag Name"
-            required
-          />
-          <label htmlFor="tagName" className="bt-modal-complex-input-label">
-            Tag Name
-          </label>
-        </div>
-      </div>
+      </ModalRow>
     </Modal>
   );
 };

@@ -6,7 +6,7 @@ import {
   createUniverseFolder,
   uploadFileUniverse,
 } from "../../api_helper/TreeWrapper";
-import { useError } from "../error_popup/ErrorModal";
+import { useError } from "jderobot-ide-interface";
 import JSZip from "jszip";
 import {
   ModalInputBox,

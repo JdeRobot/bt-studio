@@ -3,7 +3,7 @@ import {
   createRoboticsBackendUniverse,
   listDockerUniverses,
 } from "../../api_helper/TreeWrapper";
-import { useError } from "../error_popup/ErrorModal";
+import { useError } from "jderobot-ide-interface";
 import {
   ModalInputBox,
   ModalInputDropdown,

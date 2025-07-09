@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createCustomUniverse } from "../../api_helper/TreeWrapper";
-import { useError } from "../error_popup/ErrorModal";
+import { useError } from "jderobot-ide-interface";
 import { ModalInputBox, ModalRow, ModalTitlebar } from "jderobot-ide-interface";
 
 const initialUniverseData = {

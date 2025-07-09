@@ -7,7 +7,7 @@ import {
 } from "jderobot-ide-interface";
 import CreatePage from "./CreatePage";
 import { deleteUniverse, listUniverses } from "../../api_helper/TreeWrapper";
-import { useError } from "../error_popup/ErrorModal";
+import { useError } from "jderobot-ide-interface";
 import CreateCustomPage from "./CreateCustomPage";
 import ImportCustomPage from "./ImportCustomPage";
 import "./UniverseModal.css";

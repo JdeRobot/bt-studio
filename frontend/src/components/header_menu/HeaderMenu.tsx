@@ -27,7 +27,7 @@ import { OptionsContext } from "../options/Options";
 
 import RosTemplates from "./../../templates/RosTemplates";
 import TreeGardener from "./../../templates/TreeGardener";
-import { useError } from "../error_popup/ErrorModal";
+import { useError } from "jderobot-ide-interface";
 
 interface Entry {
   name: string;

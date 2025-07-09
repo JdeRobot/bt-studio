@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import Modal from "../../Modal/Modal";
-
-import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
+import {
+  Modal,
+  ModalInputBox,
+  ModalRow,
+  ModalTitlebar,
+} from "jderobot-ide-interface";
 
 const initialAddSubtreeModalData = {
   subTreeName: "",
@@ -76,64 +79,40 @@ const AddSubtreeModal = ({
   return (
     <Modal
       id="new-subtree-modal"
-      hasCloseBtn={true}
       isOpen={isOpen}
       onClose={onClose}
+      onSubmit={handleSubmit}
+      onReset={handleCancel}
     >
-      <form onSubmit={handleSubmit} onReset={handleCancel}>
-        <div className="bt-modal-titlebar">
-          <label
-            className="bt-modal-titlebar-title"
-            htmlFor="folderName"
-            style={{ textAlign: "center" }}
-          >
-            Create new subtree
-          </label>
-          <CloseIcon
-            className="bt-modal-titlebar-close bt-icon"
-            onClick={() => {
-              handleCancel(null);
-            }}
-            fill={"var(--icon)"}
-          />
-        </div>
-        <div className="bt-modal-complex-input-row-container">
-          <div className="bt-modal-complex-input-container">
-            <input
-              ref={focusInputRef}
-              type="text"
-              id="subTreeName"
-              name="subTreeName"
-              className={
-                isCreationAllowed || formState.subTreeName === ""
-                  ? "bt-modal-complex-input"
-                  : "bt-modal-complex-input bt-modal-complex-input-invalid"
-              }
-              onChange={handleInputChange}
-              autoComplete="off"
-              placeholder="Subtree Name"
-              required
-            />
-            <label
-              htmlFor="subTreeName"
-              className="bt-modal-complex-input-label"
-            >
-              Subtree Name
-            </label>
-          </div>
-        </div>
-        <div className="bt-form-row">
-          <div className="bt-button-row">
-            <button
-              type="submit"
-              id="create-new-action"
-              disabled={!isCreationAllowed}
-            >
-              Create
-            </button>
-          </div>
-        </div>
-      </form>
+      <ModalTitlebar
+        title="Create new subtree"
+        htmlFor="folderName"
+        hasClose
+        handleClose={() => {
+          handleCancel(null);
+        }}
+      />
+      <ModalRow type="input">
+        <ModalInputBox
+          isInputValid={isCreationAllowed || formState.subTreeName === ""}
+          ref={focusInputRef}
+          id="subTreeName"
+          placeholder="Subtree Name"
+          onChange={handleInputChange}
+          type="text"
+          autoComplete="off"
+          required
+        />
+      </ModalRow>
+      <ModalRow type="buttons">
+        <button
+          type="submit"
+          id="create-new-subtree"
+          disabled={!isCreationAllowed}
+        >
+          Create
+        </button>
+      </ModalRow>
     </Modal>
   );
 };

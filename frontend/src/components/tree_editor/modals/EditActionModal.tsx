@@ -16,10 +16,9 @@ import { ReactComponent as AddIcon } from "../img/add.svg";
 import { ReactComponent as DeleteIcon } from "../img/delete.svg";
 import { ReactComponent as CancelIcon } from "../img/cancel.svg";
 import { ReactComponent as AcceptIcon } from "../img/accept.svg";
-import { ReactComponent as CloseIcon } from "../../Modal/img/close.svg";
 
 import "./EditActionModal.css";
-import Modal from "../../Modal/Modal";
+import { Modal, ModalTitlebar } from "jderobot-ide-interface";
 import { BasicNodeModel } from "../nodes/basic_node/BasicNodeModel";
 import { OutputPortModel } from "../nodes/basic_node/ports/output_port/OutputPortModel";
 import { InputPortModel } from "../nodes/basic_node/ports/input_port/InputPortModel";
@@ -253,28 +252,15 @@ const EditActionModal = ({
   };
 
   return (
-    <Modal
-      id="node-editor-modal"
-      hasCloseBtn={true}
-      isOpen={isOpen}
-      onClose={onClose}
-    >
-      <div className="bt-modal-titlebar">
-        <label
-          className="bt-modal-titlebar-title"
-          htmlFor="actionName"
-          style={{ textAlign: "center" }}
-        >
-          Edit action value
-        </label>
-        <CloseIcon
-          className="bt-modal-titlebar-close bt-icon"
-          onClick={() => {
-            onClose();
-          }}
-          fill={"var(--icon)"}
-        />
-      </div>
+    <Modal id="node-editor-modal" isOpen={isOpen} onClose={onClose}>
+      <ModalTitlebar
+        title="Edit action value"
+        htmlFor="actionName"
+        hasClose
+        handleClose={() => {
+          onClose();
+        }}
+      />
       <div className="bt-node-editor-row">
         {currentActionNode && (
           <div

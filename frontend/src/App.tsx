@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useUnload } from "./hooks/useUnload";
 import HeaderMenu from "./components/header_menu/HeaderMenu";
 import "./App.css";
-import ErrorModal from "./components/error_popup/ErrorModal";
-import { useError } from "./components/error_popup/ErrorModal";
+import { useError } from "jderobot-ide-interface";
 import { ReactComponent as SimulatorIcon } from "./components/icons/gazebo.svg";
 import { ReactComponent as TerminalIcon } from "./components/icons/terminal.svg";
 import { CommsManager } from "jderobot-commsmanager";
@@ -325,7 +324,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       data-theme={settings.theme.value}
       style={{ display: "flex" }}
     >
-      <ErrorModal />
       <HeaderMenu
         currentProjectname={currentProjectname}
         setCurrentProjectname={setCurrentProjectname}

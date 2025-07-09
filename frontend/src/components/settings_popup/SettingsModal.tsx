@@ -1,8 +1,6 @@
 import { useContext } from "react";
 import "react-color-palette/css";
 import "./SettingsModal.css";
-import Modal from "../Modal/Modal";
-import { ReactComponent as CloseIcon } from "../Modal/img/close.svg";
 
 import Section from "./sections/Section";
 import SubSection from "./sections/SubSection";
@@ -11,7 +9,12 @@ import Setting from "./sections/Setting";
 import Dropdown from "./options/Dropdown";
 
 import { OptionsContext, SettingsData } from "../options/Options";
-import { useError } from "../error_popup/ErrorModal";
+import {
+  useError,
+  Modal,
+  ModalTitlebar,
+  ModalRow,
+} from "jderobot-ide-interface";
 
 import { saveProjectConfig } from "../../api_helper/TreeWrapper";
 import Checkbox from "./options/Checkbox";
@@ -63,39 +66,24 @@ const SettingsModal = ({
     return (
       <Modal
         id="settings-modal"
-        hasCloseBtn={true}
         isOpen={isOpen}
         onClose={onClose}
+        onSubmit={onSubmit}
+        onReset={() => {
+          handleCancel(settings);
+        }}
       >
-        <form
-          onSubmit={onSubmit}
-          onReset={() => {
+        <ModalTitlebar
+          title="Settings"
+          htmlFor="actionName"
+          hasClose
+          handleClose={() => {
             handleCancel(settings);
           }}
-          style={{ display: "flex", flexDirection: "column", flexGrow: "1" }}
-        >
-          <div className="bt-modal-titlebar">
-            <label
-              className="bt-modal-titlebar-title"
-              htmlFor="actionName"
-              style={{ textAlign: "center" }}
-            >
-              Settings
-            </label>
-            <CloseIcon
-              className="bt-modal-titlebar-close bt-icon"
-              onClick={() => {
-                handleCancel(settings);
-              }}
-              fill={"var(--icon)"}
-            />
-          </div>
-          <div
-            className="bt-form-row"
-            style={{ display: "flex", flexDirection: "column", flexGrow: "1" }}
-          >
-            <ul className="bt-settings-entry-list">
-              {/* <Section title="General">
+        />
+        <ModalRow>
+          <ul className="bt-settings-entry-list">
+            {/* <Section title="General">
                 <SubSection title="Accent Colors">
                   <Setting title ="Turn on project accent color">
                   </Setting>
@@ -105,35 +93,34 @@ const SettingsModal = ({
                   </Setting>
                 </SubSection>
               </Section> */}
-              <Section title="Appearance">
-                <SubSection title="Color theme">
-                  <Setting title="Set color theme">
-                    <Dropdown
-                      setting={settings.theme}
-                      possibleValues={["dark", "light"]}
-                    />
-                  </Setting>
-                </SubSection>
-                <SubSection title="Editor">
-                  <Setting title="Show actions accent color">
-                    <Checkbox setting={settings.editorShowAccentColors} />
-                  </Setting>
-                </SubSection>
-              </Section>
-              <Section title="Behaviour Tree">
-                <SubSection title="Execution settings">
-                  <Setting title="Order of execution of the behavior tree">
-                    {/* Add explanation here */}
-                    <Dropdown
-                      setting={settings.btOrder}
-                      possibleValues={["bottom-to-top", "top-to-bottom"]}
-                    />
-                  </Setting>
-                </SubSection>
-              </Section>
-            </ul>
-          </div>
-        </form>
+            <Section title="Appearance">
+              <SubSection title="Color theme">
+                <Setting title="Set color theme">
+                  <Dropdown
+                    setting={settings.theme}
+                    possibleValues={["dark", "light"]}
+                  />
+                </Setting>
+              </SubSection>
+              <SubSection title="Editor">
+                <Setting title="Show actions accent color">
+                  <Checkbox setting={settings.editorShowAccentColors} />
+                </Setting>
+              </SubSection>
+            </Section>
+            <Section title="Behaviour Tree">
+              <SubSection title="Execution settings">
+                <Setting title="Order of execution of the behavior tree">
+                  {/* Add explanation here */}
+                  <Dropdown
+                    setting={settings.btOrder}
+                    possibleValues={["bottom-to-top", "top-to-bottom"]}
+                  />
+                </Setting>
+              </SubSection>
+            </Section>
+          </ul>
+        </ModalRow>
       </Modal>
     );
   }

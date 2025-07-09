@@ -8,7 +8,7 @@ import {
 } from "../../api_helper/TreeWrapper";
 import { findSubtree } from "../helper/TreeEditorHelper";
 import { OptionsContext } from "../options/Options";
-import { useError } from "../error_popup/ErrorModal";
+import { useError } from "jderobot-ide-interface";
 import TreeMonitor from "./TreeMonitor";
 
 const TreeMonitorContainer = ({

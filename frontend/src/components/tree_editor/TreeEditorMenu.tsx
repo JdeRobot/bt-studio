@@ -15,7 +15,7 @@ import {
 } from "../../api_helper/TreeWrapper";
 import { publish, subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 import AddSubtreeModal from "./modals/AddSubtreeModal";
-import { useError } from "../error_popup/ErrorModal";
+import { useError } from "jderobot-ide-interface";
 import { OptionsContext } from "../options/Options";
 import {
   MenuButton,
