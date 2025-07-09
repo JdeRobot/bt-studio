@@ -42,6 +42,7 @@ import {
 } from "./components/tree_editor/TreeEditorMenu";
 import TreeMonitor from "./components/tree_monitor/TreeMonitorContainer";
 import { createCustomUniverseConfig } from "./components/helper/customUniverseHelper";
+import UniverseModal from "./components/UniverseModal/UniverseModal";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
@@ -50,7 +51,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [showMonitor, setMonitorVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
   const [layout, setLayout] = useState<"only-editor" | "only-viewers" | "both">(
-    "both",
+    "both"
   );
 
   //Only needed in Unibotics
@@ -185,7 +186,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         project: string,
         path: string,
         name: string,
-        content: string,
+        content: string
       ) => {
         return uploadFile(project, name, path, content);
       },
@@ -225,7 +226,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         project: string,
         path: string,
         name: string,
-        content: string,
+        content: string
       ) => {
         return uploadFile(project, name, path, content, "");
       },
@@ -314,6 +315,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   };
 
   const statusBar: StatusBarComponents = {
+    universeSelector: UniverseModal,
     extras: [],
   };
 
