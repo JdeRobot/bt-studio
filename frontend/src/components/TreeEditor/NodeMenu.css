@@ -1,0 +1,65 @@
+.bt-button-container {
+  display: flex;
+  justify-content: left;
+  align-self: center;
+}
+
+.bt-node-button {
+  height: 24px;
+  color: var(--text);
+  border: none;
+  font-size: 15px;
+  background-color: transparent;
+  margin: 0 5px 0 5px;
+  white-space: nowrap;
+}
+
+.bt-button:hover {
+  background-color: var(--buttons-hover);
+  border-radius: var(--border-radius);
+}
+
+.bt-node-header-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  justify-content: left;
+  height: 50px;
+  max-height: 50px;
+  min-height: 50px;
+  background-color: var(--control-bar);
+}
+
+.bt-action-buttons {
+  margin-right: 10px;
+  display: flex;
+}
+
+.bt-node-action-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  background-color: var(--control-bar);
+  border: 0;
+  align-self: center;
+  margin: 0 2px 0 2px;
+}
+
+/* Dropdown menus */
+
+.css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
+  background-color: var(--buttons) !important;
+  color: var(--text) !important;
+  border: 2px solid var(--border-color) !important;
+}
+
+.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root:hover {
+  background-color: var(--buttons-hover) !important;
+}
+
+.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root {
+  border-radius: var(--border-radius) !important;
+  margin: 4px !important;
+}

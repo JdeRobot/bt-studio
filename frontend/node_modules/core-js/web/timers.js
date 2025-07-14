@@ -1,2 +1,5 @@
+'use strict';
 require('../modules/web.timers');
-module.exports = require('../modules/_core');
+var path = require('../internals/path');
+
+module.exports = path;

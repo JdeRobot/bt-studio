@@ -1,3 +1,4 @@
+import os
 import shutil
 import json
 import base64
@@ -75,23 +76,6 @@ def get_project_list(request):
     folder_path = fal.base_path()
     project_list = fal.listdirs(folder_path)
     return Response({"project_list": project_list})
-
-
-@error_wrapper("POST", ["project_name", "graph_json"])
-def save_base_tree(request):
-    # Get the app name and the graph
-    project_name = request.data.get("project_name")
-    graph_json = request.data.get("graph_json")
-
-    # Generate the paths
-    trees_path = fal.trees_path(project_name)
-    graph_path = fal.path_join(trees_path, "main.json")
-
-    # Obtain pretty json
-    graph = json.loads(graph_json)
-    graph_formated = json.dumps(graph, indent=4)
-    fal.write(graph_path, graph_formated)
-    return JsonResponse({"success": True})
 
 
 @error_wrapper("GET", ["project_name"])
@@ -209,21 +193,6 @@ def create_subtree(request):
     return JsonResponse({"success": True}, status=status.HTTP_201_CREATED)
 
 
-@error_wrapper("POST", ["project_name", "subtree_name", "subtree_json"])
-def save_subtree(request):
-    # Get the project name, subtree name, and subtree JSON
-    project_name = request.data.get("project_name")
-    subtree_name = request.data.get("subtree_name")
-    subtree_json = request.data.get("subtree_json")
-
-    # Generate the paths
-    subtrees_path = fal.subtrees_path(project_name)
-    subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
-
-    fal.write(subtree_path, subtree_json)
-    return JsonResponse({"success": True}, status=status.HTTP_200_OK)
-
-
 @error_wrapper("GET", ["project_name", "subtree_name"])
 def get_subtree(request):
     project_name = request.GET.get("project_name")
@@ -234,6 +203,19 @@ def get_subtree(request):
 
     subtree = json.loads(fal.read(subtree_path))
     return Response({"subtree": subtree}, status=status.HTTP_200_OK)
+
+
+@error_wrapper("GET", ["project_name", "subtree_name"])
+def get_subtree_path(request):
+    project_name = request.GET.get("project_name")
+    subtree_name = request.GET.get("subtree_name")
+
+    subtrees_path = fal.subtrees_path(project_name)
+    subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
+    rel_path = os.path.relpath(subtree_path, fal.code_path(project_name))
+    print(rel_path)
+
+    return Response({"subtree": rel_path}, status=status.HTTP_200_OK)
 
 
 @error_wrapper("GET", ["project_name"])
@@ -334,13 +316,17 @@ def get_file_list(request):
     project_name = request.GET.get("project_name")
     universe = request.GET.get("universe")
 
+    base_group = "Code"
+
     if universe is not None:
-        universes_path = fal.universes_path(project_name)
-        path = fal.path_join(universes_path, universe)
+        path = fal.universes_path(project_name)
+        base_group = "Universes"
+        if universe == "":
+            path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
 
-    file_list = fal.list_formatted(path)
+    file_list = fal.list_formatted(path, base_group)
 
     # Return the list of files
     return Response({"file_list": EntryEncoder().encode(file_list)})
@@ -360,11 +346,12 @@ def get_actions_list(request):
 def get_file(request):
     project_name = request.GET.get("project_name", None)
     filename = request.GET.get("filename", None)
-    universe = request.GET.get("universe")
+    universe = request.GET.get("universe", None)
 
     if universe is not None:
-        universes_path = fal.universes_path(project_name)
-        path = fal.path_join(universes_path, universe)
+        path = fal.universes_path(project_name)
+        if universe == "":
+            path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
 
@@ -385,7 +372,9 @@ def create_action(request):
     action_path = fal.actions_path(project_name)
     file_path = fal.path_join(action_path, filename + ".py")
 
-    content = fal.get_action_template(filename, template)
+    content = ""
+    if template != "empty":
+        content = fal.get_action_template(filename, template)
     fal.create(file_path, content)
     return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
@@ -398,8 +387,9 @@ def create_file(request):
     universe = request.data.get("universe")
 
     if universe is not None:
-        universes_path = fal.universes_path(project_name)
-        path = fal.path_join(universes_path, universe)
+        path = fal.universes_path(project_name)
+        if universe == "":
+            path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
 
@@ -418,8 +408,9 @@ def create_folder(request):
     universe = request.data.get("universe")
 
     if universe is not None:
-        universes_path = fal.universes_path(project_name)
-        path = fal.path_join(universes_path, universe)
+        path = fal.universes_path(project_name)
+        if universe == "":
+            path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
 
@@ -438,8 +429,9 @@ def rename_file(request):
     universe = request.data.get("universe")
 
     if universe is not None:
-        universes_path = fal.universes_path(project_name)
-        base_path = fal.path_join(universes_path, universe)
+        base_path = fal.universes_path(project_name)
+        if universe == "":
+            base_path = fal.path_join(base_path, universe)
     else:
         base_path = fal.code_path(project_name)
 
@@ -458,8 +450,9 @@ def rename_folder(request):
     universe = request.data.get("universe")
 
     if universe is not None:
-        universes_path = fal.universes_path(project_name)
-        base_path = fal.path_join(universes_path, universe)
+        base_path = fal.universes_path(project_name)
+        if universe == "":
+            base_path = fal.path_join(base_path, universe)
     else:
         base_path = fal.code_path(project_name)
 
@@ -477,8 +470,9 @@ def delete_file(request):
     universe = request.data.get("universe")
 
     if universe is not None:
-        universes_path = fal.universes_path(project_name)
-        base_path = fal.path_join(universes_path, universe)
+        base_path = fal.universes_path(project_name)
+        if universe == "":
+            base_path = fal.path_join(base_path, universe)
     else:
         base_path = fal.code_path(project_name)
 
@@ -495,8 +489,9 @@ def delete_folder(request):
     universe = request.data.get("universe")
 
     if universe is not None:
-        universes_path = fal.universes_path(project_name)
-        base_path = fal.path_join(universes_path, universe)
+        base_path = fal.universes_path(project_name)
+        if universe == "":
+            base_path = fal.path_join(base_path, universe)
     else:
         base_path = fal.code_path(project_name)
 
@@ -514,8 +509,9 @@ def save_file(request):
     universe = request.data.get("universe")
 
     if universe is not None:
-        universes_path = fal.universes_path(project_name)
-        path = fal.path_join(universes_path, universe)
+        path = fal.universes_path(project_name)
+        if universe == "":
+            path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
 
@@ -583,9 +579,10 @@ def create_custom_universe(request):
         "type": "custom",
         "ram_config": {
             "ros_version": "ROS2",
-            "world": "gazebo",
+            "type": "gz",
             "launch_file_path": ram_launch_path,
-            "visualization_config_path": ram_visualization_config_path,
+            "tools_config": {"gzsim": ram_visualization_config_path},
+            "tools": ["console", "simulator", "state_monitor"],
         },
     }
 
@@ -643,8 +640,9 @@ def upload_code(request):
     universe = request.data.get("universe")
 
     if universe is not None:
-        universes_path = fal.universes_path(project_name)
-        path = fal.path_join(universes_path, universe)
+        path = fal.universes_path(project_name)
+        if universe == "":
+            path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
 
@@ -675,17 +673,18 @@ def get_docker_universe_data(request):
             "name": universe.world.name,
             "launch_file_path": universe.world.launch_file_path,
             "ros_version": universe.world.ros_version,
-            "world": universe.world.world,
+            "type": universe.world.type,
+            "tools_config": {},
         },
         "robot": {
             "name": universe.robot.name,
             "launch_file_path": universe.robot.launch_file_path,
             "ros_version": universe.world.ros_version,
-            "world": universe.world.world,
+            "type": universe.world.type,
             "start_pose": universe.world.start_pose,
         },
-        "visualization": universe.world.visualization,
-        "visualization_config_path": universe.world.visualization_config_path,
+        "tools": ["console", "simulator", "state_monitor"],
+        "tools_config": {},
     }
 
     # Return the list of projects

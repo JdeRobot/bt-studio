@@ -49,13 +49,12 @@ urlpatterns = [
         name="create_custom_universe",
     ),
     # Tree Management
-    path("save_base_tree/", views.save_base_tree, name="save_base_tree"),
     path("get_base_tree/", views.get_base_tree, name="get_base_tree"),
     path("get_tree_structure/", views.get_tree_structure, name="get_tree_structure"),
     # Subtree Management
     path("create_subtree/", views.create_subtree, name="create_subtree"),
-    path("save_subtree/", views.save_subtree, name="save_subtree"),
     path("get_subtree/", views.get_subtree, name="get_subtree"),
+    path("get_subtree_path/", views.get_subtree_path, name="get_subtree_path"),
     path("get_subtree_list/", views.get_subtree_list, name="get_subtree_list"),
     path(
         "get_subtree_structure/",

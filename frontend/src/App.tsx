@@ -1,49 +1,43 @@
 import React, { useState, useEffect, useRef } from "react";
-// import useLocalStorage from 'use-local-storage'
 import { useUnload } from "./hooks/useUnload";
-import { Resizable } from "react-resizable";
-import HeaderMenu from "./components/header_menu/HeaderMenu";
-import FileBrowser from "./components/file_browser/FileBrowser";
-import FileEditor from "./components/file_editor/FileEditor";
+import HeaderMenu from "./components/HeaderMenu";
 import "./App.css";
-import VncViewer from "./components/vnc_viewer/VncViewer";
-import ErrorModal, { ErrorProvider } from "./components/error_popup/ErrorModal";
-import { useError } from "./components/error_popup/ErrorModal";
-import MainTreeEditorContainer from "./components/tree_editor/MainTreeEditorContainer";
-import CommsManager from "./api_helper/CommsManager";
+import { SimulatorIcon, TerminalIcon } from "./components/icons";
+import { CommsManager } from "jderobot-commsmanager";
 import { getProjectConfig } from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
-import TerminalViewer from "./components/vnc_viewer/TerminalViewer";
-import StatusBar from "./components/status_bar/StatusBar";
+import IdeInterface, {
+  Theme,
+  ThemeProvider,
+  VncViewer,
+  useError,
+} from "jderobot-ide-interface";
+import TreeEditorContainer, {
+  AddSubtreeButton,
+  BTSelectorButtons,
+  OtherButtons,
+} from "./components/TreeEditor";
+import TreeMonitorContainer from "./components/TreeMonitor";
+import { explorers } from "./components/Explorers";
+import { statusBar } from "./components/StatusBar";
+import { editorApi } from "./components/Editors";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
-  const [fileBrowserWidth, setFileBrowserWidth] = useState<number>(300);
-  const [editorWidth, setEditorWidth] = useState<number>(800);
-  const [currentFilename, setCurrentFilename] = useState<string>("");
-  const [autosaveEnabled, setAutosave] = useState<boolean>(true);
-  const [forceSaveCurrent, setForcedSaveCurrent] = useState<boolean>(false);
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
-  const [currentUniverseName, setCurrentUniverseName] = useState<string>("");
-  const [saveCurrentDiagram, setSaveCurrentDiagram] = useState<boolean>(false);
-  const [updateFileExplorer, setUpdateFileExplorer] = useState<boolean>(false);
-  const [projectChanges, setProjectChanges] = useState<boolean>(false);
-  const [gazeboEnabled, setGazeboEnabled] = useState<boolean>(false);
   const [manager, setManager] = useState<CommsManager | null>(null);
   const [showSim, setSimVisible] = useState<boolean>(false);
+  const [showMonitor, setMonitorVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
+  const [layout, setLayout] = useState<"only-editor" | "only-viewers" | "both">(
+    "both",
+  );
 
   //Only needed in Unibotics
   const maxUsers = 15;
   const currentUsers = React.useRef<number>(0);
   const btAtMaxCapacity = React.useRef<boolean>(false);
   const { error_critical } = useError();
-
-  const [dockerData, setDockerData] = useState<{
-    gpu_avaliable: string;
-    robotics_backend_version: string;
-    ros_version: string;
-  } | null>(null);
 
   const settings = React.useContext(OptionsContext);
   //////////////////////////s////////////////////////////
@@ -69,7 +63,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     );
 
     const manager = CommsManager.getInstance();
-    if (btAtMaxCapacity.current == false) {
+    if (btAtMaxCapacity.current === false) {
       setManager(manager);
     }
 
@@ -82,10 +76,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     CommsManager.deleteInstance();
     const manager = CommsManager.getInstance();
     setManager(manager);
-  };
-
-  const introspectionCallback = (msg: any) => {
-    setDockerData(msg.data);
   };
 
   /////////////////////////////Functions only used in Unibotics///////////////////////////////////////////////////
@@ -120,7 +110,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     }
     try {
       await manager.connect();
-      console.log("Connected!");
+      console.log("Connected!", manager.getState());
       connected.current = true;
     } catch (error) {
       console.log("Connection failed, trying again!");
@@ -131,7 +121,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   useEffect(() => {
     if (manager) {
       console.log("The manager is up!");
-      manager.subscribeOnce("introspection", introspectionCallback);
       connectWithRetry();
     }
   }, [manager]);
@@ -149,35 +138,83 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     }
   }, [currentProjectname]); // Reload project configuration
 
-  const onResize = (key: string, size: { width: number; height: number }) => {
-    switch (key) {
-      case "editorWidth":
-        setEditorWidth(size.width);
-        break;
-      case "fileBrowserWidth":
-        setFileBrowserWidth(size.width);
-        break;
-      default:
-        break;
-    }
+  const treeMonitor = {
+    component: (
+      <TreeMonitorContainer
+        commsManager={manager}
+        project={currentProjectname}
+      />
+    ),
+    icon: <SimulatorIcon />,
+    name: "Tree Monitor",
+    active: showMonitor,
+    activate: setMonitorVisible,
   };
 
-  // Show VNC viewers
-  const showVNCViewer = () => {
-    setSimVisible(true);
-    setTerminalVisible(true);
+  const gazeboViewer = {
+    component: <VncViewer commsManager={manager} port={6080} />,
+    icon: <SimulatorIcon />,
+    name: "Gazebo",
+    active: showSim,
+    activate: setSimVisible,
   };
 
-  const showVNCTerminal = (show: boolean) => {
-    if (gazeboEnabled) {
-      setTerminalVisible(show);
-    }
+  const terminalViewer = {
+    component: <VncViewer commsManager={manager} port={1108} />,
+    icon: <TerminalIcon />,
+    name: "Terminal",
+    active: showTerminal,
+    activate: setTerminalVisible,
   };
 
-  const showVNCSim = (show: boolean) => {
-    if (gazeboEnabled) {
-      setSimVisible(show);
-    }
+  const treeEditor = {
+    component: TreeEditorContainer,
+    buttons: [
+      <BTSelectorButtons project={currentProjectname} />,
+      <AddSubtreeButton project={currentProjectname} />,
+      <OtherButtons project={currentProjectname} />,
+    ],
+    name: "Tree editor",
+    language: "custom_tree_editor",
+    trigger: [{ group: "Trees", extension: "json" }],
+  };
+
+  const darkTheme: Theme = {
+    palette: {
+      text: "#ededf2",
+      darkText: "#000000",
+      placeholderText: "#a6a6bf",
+      success: "#29ac29",
+      warning: "#f9e86d",
+      error: "#802626",
+      background: "#16161d",
+      primary: "#444444ff",
+      secondary: "#666666ff",
+      scrollbar: "#6f6f90",
+      border: {
+        warning: "#ffe100",
+        error: "#772222",
+        info: "#134f53",
+      },
+      progressBar: {
+        background: "#134f53",
+        color: "#1d777c",
+      },
+      button: {
+        error: "#9e2e2e",
+        success: "#29ac29",
+        warning: "#ffe100",
+        info: "#134f53",
+        hoverError: "#c63939",
+        hoverSuccess: "#29ac29",
+        hoverWarning: "#ccb400",
+        hoverInfo: "#1d777c",
+      },
+      selectedGradient:
+        "linear-gradient( -45deg, #12494c 0%, #584f42 50%, #909c7b 100%)",
+    },
+    roundness: 5,
+    monacoTheme: "dark",
   };
 
   return (
@@ -186,120 +223,28 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       data-theme={settings.theme.value}
       style={{ display: "flex" }}
     >
-      <ErrorModal />
-      <>
-        <HeaderMenu
-          currentProjectname={currentProjectname}
-          setCurrentProjectname={setCurrentProjectname}
-          currentUniverseName={currentUniverseName}
-          setCurrentUniverseName={setCurrentUniverseName}
-          setSaveCurrentDiagram={setSaveCurrentDiagram}
-          projectChanges={projectChanges}
-          setProjectChanges={setProjectChanges}
-          gazeboEnabled={gazeboEnabled}
-          setGazeboEnabled={setGazeboEnabled}
-          manager={manager}
-          showVNCViewer={showVNCViewer}
-          isUnibotics={isUnibotics}
-        />
-
-        <div className="bt-App-main">
-          <Resizable
-            width={fileBrowserWidth}
-            height={0}
-            onResize={(e, { size }) => onResize("fileBrowserWidth", size)}
-            minConstraints={[200, 200]}
-            maxConstraints={[400, 400]}
-          >
-            <div
-              style={{
-                width: `${fileBrowserWidth}px`,
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <div className="bt-sideBar">
-                <FileBrowser
-                  setCurrentFilename={setCurrentFilename}
-                  currentFilename={currentFilename}
-                  currentProjectname={currentProjectname}
-                  setProjectChanges={setProjectChanges}
-                  setAutosave={setAutosave}
-                  forceSaveCurrent={forceSaveCurrent}
-                  setForcedSaveCurrent={setForcedSaveCurrent}
-                  forceUpdate={{
-                    value: updateFileExplorer,
-                    callback: setUpdateFileExplorer,
-                  }}
-                  setSaveCurrentDiagram={setSaveCurrentDiagram}
-                />
-              </div>
-            </div>
-          </Resizable>
-
-          <Resizable
-            width={editorWidth}
-            height={0}
-            onResize={(e, { size }) => onResize("editorWidth", size)}
-            minConstraints={[400, 400]}
-            maxConstraints={[800, 900]}
-          >
-            <div
-              style={{
-                width: `${editorWidth}px`,
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px",
-                backgroundColor: "var(--control-bar)",
-              }}
-            >
-              <FileEditor
-                currentFilename={currentFilename}
-                currentProjectname={currentProjectname}
-                setProjectChanges={setProjectChanges}
-                isUnibotics={isUnibotics}
-                autosaveEnabled={autosaveEnabled}
-                setAutosave={setAutosave}
-                forceSaveCurrent={forceSaveCurrent}
-                manager={manager}
-              />
-              {showTerminal && <TerminalViewer gazeboEnabled={gazeboEnabled} />}
-            </div>
-          </Resizable>
-
-          <div
-            style={{
-              flex: "1 1 0%",
-              display: "flex",
-              flexDirection: "column",
-              flexWrap: "nowrap",
-              gap: "5px",
-              backgroundColor: "var(--control-bar)",
-            }}
-          >
-            {currentProjectname ? (
-              <MainTreeEditorContainer
-                projectName={currentProjectname}
-                setProjectEdited={setProjectChanges}
-                saveCurrentDiagram={saveCurrentDiagram}
-                setSaveCurrentDiagram={setSaveCurrentDiagram}
-                updateFileExplorer={setUpdateFileExplorer}
-              />
-            ) : (
-              <p>Loading...</p>
-            )}
-            {showSim && <VncViewer gazeboEnabled={gazeboEnabled} />}
-          </div>
-        </div>
-        <StatusBar
-          showSim={showSim}
-          setSimVisible={showVNCSim}
-          showTerminal={showTerminal}
-          setTerminalVisible={showVNCTerminal}
-          dockerData={dockerData}
+      <HeaderMenu
+        currentProjectname={currentProjectname}
+        setCurrentProjectname={setCurrentProjectname}
+        manager={manager}
+        isUnibotics={isUnibotics}
+        setLayout={setLayout}
+      />
+      <ThemeProvider>
+        {/* <ThemeProvider theme={darkTheme}> */}
+        <IdeInterface
+          commsManager={manager}
           resetManager={resetManager}
+          project={currentProjectname}
+          explorers={explorers}
+          api={editorApi}
+          extraEditors={[treeEditor]}
+          viewers={[treeMonitor, gazeboViewer, terminalViewer]}
+          options={[]}
+          layout={layout}
+          statusBarComponents={statusBar}
         />
-      </>
+      </ThemeProvider>
     </div>
   );
 };

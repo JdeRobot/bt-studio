@@ -1,1 +1,0 @@
-{"version":3,"sources":["Elements/_CloseIcon/close.icon.scss"],"names":[],"mappings":"AAAA,kBACE,iBAAkB,CAClB,YAAa,CAAb,WAAa,CACb,aAAc,CAAd,YAAc","file":"close.icon.css","sourcesContent":[".bi.bi-close-icon {\n  fill: currentColor;\n  width: 0.8rem;\n  height: 0.8rem;\n}\n"]}

@@ -56,10 +56,10 @@
 }
 
 .bt-sidebar {
-  width: 200px;
   min-width: 200px;
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 }
 
 h1 {
@@ -315,4 +315,5 @@ h3 {
   --bt-status-invalid: #494949;
 
   --status-bar: var(--primary-100);
+  --border-radius: 5px;
 }

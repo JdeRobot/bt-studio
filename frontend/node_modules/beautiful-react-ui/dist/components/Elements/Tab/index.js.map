@@ -1,1 +1,0 @@
-{"version":3,"sources":["components/Elements/Tab/index.js"],"names":[],"mappings":";;;;;;;;;;;;AAAA","sourcesContent":["export { default } from './Tab';\n"],"file":"index.js"}

@@ -7,7 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import "beautiful-react-diagrams/styles.css";
 
 import { OptionsProvider } from "./components/options/Options";
-import { ErrorProvider } from "./components/error_popup/ErrorModal";
+import { ErrorProvider } from "jderobot-ide-interface";
 
 // Load Google Font
 WebFont.load({
