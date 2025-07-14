@@ -6,7 +6,7 @@ import {
   createUniverseFolder,
   uploadFileUniverse,
 } from "../../api_helper/TreeWrapper";
-import { useError } from "jderobot-ide-interface";
+import { ModalInputDropArea, useError } from "jderobot-ide-interface";
 import JSZip from "jszip";
 import {
   ModalInputBox,
@@ -166,40 +166,20 @@ const ImportCustomPage = ({
           maxLength={20}
         />
       </ModalRow>
-      <div className="bt-form-row">
-        <div className="bt-modal-complex-input-row-container">
-          <label
-            ref={uploadAreaRef}
-            htmlFor="uploadDropInput"
-            className="bt-modal-drop-container"
-            onDragOver={(e) => {
-              e.preventDefault();
-            }}
-            onDragEnter={() =>
-              uploadAreaRef.current.classList.add("bt-drag-active")
-            }
-            onDragLeave={() =>
-              uploadAreaRef.current.classList.remove("bt-drag-active")
-            }
-            onDrop={(e) => handleDrop(e)}
-            style={{ height: "300px", width: "75%", marginTop: "30px" }}
-          >
-            <span className="bt-modal-drop-title">Drop zip here</span>
-            or
-            <input
-              ref={uploadInputRef}
-              className="bt-modal-button"
-              id="uploadDropInput"
-              type="file"
-              accept="application/zip"
-              name="img"
-              title="Upload zip"
-              required
-              multiple={false}
-            />
-          </label>
-        </div>
-      </div>
+      <ModalRow>
+        <ModalInputDropArea
+          areaRef={uploadAreaRef}
+          inputRef={uploadInputRef}
+          id="uploadDropInput"
+          dropTitle={"Drop zip here"}
+          onChange={(e: any) => {}}
+          onDrop={handleDrop}
+          type="file"
+          accept="application/zip"
+          required
+          multiple={false}
+        />
+      </ModalRow>
       <ProgressBar completed={uploadPercentage} />
       <ModalRow type="buttons">
         <button

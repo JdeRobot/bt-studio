@@ -404,7 +404,9 @@ def create_action(request):
     action_path = fal.actions_path(project_name)
     file_path = fal.path_join(action_path, filename + ".py")
 
-    content = fal.get_action_template(filename, template)
+    content = ""
+    if template != "empty":
+        content = fal.get_action_template(filename, template)
     fal.create(file_path, content)
     return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 

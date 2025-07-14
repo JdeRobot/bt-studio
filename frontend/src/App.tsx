@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useUnload } from "./hooks/useUnload";
 import HeaderMenu from "./components/header_menu/HeaderMenu";
 import "./App.css";
-import { useError } from "jderobot-ide-interface";
 import { ReactComponent as SimulatorIcon } from "./components/icons/gazebo.svg";
 import { ReactComponent as TerminalIcon } from "./components/icons/terminal.svg";
 import { CommsManager } from "jderobot-commsmanager";
@@ -28,9 +27,9 @@ import { OptionsContext } from "./components/options/Options";
 import IdeInterface, {
   VncViewer,
   Entry,
-  newFileData,
   StatusBarComponents,
   ExtraApi,
+  useError,
 } from "jderobot-ide-interface";
 import { publish } from "./components/helper/TreeEditorHelper";
 import TreeEditor from "./components/tree_editor/TreeEditorContainer";
@@ -42,6 +41,9 @@ import {
 import TreeMonitor from "./components/tree_monitor/TreeMonitorContainer";
 import { createCustomUniverseConfig } from "./components/helper/customUniverseHelper";
 import UniverseModal from "./components/UniverseModal/UniverseModal";
+import CreateAction, {
+  newFileData,
+} from "./components/CreateAction/CreateAction";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
@@ -164,13 +166,8 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       return getFileList(project);
     },
     file: {
-      create: (project: string, location: string, data: newFileData) => {
-        if (data.fileType === "actions") {
-          publish("updateActionList");
-          return createAction(project, data.fileName, data.templateType);
-        } else {
-          return createFile(project, data.fileName, location);
-        }
+      create: (project: string, location: string, name: string) => {
+        return createFile(project, name, location);
       },
       get: (project: string, path: string) => {
         return getFile(project, path);
@@ -201,6 +198,20 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         return deleteFolder(project, path);
       },
     },
+    modals: {
+      createFile: {
+        component: CreateAction,
+        onCreate: (project: string, location: string, data: newFileData) => {
+          console.log(data);
+          if (data.fileType === "actions") {
+            publish("updateActionList");
+            return createAction(project, data.fileName, data.templateType);
+          } else {
+            return createFile(project, data.fileName, location);
+          }
+        },
+      },
+    },
   };
 
   const universeExplorer = {
@@ -209,8 +220,8 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       return getFileList(project, "");
     },
     file: {
-      create: (project: string, location: string, data: newFileData) => {
-        return createFile(project, data.fileName, location, "");
+      create: (project: string, location: string, name: string) => {
+        return createFile(project, name, location, "");
       },
       get: (project: string, path: string) => {
         return getFile(project, path, "");
@@ -219,6 +230,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         return renameFile(project, oldPath, newPath, "");
       },
       delete: (project: string, path: string) => {
+        console.log(project, path);
         return deleteFile(project, path, "");
       },
       upload: (

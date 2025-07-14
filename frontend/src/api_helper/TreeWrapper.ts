@@ -795,7 +795,6 @@ const saveFile = async (
 ) => {
   if (!projectName) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("Current File name is not set");
-  if (!content) throw new Error("Content does not exist");
 
   const apiUrl = "/bt_studio/save_file/";
 

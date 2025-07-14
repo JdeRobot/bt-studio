@@ -18,3 +18,5 @@ export { ReactComponent as ResetIcon } from "./reset.svg";
 export { ReactComponent as RenameIcon } from "./rename.svg";
 export { ReactComponent as SaveIcon } from "./save.svg";
 export { ReactComponent as SplashIcon } from "./logo_jderobot.svg";
+export { ReactComponent as MinusIcon } from "./minus.svg";
+export { ReactComponent as PlusIcon } from "./plus.svg";

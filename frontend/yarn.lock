@@ -2025,24 +2025,6 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@storybook/global@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@storybook/global/-/global-5.0.0.tgz#b793d34b94f572c1d7d9e0f44fac4e0dbc9572ed"
-  integrity sha512-FcOqPAXACP0I3oJ/ws6/rrPT9WGhu915Cg8D02a9YxLo0DE9zI+a9A5gRGvmQ09fiWPukqI8ZAEoQEdWUKMQdQ==
-
-"@storybook/react-dom-shim@9.0.15":
-  version "9.0.15"
-  resolved "https://registry.yarnpkg.com/@storybook/react-dom-shim/-/react-dom-shim-9.0.15.tgz#5c98ad2a3ead9c4ac1136d75d4e1e08e25fc6443"
-  integrity sha512-X5VlYKoZSIMU9HEshIwtNzp41nPt4kiJtJ2c5HzFa5F6M8rEHM5n059CGcCZQqff3FnZtK/y6v/kCVZO+8oETA==
-
-"@storybook/react@^9.0.12":
-  version "9.0.15"
-  resolved "https://registry.yarnpkg.com/@storybook/react/-/react-9.0.15.tgz#e59913879baf6043dd2828cf1818d33f8839588c"
-  integrity sha512-hewpSH8Ij4Bg7S9Tfw7ecfGPv7YDycRxsfpsDX7Mw3JhLuCdqjpmmTL2RgoNojg7TAW3FPdixcgQi/b4PH50ag==
-  dependencies:
-    "@storybook/global" "^5.0.0"
-    "@storybook/react-dom-shim" "9.0.15"
-
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/@surma/rollup-plugin-off-main-thread/-/rollup-plugin-off-main-thread-2.2.3.tgz#ee34985952ca21558ab0d952f00298ad2190c053"
@@ -5888,13 +5870,12 @@ jderobot-commsmanager@1.0.3, jderobot-commsmanager@^1.0.3:
   dependencies:
     uuid "^11.1.0"
 
-jderobot-ide-interface@0.1.42:
-  version "0.1.42"
-  resolved "https://registry.yarnpkg.com/jderobot-ide-interface/-/jderobot-ide-interface-0.1.42.tgz#610bffe2cdbcb49131de2f6c92a15d58eba27396"
-  integrity sha512-s96F8a1rtRgIs+Bsf4yqcQp3GDJ0SKXwhmKNE/1MC1DE4uFHhwFn6DDP910huEzDTMLBo3VVIINoXGMnJM8/XA==
+jderobot-ide-interface@0.1.53:
+  version "0.1.53"
+  resolved "https://registry.yarnpkg.com/jderobot-ide-interface/-/jderobot-ide-interface-0.1.53.tgz#3102f7dc57c6771773f483fde274eca85f89deca"
+  integrity sha512-czWkeOmJhUuIrfUAYfqFCuJtsdtMysW7lktIP+jAX8XAotm0WdUyVCIcrtK5SsZDuY47pE+GCV9jN/J+4mVInw==
   dependencies:
     "@monaco-editor/react" "^4.7.0"
-    "@storybook/react" "^9.0.12"
     jderobot-commsmanager "^1.0.3"
     jszip "^3.10.1"
     lodash "^4.17.21"

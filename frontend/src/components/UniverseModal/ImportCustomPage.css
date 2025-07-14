@@ -3,6 +3,12 @@
   height: 30%;
 }
 
+#uploadDropInput-area {
+  height: 300px;
+  width: 75%;
+  margin-top: 30px;
+}
+
 .bt-upload-percentage {
   display: flex;
   font-size: 2em;
@@ -55,6 +61,7 @@
   transition:
     background 0.2s ease-in-out,
     border 0.2s ease-in-out;
+
   &:hover {
     background: var(--buttons);
     border-color: var(--background);

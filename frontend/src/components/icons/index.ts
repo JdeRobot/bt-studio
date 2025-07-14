@@ -1,0 +1,9 @@
+export { ReactComponent as ActionTeplateIcon } from "./action_template.svg";
+export { ReactComponent as EmptyTeplateIcon } from "./empty_template.svg";
+export { ReactComponent as IOTeplateIcon } from "./io_template.svg";
+export { ReactComponent as MonocolorSplashIcon } from "./logo_jderobot_monocolor.svg";
+export { ReactComponent as SplashIcon } from "./logo_jderobot.svg";
+export { ReactComponent as MonocolorUniboticsSplashIcon } from "./logo_unibotics_monocolor.svg";
+export { ReactComponent as UniboticsSplashIcon } from "./logo_unibotics.svg";
+export { ReactComponent as TerminalIcon } from "./terminal.svg";
+export { ReactComponent as GazeboIcon } from "./gazebo.svg";
