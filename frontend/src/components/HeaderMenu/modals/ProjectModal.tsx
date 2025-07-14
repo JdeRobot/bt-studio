@@ -137,6 +137,7 @@ const ProjectModal = ({
           </ModalRow>
           <ModalRow type="buttons" id="project-buttons">
             <button
+              id="create-project-open"
               type="button"
               onClick={() => {
                 setCreateProjectOpen(true);
@@ -180,6 +181,7 @@ const ProjectModal = ({
           </ModalRow>
           <ModalRow type="buttons" id="project-buttons">
             <button
+              id="create-new-project"
               type="button"
               onClick={() => {
                 handleCreate();

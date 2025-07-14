@@ -230,7 +230,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         isUnibotics={isUnibotics}
         setLayout={setLayout}
       />
-      <ThemeProvider theme={darkTheme}>
+      <ThemeProvider>
         {/* <ThemeProvider theme={darkTheme}> */}
         <IdeInterface
           commsManager={manager}

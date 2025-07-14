@@ -78,23 +78,6 @@ def get_project_list(request):
     return Response({"project_list": project_list})
 
 
-@error_wrapper("POST", ["project_name", "graph_json"])
-def save_base_tree(request):
-    # Get the app name and the graph
-    project_name = request.data.get("project_name")
-    graph_json = request.data.get("graph_json")
-
-    # Generate the paths
-    trees_path = fal.trees_path(project_name)
-    graph_path = fal.path_join(trees_path, "main.json")
-
-    # Obtain pretty json
-    graph = json.loads(graph_json)
-    graph_formated = json.dumps(graph, indent=4)
-    fal.write(graph_path, graph_formated)
-    return JsonResponse({"success": True})
-
-
 @error_wrapper("GET", ["project_name"])
 def get_base_tree(request):
     project_name = request.GET.get("project_name")
@@ -208,21 +191,6 @@ def create_subtree(request):
     subtree_formated = json.dumps(subtree, indent=4)
     fal.create(project_json_path, subtree_formated)
     return JsonResponse({"success": True}, status=status.HTTP_201_CREATED)
-
-
-@error_wrapper("POST", ["project_name", "subtree_name", "subtree_json"])
-def save_subtree(request):
-    # Get the project name, subtree name, and subtree JSON
-    project_name = request.data.get("project_name")
-    subtree_name = request.data.get("subtree_name")
-    subtree_json = request.data.get("subtree_json")
-
-    # Generate the paths
-    subtrees_path = fal.subtrees_path(project_name)
-    subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
-
-    fal.write(subtree_path, subtree_json)
-    return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
 
 @error_wrapper("GET", ["project_name", "subtree_name"])

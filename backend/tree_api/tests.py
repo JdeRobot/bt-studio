@@ -268,8 +268,12 @@ def get_tree(self, exepected):
 
 def write_tree(self, content):
     response = self.c.post(
-        "/bt_studio/save_base_tree/",
-        {"project_name": "test", "graph_json": content},
+        "/bt_studio/save_file/",
+        {
+            "project_name": "test",
+            "filename": "trees/main.json",
+            "content": content,
+        },
     )
     self.assertEqual(response.status_code, 200)
 
@@ -293,15 +297,19 @@ def get_subtree(self, subtree, exepected):
 
 def write_subtree(self, subtree, content):
     response = self.c.post(
-        "/bt_studio/save_subtree/",
-        {"project_name": "test", "subtree_name": subtree, "subtree_json": content},
+        "/bt_studio/save_file/",
+        {
+            "project_name": "test",
+            "filename": "trees/subtrees/" + subtree + ".json",
+            "content": content,
+        },
     )
     self.assertEqual(response.status_code, 200)
 
 
 class LocalTestCase(TestCase):
     empty_project_content = {
-        "file_list": '[{"is_dir": true, "name": "actions", "path": "actions", "files": []}, {"is_dir": true, "name": "trees", "path": "trees", "files": [{"is_dir": true, "name": "subtrees", "path": "trees/subtrees", "files": []}, {"is_dir": false, "name": "main.json", "path": "trees/main.json", "files": []}]}]'
+        "file_list": '[{"is_dir": true, "name": "actions", "path": "actions", "group": "Code", "access": true, "files": []}, {"is_dir": true, "name": "trees", "path": "trees", "group": "Trees", "access": true, "files": [{"is_dir": true, "name": "subtrees", "path": "trees/subtrees", "group": "Trees", "access": true, "files": []}, {"is_dir": false, "name": "main.json", "path": "trees/main.json", "group": "Trees", "access": true, "files": []}]}]'
     }
 
     base_project_config = {
@@ -320,7 +328,7 @@ class LocalTestCase(TestCase):
     }
 
     base_rb_universe_content = {
-        "file_list": '[{"is_dir": false, "name": "config.json", "path": "config.json", "files": []}]'
+        "file_list": '[{"is_dir": true, "name": "test", "path": "test", "group": "Universes", "access": true, "files": [{"is_dir": false, "name": "config.json", "path": "test/config.json", "group": "Universes", "access": true, "files": []}]}]'
     }
 
     test_action_content = {
@@ -435,8 +443,8 @@ class LocalTestCase(TestCase):
             "/bt_studio/get_file/",
             {
                 "project_name": "test",
-                "universe": "test",
-                "filename": "config.json",
+                "universe": "",
+                "filename": "test/config.json",
             },
         )
         self.assertEqual(
@@ -897,18 +905,6 @@ class LocalTestFailedCase(TestCase):
         response = self.c.post("/bt_studio/delete_project/", {"project_name": "test"})
         self.assertEqual(response.status_code, self.no_files)
 
-    def test_incorrect_save_base_tree(self):
-        """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/save_base_tree/")
-        self.assertEqual(response.status_code, self.no_param)
-
-    def test_bad_json_save_base_tree(self):
-        """Test if error appears when no paramters are passed"""
-        response = self.c.post(
-            "/bt_studio/save_base_tree/", {"project_name": "test", "graph_json": "{"}
-        )
-        self.assertEqual(response.status_code, self.bad_data)
-
     def test_incorrect_get_main_tree(self):
         """Test if error appears when no paramters are passed"""
         response = self.c.get("/bt_studio/get_base_tree/")
@@ -1044,19 +1040,6 @@ class LocalTestFailedCase(TestCase):
         )
         self.assertEqual(response.status_code, self.dup_file)
         delete_proyect(self)
-
-    def test_incorrect_save_subtree(self):
-        """Test if error appears when no paramters are passed"""
-        response = self.c.post("/bt_studio/save_subtree/")
-        self.assertEqual(response.status_code, self.no_param)
-
-    def test_bad_path_save_subtree(self):
-        """Test if error appears when no paramters are passed"""
-        response = self.c.post(
-            "/bt_studio/save_subtree/",
-            {"project_name": "test", "subtree_name": "subtree", "subtree_json": "a"},
-        )
-        self.assertEqual(response.status_code, self.no_files)
 
     def test_incorrect_get_subtree(self):
         """Test if error appears when no paramters are passed"""
@@ -1473,11 +1456,18 @@ class SeleniumTests(StaticLiveServerTestCase):
         self.selenium.find_element(By.ID, "projectName").send_keys("test")
         self.selenium.find_element(By.ID, "create-new-project").click()
         # Create Action
-        self.selenium.find_element(By.ID, "create-file-open").click()
+        explorer = self.selenium.find_element(By.ID, "Code")
+        explorer.find_element(By.ID, "new-file-button").click()
         self.selenium.find_element(By.ID, "fileName").send_keys("Action")
-        self.selenium.find_element(By.ID, "button-actionsType").click()
-        self.selenium.find_element(By.ID, "button-actionTemplate").click()
+        self.selenium.find_element(By.ID, "button-actions").click()
+        self.selenium.find_element(By.ID, "button-action").click()
         self.selenium.find_element(By.ID, "create-new-action").click()
+        # Open BT
+        explorer.find_element(By.XPATH,"//*[contains(text(), 'main.json')]").click()
+        print()
+        WebDriverWait(self.selenium, 0.5).until(
+            EC.presence_of_element_located((By.ID, "Sequences"))
+        )
         # Create BT
         self.selenium.find_element(By.ID, "Sequences").click()
         menu = self.selenium.find_element(By.CLASS_NAME, "MuiPopover-root")
@@ -1544,7 +1534,7 @@ class SeleniumTests(StaticLiveServerTestCase):
             action.drag_and_drop_by_offset(action_node, 100, 0)
             action.perform()
 
-        self.selenium.find_element(By.ID, "save-bt-changes").click()
+        self.selenium.find_element(By.ID, "save-button").click()
         self.selenium.get_full_page_screenshot_as_file(
             "/BtStudio/.test_logs/bt_create.png"
         )
