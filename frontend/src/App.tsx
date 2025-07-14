@@ -7,7 +7,11 @@ import { CommsManager } from "jderobot-commsmanager";
 import { getProjectConfig } from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
-import IdeInterface, { VncViewer, useError } from "jderobot-ide-interface";
+import IdeInterface, {
+  ThemeProvider,
+  VncViewer,
+  useError,
+} from "jderobot-ide-interface";
 import TreeEditorContainer, {
   AddSubtreeButton,
   BTSelectorButtons,
@@ -187,19 +191,20 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         isUnibotics={isUnibotics}
         setLayout={setLayout}
       />
-
-      <IdeInterface
-        commsManager={manager}
-        resetManager={resetManager}
-        project={currentProjectname}
-        explorers={explorers}
-        api={editorApi}
-        extraEditors={[treeEditor]}
-        viewers={[treeMonitor, gazeboViewer, terminalViewer]}
-        options={[]}
-        layout={layout}
-        statusBarComponents={statusBar}
-      />
+      <ThemeProvider>
+        <IdeInterface
+          commsManager={manager}
+          resetManager={resetManager}
+          project={currentProjectname}
+          explorers={explorers}
+          api={editorApi}
+          extraEditors={[treeEditor]}
+          viewers={[treeMonitor, gazeboViewer, terminalViewer]}
+          options={[]}
+          layout={layout}
+          statusBarComponents={statusBar}
+        />
+      </ThemeProvider>
     </div>
   );
 };

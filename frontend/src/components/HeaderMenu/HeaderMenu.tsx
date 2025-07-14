@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import JSZip from "jszip";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,7 +9,7 @@ import {
   getFileList,
   getFile,
 } from "../../api_helper/TreeWrapper";
-import { CommsManager } from "jderobot-commsmanager";
+import { CommsManager, states } from "jderobot-commsmanager";
 
 import { ReactComponent as LogoIcon } from "../icons/logo_jderobot_monocolor.svg";
 import { ReactComponent as LogoUniboticsIcon } from "../icons/logo_unibotics_monocolor.svg";
@@ -28,6 +28,7 @@ import { OptionsContext } from "../options/Options";
 import RosTemplates from "../../templates/RosTemplates";
 import TreeGardener from "../../templates/TreeGardener";
 import { useError } from "jderobot-ide-interface";
+import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 
 interface Entry {
   name: string;
@@ -63,6 +64,18 @@ const HeaderMenu = ({
   // Modal state
   const [isProjectModalOpen, setProjectModalOpen] = useState(true);
   const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
+
+  const updateState = (e: any) => {
+    setAppRunning(e.detail.state === states.RUNNING);
+  };
+
+  useEffect(() => {
+    subscribe("CommsManagerStateChange", updateState);
+
+    return () => {
+      unsubscribe("CommsManagerStateChange", () => {});
+    };
+  }, []);
 
   // RB helpers
 
