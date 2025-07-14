@@ -8,8 +8,8 @@ import createEngine, {
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
 import { changeColorNode, configureEngine } from "../helper/TreeEditorHelper";
-import { BasicNodeModel } from "./../tree_editor/nodes/basic_node/BasicNodeModel";
-import { TagNodeModel } from "./../tree_editor/nodes/tag_node/TagNodeModel";
+import { BasicNodeModel } from "../TreeEditor/nodes/basic_node/BasicNodeModel";
+import { TagNodeModel } from "../TreeEditor/nodes/tag_node/TagNodeModel";
 
 import "./TreeMonitor.css";
 import TreeMonitorMenu from "./TreeMonitorMenu";

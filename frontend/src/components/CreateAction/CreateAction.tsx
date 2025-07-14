@@ -16,7 +16,7 @@ export interface newFileData {
   templateType: string;
 }
 
-const initialNewFileModalData = {
+const initialNewFileModalData: newFileData = {
   fileType: "plain",
   fileName: "",
   templateType: "empty",

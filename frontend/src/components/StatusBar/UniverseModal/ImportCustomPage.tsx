@@ -5,14 +5,15 @@ import {
   createUniverseConfig,
   createUniverseFolder,
   uploadFileUniverse,
-} from "../../api_helper/TreeWrapper";
-import { ModalInputDropArea, useError } from "jderobot-ide-interface";
+} from "../../../api_helper/TreeWrapper";
 import JSZip from "jszip";
 import {
   ModalInputBox,
   ModalRow,
   ModalTitlebar,
   ProgressBar,
+  ModalInputDropArea,
+  useError,
 } from "jderobot-ide-interface";
 
 const initialUniverseData = {

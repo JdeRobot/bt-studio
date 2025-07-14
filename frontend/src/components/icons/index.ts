@@ -6,4 +6,4 @@ export { ReactComponent as SplashIcon } from "./logo_jderobot.svg";
 export { ReactComponent as MonocolorUniboticsSplashIcon } from "./logo_unibotics_monocolor.svg";
 export { ReactComponent as UniboticsSplashIcon } from "./logo_unibotics.svg";
 export { ReactComponent as TerminalIcon } from "./terminal.svg";
-export { ReactComponent as GazeboIcon } from "./gazebo.svg";
+export { ReactComponent as SimulatorIcon } from "./gazebo.svg";

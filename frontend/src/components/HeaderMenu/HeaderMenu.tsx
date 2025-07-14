@@ -25,8 +25,8 @@ import ProjectModal from "./modals/ProjectModal";
 import SettingsModal from "../settings_popup/SettingsModal";
 import { OptionsContext } from "../options/Options";
 
-import RosTemplates from "./../../templates/RosTemplates";
-import TreeGardener from "./../../templates/TreeGardener";
+import RosTemplates from "../../templates/RosTemplates";
+import TreeGardener from "../../templates/TreeGardener";
 import { useError } from "jderobot-ide-interface";
 
 interface Entry {

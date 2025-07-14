@@ -7,16 +7,16 @@ import {
   ZoomCanvasAction,
 } from "@projectstorm/react-diagrams";
 
-import { BasicNodeFactory } from "../tree_editor/nodes/basic_node/BasicNodeFactory";
-import { BasicNodeModel } from "../tree_editor/nodes/basic_node/BasicNodeModel";
-import { TagNodeFactory } from "../tree_editor/nodes/tag_node/TagNodeFactory";
-import { SimplePortFactory } from "../tree_editor/nodes/SimplePortFactory";
-import { ChildrenPortModel } from "../tree_editor/nodes/basic_node/ports/children_port/ChildrenPortModel";
-import { ParentPortModel } from "../tree_editor/nodes/basic_node/ports/parent_port/ParentPortModel";
-import { OutputPortModel } from "../tree_editor/nodes/basic_node/ports/output_port/OutputPortModel";
-import { InputPortModel } from "../tree_editor/nodes/basic_node/ports/input_port/InputPortModel";
-import { TagOutputPortModel } from "../tree_editor/nodes/tag_node/ports/output_port/TagOutputPortModel";
-import { TagInputPortModel } from "../tree_editor/nodes/tag_node/ports/input_port/TagInputPortModel";
+import { BasicNodeFactory } from "../TreeEditor/nodes/basic_node/BasicNodeFactory";
+import { BasicNodeModel } from "../TreeEditor/nodes/basic_node/BasicNodeModel";
+import { TagNodeFactory } from "../TreeEditor/nodes/tag_node/TagNodeFactory";
+import { SimplePortFactory } from "../TreeEditor/nodes/SimplePortFactory";
+import { ChildrenPortModel } from "../TreeEditor/nodes/basic_node/ports/children_port/ChildrenPortModel";
+import { ParentPortModel } from "../TreeEditor/nodes/basic_node/ports/parent_port/ParentPortModel";
+import { OutputPortModel } from "../TreeEditor/nodes/basic_node/ports/output_port/OutputPortModel";
+import { InputPortModel } from "../TreeEditor/nodes/basic_node/ports/input_port/InputPortModel";
+import { TagOutputPortModel } from "../TreeEditor/nodes/tag_node/ports/output_port/TagOutputPortModel";
+import { TagInputPortModel } from "../TreeEditor/nodes/tag_node/ports/input_port/TagInputPortModel";
 
 export enum ActionNodePortType {
   Input = 0,

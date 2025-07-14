@@ -1,22 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  createRoboticsBackendUniverse,
-  listDockerUniverses,
-} from "../../api_helper/TreeWrapper";
-import { useError } from "jderobot-ide-interface";
+import { createCustomUniverse } from "../../../api_helper/TreeWrapper";
 import {
   ModalInputBox,
-  ModalInputDropdown,
   ModalRow,
   ModalTitlebar,
+  useError,
 } from "jderobot-ide-interface";
 
 const initialUniverseData = {
   universeName: "",
-  dockerUniverseName: "",
 };
 
-const CreatePage = ({
+const CreateCustomPage = ({
   setVisible,
   visible,
   onClose,
@@ -32,20 +27,7 @@ const CreatePage = ({
   const focusInputRef = useRef<any>(null);
   const dropdown = useRef<any>(null);
   const [formState, setFormState] = useState(initialUniverseData);
-  const [availableUniverses, setUniversesDocker] = useState<string[]>([]);
   const [openDropdown, setOpenDropdown] = useState<boolean>(false);
-
-  const loadUniverseList = async () => {
-    try {
-      const response = await listDockerUniverses();
-      setUniversesDocker(response);
-    } catch (e) {
-      if (e instanceof Error) {
-        console.error("Error while fetching universes list: " + e.message);
-        error("Error while fetching universes list: " + e.message);
-      }
-    }
-  };
 
   useEffect(() => {
     if (visible && focusInputRef.current) {
@@ -53,8 +35,6 @@ const CreatePage = ({
         focusInputRef.current.focus();
       }, 0);
     }
-
-    loadUniverseList();
   }, [visible]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,20 +52,12 @@ const CreatePage = ({
   };
 
   const handleCreate = () => {
-    if (formState.universeName === "" && formState.dockerUniverseName === "") {
+    if (formState.universeName === "") {
       return;
     }
 
-    if (!availableUniverses.includes(formState.dockerUniverseName)) {
-      //TODO: invalid docker universe
-      return;
-    }
+    createCustomUniverse(currentProject, formState.universeName);
 
-    createRoboticsBackendUniverse(
-      currentProject,
-      formState.universeName,
-      formState.dockerUniverseName,
-    );
     setVisible(false);
   };
 
@@ -127,18 +99,6 @@ const CreatePage = ({
           maxLength={20}
         />
       </ModalRow>
-      <ModalRow type="input">
-        <ModalInputDropdown
-          isInputValid={true}
-          ref={dropdown}
-          entries={availableUniverses}
-          id="dockerUniverseName"
-          placeholder="Select Robotics Backend Universe"
-          onChange={handleInputChange}
-          type="text"
-          required
-        ></ModalInputDropdown>
-      </ModalRow>
       <ModalRow type="buttons">
         <button
           type="button"
@@ -152,4 +112,4 @@ const CreatePage = ({
   );
 };
 
-export default CreatePage;
+export default CreateCustomPage;

@@ -1,49 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useUnload } from "./hooks/useUnload";
-import HeaderMenu from "./components/header_menu/HeaderMenu";
+import HeaderMenu from "./components/HeaderMenu";
 import "./App.css";
-import { ReactComponent as SimulatorIcon } from "./components/icons/gazebo.svg";
-import { ReactComponent as TerminalIcon } from "./components/icons/terminal.svg";
+import { SimulatorIcon, TerminalIcon } from "./components/icons";
 import { CommsManager } from "jderobot-commsmanager";
-import {
-  createAction,
-  createFile,
-  createFolder,
-  deleteFile,
-  deleteFolder,
-  getFile,
-  getFileList,
-  getProjectConfig,
-  getRoboticsBackendUniverse,
-  getUniverseConfig,
-  listUniverses,
-  renameFile,
-  renameFolder,
-  saveFile,
-  uploadFile,
-} from "./api_helper/TreeWrapper";
+import { getProjectConfig } from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
-import IdeInterface, {
-  VncViewer,
-  Entry,
-  StatusBarComponents,
-  ExtraApi,
-  useError,
-} from "jderobot-ide-interface";
-import { publish } from "./components/helper/TreeEditorHelper";
-import TreeEditor from "./components/tree_editor/TreeEditorContainer";
-import {
+import IdeInterface, { VncViewer, useError } from "jderobot-ide-interface";
+import TreeEditorContainer, {
   AddSubtreeButton,
   BTSelectorButtons,
   OtherButtons,
-} from "./components/tree_editor/TreeEditorMenu";
-import TreeMonitor from "./components/tree_monitor/TreeMonitorContainer";
-import { createCustomUniverseConfig } from "./components/helper/customUniverseHelper";
-import UniverseModal from "./components/UniverseModal/UniverseModal";
-import CreateAction, {
-  newFileData,
-} from "./components/CreateAction/CreateAction";
+} from "./components/TreeEditor";
+import TreeMonitorContainer from "./components/TreeMonitor";
+import { explorers } from "./components/Explorers";
+import { statusBar } from "./components/StatusBar";
+import { editorApi } from "./components/Editors";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
@@ -160,104 +133,12 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     }
   }, [currentProjectname]); // Reload project configuration
 
-  const fileExplorer = {
-    name: "Code",
-    list: (project: string) => {
-      return getFileList(project);
-    },
-    file: {
-      create: (project: string, location: string, name: string) => {
-        return createFile(project, name, location);
-      },
-      get: (project: string, path: string) => {
-        return getFile(project, path);
-      },
-      rename: (project: string, oldPath: string, newPath: string) => {
-        return renameFile(project, oldPath, newPath);
-      },
-      delete: (project: string, path: string) => {
-        return deleteFile(project, path);
-      },
-      upload: (
-        project: string,
-        path: string,
-        name: string,
-        content: string,
-      ) => {
-        return uploadFile(project, name, path, content);
-      },
-    },
-    folder: {
-      create: (project: string, location: string, name: string) => {
-        return createFolder(project, name, location);
-      },
-      rename: (project: string, oldPath: string, newPath: string) => {
-        return renameFolder(project, oldPath, newPath);
-      },
-      delete: (project: string, path: string) => {
-        return deleteFolder(project, path);
-      },
-    },
-    modals: {
-      createFile: {
-        component: CreateAction,
-        onCreate: (project: string, location: string, data: newFileData) => {
-          console.log(data);
-          if (data.fileType === "actions") {
-            publish("updateActionList");
-            return createAction(project, data.fileName, data.templateType);
-          } else {
-            return createFile(project, data.fileName, location);
-          }
-        },
-      },
-    },
-  };
-
-  const universeExplorer = {
-    name: "Universes",
-    list: (project: string) => {
-      return getFileList(project, "");
-    },
-    file: {
-      create: (project: string, location: string, name: string) => {
-        return createFile(project, name, location, "");
-      },
-      get: (project: string, path: string) => {
-        return getFile(project, path, "");
-      },
-      rename: (project: string, oldPath: string, newPath: string) => {
-        return renameFile(project, oldPath, newPath, "");
-      },
-      delete: (project: string, path: string) => {
-        console.log(project, path);
-        return deleteFile(project, path, "");
-      },
-      upload: (
-        project: string,
-        path: string,
-        name: string,
-        content: string,
-      ) => {
-        return uploadFile(project, name, path, content, "");
-      },
-    },
-    folder: {
-      create: (project: string, location: string, name: string) => {
-        return createFolder(project, name, location, "");
-      },
-      rename: (project: string, oldPath: string, newPath: string) => {
-        return renameFolder(project, oldPath, newPath, "");
-      },
-      delete: (project: string, path: string) => {
-        return deleteFolder(project, path, "");
-      },
-    },
-  };
-
   const treeMonitor = {
     component: (
-      <TreeMonitor commsManager={manager} project={currentProjectname} />
+      <TreeMonitorContainer
+        commsManager={manager}
+        project={currentProjectname}
+      />
     ),
     icon: <SimulatorIcon />,
     name: "Tree Monitor",
@@ -282,7 +163,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   };
 
   const treeEditor = {
-    component: TreeEditor,
+    component: TreeEditorContainer,
     buttons: [
       <BTSelectorButtons project={currentProjectname} />,
       <AddSubtreeButton project={currentProjectname} />,
@@ -291,43 +172,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     name: "Tree editor",
     language: "custom_tree_editor",
     trigger: [{ group: "Trees", extension: "json" }],
-  };
-
-  const api: ExtraApi = {
-    file: {
-      get: (project: string, file: Entry) => {
-        if (file.group === "Universes") {
-          return getFile(project, file.path, "");
-        }
-        return getFile(project, file.path);
-      },
-      save: (project: string, file: Entry, content: string) => {
-        if (file.group === "Universes") {
-          return saveFile(project, file.path, content, "");
-        }
-        return saveFile(project, file.path, content);
-      },
-    },
-    universes: {
-      list: (project: string) => {
-        return listUniverses(project);
-      },
-      get_config: async (project: string, universe: string) => {
-        const config = await getUniverseConfig(universe, project);
-        const configJson = JSON.parse(config);
-
-        if (configJson.type === "robotics_backend") {
-          return getRoboticsBackendUniverse(configJson.id);
-        }
-        // Get custom universe config
-        return createCustomUniverseConfig(project, configJson);
-      },
-    },
-  };
-
-  const statusBar: StatusBarComponents = {
-    universeSelector: UniverseModal,
-    extras: [],
   };
 
   return (
@@ -348,8 +192,8 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         commsManager={manager}
         resetManager={resetManager}
         project={currentProjectname}
-        explorers={[fileExplorer, universeExplorer]}
-        api={api}
+        explorers={explorers}
+        api={editorApi}
         extraEditors={[treeEditor]}
         viewers={[treeMonitor, gazeboViewer, terminalViewer]}
         options={[]}
