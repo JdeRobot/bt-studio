@@ -579,9 +579,10 @@ def create_custom_universe(request):
         "type": "custom",
         "ram_config": {
             "ros_version": "ROS2",
-            "world": "gazebo",
+            "type": "gz",
             "launch_file_path": ram_launch_path,
-            "visualization_config_path": ram_visualization_config_path,
+            "tools_config": {"gzsim": ram_visualization_config_path},
+            "tools": ["console", "simulator", "state_monitor"],
         },
     }
 

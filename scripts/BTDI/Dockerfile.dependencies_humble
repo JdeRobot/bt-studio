@@ -149,7 +149,7 @@ RUN python3.10 -m pip install \
     argparse==1.4.0 coverage==6.2 cerberus==1.3.4 empy==3.3.4 jinja2==3.0.3 kconfiglib==14.1.0 \
     matplotlib==3.0.* numpy==1.24.3 nunavut==1.1.0 packaging==21.3 pkgconfig==1.5.5 pyros-genmsg==0.5.8 \
     pyulog==1.0.1 pyyaml==5.4.1 requests==2.31.0 serial==0.0.97 six==1.16.0 toml==0.10.2 psutil==5.9.0 \
-    onnxruntime==1.15.0 Pillow==9.0.1 opencv-python==4.5.5.64 netron seaborn==0.11.2 watchdog==2.1.5 utm==0.7.0 psycopg2 jedi pyapriltags
+    onnxruntime==1.22.0 Pillow==9.0.1 opencv-python==4.5.5.64 netron seaborn==0.11.2 watchdog==2.1.5 utm==0.7.0 psycopg2 jedi pyapriltags
 
 # monaco editor
 RUN python3.10 -m pip install black==24.10.0
@@ -288,27 +288,14 @@ RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
 # Install CycloneDDS RMW for ROS 2 Humble to fix cycle time issues in humble-moveit (temporary fix)    
 RUN echo 'export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp' >> ~/.bashrc
 
-# Instalation for industrial robots
-
-RUN mkdir -p /home/industrial_ws/src/ABBDriver
-WORKDIR /home/industrial_ws/src/ABBDriver
-RUN git clone https://github.com/PickNikRobotics/abb_ros2.git -b rolling
-RUN . /opt/ros/$ROS_DISTRO/setup.sh && rosdep update
-RUN vcs import < abb_ros2/abb.repos
-RUN . /opt/ros/$ROS_DISTRO/setup.sh && rosdep install -r --from-paths . --ignore-src --rosdistro $ROS_DISTRO -y
-WORKDIR /home/industrial_ws/src
-RUN git clone https://github.com/ros-controls/gazebo_ros2_control.git
-RUN cd gazebo_ros2_control && git reset --hard 9a3736c # Commit for the 0.4.6 version!
-RUN git clone https://github.com/IFRA-Cranfield/IFRA_LinkAttacher.git
-RUN git clone https://github.com/IFRA-Cranfield/IFRA_ObjectPose.git
-RUN git clone https://github.com/IFRA-Cranfield/IFRA_LinkPose.git
-RUN git clone https://github.com/IFRA-Cranfield/ros2_RobotiqGripper.git
-# Forked needed in order to read the parameters from main launcher
-RUN git clone https://github.com/javizqh/ros2_SimRealRobotControl
-RUN sudo cp /home/industrial_ws/src/ros2_SimRealRobotControl/include/move_group_interface_improved.h /opt/ros/humble/include/moveit/move_group_interface/move_group_interface_improved.h
-WORKDIR /home/industrial_ws
-RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
-    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+# Create workspace and add IndustrialRobots repo 
+RUN mkdir -p /home/dev_ws/src/
+WORKDIR /home/dev_ws/src/
+RUN git clone https://github.com/JdeRobot/IndustrialRobots.git -b humble-devel 
+RUN sudo cp /home/dev_ws/src/IndustrialRobots/ros2_SimRealRobotControl/include/move_group_interface_improved.h /opt/ros/humble/include/moveit/move_group_interface/move_group_interface_improved.h
+WORKDIR /home/dev_ws
+RUN . /opt/ros/$ROS_DISTRO/setup.sh && colcon build && colcon build
+RUN echo "source /home/dev_ws/install/local_setup.bash" >> ~/.bashrc
 
 # Create workspace and add drone packages
 RUN echo "source /usr/share/gazebo/setup.bash" >> ~/.bashrc
@@ -316,7 +303,6 @@ RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 RUN echo 'export AEROSTACK2_PATH=/home/drones_ws/src/aerostack2' >> ~/.bashrc
 RUN echo 'source $AEROSTACK2_PATH/as2_cli/setup_env.bash' >> ~/.bashrc
 RUN echo "source /home/drones_ws/install/setup.bash" >> ~/.bashrc
-RUN echo "source /home/industrial_ws/install/setup.bash" >> ~/.bashrc
 
 # Download and install OMPL library
 COPY install-ompl-ubuntu.sh /

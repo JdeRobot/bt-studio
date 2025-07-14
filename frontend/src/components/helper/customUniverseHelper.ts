@@ -46,7 +46,10 @@ const zipToData = (zip: JSZip) => {
   });
 };
 
-export const createCustomUniverseConfig = async (project: string, configJson: any) => {
+export const createCustomUniverseConfig = async (
+  project: string,
+  configJson: any
+) => {
   const file_list = await getFileList(project, configJson.name);
 
   const files: Entry[] = JSON.parse(file_list);
@@ -74,12 +77,25 @@ export const createCustomUniverseConfig = async (project: string, configJson: an
 
   const base64data = await zipToData(zip);
 
+  const universe_type = configJson.ram_config.type
+    ? configJson.ram_config.type
+    : "gz";
+  const tools = configJson.ram_config.tools
+    ? configJson.ram_config.tools
+    : ["console", "simulator", "state_monitor"];
+  var tools_config = configJson.ram_config.tools_config
+    ? configJson.ram_config.tools_config
+    : {};
+
+  if (configJson.ram_config.visualization_config_path) {
+    tools_config = { gzsim: configJson.ram_config.visualization_config_path };
+  }
+
   const world_config = {
     name: configJson.name,
     launch_file_path: configJson.ram_config.launch_file_path,
     ros_version: configJson.ram_config.ros_version,
-    world: configJson.ram_config.world,
-    tools_config: {},
+    type: universe_type,
     zip: base64data,
   };
 
@@ -87,32 +103,16 @@ export const createCustomUniverseConfig = async (project: string, configJson: an
     name: null,
     launch_file_path: null,
     ros_version: null,
-    world: null,
+    type: null,
     start_pose: null,
   };
 
   const universe_config = {
     world: world_config,
     robot: robot_config,
-    "tools": ["console", "simulator", "state_monitor"],
-    "tools_config": {},
+    tools: tools,
+    tools_config: tools_config,
   };
 
-  // config = {
-  //     "name": universe.name,
-  //     "world": {
-  //         "name": universe.world.name,
-  //         "launch_file_path": universe.world.launch_file_path,
-  //         "ros_version": universe.world.ros_version,
-  //         "type": universe.world.type,
-  //         "tools_config": tools_configuration,
-  //     },
-  //     "tools": tools,
-  //     "tools_config": tools_config,
-  //     "robot": robot_config,
-  //     "template": self.template,
-  //     "exercise_id": self.exercise_id,
-  // }
-
-  return universe_config
+  return universe_config;
 };
