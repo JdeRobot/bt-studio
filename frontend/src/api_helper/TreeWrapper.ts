@@ -446,31 +446,6 @@ const generateDockerizedApp = async (
 
 ////////////////////////////// Tree management /////////////////////////////////
 
-const saveBaseTree = async (modelJson: string, currentProjectname: string) => {
-  if (!modelJson) throw new Error("Tree JSON is empty!");
-  if (!currentProjectname) throw new Error("Current Project name is not set");
-
-  const apiUrl = "/bt_studio/save_base_tree/";
-  try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        project_name: currentProjectname,
-        graph_json: JSON.stringify(modelJson),
-      },
-      axiosExtra
-    );
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
-    }
-  } catch (error: unknown) {
-    console.log(error);
-    throw error; // Rethrow
-  }
-};
-
 const getBaseTree = async (currentProjectname: string) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
@@ -586,36 +561,6 @@ const getSubtreePath = async (projectName: string,subtreeName: string) => {
   }
 };
 
-const saveSubtree = async (
-  modelJson: string,
-  currentProjectname: string,
-  subtreeName: string
-) => {
-  if (!modelJson) throw new Error("Tree JSON is empty!");
-  if (!currentProjectname) throw new Error("Current Project name is not set");
-  if (!subtreeName) throw new Error("Subtree name is not set");
-
-  const apiUrl = "/bt_studio/save_subtree/";
-  try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        project_name: currentProjectname,
-        subtree_name: subtreeName,
-        subtree_json: JSON.stringify(modelJson),
-      },
-      axiosExtra
-    );
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
-    }
-  } catch (error: unknown) {
-    console.log(error);
-    throw error; // Rethrow
-  }
-};
 
 const getSubtreeList = async (projectName: string) => {
   if (!projectName) throw new Error("Project name is not set");
@@ -702,19 +647,6 @@ const createFile = async (
   }
 };
 
-const createUniverseFile = async (
-  projectName: string,
-  fileName: string,
-  location: string,
-  universeName: string
-) => {
-  if (!projectName) throw new Error("Project name is not set");
-  if (!universeName) throw new Error("Universe name is not set");
-  if (!fileName) throw new Error("File name is not set");
-  if (!location) throw new Error("Location does not exist");
-
-  return await createFile(projectName, fileName, location, universeName);
-};
 
 const createAction = async (
   projectName: string,
@@ -820,20 +752,6 @@ const saveFile = async (
   }
 };
 
-const saveUniverseFile = async (
-  projectName: string,
-  fileName: string,
-  content: string,
-  universeName: string
-) => {
-  if (!projectName) throw new Error("Project name is not set");
-  if (!universeName) throw new Error("Universe name is not set");
-  if (!fileName) throw new Error("File name is not set");
-  if (!content) throw new Error("Content does not exist");
-
-  return await saveFile(projectName, fileName, content, universeName);
-};
-
 const renameFile = async (
   projectName: string,
   path: string,
@@ -869,19 +787,6 @@ const renameFile = async (
   }
 };
 
-const renameUniverseFile = async (
-  projectName: string,
-  path: string,
-  new_path: string,
-  universeName: string
-) => {
-  if (!projectName) throw new Error("Project name is not set");
-  if (!universeName) throw new Error("Universe name is not set");
-  if (!path) throw new Error("Path is not set");
-  if (!new_path) throw new Error("New path is not set");
-
-  return await renameFile(projectName, path, new_path, universeName);
-};
 
 const deleteFile = async (
   projectName: string,
@@ -915,17 +820,6 @@ const deleteFile = async (
   }
 };
 
-const deleteUniverseFile = async (
-  projectName: string,
-  path: string,
-  universeName: string
-) => {
-  if (!projectName) throw new Error("Project name is not set");
-  if (!universeName) throw new Error("Universe name is not set");
-  if (!path) throw new Error("Path is not set");
-
-  return await renameFile(projectName, path, universeName);
-};
 
 const uploadFile = async (
   projectName: string,
@@ -1115,19 +1009,6 @@ const renameFolder = async (
   }
 };
 
-const renameUniverseFolder = async (
-  projectName: string,
-  path: string,
-  new_path: string,
-  universeName: string
-) => {
-  if (!projectName) throw new Error("Current Project name is not set");
-  if (!path) throw new Error("Path is not set");
-  if (!new_path) throw new Error("New path is not set");
-  if (!universeName) throw new Error("Universe name is not set");
-
-  return await renameFolder(projectName, path, new_path, universeName);
-};
 
 const deleteFolder = async (
   projectName: string,
@@ -1159,18 +1040,6 @@ const deleteFolder = async (
   }
 };
 
-const deleteUniverseFolder = async (
-  projectName: string,
-  path: string,
-  universeName: string
-) => {
-  if (!projectName) throw new Error("Current Project name is not set");
-  if (!path) throw new Error("Path is not set");
-  if (!universeName) throw new Error("Universe name is not set");
-
-  return await deleteFolder(projectName, path, universeName);
-};
-
 ////////////////////////////////// Exports /////////////////////////////////////
 export {
   createAction,
@@ -1182,14 +1051,11 @@ export {
   createRoboticsBackendUniverse,
   createSubtree,
   createUniverseConfig,
-  createUniverseFile,
   createUniverseFolder,
   deleteFile,
   deleteFolder,
   deleteProject,
   deleteUniverse,
-  deleteUniverseFile,
-  deleteUniverseFolder,
   generateDockerizedApp,
   generateLocalApp,
   getActionsList,
@@ -1209,13 +1075,8 @@ export {
   listUniverses,
   renameFile,
   renameFolder,
-  renameUniverseFile,
-  renameUniverseFolder,
-  saveBaseTree,
   saveFile,
   saveProjectConfig,
-  saveSubtree,
-  saveUniverseFile,
   uploadFile,
   uploadFileUniverse,
   getSubtreePath

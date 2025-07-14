@@ -8,6 +8,7 @@ import { getProjectConfig } from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
 import IdeInterface, {
+  Theme,
   ThemeProvider,
   VncViewer,
   useError,
@@ -178,6 +179,44 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     trigger: [{ group: "Trees", extension: "json" }],
   };
 
+  const darkTheme: Theme = {
+    palette: {
+      text: "#ededf2",
+      darkText: "#000000",
+      placeholderText: "#a6a6bf",
+      success: "#29ac29",
+      warning: "#f9e86d",
+      error: "#802626",
+      background: "#16161d",
+      primary: "#444444ff",
+      secondary: "#666666ff",
+      scrollbar: "#6f6f90",
+      border: {
+        warning: "#ffe100",
+        error: "#772222",
+        info: "#134f53",
+      },
+      progressBar: {
+        background: "#134f53",
+        color: "#1d777c",
+      },
+      button: {
+        error: "#9e2e2e",
+        success: "#29ac29",
+        warning: "#ffe100",
+        info: "#134f53",
+        hoverError: "#c63939",
+        hoverSuccess: "#29ac29",
+        hoverWarning: "#ccb400",
+        hoverInfo: "#1d777c",
+      },
+      selectedGradient:
+        "linear-gradient( -45deg, #12494c 0%, #584f42 50%, #909c7b 100%)",
+    },
+    roundness: 5,
+    monacoTheme: "dark",
+  };
+
   return (
     <div
       className="bt-App"
@@ -191,7 +230,8 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         isUnibotics={isUnibotics}
         setLayout={setLayout}
       />
-      <ThemeProvider>
+      <ThemeProvider theme={darkTheme}>
+        {/* <ThemeProvider theme={darkTheme}> */}
         <IdeInterface
           commsManager={manager}
           resetManager={resetManager}
