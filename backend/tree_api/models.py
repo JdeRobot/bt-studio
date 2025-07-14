@@ -31,6 +31,7 @@ class Tool(models.Model):
     class Meta:
         db_table = '"tools"'
 
+
 class Robot(models.Model):
     """
     Modelo Robot para RoboticsAcademy
@@ -66,6 +67,7 @@ class World(models.Model):
             )
         )
     )
+
     def __str__(self):
         return str(self.name)
 
