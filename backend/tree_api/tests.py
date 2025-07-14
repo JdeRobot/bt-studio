@@ -1463,7 +1463,7 @@ class SeleniumTests(StaticLiveServerTestCase):
         self.selenium.find_element(By.ID, "button-action").click()
         self.selenium.find_element(By.ID, "create-new-action").click()
         # Open BT
-        explorer.find_element(By.XPATH,"//*[contains(text(), 'main.json')]").click()
+        explorer.find_element(By.XPATH, "//*[contains(text(), 'main.json')]").click()
         print()
         WebDriverWait(self.selenium, 0.5).until(
             EC.presence_of_element_located((By.ID, "Sequences"))
