@@ -328,7 +328,7 @@ class LocalTestCase(TestCase):
     }
 
     base_rb_universe_content = {
-        "file_list": '[{"is_dir": true, "name": "test", "path": "test", "group": "Universes", "access": true, "files": [{"is_dir": false, "name": "config.json", "path": "test/config.json", "group": "Universes", "access": true, "files": []}]}]'
+        "file_list": '[{"is_dir": false, "name": "config.json", "path": "config.json", "group": "Universes", "access": true, "files": []}]'
     }
 
     test_action_content = {

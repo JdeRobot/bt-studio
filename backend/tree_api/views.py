@@ -321,7 +321,7 @@ def get_file_list(request):
     if universe is not None:
         path = fal.universes_path(project_name)
         base_group = "Universes"
-        if universe == "":
+        if universe != "":
             path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
@@ -350,7 +350,7 @@ def get_file(request):
 
     if universe is not None:
         path = fal.universes_path(project_name)
-        if universe == "":
+        if universe != "":
             path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
@@ -388,7 +388,7 @@ def create_file(request):
 
     if universe is not None:
         path = fal.universes_path(project_name)
-        if universe == "":
+        if universe != "":
             path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
@@ -409,7 +409,7 @@ def create_folder(request):
 
     if universe is not None:
         path = fal.universes_path(project_name)
-        if universe == "":
+        if universe != "":
             path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
@@ -430,7 +430,7 @@ def rename_file(request):
 
     if universe is not None:
         base_path = fal.universes_path(project_name)
-        if universe == "":
+        if universe != "":
             base_path = fal.path_join(base_path, universe)
     else:
         base_path = fal.code_path(project_name)
@@ -451,7 +451,7 @@ def rename_folder(request):
 
     if universe is not None:
         base_path = fal.universes_path(project_name)
-        if universe == "":
+        if universe != "":
             base_path = fal.path_join(base_path, universe)
     else:
         base_path = fal.code_path(project_name)
@@ -471,7 +471,7 @@ def delete_file(request):
 
     if universe is not None:
         base_path = fal.universes_path(project_name)
-        if universe == "":
+        if universe != "":
             base_path = fal.path_join(base_path, universe)
     else:
         base_path = fal.code_path(project_name)
@@ -490,7 +490,7 @@ def delete_folder(request):
 
     if universe is not None:
         base_path = fal.universes_path(project_name)
-        if universe == "":
+        if universe != "":
             base_path = fal.path_join(base_path, universe)
     else:
         base_path = fal.code_path(project_name)
@@ -510,7 +510,7 @@ def save_file(request):
 
     if universe is not None:
         path = fal.universes_path(project_name)
-        if universe == "":
+        if universe != "":
             path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
@@ -641,7 +641,7 @@ def upload_code(request):
 
     if universe is not None:
         path = fal.universes_path(project_name)
-        if universe == "":
+        if universe != "":
             path = fal.path_join(path, universe)
     else:
         path = fal.code_path(project_name)
