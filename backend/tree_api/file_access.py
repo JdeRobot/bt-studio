@@ -15,6 +15,9 @@ class FAL:
     def base_path(self) -> str:
         return self.path_join(self.base, "filesystem")
 
+    def library_path(self) -> str:
+        return self.path_join(self.base, "library")
+
     def project_path(self, project_name) -> str:
         return self.path_join(self.base_path(), project_name)
 

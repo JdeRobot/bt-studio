@@ -84,4 +84,6 @@ urlpatterns = [
     ),
     # Other
     path("upload_code/", views.upload_code, name="upload_code"),
+    # Subtree Library
+    path("get_subtree_library_list/", views.get_subtree_library_list, name="get_subtree_library_list"),
 ]
