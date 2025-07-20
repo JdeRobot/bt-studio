@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, MutableRefObject } from "react";
 import {
   Modal,
   ModalEditableList,
@@ -6,7 +6,16 @@ import {
   ModalRow,
   ModalTitlebar,
 } from "jderobot-ide-interface";
-import { getSubtreeLibrary } from "../../../api_helper/TreeWrapper";
+import {
+  getLibraryTree,
+  getSubtreeLibrary,
+} from "../../../api_helper/TreeWrapper";
+import { configureEngine } from "../../helper/TreeEditorHelper";
+import createEngine, {
+  CanvasWidget,
+  DiagramModel,
+} from "@projectstorm/react-diagrams";
+import "./ImportSubtreeModal.css";
 
 const initialData = {
   subTreeName: "",
@@ -31,7 +40,12 @@ const ImportSubtreeModal = ({
   const getSubtrees = async () => {
     try {
       const response = await getSubtreeLibrary();
-      setAvailableSubtree(response);
+      var entry_list = [];
+      for (const entry of response) {
+        const graph_json = await getLibraryTree(entry);
+        entry_list.push(<LibrarySubtree name={entry} tree={graph_json} />);
+      }
+      setAvailableSubtree(entry_list);
       setFormState(initialData);
     } catch (e) {
       setAvailableSubtree([]);
@@ -127,19 +141,12 @@ const ImportSubtreeModal = ({
         />
       </ModalRow>
       <ModalRow type="all">
-        <ModalEditableList
-          list={Object.values(availableSubtrees)}
-          onSelect={(e: any, entry: string) => {
-            onClose(entry);
-          }}
-        />
+        {Object.values(availableSubtrees).map((entry) => {
+          return <>{entry}</>;
+        })}
       </ModalRow>
       <ModalRow type="buttons">
-        <button
-          type="submit"
-          id="import-subtree"
-          disabled={!isCreationAllowed}
-        >
+        <button type="submit" id="import-subtree" disabled={!isCreationAllowed}>
           Import
         </button>
       </ModalRow>
@@ -148,3 +155,34 @@ const ImportSubtreeModal = ({
 };
 
 export default ImportSubtreeModal;
+
+const LibrarySubtree = ({ name, tree }: { name: string; tree: any; }) => {
+  const model = useRef(new DiagramModel());
+  const engine = useRef(createEngine());
+  const [fit, setFit] = useState(false);
+
+  configureEngine(engine);
+
+  // Deserialize and load the model
+  model.current.deserializeModel(tree, engine.current);
+  model.current.setLocked(true);
+  engine.current.setModel(model.current);
+
+  useEffect(() => {
+    if (engine.current) {
+      engine.current.zoomToFitNodes({ margin:5, nodes: model.current.getNodes() });
+      console.log("Fit")
+    }
+  }, [fit]);
+
+  return (
+    <div id={"project-" + name}>
+      <label>{name}</label>
+      <CanvasWidget
+        className={`subtree-library-canvas`}
+        engine={engine.current}
+      />
+      <button onClick={()=>{setFit(!fit)}}>Click</button>
+    </div>
+  );
+};

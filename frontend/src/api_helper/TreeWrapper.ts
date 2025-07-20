@@ -1040,6 +1040,26 @@ const deleteFolder = async (
   }
 };
 
+const getLibraryTree = async (entry: string) => {
+  if (!entry) throw new Error("Current Library Tree name is not set");
+
+  const apiUrl = `/bt_studio/get_library_tree?entry=${entry}`;
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(
+        response.data.message || "Failed to retrieve project graph"
+      ); // Response error
+    }
+
+    return response.data.graph_json;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 const getSubtreeLibrary = async () => {
   const apiUrl = `/bt_studio/get_subtree_library_list`;
 
@@ -1101,5 +1121,6 @@ export {
   saveProjectConfig,
   uploadFile,
   uploadFileUniverse,
-  getSubtreePath
+  getSubtreePath,
+  getLibraryTree
 };

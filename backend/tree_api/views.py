@@ -703,3 +703,14 @@ def get_subtree_library_list(request):
     # List all files in the directory removing the .json extension
     subtree_list = fal.listdirs(library_path)
     return Response({"subtree_list": subtree_list})
+
+@error_wrapper("GET", ["entry"])
+def get_library_tree(request):
+    entry = request.GET.get("entry")
+
+    # Generate the paths
+    entry_path = fal.library_entry_path(entry)
+    graph_path = fal.path_join(entry_path, "graph.json")
+
+    graph_data = json.loads(fal.read(graph_path))
+    return JsonResponse({"success": True, "graph_json": graph_data})
