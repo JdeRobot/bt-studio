@@ -176,7 +176,7 @@ const LibrarySubtree = ({ name, tree }: { name: string; tree: any; }) => {
   }, [fit]);
 
   return (
-    <div id={"project-" + name}>
+    <div id={"subtree-" + name} style={{margin: "1%", width: "30%"}}>
       <label>{name}</label>
       <CanvasWidget
         className={`subtree-library-canvas`}
