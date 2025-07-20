@@ -1040,6 +1040,27 @@ const deleteFolder = async (
   }
 };
 
+const getSubtreeLibrary = async () => {
+  const apiUrl = `/bt_studio/get_subtree_library_list`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get subtree list."); // Response error
+    }
+
+    if (!Array.isArray(response.data.subtree_list)) {
+      throw new Error("API response is not an array");
+    }
+
+    return response.data.subtree_list;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
 ////////////////////////////////// Exports /////////////////////////////////////
 export {
   createAction,
@@ -1065,6 +1086,7 @@ export {
   getProjectConfig,
   getRoboticsBackendUniverse,
   getSubtree,
+  getSubtreeLibrary,
   getSubtreeList,
   getSubtreeStructure,
   getTreeStructure,
