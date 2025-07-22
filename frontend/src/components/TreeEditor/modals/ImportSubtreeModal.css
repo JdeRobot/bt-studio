@@ -2,3 +2,7 @@
   height: 100px;
   width: 100px;
 }
+
+#import-subtree-modal {
+  width: 70%;
+}

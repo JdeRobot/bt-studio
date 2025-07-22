@@ -141,9 +141,29 @@ const ImportSubtreeModal = ({
         />
       </ModalRow>
       <ModalRow type="all">
-        {Object.values(availableSubtrees).map((entry) => {
-          return <>{entry}</>;
-        })}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+            justifyContent: "space-around",
+          }}
+        >
+          <div style={{width: "100%"}}>
+            {Object.values(availableSubtrees).map((entry) => {
+              return <>{entry}</>;
+            })}
+          </div>
+          <div style={{width: "100%"}}>
+            <ModalEditableList
+              title="Standard library"
+              list={["a","b", "c", "d","b", "c", "d","b", "c", "d","b", "c", "d","b", "c", "d"]}
+              onSelect={function (event: any, entry: string): void {
+                throw new Error("Function not implemented.");
+              }}
+            />
+          </div>
+        </div>
       </ModalRow>
       <ModalRow type="buttons">
         <button type="submit" id="import-subtree" disabled={!isCreationAllowed}>
@@ -156,7 +176,7 @@ const ImportSubtreeModal = ({
 
 export default ImportSubtreeModal;
 
-const LibrarySubtree = ({ name, tree }: { name: string; tree: any; }) => {
+const LibrarySubtree = ({ name, tree }: { name: string; tree: any }) => {
   const model = useRef(new DiagramModel());
   const engine = useRef(createEngine());
   const [fit, setFit] = useState(false);
@@ -170,19 +190,28 @@ const LibrarySubtree = ({ name, tree }: { name: string; tree: any; }) => {
 
   useEffect(() => {
     if (engine.current) {
-      engine.current.zoomToFitNodes({ margin:5, nodes: model.current.getNodes() });
-      console.log("Fit")
+      engine.current.zoomToFitNodes({
+        margin: 5,
+        nodes: model.current.getNodes(),
+      });
+      console.log("Fit");
     }
   }, [fit]);
 
   return (
-    <div id={"subtree-" + name} style={{margin: "1%", width: "30%"}}>
+    <div id={"subtree-" + name} style={{ margin: "1%", width: "30%" }}>
       <label>{name}</label>
       <CanvasWidget
         className={`subtree-library-canvas`}
         engine={engine.current}
       />
-      <button onClick={()=>{setFit(!fit)}}>Click</button>
+      <button
+        onClick={() => {
+          setFit(!fit);
+        }}
+      >
+        Click
+      </button>
     </div>
   );
 };
