@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, MutableRefObject } from "react";
 import {
   Modal,
+  ModalActionList,
   ModalEditableList,
   ModalInputBox,
   ModalRow,
@@ -43,7 +44,7 @@ const ImportSubtreeModal = ({
       var entry_list = [];
       for (const entry of response) {
         const graph_json = await getLibraryTree(entry);
-        entry_list.push(<LibrarySubtree name={entry} tree={graph_json} />);
+        entry_list.push({name: entry, component:<LibrarySubtree name={entry} tree={graph_json}/>});
       }
       setAvailableSubtree(entry_list);
       setFormState(initialData);
@@ -149,15 +150,19 @@ const ImportSubtreeModal = ({
             justifyContent: "space-around",
           }}
         >
-          <div style={{width: "100%"}}>
-            {Object.values(availableSubtrees).map((entry) => {
-              return <>{entry}</>;
-            })}
+          <div style={{ width: "100%" }}>
+            <ModalActionList
+              title="User library"
+              list={availableSubtrees}
+              onSelect={function (event: any, entry: string): void {
+                throw new Error("Function not implemented.");
+              }}
+            />
           </div>
-          <div style={{width: "100%"}}>
-            <ModalEditableList
+          <div style={{ width: "100%" }}>
+            <ModalActionList
               title="Standard library"
-              list={["a","b", "c", "d","b", "c", "d","b", "c", "d","b", "c", "d","b", "c", "d"]}
+              list={availableSubtrees}
               onSelect={function (event: any, entry: string): void {
                 throw new Error("Function not implemented.");
               }}
@@ -175,6 +180,46 @@ const ImportSubtreeModal = ({
 };
 
 export default ImportSubtreeModal;
+
+// const LibrarySubtree = ({ name, tree }: { name: string; tree: any }) => {
+//   const model = useRef(new DiagramModel());
+//   const engine = useRef(createEngine());
+//   const [fit, setFit] = useState(false);
+
+//   configureEngine(engine);
+
+//   // Deserialize and load the model
+//   model.current.deserializeModel(tree, engine.current);
+//   model.current.setLocked(true);
+//   engine.current.setModel(model.current);
+
+//   useEffect(() => {
+//     if (engine.current) {
+//       engine.current.zoomToFitNodes({
+//         margin: 5,
+//         nodes: model.current.getNodes(),
+//       });
+//       console.log("Fit");
+//     }
+//   }, [fit]);
+
+//   return (
+//     <div id={"subtree-" + name} style={{ margin: "1%", width: "30%" }}>
+//       <label>{name}</label>
+//       <CanvasWidget
+//         className={`subtree-library-canvas`}
+//         engine={engine.current}
+//       />
+//       <button
+//         onClick={() => {
+//           setFit(!fit);
+//         }}
+//       >
+//         Click
+//       </button>
+//     </div>
+//   );
+// };
 
 const LibrarySubtree = ({ name, tree }: { name: string; tree: any }) => {
   const model = useRef(new DiagramModel());
@@ -199,19 +244,19 @@ const LibrarySubtree = ({ name, tree }: { name: string; tree: any }) => {
   }, [fit]);
 
   return (
-    <div id={"subtree-" + name} style={{ margin: "1%", width: "30%" }}>
-      <label>{name}</label>
+    <div style={{display: "flex", flexDirection: "column"}}>
+    <ModalRow type="all">
       <CanvasWidget
         className={`subtree-library-canvas`}
         engine={engine.current}
       />
-      <button
-        onClick={() => {
-          setFit(!fit);
-        }}
-      >
-        Click
+    </ModalRow>
+    <ModalRow type="buttons">
+      <button type="submit" id="import-subtree">
+        Import
       </button>
+    </ModalRow>
     </div>
   );
 };
+
