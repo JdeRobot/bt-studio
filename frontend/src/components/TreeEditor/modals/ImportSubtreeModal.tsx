@@ -44,7 +44,10 @@ const ImportSubtreeModal = ({
       var entry_list = [];
       for (const entry of response) {
         const graph_json = await getLibraryTree(entry);
-        entry_list.push({name: entry, component:<LibrarySubtree name={entry} tree={graph_json}/>});
+        entry_list.push({
+          name: entry,
+          component: <LibrarySubtree name={entry} tree={graph_json} />,
+        });
       }
       setAvailableSubtree(entry_list);
       setFormState(initialData);
@@ -244,19 +247,18 @@ const LibrarySubtree = ({ name, tree }: { name: string; tree: any }) => {
   }, [fit]);
 
   return (
-    <div style={{display: "flex", flexDirection: "column"}}>
-    <ModalRow type="all">
-      <CanvasWidget
-        className={`subtree-library-canvas`}
-        engine={engine.current}
-      />
-    </ModalRow>
-    <ModalRow type="buttons">
-      <button type="submit" id="import-subtree">
-        Import
-      </button>
-    </ModalRow>
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <ModalRow type="all">
+        <CanvasWidget
+          className={`subtree-library-canvas`}
+          engine={engine.current}
+        />
+      </ModalRow>
+      <ModalRow type="buttons">
+        <button type="submit" id="import-subtree">
+          Import
+        </button>
+      </ModalRow>
     </div>
   );
 };
-

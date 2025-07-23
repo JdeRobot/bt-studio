@@ -695,6 +695,7 @@ def get_docker_universe_data(request):
         }
     )
 
+
 # Subtree Library
 @error_wrapper("GET", [])
 def get_subtree_library_list(request):
@@ -703,6 +704,7 @@ def get_subtree_library_list(request):
     # List all files in the directory removing the .json extension
     subtree_list = fal.listdirs(library_path)
     return Response({"subtree_list": subtree_list})
+
 
 @error_wrapper("GET", ["entry"])
 def get_library_tree(request):
