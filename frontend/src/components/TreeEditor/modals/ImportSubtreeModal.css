@@ -1,8 +1,9 @@
 .subtree-library-canvas {
   height: 200px;
-  width: 200px;
+  width: 100%;
+  margin: 10px;
 }
 
 #import-subtree-modal {
-  width: 70%;
+  width: 80%;
 }

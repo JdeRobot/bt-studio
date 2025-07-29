@@ -184,49 +184,14 @@ const ImportSubtreeModal = ({
 
 export default ImportSubtreeModal;
 
-// const LibrarySubtree = ({ name, tree }: { name: string; tree: any }) => {
-//   const model = useRef(new DiagramModel());
-//   const engine = useRef(createEngine());
-//   const [fit, setFit] = useState(false);
-
-//   configureEngine(engine);
-
-//   // Deserialize and load the model
-//   model.current.deserializeModel(tree, engine.current);
-//   model.current.setLocked(true);
-//   engine.current.setModel(model.current);
-
-//   useEffect(() => {
-//     if (engine.current) {
-//       engine.current.zoomToFitNodes({
-//         margin: 5,
-//         nodes: model.current.getNodes(),
-//       });
-//       console.log("Fit");
-//     }
-//   }, [fit]);
-
-//   return (
-//     <div id={"subtree-" + name} style={{ margin: "1%", width: "30%" }}>
-//       <label>{name}</label>
-//       <CanvasWidget
-//         className={`subtree-library-canvas`}
-//         engine={engine.current}
-//       />
-//       <button
-//         onClick={() => {
-//           setFit(!fit);
-//         }}
-//       >
-//         Click
-//       </button>
-//     </div>
-//   );
-// };
-
 const LibrarySubtree = ({ name, tree }: { name: string; tree: any }) => {
   const model = useRef(new DiagramModel());
-  const engine = useRef(createEngine());
+  const engine = useRef(
+    createEngine({
+      registerDefaultZoomCanvasAction: false,
+      registerDefaultPanAndZoomCanvasAction: false,
+    })
+  );
   const [fit, setFit] = useState(false);
 
   configureEngine(engine);
@@ -238,16 +203,14 @@ const LibrarySubtree = ({ name, tree }: { name: string; tree: any }) => {
 
   useEffect(() => {
     if (engine.current) {
-      engine.current.zoomToFitNodes({
-        margin: 5,
-        nodes: model.current.getNodes(),
-      });
-      console.log("Fit");
+      const state: any = engine.current.getStateMachine().getCurrentState();
+      state.dragCanvas.config.allowDrag = false;
+      engine.current.zoomToFitNodes({ margin: 50 });
     }
-  }, [fit]);
+  }, []);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
+    <div style={{ display: "flex", flexDirection: "column", width: "90%" }}>
       <ModalRow type="all">
         <CanvasWidget
           className={`subtree-library-canvas`}
