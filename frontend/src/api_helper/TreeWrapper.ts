@@ -1081,6 +1081,81 @@ const getSubtreeLibrary = async () => {
   }
 };
 
+const getUserSubtreeLibrary = async () => {
+  const apiUrl = `/bt_studio/get_user_subtree_library_list`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get subtree list."); // Response error
+    }
+
+    if (!Array.isArray(response.data.library)) {
+      throw new Error("API response is not an array");
+    }
+
+    return response.data.library;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
+const getUserLibraryTree = async (project:string, entry: string) => {
+  if (!project) throw new Error("Current Project name is not set");
+  if (!entry) throw new Error("Current Library Tree name is not set");
+
+  const apiUrl = `/bt_studio/get_user_library_tree?project=${project}&entry=${entry}`;
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(
+        response.data.message || "Failed to retrieve project graph"
+      ); // Response error
+    }
+
+    return response.data.graph_json;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
+const importLibrarySubtree = async (
+  project: string,
+  entry: string,
+  subtreeName: string,
+) => {
+  if (!project) throw new Error("Current Project name is not set");
+  if (!entry) throw new Error("Current Library Tree name is not set");
+  if (!subtreeName) throw new Error("Subtree name is not set");
+
+  const apiUrl = `/bt_studio/import_library_tree/`;
+
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        project: project,
+        entry: entry,
+        name: subtreeName,
+      },
+      axiosExtra
+    );
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to import subtree."); // Response error
+    }
+  } catch (error: unknown) {
+    console.log(error);
+    throw error; // Rethrow
+  }
+};
+
+
 ////////////////////////////////// Exports /////////////////////////////////////
 export {
   createAction,
@@ -1122,5 +1197,8 @@ export {
   uploadFile,
   uploadFileUniverse,
   getSubtreePath,
-  getLibraryTree
+  getLibraryTree,
+  getUserSubtreeLibrary,
+  getUserLibraryTree,
+  importLibrarySubtree
 };

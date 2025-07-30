@@ -10,6 +10,8 @@ import {
 import {
   getLibraryTree,
   getSubtreeLibrary,
+  getUserLibraryTree,
+  getUserSubtreeLibrary,
 } from "../../../api_helper/TreeWrapper";
 import { configureEngine } from "../../helper/TreeEditorHelper";
 import createEngine, {
@@ -19,7 +21,7 @@ import createEngine, {
 import "./ImportSubtreeModal.css";
 
 const initialData = {
-  subTreeName: "",
+  subtreeName: "",
 };
 
 const ImportSubtreeModal = ({
@@ -37,6 +39,8 @@ const ImportSubtreeModal = ({
   const [formState, setFormState] = useState(initialData);
   const [isCreationAllowed, allowCreation] = useState(false);
   const [availableSubtrees, setAvailableSubtree] = useState<any[]>([]);
+  const [availableUserSubtrees, setAvailableUserSubtree] = useState<any[]>([]);
+  const [selectedSubtree, selectSubtree] = useState<{name: string, project?: string}|undefined>(undefined);
 
   const getSubtrees = async () => {
     try {
@@ -44,9 +48,10 @@ const ImportSubtreeModal = ({
       var entry_list = [];
       for (const entry of response) {
         const graph_json = await getLibraryTree(entry);
+        const select = () => {selectSubtree({name: entry.tree, project: entry.project})}
         entry_list.push({
           name: entry,
-          component: <LibrarySubtree name={entry} tree={graph_json} />,
+          component: <LibrarySubtree name={entry} tree={graph_json} onSelect={select} />,
         });
       }
       setAvailableSubtree(entry_list);
@@ -61,9 +66,37 @@ const ImportSubtreeModal = ({
     }
   };
 
+  const getUserSubtrees = async () => {
+    try {
+      const response = await getUserSubtreeLibrary();
+      var entry_list = [];
+      for (const entry of response) {
+        const graph_json = await getUserLibraryTree(entry.project, entry.tree);
+        const name = `${entry.project}: ${entry.tree}`
+        const select = () => {selectSubtree({name: entry.tree, project: entry.project}); console.log({name: entry.tree, project: entry.project})}
+        entry_list.push({
+          name: name,
+          component: <LibrarySubtree name={name} tree={graph_json} onSelect={select} />,
+        });
+      }
+      setAvailableUserSubtree(entry_list);
+    } catch (e) {
+      setAvailableUserSubtree([]);
+      if (e instanceof Error) {
+        console.error("Error while fetching project list: " + e.message);
+        // error("Error while fetching project list: " + e.message);
+      }
+    }
+  };
+
   useEffect(() => {
     getSubtrees();
+    getUserSubtrees();
   }, []);
+
+  useEffect(() => {
+    console.log(selectSubtree)
+  }, [selectSubtree]);
 
   useEffect(() => {
     if (isOpen && focusInputRef.current) {
@@ -82,7 +115,7 @@ const ImportSubtreeModal = ({
       [name]: value,
     }));
 
-    if (name === "subTreeName") {
+    if (name === "subtreeName") {
       if (value !== "" && !value.includes(".")) {
         subTreeList.some((element: string) => {
           if (element === value) {
@@ -100,8 +133,9 @@ const ImportSubtreeModal = ({
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    console.log("Selected",selectedSubtree)
     event.preventDefault();
-    onSubmit(formState.subTreeName);
+    onSubmit(formState.subtreeName);
     setFormState(initialData);
     allowCreation(false);
     onClose();
@@ -134,7 +168,7 @@ const ImportSubtreeModal = ({
       />
       <ModalRow type="input">
         <ModalInputBox
-          isInputValid={isCreationAllowed || formState.subTreeName === ""}
+          isInputValid={isCreationAllowed || formState.subtreeName === ""}
           ref={focusInputRef}
           id="subtreeName"
           placeholder="Subtree Name"
@@ -156,9 +190,9 @@ const ImportSubtreeModal = ({
           <div style={{ width: "100%" }}>
             <ModalActionList
               title="User library"
-              list={availableSubtrees}
-              onSelect={function (event: any, entry: string): void {
-                throw new Error("Function not implemented.");
+              list={availableUserSubtrees}
+              onSelect={(event: any, entry: string) => {
+                console.log(entry)
               }}
             />
           </div>
@@ -166,8 +200,8 @@ const ImportSubtreeModal = ({
             <ModalActionList
               title="Standard library"
               list={availableSubtrees}
-              onSelect={function (event: any, entry: string): void {
-                throw new Error("Function not implemented.");
+              onSelect={(event: any, entry: string) => {
+                console.log(entry)
               }}
             />
           </div>
@@ -184,7 +218,7 @@ const ImportSubtreeModal = ({
 
 export default ImportSubtreeModal;
 
-const LibrarySubtree = ({ name, tree }: { name: string; tree: any }) => {
+const LibrarySubtree = ({ name, tree, onSelect }: { name: string; tree: any, onSelect: Function }) => {
   const model = useRef(new DiagramModel());
   const engine = useRef(
     createEngine({
@@ -218,8 +252,8 @@ const LibrarySubtree = ({ name, tree }: { name: string; tree: any }) => {
         />
       </ModalRow>
       <ModalRow type="buttons">
-        <button type="submit" id="import-subtree">
-          Import
+        <button onClick={() => onSelect()} type="button" id="import-subtree">
+          Select
         </button>
       </ModalRow>
     </div>

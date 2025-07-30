@@ -27,6 +27,7 @@ def error_wrapper(type: str, param: list[str | tuple] = []):
                 check_parameters(request.data if type == "POST" else request.GET, param)
                 return func(request)
             except CUSTOM_EXCEPTIONS as e:
+                print(str(e))
                 return Response({"error": f"{str(e)}"}, status=e.error_code)
             except json.JSONDecodeError as e:
                 return Response({"error": f"Invalid JSON format: {str(e)}"}, status=422)
