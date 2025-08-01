@@ -705,15 +705,20 @@ def get_subtree_library_list(request):
     subtree_list = fal.listdirs(library_path)
     return Response({"subtree_list": subtree_list})
 
-@error_wrapper("GET", [])
+@error_wrapper("GET", ["project"])
 def get_user_subtree_library_list(request):
+    curr_project = request.GET.get("project")
+
     folder_path = fal.base_path()
     project_list = fal.listdirs(folder_path)
 
     library = []
 
     for project in project_list:
-        tree_path = fal.trees_path(project)
+        print(project == curr_project)
+        if project == curr_project:
+            continue
+
         library.append({"project": project, "tree": "main"})
         subtrees_path = fal.subtrees_path(project)
         if (fal.exists(subtrees_path)):

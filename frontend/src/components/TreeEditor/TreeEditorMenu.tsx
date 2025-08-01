@@ -288,6 +288,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
         <SubtreeIcon className="bt-icon bt-action-icon" />
       </MenuButton>
       <ImportSubtreeModal
+        project={project}
         onSubmit={handleImportSubtreeSubmit}
         onClose={handleCloseImportSubtree}
         isOpen={importSubtreeModalOpen}

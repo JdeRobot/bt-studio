@@ -541,7 +541,7 @@ const getSubtree = async (subtreeName: string, projectName: string) => {
   }
 };
 
-const getSubtreePath = async (projectName: string,subtreeName: string) => {
+const getSubtreePath = async (projectName: string, subtreeName: string) => {
   if (!subtreeName) throw new Error("Subtree name is not set");
   if (!projectName) throw new Error("Project name is not set");
 
@@ -560,7 +560,6 @@ const getSubtreePath = async (projectName: string,subtreeName: string) => {
     throw error; // Rethrow
   }
 };
-
 
 const getSubtreeList = async (projectName: string) => {
   if (!projectName) throw new Error("Project name is not set");
@@ -646,7 +645,6 @@ const createFile = async (
     throw error; // Rethrow
   }
 };
-
 
 const createAction = async (
   projectName: string,
@@ -787,7 +785,6 @@ const renameFile = async (
   }
 };
 
-
 const deleteFile = async (
   projectName: string,
   path: string,
@@ -819,7 +816,6 @@ const deleteFile = async (
     throw error; // Rethrow
   }
 };
-
 
 const uploadFile = async (
   projectName: string,
@@ -881,7 +877,7 @@ const uploadFileUniverse = async (
 const getFileList = async (
   projectName: string,
   universeName: string | undefined = undefined
-) : Promise<string> => {
+): Promise<string> => {
   if (!projectName) throw new Error("Project name is not set");
 
   let apiUrl = `/bt_studio/get_file_list?project_name=${encodeURIComponent(projectName)}`;
@@ -1009,7 +1005,6 @@ const renameFolder = async (
   }
 };
 
-
 const deleteFolder = async (
   projectName: string,
   path: string,
@@ -1081,8 +1076,10 @@ const getSubtreeLibrary = async () => {
   }
 };
 
-const getUserSubtreeLibrary = async () => {
-  const apiUrl = `/bt_studio/get_user_subtree_library_list`;
+const getUserSubtreeLibrary = async (project: string) => {
+  if (!project) throw new Error("Current Project name is not set");
+  
+  const apiUrl = `/bt_studio/get_user_subtree_library_list?project=${project}`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -1102,7 +1099,7 @@ const getUserSubtreeLibrary = async () => {
   }
 };
 
-const getUserLibraryTree = async (project:string, entry: string) => {
+const getUserLibraryTree = async (project: string, entry: string) => {
   if (!project) throw new Error("Current Project name is not set");
   if (!entry) throw new Error("Current Library Tree name is not set");
 
@@ -1126,7 +1123,7 @@ const getUserLibraryTree = async (project:string, entry: string) => {
 const importLibrarySubtree = async (
   project: string,
   entry: string,
-  subtreeName: string,
+  subtreeName: string
 ) => {
   if (!project) throw new Error("Current Project name is not set");
   if (!entry) throw new Error("Current Library Tree name is not set");
@@ -1154,7 +1151,6 @@ const importLibrarySubtree = async (
     throw error; // Rethrow
   }
 };
-
 
 ////////////////////////////////// Exports /////////////////////////////////////
 export {
@@ -1200,5 +1196,5 @@ export {
   getLibraryTree,
   getUserSubtreeLibrary,
   getUserLibraryTree,
-  importLibrarySubtree
+  importLibrarySubtree,
 };

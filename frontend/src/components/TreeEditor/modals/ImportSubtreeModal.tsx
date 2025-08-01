@@ -25,11 +25,13 @@ const initialData = {
 };
 
 const ImportSubtreeModal = ({
+  project,
   onSubmit,
   isOpen,
   onClose,
   subTreeList,
 }: {
+  project: string;
   onSubmit: Function;
   isOpen: boolean;
   onClose: Function;
@@ -68,7 +70,7 @@ const ImportSubtreeModal = ({
 
   const getUserSubtrees = async () => {
     try {
-      const response = await getUserSubtreeLibrary();
+      const response = await getUserSubtreeLibrary(project);
       var entry_list = [];
       for (const entry of response) {
         const graph_json = await getUserLibraryTree(entry.project, entry.tree);
@@ -89,10 +91,10 @@ const ImportSubtreeModal = ({
     }
   };
 
-  useEffect(() => {
-    getSubtrees();
-    getUserSubtrees();
-  }, []);
+  // useEffect(() => {
+  //   getSubtrees();
+  //   getUserSubtrees();
+  // }, []);
 
   useEffect(() => {
     console.log(selectSubtree)
@@ -103,6 +105,10 @@ const ImportSubtreeModal = ({
       setTimeout(() => {
         focusInputRef.current.focus();
       }, 0);
+    }
+    if (isOpen) {
+      getSubtrees();
+      getUserSubtrees();
     }
   }, [isOpen]);
 
