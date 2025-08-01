@@ -91,10 +91,13 @@ const ImportSubtreeModal = ({
     }
   };
 
-  // useEffect(() => {
-  //   getSubtrees();
-  //   getUserSubtrees();
-  // }, []);
+  useEffect(() => {
+    getSubtrees();
+  }, []);
+
+  useEffect(() => {
+    getUserSubtrees();
+  }, [project]);
 
   useEffect(() => {
     console.log(selectSubtree)
@@ -105,10 +108,6 @@ const ImportSubtreeModal = ({
       setTimeout(() => {
         focusInputRef.current.focus();
       }, 0);
-    }
-    if (isOpen) {
-      getSubtrees();
-      getUserSubtrees();
     }
   }, [isOpen]);
 
