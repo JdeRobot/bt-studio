@@ -321,7 +321,7 @@ const HeaderMenu = ({
     }
 
     if (
-      manager.getState() !== "visualization_ready" &&
+      manager.getState() !== "tools_ready" &&
       manager.getState() !== "application_running" &&
       manager.getState() !== "paused"
     ) {

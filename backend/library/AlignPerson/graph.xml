@@ -1,9 +1,0 @@
-<?xml version="1.0" ?>
-<Root name="Tree Root">
-  <BehaviorTree>
-    <ReactiveFallback name="ReactiveFallback">
-      <DetectPerson name="DetectPerson" direction="{direction}"/>
-      <Turn name="Turn" speed="0.6" direction="{direction}"/>
-    </ReactiveFallback>
-  </BehaviorTree>
-</Root>
