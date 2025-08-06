@@ -1049,7 +1049,7 @@ const getLibraryTree = async (entry: string) => {
       ); // Response error
     }
 
-    return response.data.graph_json;
+    return {graph_json: response.data.graph_json, actions: response.data.actions, subtrees: []};
   } catch (error: unknown) {
     throw error; // Rethrow
   }
@@ -1114,7 +1114,7 @@ const getUserLibraryTree = async (project: string, entry: string) => {
       ); // Response error
     }
 
-    return response.data.graph_json;
+    return {graph_json: response.data.graph_json, actions: response.data.actions, subtrees: response.data.subtrees};
   } catch (error: unknown) {
     throw error; // Rethrow
   }
@@ -1137,6 +1137,41 @@ const importLibrarySubtree = async (
       {
         project: project,
         entry: entry,
+        name: subtreeName,
+      },
+      axiosExtra
+    );
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to import subtree."); // Response error
+    }
+  } catch (error: unknown) {
+    console.log(error);
+    throw error; // Rethrow
+  }
+};
+
+const importUserLibrarySubtree = async (
+  project: string,
+  entry: string,
+  entryProject: string,
+  subtreeName: string
+) => {
+  if (!project) throw new Error("Current Project name is not set");
+  if (!entry) throw new Error("Current Library Tree name is not set");
+  if (!entryProject) throw new Error("Entry Project name is not set");
+  if (!subtreeName) throw new Error("Subtree name is not set");
+
+  const apiUrl = `/bt_studio/import_user_library_tree/`;
+
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        project: project,
+        entry: entry,
+        entry_project: entryProject,
         name: subtreeName,
       },
       axiosExtra
@@ -1197,4 +1232,5 @@ export {
   getUserSubtreeLibrary,
   getUserLibraryTree,
   importLibrarySubtree,
+  importUserLibrarySubtree
 };

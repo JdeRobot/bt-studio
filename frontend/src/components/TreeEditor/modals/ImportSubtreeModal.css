@@ -7,3 +7,7 @@
 #import-subtree-modal {
   width: 80%;
 }
+
+#import-subtree {
+  margin: 10px
+}

@@ -234,21 +234,6 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
     }
   };
 
-  const handleImportSubtreeSubmit = async (subtreeName: string) => {
-    // if (subtreeName !== "") {
-    //   try {
-    //     const subtreeId = await createSubtree(subtreeName, project);
-    //     console.log("Created subtree:", subtreeId);
-    //     fetchSubtreeList();
-    //   } catch (e) {
-    //     if (e instanceof Error) {
-    //       console.error("Failed to create subtree: " + e.message);
-    //       error("Failed to create subtree: " + e.message);
-    //     }
-    //   }
-    // }
-  };
-
   return (
     <>
       <MenuButtonLabel
@@ -289,7 +274,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
       </MenuButton>
       <ImportSubtreeModal
         project={project}
-        onSubmit={handleImportSubtreeSubmit}
+        onSubmit={handleCloseImportSubtree}
         onClose={handleCloseImportSubtree}
         isOpen={importSubtreeModalOpen}
         subTreeList={subtreesList}
