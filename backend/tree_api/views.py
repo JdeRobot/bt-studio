@@ -795,6 +795,8 @@ def import_library_tree(request):
     if not fal.exists(fal.subtrees_path(project)):
         fal.mkdir(fal.subtrees_path(project))
 
+    # TODO: save always in the same order and get tree data
+
     fal.create(subtree_path, fal.read(tree_path))
 
     actions_list = fal.listfiles(actions_entry_path)
@@ -842,9 +844,15 @@ def import_user_library_tree(request):
         subtrees_entry_path = fal.subtrees_path(entry_project)
         subtrees_path = fal.subtrees_path(project)
         subtree_path = fal.path_join(subtrees_entry_path, subtree + ".json")
-        new_subtree_path = fal.path_join(subtrees_path, subtree + ".json")
+        new_subtree_name = name if subtree == entry else name + ":" + subtree
+        new_subtree_path = fal.path_join(subtrees_path, new_subtree_name + ".json")
         try:
-            fal.create(new_subtree_path, fal.read(subtree_path))
+            data = fal.read(subtree_path)
+            for replace_subtree in tree_data["subtrees"]:
+                data = data.replace(replace_subtree, name + ":" + replace_subtree)
+            for replace_action in tree_data["actions"]:
+                data = data.replace(replace_action, name + "-" + replace_action)
+            fal.create(new_subtree_path, data)
         except:
             pass
 
@@ -852,9 +860,11 @@ def import_user_library_tree(request):
         actions_entry_path = fal.actions_path(entry_project)
         actions_path = fal.actions_path(project)
         action_path = fal.path_join(actions_entry_path, action + ".py")
-        new_action_path = fal.path_join(actions_path, action + ".py")
+        new_action_path = fal.path_join(actions_path, name + "-" + action + ".py")
         try:
-            fal.create(new_action_path, fal.read(action_path))
+            action_data = fal.read(action_path)
+            action_data = action_data.replace(action, name + "-" + action)
+            fal.create(new_action_path, action_data)
         except:
             pass
 

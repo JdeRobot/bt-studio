@@ -163,7 +163,7 @@ const ImportSubtreeModal = ({
       return;
     }
 
-    // TODO: check if actions are duplicated
+    // TODO: add modal for all the changes
 
     if (selectedSubtree.project === undefined) {
       // Import from standard library
@@ -182,6 +182,7 @@ const ImportSubtreeModal = ({
       );
     }
     publish("updateSubtreeList");
+    publish("updateExplorer-Code", { project: project});
     setFormState(initialData);
     allowCreation(false);
     onSubmit();
@@ -237,18 +238,14 @@ const ImportSubtreeModal = ({
             <ModalActionList
               title="User library"
               list={availableUserSubtrees}
-              onSelect={(event: any, entry: string) => {
-                console.log(entry);
-              }}
+              selected={selectedSubtree ? selectedSubtree.name : ""}
             />
           </div>
           <div style={{ width: "100%" }}>
             <ModalActionList
               title="Standard library"
               list={availableSubtrees}
-              onSelect={(event: any, entry: string) => {
-                console.log(entry);
-              }}
+              selected={selectedSubtree ? selectedSubtree.name : ""}
             />
           </div>
         </div>
