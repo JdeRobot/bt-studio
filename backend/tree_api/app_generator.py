@@ -31,7 +31,8 @@ def get_unique_imports(fal, project_name):
 
     return list(unique_imports)
 
-def add_actions_in_tree(actions,actions_list, subtrees, subtrees_list, tree):
+
+def add_actions_in_tree(actions, actions_list, subtrees, subtrees_list, tree):
     for entry in tree["childs"]:
         if entry["name"] in actions_list:
             actions.add(entry["name"])
@@ -40,14 +41,17 @@ def add_actions_in_tree(actions,actions_list, subtrees, subtrees_list, tree):
         else:
             add_actions_in_tree(actions, actions_list, subtrees, subtrees_list, entry)
 
-def get_tree_data(fal, project, graph_data, bt_order, actions = set(), subtrees = set()):
+
+def get_tree_data(fal, project, graph_data, bt_order, actions=set(), subtrees=set()):
     subtree_path = fal.subtrees_path(project)
     actions_path = fal.actions_path(project)
     subtrees_inside = set()
 
     # Check if the project exists
     # 1. Generate a basic tree from the JSON definition
-    main_tree = json_translator.translate_tree_structure(json.loads(graph_data), bt_order)
+    main_tree = json_translator.translate_tree_structure(
+        json.loads(graph_data), bt_order
+    )
 
     try:
         actions_list = fal.listfiles(actions_path)
@@ -66,7 +70,9 @@ def get_tree_data(fal, project, graph_data, bt_order, actions = set(), subtrees 
     elif main_tree["name"] in subtrees_list:
         subtrees_inside.add(main_tree["name"])
 
-    add_actions_in_tree(actions, actions_list, subtrees_inside, subtrees_list, main_tree)
+    add_actions_in_tree(
+        actions, actions_list, subtrees_inside, subtrees_list, main_tree
+    )
 
     for subtree in subtrees_inside:
         if subtree not in subtrees:
@@ -75,8 +81,9 @@ def get_tree_data(fal, project, graph_data, bt_order, actions = set(), subtrees 
             graph_path = fal.path_join(entry_path, subtree + ".json")
             graph_data = fal.read(graph_path)
             get_tree_data(fal, project, graph_data, bt_order, actions, subtrees)
-    
+
     return {"actions": list(actions), "subtrees": list(subtrees)}
+
 
 def generate_app(fal, project_name, bt_order):
     # Make folder path relative to Django app
