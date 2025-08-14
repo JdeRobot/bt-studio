@@ -36,6 +36,8 @@ const TreeEditorContainer = ({
   const editCurrentCallbackRef = useRef<(e: any) => void>(() => {});
   const homeZoomCallbackRef = useRef<(e: any) => void>(() => {});
   const addNodeCallbackRef = useRef<(e: any) => void>(() => {});
+  const closeEditActionModalRef = useRef<() => void>(() => {});
+  const closeEditTagModalRef = useRef<() => void>(() => {});
 
   const setResultJson = (data: string) => {
     contentRef.current = data;
@@ -73,19 +75,16 @@ const TreeEditorContainer = ({
     }
   };
 
-  // useEffect(() => {
-  //   // TODO: move this to App.tsx
-  //   resetActionFrames();
-  // }, [projectName]);
-
   const onEditActionModalClose = () => {
     setEditActionModalOpen(false);
     setNode(undefined);
+    closeEditActionModalRef.current();
   };
 
   const onEditTagModalClose = () => {
     setEditTagModalOpen(false);
     setNode(undefined);
+    closeEditTagModalRef.current();
   };
 
   return (
@@ -127,6 +126,8 @@ const TreeEditorContainer = ({
         editCurrentCallbackRef={editCurrentCallbackRef}
         homeZoomCallbackRef={homeZoomCallbackRef}
         addNodeCallbackRef={addNodeCallbackRef}
+        closeEditActionModalRef={closeEditActionModalRef}
+        closeEditTagModalRef={closeEditTagModalRef}
         render={showRef}
       />
     </>

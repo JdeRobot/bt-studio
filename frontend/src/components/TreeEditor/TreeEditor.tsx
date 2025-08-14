@@ -36,6 +36,8 @@ const TreeEditor = memo(
     editCurrentCallbackRef,
     homeZoomCallbackRef,
     addNodeCallbackRef,
+    closeEditTagModalRef,
+    closeEditActionModalRef,
     render,
   }: {
     fileContent: any;
@@ -50,6 +52,8 @@ const TreeEditor = memo(
     editCurrentCallbackRef: MutableRefObject<(e: any) => void>;
     homeZoomCallbackRef: MutableRefObject<(e: any) => void>;
     addNodeCallbackRef: MutableRefObject<(e: any) => void>;
+    closeEditActionModalRef: MutableRefObject<(e: any) => void>;
+    closeEditTagModalRef: MutableRefObject<(e: any) => void>;
     render: MutableRefObject<boolean>;
   }) => {
     // VARS
@@ -164,6 +168,10 @@ const TreeEditor = memo(
         setCurrentNode(node);
         setEditTagModalOpen(true);
       }
+    };
+
+    const closeActionEditor = (node: BasicNodeModel) => {
+      updateJsonState();
     };
 
     // LISTENERS
@@ -385,6 +393,8 @@ const TreeEditor = memo(
     editCurrentCallbackRef.current = onNodeEditor;
     homeZoomCallbackRef.current = zoomToFit;
     addNodeCallbackRef.current = nodeTypeSelector;
+    closeEditActionModalRef.current = closeActionEditor;
+    closeEditTagModalRef.current = closeActionEditor;
 
     return (
       <>

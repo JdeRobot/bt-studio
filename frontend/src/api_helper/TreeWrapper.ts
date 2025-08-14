@@ -541,7 +541,7 @@ const getSubtree = async (subtreeName: string, projectName: string) => {
   }
 };
 
-const getSubtreePath = async (projectName: string,subtreeName: string) => {
+const getSubtreePath = async (projectName: string, subtreeName: string) => {
   if (!subtreeName) throw new Error("Subtree name is not set");
   if (!projectName) throw new Error("Project name is not set");
 
@@ -560,7 +560,6 @@ const getSubtreePath = async (projectName: string,subtreeName: string) => {
     throw error; // Rethrow
   }
 };
-
 
 const getSubtreeList = async (projectName: string) => {
   if (!projectName) throw new Error("Project name is not set");
@@ -646,7 +645,6 @@ const createFile = async (
     throw error; // Rethrow
   }
 };
-
 
 const createAction = async (
   projectName: string,
@@ -787,7 +785,6 @@ const renameFile = async (
   }
 };
 
-
 const deleteFile = async (
   projectName: string,
   path: string,
@@ -819,7 +816,6 @@ const deleteFile = async (
     throw error; // Rethrow
   }
 };
-
 
 const uploadFile = async (
   projectName: string,
@@ -881,7 +877,7 @@ const uploadFileUniverse = async (
 const getFileList = async (
   projectName: string,
   universeName: string | undefined = undefined
-) : Promise<string> => {
+): Promise<string> => {
   if (!projectName) throw new Error("Project name is not set");
 
   let apiUrl = `/bt_studio/get_file_list?project_name=${encodeURIComponent(projectName)}`;
@@ -1009,7 +1005,6 @@ const renameFolder = async (
   }
 };
 
-
 const deleteFolder = async (
   projectName: string,
   path: string,
@@ -1040,6 +1035,158 @@ const deleteFolder = async (
   }
 };
 
+const getLibraryTree = async (entry: string) => {
+  if (!entry) throw new Error("Current Library Tree name is not set");
+
+  const apiUrl = `/bt_studio/get_library_tree?entry=${entry}`;
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(
+        response.data.message || "Failed to retrieve project graph"
+      ); // Response error
+    }
+
+    return {graph_json: response.data.graph_json, actions: response.data.actions, subtrees: []};
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
+const getSubtreeLibrary = async () => {
+  const apiUrl = `/bt_studio/get_subtree_library_list`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get subtree list."); // Response error
+    }
+
+    if (!Array.isArray(response.data.subtree_list)) {
+      throw new Error("API response is not an array");
+    }
+
+    return response.data.subtree_list;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
+const getUserSubtreeLibrary = async (project: string) => {
+  if (!project) throw new Error("Current Project name is not set");
+  
+  const apiUrl = `/bt_studio/get_user_subtree_library_list?project=${project}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to get subtree list."); // Response error
+    }
+
+    if (!Array.isArray(response.data.library)) {
+      throw new Error("API response is not an array");
+    }
+
+    return response.data.library;
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
+const getUserLibraryTree = async (project: string, entry: string) => {
+  if (!project) throw new Error("Current Project name is not set");
+  if (!entry) throw new Error("Current Library Tree name is not set");
+
+  const apiUrl = `/bt_studio/get_user_library_tree?project=${project}&entry=${entry}`;
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(
+        response.data.message || "Failed to retrieve project graph"
+      ); // Response error
+    }
+
+    return {graph_json: response.data.graph_json, actions: response.data.actions, subtrees: response.data.subtrees};
+  } catch (error: unknown) {
+    throw error; // Rethrow
+  }
+};
+
+const importLibrarySubtree = async (
+  project: string,
+  entry: string,
+  subtreeName: string
+) => {
+  if (!project) throw new Error("Current Project name is not set");
+  if (!entry) throw new Error("Current Library Tree name is not set");
+  if (!subtreeName) throw new Error("Subtree name is not set");
+
+  const apiUrl = `/bt_studio/import_library_tree/`;
+
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        project: project,
+        entry: entry,
+        name: subtreeName,
+      },
+      axiosExtra
+    );
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to import subtree."); // Response error
+    }
+  } catch (error: unknown) {
+    console.log(error);
+    throw error; // Rethrow
+  }
+};
+
+const importUserLibrarySubtree = async (
+  project: string,
+  entry: string,
+  entryProject: string,
+  subtreeName: string
+) => {
+  if (!project) throw new Error("Current Project name is not set");
+  if (!entry) throw new Error("Current Library Tree name is not set");
+  if (!entryProject) throw new Error("Entry Project name is not set");
+  if (!subtreeName) throw new Error("Subtree name is not set");
+
+  const apiUrl = `/bt_studio/import_user_library_tree/`;
+
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        project: project,
+        entry: entry,
+        entry_project: entryProject,
+        name: subtreeName,
+      },
+      axiosExtra
+    );
+
+    // Handle unsuccessful response status (e.g., non-2xx status)
+    if (!isSuccessful(response)) {
+      throw new Error(response.data.message || "Failed to import subtree."); // Response error
+    }
+  } catch (error: unknown) {
+    console.log(error);
+    throw error; // Rethrow
+  }
+};
+
 ////////////////////////////////// Exports /////////////////////////////////////
 export {
   createAction,
@@ -1065,6 +1212,7 @@ export {
   getProjectConfig,
   getRoboticsBackendUniverse,
   getSubtree,
+  getSubtreeLibrary,
   getSubtreeList,
   getSubtreeStructure,
   getTreeStructure,
@@ -1079,5 +1227,10 @@ export {
   saveProjectConfig,
   uploadFile,
   uploadFileUniverse,
-  getSubtreePath
+  getSubtreePath,
+  getLibraryTree,
+  getUserSubtreeLibrary,
+  getUserLibraryTree,
+  importLibrarySubtree,
+  importUserLibrarySubtree
 };

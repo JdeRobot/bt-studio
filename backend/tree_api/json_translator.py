@@ -168,6 +168,7 @@ def translate_raw(content, raw_order):
 
         # Get the tree structure
         tree_structure = get_tree_structure(link_models, node_models)
+        print(tree_structure)
 
         # Get the order of bt: True = Ascendent; False = Descendent
         order = raw_order == "bottom-to-top"

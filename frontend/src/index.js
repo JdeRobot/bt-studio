@@ -26,7 +26,7 @@ root.render(
   // <React.StrictMode>
   <OptionsProvider>
     <ErrorProvider>
-      <App isUnibotics={false} />
+      <App />
     </ErrorProvider>
   </OptionsProvider>,
   // </React.StrictMode>,

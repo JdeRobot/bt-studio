@@ -1,3 +1,5 @@
+import json
+import os
 import re
 from . import tree_generator
 from . import json_translator
@@ -28,6 +30,59 @@ def get_unique_imports(fal, project_name):
                     unique_imports.add(match.group(1))
 
     return list(unique_imports)
+
+
+def add_actions_in_tree(actions, actions_list, subtrees, subtrees_list, tree):
+    for entry in tree["childs"]:
+        if entry["name"] in actions_list:
+            actions.add(entry["name"])
+        elif entry["name"] in subtrees_list:
+            subtrees.add(entry["name"])
+        else:
+            add_actions_in_tree(actions, actions_list, subtrees, subtrees_list, entry)
+
+
+def get_tree_data(fal, project, graph_data, bt_order, actions=set(), subtrees=set()):
+    subtree_path = fal.subtrees_path(project)
+    actions_path = fal.actions_path(project)
+    subtrees_inside = set()
+
+    # Check if the project exists
+    # 1. Generate a basic tree from the JSON definition
+    main_tree = json_translator.translate_tree_structure(
+        json.loads(graph_data), bt_order
+    )
+
+    try:
+        actions_list = fal.listfiles(actions_path)
+        actions_list = [os.path.splitext(x)[0] for x in actions_list]
+    except:
+        actions_list = []
+
+    try:
+        subtrees_list = fal.listfiles(subtree_path)
+        subtrees_list = [os.path.splitext(x)[0] for x in subtrees_list]
+    except:
+        subtrees_list = []
+
+    if main_tree["name"] in actions_list:
+        actions.add(main_tree["name"])
+    elif main_tree["name"] in subtrees_list:
+        subtrees_inside.add(main_tree["name"])
+
+    add_actions_in_tree(
+        actions, actions_list, subtrees_inside, subtrees_list, main_tree
+    )
+
+    for subtree in subtrees_inside:
+        if subtree not in subtrees:
+            subtrees.add(subtree)
+            entry_path = fal.subtrees_path(project)
+            graph_path = fal.path_join(entry_path, subtree + ".json")
+            graph_data = fal.read(graph_path)
+            get_tree_data(fal, project, graph_data, bt_order, actions, subtrees)
+
+    return {"actions": list(actions), "subtrees": list(subtrees)}
 
 
 def generate_app(fal, project_name, bt_order):

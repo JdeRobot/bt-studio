@@ -22,6 +22,7 @@ import {
   MenuButtonLabel,
   MenuButtonStroke,
 } from "jderobot-ide-interface";
+import ImportSubtreeModal from "./modals/ImportSubtreeModal";
 
 export const BTSelectorButtons = ({ project }: { project: string }) => {
   var NODE_MENU_ITEMS: Record<string, string[]> = {
@@ -146,6 +147,8 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isNewSubtreeModalOpen, setNewSubtreeModalOpen] =
     useState<boolean>(false);
+  const [importSubtreeModalOpen, setImportSubtreeModalOpen] =
+    useState<boolean>(false);
 
   const fetchSubtreeList = async () => {
     console.log("Fetching subtrees...");
@@ -217,6 +220,20 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
     }
   };
 
+  const handleImportSubtree = () => {
+    setImportSubtreeModalOpen(true);
+  };
+
+  const handleCloseImportSubtree = () => {
+    setImportSubtreeModalOpen(false);
+    var subtree_input = document.getElementById(
+      "subtreeName",
+    ) as HTMLInputElement;
+    if (subtree_input) {
+      subtree_input.value = "";
+    }
+  };
+
   return (
     <>
       <MenuButtonLabel
@@ -246,6 +263,22 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
       >
         <SubtreeIcon className="bt-icon bt-action-icon" />
       </MenuButton>
+      <MenuButton
+        id="import-subtree-button"
+        onClick={() => {
+          handleImportSubtree();
+        }}
+        title="Import Subtree"
+      >
+        <SubtreeIcon className="bt-icon bt-action-icon" />
+      </MenuButton>
+      <ImportSubtreeModal
+        project={project}
+        onSubmit={handleCloseImportSubtree}
+        onClose={handleCloseImportSubtree}
+        isOpen={importSubtreeModalOpen}
+        subTreeList={subtreesList}
+      />
       <AddSubtreeModal
         onSubmit={handleCreateSubtreeSubmit}
         onClose={handleCloseCreateSubtree}
