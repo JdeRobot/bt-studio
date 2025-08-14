@@ -1,0 +1,8 @@
+{
+    "name": "follow_line_demo",
+    "config": {
+        "editorShowAccentColors": false,
+        "theme": "dark",
+        "btOrder": "top-to-bottom"
+    }
+}

@@ -50,6 +50,7 @@ const TreeMonitorContainer = ({
   }, [goBack]);
 
   useEffect(() => {
+    // TODO: also do this if the file changes
     // Reset everything
     setWentBack(false);
     setGoBack(false);
@@ -59,11 +60,22 @@ const TreeMonitorContainer = ({
     load();
   }, [, project]);
 
+  useEffect(() => {
+    // Reset everything
+    setWentBack(false);
+    setGoBack(false);
+    setTreeHierarchy([]);
+
+    // Fetch the new subtree or project graph
+    load();
+  }, []);
+
   const setResultJson = (data: string) => {
     contentRef.current = data;
   };
 
   const load = async (subtree?: string) => {
+    console.log("load Subtree")
     try {
       const graph_json = subtree
         ? await getSubtree(subtree, project)

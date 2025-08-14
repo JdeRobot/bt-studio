@@ -4,7 +4,7 @@ import HeaderMenu from "./components/HeaderMenu";
 import "./App.css";
 import { SimulatorIcon, TerminalIcon } from "./components/icons";
 import { CommsManager } from "jderobot-commsmanager";
-import { getProjectConfig } from "./api_helper/TreeWrapper";
+import { getProjectConfig, listProjects, saveProjectConfig } from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
 import IdeInterface, {
@@ -25,21 +25,43 @@ import { editorApi } from "./components/Editors";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
+  // const [projectToSave, setProjectToSave] = useState(currentProjectname);
   const [manager, setManager] = useState<CommsManager | null>(null);
   const [showSim, setSimVisible] = useState<boolean>(false);
   const [showMonitor, setMonitorVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
   const [layout, setLayout] = useState<"only-editor" | "only-viewers" | "both">(
-    "both",
+    "both"
   );
 
   //Only needed in Unibotics
   const maxUsers = 15;
   const currentUsers = React.useRef<number>(0);
   const btAtMaxCapacity = React.useRef<boolean>(false);
+  const projectToSave = React.useRef<string>(currentProjectname);
   const { error_critical } = useError();
 
   const settings = React.useContext(OptionsContext);
+  const settingsToSave = React.useRef<Object>(settings);
+
+  const saveSettings = async (project: string) => {
+    let json_settings: { name: string; config: { [id: string]: any } } = {
+      name: project,
+      config: {},
+    };
+
+    Object.entries(settingsToSave.current).map(([key, setting]) => {
+      json_settings.config[key] = setting.value;
+    });
+
+    console.log("Save: ", projectToSave.current)
+
+    try {
+      await saveProjectConfig(project, JSON.stringify(json_settings));
+    } catch (e) {
+      console.error("Error saving config:", e);
+    }
+  };
   //////////////////////////s////////////////////////////
 
   // RB manager setup
@@ -50,16 +72,16 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     addUser();
     console.log(
       "Now the updated value of users connected is: ",
-      currentUsers.current,
+      currentUsers.current
     );
     console.log(
       "Current value of UsersAtMaxCapacity: ",
-      btAtMaxCapacity.current,
+      btAtMaxCapacity.current
     );
     updateBtAtMaxCapacity(currentUsers.current);
     console.log(
       "Updated value of UsersAtMaxCapacity: ",
-      btAtMaxCapacity.current,
+      btAtMaxCapacity.current
     );
 
     const manager = CommsManager.getInstance();
@@ -94,7 +116,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       console.log("Too much users!");
       btAtMaxCapacity.current = true;
       error_critical(
-        "There's not enough room for you to enter BT-studio. Please try again later.",
+        "There's not enough room for you to enter BT-studio. Please try again later."
       );
     } else {
       console.log("The user can go in");
@@ -125,18 +147,31 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     }
   }, [manager]);
 
-  useUnload(() => {
+  useUnload((event:any) => {
+    event.preventDefault();
     if (manager) {
       manager.disconnect();
       connected.current = false;
     }
+    saveSettings(projectToSave.current)
+    return event.returnValue = '';
   });
 
   useEffect(() => {
-    if (currentProjectname !== "") {
-      getProjectConfig(currentProjectname, settings);
+    const func = async () => {
+      if (currentProjectname !== "") {
+        getProjectConfig(currentProjectname, settings);
+      }
+      await saveSettings(projectToSave.current)
+      projectToSave.current = currentProjectname
     }
+    func()
   }, [currentProjectname]); // Reload project configuration
+
+  useEffect(() => {
+    console.log("change settings")
+    settingsToSave.current = settings
+  }, [settings]); // Reload project configuration
 
   const treeMonitor = {
     component: (
