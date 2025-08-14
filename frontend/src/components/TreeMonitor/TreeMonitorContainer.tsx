@@ -75,7 +75,7 @@ const TreeMonitorContainer = ({
   };
 
   const load = async (subtree?: string) => {
-    console.log("load Subtree")
+    console.log("load Subtree");
     try {
       const graph_json = subtree
         ? await getSubtree(subtree, project)

@@ -78,13 +78,13 @@ const TreeEditorContainer = ({
   const onEditActionModalClose = () => {
     setEditActionModalOpen(false);
     setNode(undefined);
-    closeEditActionModalRef.current()
+    closeEditActionModalRef.current();
   };
 
   const onEditTagModalClose = () => {
     setEditTagModalOpen(false);
     setNode(undefined);
-    closeEditTagModalRef.current()
+    closeEditTagModalRef.current();
   };
 
   return (

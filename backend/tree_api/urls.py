@@ -96,7 +96,15 @@ urlpatterns = [
         name="get_user_subtree_library_list",
     ),
     path("get_library_tree/", views.get_library_tree, name="get_library_tree"),
-    path("get_user_library_tree/", views.get_user_library_tree, name="get_user_library_tree"),
+    path(
+        "get_user_library_tree/",
+        views.get_user_library_tree,
+        name="get_user_library_tree",
+    ),
     path("import_library_tree/", views.import_library_tree, name="import_library_tree"),
-    path("import_user_library_tree/", views.import_user_library_tree, name="import_user_library_tree"),
+    path(
+        "import_user_library_tree/",
+        views.import_user_library_tree,
+        name="import_user_library_tree",
+    ),
 ]

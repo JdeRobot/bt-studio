@@ -170,7 +170,7 @@ const ImportSubtreeModal = ({
       await importLibrarySubtree(
         project,
         selectedSubtree.name,
-        formState.subtreeName
+        formState.subtreeName,
       );
     } else {
       // Import from user library
@@ -178,11 +178,11 @@ const ImportSubtreeModal = ({
         project,
         selectedSubtree.name,
         selectedSubtree.project,
-        formState.subtreeName
+        formState.subtreeName,
       );
     }
     publish("updateSubtreeList");
-    publish("updateExplorer-Code", { project: project});
+    publish("updateExplorer-Code", { project: project });
     setFormState(initialData);
     allowCreation(false);
     onSubmit();
@@ -281,7 +281,7 @@ const LibrarySubtree = ({
     createEngine({
       registerDefaultZoomCanvasAction: false,
       registerDefaultPanAndZoomCanvasAction: false,
-    })
+    }),
   );
 
   configureEngine(engine);
