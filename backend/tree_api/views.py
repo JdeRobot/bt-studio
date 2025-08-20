@@ -739,9 +739,29 @@ def get_library_tree(request):
     entry_path = fal.library_entry_path(entry)
     graph_path = fal.path_join(entry_path, "graph.json")
 
-    graph_data = json.loads(fal.read(graph_path))
-    actions = fal.listfiles(fal.path_join(entry_path, "actions"))
-    return JsonResponse({"success": True, "graph_json": graph_data, "actions": actions})
+    graph_data = fal.read(graph_path)
+
+    # Get the BT order
+    bt_order = "top-to-bottom"
+
+    tree_data = app_generator.get_tree_data(
+        fal,
+        fal.library_subtrees_path(entry_path),
+        fal.library_actions_path(entry_path),
+        graph_data,
+        bt_order,
+        actions=set(),
+        subtrees=set(),
+    )
+
+    return JsonResponse(
+        {
+            "success": True,
+            "graph_json": json.loads(graph_data),
+            "actions": tree_data["actions"],
+            "subtrees": tree_data["subtrees"],
+        }
+    )
 
 
 @error_wrapper("GET", ["project", "entry"])
@@ -755,7 +775,6 @@ def get_user_library_tree(request):
     else:
         entry_path = fal.subtrees_path(project)
         graph_path = fal.path_join(entry_path, entry + ".json")
-        # TODO: only actions in the subtree
 
     graph_data = fal.read(graph_path)
 
@@ -766,7 +785,13 @@ def get_user_library_tree(request):
     bt_order = config["config"]["btOrder"]
 
     tree_data = app_generator.get_tree_data(
-        fal, project, graph_data, bt_order, actions=set(), subtrees=set()
+        fal,
+        fal.subtrees_path(project),
+        fal.actions_path(project),
+        graph_data,
+        bt_order,
+        actions=set(),
+        subtrees=set(),
     )
 
     return JsonResponse(
@@ -786,27 +811,57 @@ def import_library_tree(request):
     name = request.data.get("name")
 
     entry_path = fal.library_entry_path(entry)
-    actions_entry_path = fal.library_actions_path(entry)
     tree_path = fal.path_join(entry_path, "graph.json")
-    import_tree_file = name + ".json"
-    subtree_path = fal.path_join(fal.subtrees_path(project), import_tree_file)
-    actions_path = fal.actions_path(project)
+    graph_data = fal.read(tree_path)
+
+    # Get the BT order
+    bt_order = "top-to-bottom"
+
+    tree_data = app_generator.get_tree_data(
+        fal,
+        fal.library_subtrees_path(entry_path),
+        fal.library_actions_path(entry_path),
+        graph_data,
+        bt_order,
+        actions=set(),
+        subtrees=set([entry]),
+    )
 
     if not fal.exists(fal.subtrees_path(project)):
         fal.mkdir(fal.subtrees_path(project))
 
-    # TODO: save always in the same order and get tree data
+    # Write main tree
+    for replace_subtree in tree_data["subtrees"]:
+        graph_data = graph_data.replace(replace_subtree, name + ":" + replace_subtree)
+    for replace_action in tree_data["actions"]:
+        graph_data = graph_data.replace(replace_action, name + "-" + replace_action)
+    fal.create(fal.path_join(fal.subtrees_path(project), name + ".json"), graph_data)
 
-    fal.create(subtree_path, fal.read(tree_path))
+    # Write subtrees
+    for subtree in tree_data["subtrees"]:
+        subtrees_entry_path = fal.library_subtrees_path(entry_path)
+        subtrees_path = fal.subtrees_path(project)
+        subtree_path = fal.path_join(subtrees_entry_path, subtree + ".json")
+        if subtree == entry:
+            continue
+        new_subtree_name = name + ":" + subtree
+        new_subtree_path = fal.path_join(subtrees_path, new_subtree_name + ".json")
+        data = fal.read(subtree_path)
+        for replace_subtree in tree_data["subtrees"]:
+            data = data.replace(replace_subtree, name + ":" + replace_subtree)
+        for replace_action in tree_data["actions"]:
+            data = data.replace(replace_action, name + "-" + replace_action)
+        fal.create(new_subtree_path, data)
 
-    actions_list = fal.listfiles(actions_entry_path)
-    for action in actions_list:
-        action_path = fal.path_join(actions_entry_path, action)
-        new_action_path = fal.path_join(actions_path, action)
-        try:
-            fal.create(new_action_path, fal.read(action_path))
-        except:
-            pass
+    # Write actions
+    for action in tree_data["actions"]:
+        actions_entry_path = fal.library_actions_path(entry)
+        actions_path = fal.actions_path(project)
+        action_path = fal.path_join(actions_entry_path, action + ".py")
+        new_action_path = fal.path_join(actions_path, name + "-" + action + ".py")
+        action_data = fal.read(action_path)
+        action_data = action_data.replace(action, name + "-" + action)
+        fal.create(new_action_path, action_data)
 
     return JsonResponse({"success": True})
 
@@ -834,38 +889,49 @@ def import_user_library_tree(request):
     bt_order = config["config"]["btOrder"]
 
     tree_data = app_generator.get_tree_data(
-        fal, entry_project, graph_data, bt_order, actions=set(), subtrees=set([entry])
+        fal,
+        fal.subtrees_path(entry_project),
+        fal.actions_path(entry_project),
+        graph_data,
+        bt_order,
+        actions=set(),
+        subtrees=set([entry]),
     )
 
     if not fal.exists(fal.subtrees_path(project)):
         fal.mkdir(fal.subtrees_path(project))
 
+    # Write main tree
+    for replace_subtree in tree_data["subtrees"]:
+        graph_data = graph_data.replace(replace_subtree, name + ":" + replace_subtree)
+    for replace_action in tree_data["actions"]:
+        graph_data = graph_data.replace(replace_action, name + "-" + replace_action)
+    fal.create(fal.path_join(fal.subtrees_path(project), name + ".json"), graph_data)
+
+    # Write subtrees
     for subtree in tree_data["subtrees"]:
         subtrees_entry_path = fal.subtrees_path(entry_project)
         subtrees_path = fal.subtrees_path(project)
         subtree_path = fal.path_join(subtrees_entry_path, subtree + ".json")
-        new_subtree_name = name if subtree == entry else name + ":" + subtree
+        if subtree == entry:
+            continue
+        new_subtree_name = name + ":" + subtree
         new_subtree_path = fal.path_join(subtrees_path, new_subtree_name + ".json")
-        try:
-            data = fal.read(subtree_path)
-            for replace_subtree in tree_data["subtrees"]:
-                data = data.replace(replace_subtree, name + ":" + replace_subtree)
-            for replace_action in tree_data["actions"]:
-                data = data.replace(replace_action, name + "-" + replace_action)
-            fal.create(new_subtree_path, data)
-        except:
-            pass
+        data = fal.read(subtree_path)
+        for replace_subtree in tree_data["subtrees"]:
+            data = data.replace(replace_subtree, name + ":" + replace_subtree)
+        for replace_action in tree_data["actions"]:
+            data = data.replace(replace_action, name + "-" + replace_action)
+        fal.create(new_subtree_path, data)
 
+    # Write actions
     for action in tree_data["actions"]:
         actions_entry_path = fal.actions_path(entry_project)
         actions_path = fal.actions_path(project)
         action_path = fal.path_join(actions_entry_path, action + ".py")
         new_action_path = fal.path_join(actions_path, name + "-" + action + ".py")
-        try:
-            action_data = fal.read(action_path)
-            action_data = action_data.replace(action, name + "-" + action)
-            fal.create(new_action_path, action_data)
-        except:
-            pass
+        action_data = fal.read(action_path)
+        action_data = action_data.replace(action, name + "-" + action)
+        fal.create(new_action_path, action_data)
 
     return JsonResponse({"success": True})

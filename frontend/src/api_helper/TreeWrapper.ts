@@ -1049,7 +1049,11 @@ const getLibraryTree = async (entry: string) => {
       ); // Response error
     }
 
-    return {graph_json: response.data.graph_json, actions: response.data.actions, subtrees: []};
+    return {
+      graph_json: response.data.graph_json,
+      actions: response.data.actions,
+      subtrees: response.data.subtrees,
+    };
   } catch (error: unknown) {
     throw error; // Rethrow
   }
@@ -1078,7 +1082,7 @@ const getSubtreeLibrary = async () => {
 
 const getUserSubtreeLibrary = async (project: string) => {
   if (!project) throw new Error("Current Project name is not set");
-  
+
   const apiUrl = `/bt_studio/get_user_subtree_library_list?project=${project}`;
 
   try {
@@ -1114,7 +1118,11 @@ const getUserLibraryTree = async (project: string, entry: string) => {
       ); // Response error
     }
 
-    return {graph_json: response.data.graph_json, actions: response.data.actions, subtrees: response.data.subtrees};
+    return {
+      graph_json: response.data.graph_json,
+      actions: response.data.actions,
+      subtrees: response.data.subtrees,
+    };
   } catch (error: unknown) {
     throw error; // Rethrow
   }
@@ -1232,5 +1240,5 @@ export {
   getUserSubtreeLibrary,
   getUserLibraryTree,
   importLibrarySubtree,
-  importUserLibrarySubtree
+  importUserLibrarySubtree,
 };

@@ -24,6 +24,9 @@ class FAL:
     def library_actions_path(self, entry) -> str:
         return self.path_join(self.library_entry_path(entry), "actions")
 
+    def library_subtrees_path(self, entry) -> str:
+        return self.path_join(self.library_entry_path(entry), "subtrees")
+
     def project_path(self, project_name) -> str:
         return self.path_join(self.base_path(), project_name)
 

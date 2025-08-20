@@ -42,9 +42,15 @@ def add_actions_in_tree(actions, actions_list, subtrees, subtrees_list, tree):
             add_actions_in_tree(actions, actions_list, subtrees, subtrees_list, entry)
 
 
-def get_tree_data(fal, project, graph_data, bt_order, actions=set(), subtrees=set()):
-    subtree_path = fal.subtrees_path(project)
-    actions_path = fal.actions_path(project)
+def get_tree_data(
+    fal,
+    subtrees_path,
+    actions_path,
+    graph_data,
+    bt_order,
+    actions=set(),
+    subtrees=set(),
+):
     subtrees_inside = set()
 
     # Check if the project exists
@@ -60,7 +66,7 @@ def get_tree_data(fal, project, graph_data, bt_order, actions=set(), subtrees=se
         actions_list = []
 
     try:
-        subtrees_list = fal.listfiles(subtree_path)
+        subtrees_list = fal.listfiles(subtrees_path)
         subtrees_list = [os.path.splitext(x)[0] for x in subtrees_list]
     except:
         subtrees_list = []
@@ -77,10 +83,18 @@ def get_tree_data(fal, project, graph_data, bt_order, actions=set(), subtrees=se
     for subtree in subtrees_inside:
         if subtree not in subtrees:
             subtrees.add(subtree)
-            entry_path = fal.subtrees_path(project)
+            entry_path = subtrees_path
             graph_path = fal.path_join(entry_path, subtree + ".json")
             graph_data = fal.read(graph_path)
-            get_tree_data(fal, project, graph_data, bt_order, actions, subtrees)
+            get_tree_data(
+                fal,
+                subtrees_path,
+                actions_path,
+                graph_data,
+                bt_order,
+                actions,
+                subtrees,
+            )
 
     return {"actions": list(actions), "subtrees": list(subtrees)}
 
