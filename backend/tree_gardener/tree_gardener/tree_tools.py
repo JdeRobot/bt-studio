@@ -108,7 +108,7 @@ def ascii_blackboard_to_json(blackboard):
     ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
     blackboard = ansi_escape.sub("", blackboard)
 
-    for line in iter(blackboard.split('/')):
+    for line in iter(blackboard.split("/")):
         if "Blackboard Data" in line:
             continue
         if len(line.strip()) == 0:
@@ -118,7 +118,7 @@ def ascii_blackboard_to_json(blackboard):
         # Remove whitespaces with strip and remove / from entry
         try:
             [entry, value] = line.strip().split(":")
-            value = value.replace('\n', ' ')
+            value = value.replace("\n", " ")
             json_str += f'"{entry.strip()}":"{value.strip()}"'
             do_append_coma = True
         except:
