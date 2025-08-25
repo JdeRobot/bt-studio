@@ -1,0 +1,8 @@
+{
+    "name": "global_nav",
+    "config": {
+        "editorShowAccentColors": true,
+        "theme": "dark",
+        "btOrder": "top-to-bottom"
+    }
+}
