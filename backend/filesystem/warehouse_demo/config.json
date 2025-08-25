@@ -3,6 +3,6 @@
     "config": {
         "editorShowAccentColors": true,
         "theme": "dark",
-        "btOrder": "bottom-to-top"
+        "btOrder": "top-to-bottom"
     }
 }
