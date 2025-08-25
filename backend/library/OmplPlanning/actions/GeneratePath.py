@@ -12,7 +12,7 @@ def rotationMatrix(l1, l2, x, y, yaw):
 
     return int(newx), int(newy)
 
-class OmplPlanning-GeneratePath(py_trees.behaviour.Behaviour):
+class GeneratePath(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, ports = None):
 

@@ -2,7 +2,7 @@ import py_trees
 import geometry_msgs
 import tree_tools
 
-class FollowPath-SetSpeed(py_trees.behaviour.Behaviour):
+class SetSpeed(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, ports = None):
 

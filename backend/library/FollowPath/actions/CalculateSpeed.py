@@ -22,7 +22,7 @@ def getTurnDirection(robot_yaw, goal_yaw):
 
     return direction
 
-class FollowPath-CalculateSpeed(py_trees.behaviour.Behaviour):
+class CalculateSpeed(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, ports = None):
 

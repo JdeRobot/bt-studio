@@ -20,7 +20,7 @@ def quat2Yaw(qw, qx, qy, qz):
 
     return rotateZ
 
-class OmplPlanning-GetPose(py_trees.behaviour.Behaviour):
+class GetPose(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, ports = None):
 
