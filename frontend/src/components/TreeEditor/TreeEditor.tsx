@@ -111,8 +111,6 @@ const TreeEditor = memo(
 
       node.setColor(actionFrame.getColor());
 
-      console.log(actionFrame)
-
       actionFrame.getInputs().forEach((input) => {
         node.addInputPort(input);
       });
