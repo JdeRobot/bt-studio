@@ -123,7 +123,7 @@ const updateBlackboardValues = (
       let tagSplit = tag.getName().split(" = ");
       const tagStr = tagSplit[0].slice(1, -1); // Remove {}
       if (tagStr === element[0]) {
-        tag.setName(`{${tagStr}} = ${element[1]}`);
+        tag.setName(`{${tagStr}} = ${(element[1] as String).slice(0, 50)}`);
       } else {
         notFoundTags.push(tag);
       }
