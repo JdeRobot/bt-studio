@@ -1,8 +1,26 @@
 import py_trees
 import geometry_msgs
 import tree_tools
+import nav_msgs.msg
+from math import atan2
 
-class SetSpeed(py_trees.behaviour.Behaviour):
+def quat2Yaw(qw, qx, qy, qz):
+    """
+    Translates from Quaternion to Yaw.
+    @param qw,qx,qy,qz: Quaternion values
+    @type qw,qx,qy,qz: float
+    @return Yaw value translated from Quaternion
+    """
+
+    rotateZa0 = 2.0 * (qx * qy + qw * qz)
+    rotateZa1 = qw * qw + qx * qx - qy * qy - qz * qz
+    rotateZ = 0.0
+    if rotateZa0 != 0.0 and rotateZa1 != 0.0:
+        rotateZ = atan2(rotateZa0, rotateZa1)
+
+    return rotateZ
+
+class OmplPlanning-GetPose(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, ports = None):
 
@@ -26,12 +44,15 @@ class SetSpeed(py_trees.behaviour.Behaviour):
             error_message = "Couldn't find the tree node"
             raise KeyError(error_message) from e
 
-
         topic = tree_tools.get_port_content(self.ports["topic"])
-
-        self.publisher = self.node.create_publisher(
-            msg_type=geometry_msgs.msg.Twist, topic=topic, qos_profile=10
+        self.subscription = self.node.create_subscription(
+            nav_msgs.msg.Odometry, topic, self.listener_callback, 10
         )
+
+        self.last_scan_ = nav_msgs.msg.Odometry()
+
+    def listener_callback(self, msg) -> None:
+        self.last_scan_ = msg
 
     def initialise(self) -> None:
 
@@ -44,13 +65,15 @@ class SetSpeed(py_trees.behaviour.Behaviour):
 
         """ Executed when the action is ticked. Do not block! """
 
-        # Publish the speed msg
-        msg = geometry_msgs.msg.Twist()
-        msg.linear.x = float(tree_tools.get_port_content(self.ports["lin"]))
-        msg.angular.z = float(tree_tools.get_port_content(self.ports["ang"]))
+        x = self.last_scan_.pose.pose.position.x
+        y = self.last_scan_.pose.pose.position.y
 
-        self.publisher.publish(msg)
+        ori = self.last_scan_.pose.pose.orientation
+        yaw = quat2Yaw(ori.w, ori.x, ori.y, ori.z)
 
+        tree_tools.set_port_content(self.ports["x"], x)
+        tree_tools.set_port_content(self.ports["y"], y)
+        tree_tools.set_port_content(self.ports["yaw"], yaw)
         return py_trees.common.Status.SUCCESS
 
     def terminate(self, new_status: py_trees.common.Status) -> None:
