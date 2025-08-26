@@ -784,15 +784,18 @@ def get_user_library_tree(request):
     config = json.loads(content)
     bt_order = config["config"]["btOrder"]
 
-    tree_data = app_generator.get_tree_data(
-        fal,
-        fal.subtrees_path(project),
-        fal.actions_path(project),
-        graph_data,
-        bt_order,
-        actions=set(),
-        subtrees=set(),
-    )
+    try:
+        tree_data = app_generator.get_tree_data(
+            fal,
+            fal.subtrees_path(project),
+            fal.actions_path(project),
+            graph_data,
+            bt_order,
+            actions=set(),
+            subtrees=set(),
+        )
+    except:
+        tree_data = {"actions":[], "subtrees":[]}
 
     return JsonResponse(
         {
