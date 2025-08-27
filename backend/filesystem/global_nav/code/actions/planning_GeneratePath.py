@@ -40,8 +40,8 @@ class planning_GeneratePath(py_trees.behaviour.Behaviour):
         """
         Translates from Pixels to World Coordinates.
         """
-        worldx =  x / self.h_scale - self.room_h / 2
-        worldy =  y / self.w_scale - self.room_w / 2
+        worldx = x / self.h_scale - self.room_h / 2
+        worldy = y / self.w_scale - self.room_w / 2
 
         return worldx, worldy
 
@@ -87,7 +87,7 @@ class planning_GeneratePath(py_trees.behaviour.Behaviour):
 
         robotx, roboty = self.world2Pixels(x, y)
         goalx, goaly = self.world2Pixels(target_x, target_y)
-        print(robotx, roboty,goalx,goaly)
+        print(robotx, roboty, goalx, goaly)
 
         path = self.generatePath([[roboty, robotx], yaw], [[goalx, goaly], target_yaw])
 

@@ -26,7 +26,9 @@ class setter_SetBaseMap(py_trees.behaviour.Behaviour):
             error_message = "Couldn't find the tree node"
             raise KeyError(error_message) from e
 
-        self.mapImg = plt.imread("/resources/exercises/global_navigation/images/cityLargenBin.png")
+        self.mapImg = plt.imread(
+            "/resources/exercises/global_navigation/images/cityLargenBin.png"
+        )
 
     def initialise(self) -> None:
         """Executed when coming from an idle state"""

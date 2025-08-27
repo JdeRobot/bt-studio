@@ -795,7 +795,7 @@ def get_user_library_tree(request):
             subtrees=set(),
         )
     except:
-        tree_data = {"actions":[], "subtrees":[]}
+        tree_data = {"actions": [], "subtrees": []}
 
     return JsonResponse(
         {
