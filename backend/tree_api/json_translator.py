@@ -6,6 +6,7 @@ from xml.dom import minidom
 def prettify_xml(element):
     """Return a pretty-printed XML string for the Element."""
     rough_string = tostring(element, "utf-8")
+    print(rough_string)
     reparsed = minidom.parseString(rough_string)
     return reparsed.toprettyxml(indent="  ")
 
@@ -189,6 +190,7 @@ def translate_raw(content, raw_order):
         raise RuntimeError(f"Failed to translate tree: {e}")
 
     # Save the xml in the specified route
+    print(root)
     xml_string = prettify_xml(root)
     return xml_string
 
