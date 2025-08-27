@@ -124,8 +124,8 @@ def generate_app(fal, project_name, bt_order):
 
                 subtree = json_translator.translate_raw(subtree_json, bt_order)
                 subtrees.append({"name": subtree_name, "content": subtree})
-    except:
-        print("No subtrees")
+    except Exception as e:
+        print("No subtrees", e)
 
     # 3. Generate a self-contained tree
     return tree_generator.generate(main_tree, subtrees)

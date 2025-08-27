@@ -784,15 +784,18 @@ def get_user_library_tree(request):
     config = json.loads(content)
     bt_order = config["config"]["btOrder"]
 
-    tree_data = app_generator.get_tree_data(
-        fal,
-        fal.subtrees_path(project),
-        fal.actions_path(project),
-        graph_data,
-        bt_order,
-        actions=set(),
-        subtrees=set(),
-    )
+    try:
+        tree_data = app_generator.get_tree_data(
+            fal,
+            fal.subtrees_path(project),
+            fal.actions_path(project),
+            graph_data,
+            bt_order,
+            actions=set(),
+            subtrees=set(),
+        )
+    except:
+        tree_data = {"actions": [], "subtrees": []}
 
     return JsonResponse(
         {
@@ -832,9 +835,9 @@ def import_library_tree(request):
 
     # Write main tree
     for replace_subtree in tree_data["subtrees"]:
-        graph_data = graph_data.replace(replace_subtree, name + ":" + replace_subtree)
+        graph_data = graph_data.replace(replace_subtree, name + "_" + replace_subtree)
     for replace_action in tree_data["actions"]:
-        graph_data = graph_data.replace(replace_action, name + "-" + replace_action)
+        graph_data = graph_data.replace(replace_action, name + "_" + replace_action)
     fal.create(fal.path_join(fal.subtrees_path(project), name + ".json"), graph_data)
 
     # Write subtrees
@@ -844,13 +847,13 @@ def import_library_tree(request):
         subtree_path = fal.path_join(subtrees_entry_path, subtree + ".json")
         if subtree == entry:
             continue
-        new_subtree_name = name + ":" + subtree
+        new_subtree_name = name + "_" + subtree
         new_subtree_path = fal.path_join(subtrees_path, new_subtree_name + ".json")
         data = fal.read(subtree_path)
         for replace_subtree in tree_data["subtrees"]:
-            data = data.replace(replace_subtree, name + ":" + replace_subtree)
+            data = data.replace(replace_subtree, name + "_" + replace_subtree)
         for replace_action in tree_data["actions"]:
-            data = data.replace(replace_action, name + "-" + replace_action)
+            data = data.replace(replace_action, name + "_" + replace_action)
         fal.create(new_subtree_path, data)
 
     # Write actions
@@ -858,9 +861,9 @@ def import_library_tree(request):
         actions_entry_path = fal.library_actions_path(entry)
         actions_path = fal.actions_path(project)
         action_path = fal.path_join(actions_entry_path, action + ".py")
-        new_action_path = fal.path_join(actions_path, name + "-" + action + ".py")
+        new_action_path = fal.path_join(actions_path, name + "_" + action + ".py")
         action_data = fal.read(action_path)
-        action_data = action_data.replace(action, name + "-" + action)
+        action_data = action_data.replace(action, name + "_" + action)
         fal.create(new_action_path, action_data)
 
     return JsonResponse({"success": True})
@@ -903,9 +906,9 @@ def import_user_library_tree(request):
 
     # Write main tree
     for replace_subtree in tree_data["subtrees"]:
-        graph_data = graph_data.replace(replace_subtree, name + ":" + replace_subtree)
+        graph_data = graph_data.replace(replace_subtree, name + "_" + replace_subtree)
     for replace_action in tree_data["actions"]:
-        graph_data = graph_data.replace(replace_action, name + "-" + replace_action)
+        graph_data = graph_data.replace(replace_action, name + "_" + replace_action)
     fal.create(fal.path_join(fal.subtrees_path(project), name + ".json"), graph_data)
 
     # Write subtrees
@@ -915,13 +918,13 @@ def import_user_library_tree(request):
         subtree_path = fal.path_join(subtrees_entry_path, subtree + ".json")
         if subtree == entry:
             continue
-        new_subtree_name = name + ":" + subtree
+        new_subtree_name = name + "_" + subtree
         new_subtree_path = fal.path_join(subtrees_path, new_subtree_name + ".json")
         data = fal.read(subtree_path)
         for replace_subtree in tree_data["subtrees"]:
-            data = data.replace(replace_subtree, name + ":" + replace_subtree)
+            data = data.replace(replace_subtree, name + "_" + replace_subtree)
         for replace_action in tree_data["actions"]:
-            data = data.replace(replace_action, name + "-" + replace_action)
+            data = data.replace(replace_action, name + "_" + replace_action)
         fal.create(new_subtree_path, data)
 
     # Write actions
@@ -929,9 +932,9 @@ def import_user_library_tree(request):
         actions_entry_path = fal.actions_path(entry_project)
         actions_path = fal.actions_path(project)
         action_path = fal.path_join(actions_entry_path, action + ".py")
-        new_action_path = fal.path_join(actions_path, name + "-" + action + ".py")
+        new_action_path = fal.path_join(actions_path, name + "_" + action + ".py")
         action_data = fal.read(action_path)
-        action_data = action_data.replace(action, name + "-" + action)
+        action_data = action_data.replace(action, name + "_" + action)
         fal.create(new_action_path, action_data)
 
     return JsonResponse({"success": True})
