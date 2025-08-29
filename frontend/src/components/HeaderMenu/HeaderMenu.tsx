@@ -24,7 +24,7 @@ import { ReactComponent as ResetIcon } from "./img/reset.svg";
 import ProjectModal from "./modals/ProjectModal";
 import SettingsModal from "../settings_popup/SettingsModal";
 import { OptionsContext } from "../options/Options";
-
+import { LayoutIcon } from "../icons";
 import RosTemplates from "../../templates/RosTemplates";
 import TreeGardener from "../../templates/TreeGardener";
 import { useError } from "jderobot-ide-interface";
@@ -425,7 +425,7 @@ const HeaderMenu = ({
             setter={setLayout}
             possibleValues={["only-editor", "only-viewers", "both"]}
           >
-            <SettingsIcon className="bt-header-icon" fill={"var(--icon)"} />
+            <LayoutIcon className="bt-header-icon" stroke={"var(--icon)"} />
           </Dropdown>
           <button
             className="bt-header-button"
