@@ -7,6 +7,7 @@ import { ReactComponent as EditActionIcon } from "./img/edit_action.svg";
 import { ReactComponent as HelpIcon } from "./img/help.svg";
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
 import { Menu, MenuItem } from "@mui/material";
+import { ImportIcon } from "../icons";
 
 import {
   createSubtree,
@@ -263,15 +264,15 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
       >
         <SubtreeIcon className="bt-icon bt-action-icon" />
       </MenuButton>
-      <MenuButton
+      <MenuButtonStroke
         id="import-subtree-button"
         onClick={() => {
           handleImportSubtree();
         }}
         title="Import Subtree"
       >
-        <SubtreeIcon className="bt-icon bt-action-icon" />
-      </MenuButton>
+        <ImportIcon className="bt-icon bt-action-icon" />
+      </MenuButtonStroke>
       <ImportSubtreeModal
         project={project}
         onSubmit={handleCloseImportSubtree}
