@@ -5,17 +5,20 @@ import {
   ModalRow,
   ModalTitlebar,
 } from "jderobot-ide-interface";
+import { publish } from "../../helper/TreeEditorHelper";
 
 const initialAddSubtreeModalData = {
   subTreeName: "",
 };
 
 const AddSubtreeModal = ({
+  project,
   onSubmit,
   isOpen,
   onClose,
   subTreeList,
 }: {
+  project: string;
   onSubmit: Function;
   isOpen: boolean;
   onClose: Function;
@@ -61,6 +64,8 @@ const AddSubtreeModal = ({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    publish("updateSubtreeList");
+    publish("updateExplorer-Code", { project: project });
     onSubmit(formState.subTreeName);
     setFormState(initialAddSubtreeModalData);
     allowCreation(false);

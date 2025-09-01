@@ -758,6 +758,7 @@ def get_library_tree(request):
         {
             "success": True,
             "graph_json": json.loads(graph_data),
+            "bt_order": bt_order,
             "actions": tree_data["actions"],
             "subtrees": tree_data["subtrees"],
         }
@@ -801,6 +802,7 @@ def get_user_library_tree(request):
         {
             "success": True,
             "graph_json": json.loads(graph_data),
+            "bt_order": bt_order,
             "actions": tree_data["actions"],
             "subtrees": tree_data["subtrees"],
         }

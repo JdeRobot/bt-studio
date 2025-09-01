@@ -1051,6 +1051,7 @@ const getLibraryTree = async (entry: string) => {
 
     return {
       graph_json: response.data.graph_json,
+      btOrder: response.data.bt_order,
       actions: response.data.actions,
       subtrees: response.data.subtrees,
     };
@@ -1120,6 +1121,7 @@ const getUserLibraryTree = async (project: string, entry: string) => {
 
     return {
       graph_json: response.data.graph_json,
+      btOrder: response.data.bt_order,
       actions: response.data.actions,
       subtrees: response.data.subtrees,
     };

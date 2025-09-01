@@ -281,6 +281,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
         subTreeList={subtreesList}
       />
       <AddSubtreeModal
+        project={project}
         onSubmit={handleCreateSubtreeSubmit}
         onClose={handleCloseCreateSubtree}
         isOpen={isNewSubtreeModalOpen}

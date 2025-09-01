@@ -6,6 +6,7 @@ import {
   ModalInputBox,
   ModalRow,
   ModalTitlebar,
+  ModalRowDataText,
 } from "jderobot-ide-interface";
 import {
   getLibraryTree,
@@ -57,12 +58,14 @@ const ImportSubtreeModal = ({
 
         entry_list.push({
           name: entry,
+          base_name: entry,
           component: (
             <LibrarySubtree
               name={entry}
               tree={entryData.graph_json}
+              btOrder={entryData.btOrder}
               actions={entryData.actions}
-              subtrees={[]}
+              subtrees={entryData.subtrees}
               onSelect={selectEntry}
             />
           ),
@@ -96,6 +99,7 @@ const ImportSubtreeModal = ({
             <LibrarySubtree
               name={entry.tree}
               tree={entryData.graph_json}
+              btOrder={entryData.btOrder}
               actions={entryData.actions}
               subtrees={entryData.subtrees}
               project={entry.project}
@@ -238,7 +242,13 @@ const ImportSubtreeModal = ({
             <ModalActionList
               title="User library"
               list={availableUserSubtrees}
-              selected={selectedSubtree ? selectedSubtree.name : ""}
+              selected={
+                selectedSubtree
+                  ? selectedSubtree.project
+                    ? `${selectedSubtree.project}: ${selectedSubtree.name}`
+                    : ""
+                  : ""
+              }
             />
           </div>
           <div style={{ width: "100%" }}>
@@ -265,6 +275,7 @@ const LibrarySubtree = ({
   name,
   project,
   tree,
+  btOrder,
   actions,
   subtrees,
   onSelect,
@@ -272,6 +283,7 @@ const LibrarySubtree = ({
   name: string;
   project?: string;
   tree: any;
+  btOrder: string;
   actions: string[];
   subtrees: string[];
   onSelect: Function;
@@ -300,23 +312,16 @@ const LibrarySubtree = ({
   }, []);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", width: "90%" }}>
-      <ModalRow type="all">
+    <div className="subtree-library-entry">
+      <ModalRow type="img">
         <CanvasWidget
           className={`subtree-library-canvas`}
           engine={engine.current}
         />
       </ModalRow>
-      <ModalRow>
-        {subtrees.map((name, index) => {
-          return <li>{name}</li>;
-        })}
-      </ModalRow>
-      <ModalRow>
-        {actions.map((name, index) => {
-          return <li>{name}</li>;
-        })}
-      </ModalRow>
+      <ModalRowDataText title="Order" data={[btOrder]} />
+      <ModalRowDataText title="Subtrees" data={subtrees} />
+      <ModalRowDataText title="Actions" data={actions} />
       <ModalRow type="buttons">
         <button
           onClick={() => onSelect(name, project)}

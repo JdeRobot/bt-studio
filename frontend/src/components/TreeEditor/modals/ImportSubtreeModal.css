@@ -4,6 +4,13 @@
   margin: 10px;
 }
 
+.subtree-library-entry {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  background: inherit;
+}
+
 #import-subtree-modal {
   width: 80%;
 }
