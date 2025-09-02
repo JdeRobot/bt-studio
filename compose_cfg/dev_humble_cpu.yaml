@@ -18,7 +18,7 @@ services:
       retries: 20
 
   bt-studio:
-    image: jderobot/bt-studio:latest
+    image: jderobot/bt-studio:test
     container_name: developer-container
     command:  "-bt"
     ports:
