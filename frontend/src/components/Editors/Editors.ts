@@ -30,12 +30,20 @@ export const editorApi: ExtraApi = {
     get_config: async (project: string, universe: string) => {
       const config = await getUniverseConfig(universe, project);
       const configJson = JSON.parse(config);
+      var universeConfig;
 
       if (configJson.type === "robotics_backend") {
-        return getRoboticsBackendUniverse(configJson.id);
+        universeConfig = await getRoboticsBackendUniverse(configJson.id);
+      } else {
+        // Get custom universe config
+        universeConfig = await createCustomUniverseConfig(project, configJson);
       }
-      // Get custom universe config
-      return createCustomUniverseConfig(project, configJson);
+
+      if (!universeConfig.tools.includes("state_monitor")) {
+        universeConfig.tools.push("state_monitor");
+      }
+      
+      return universeConfig;
     },
   },
 };

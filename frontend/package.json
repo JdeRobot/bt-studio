@@ -13,7 +13,7 @@
     "beautiful-react-diagrams": "^0.5.1",
     "eslint-config-react-app": "^7.0.1",
     "jderobot-commsmanager": "1.0.3",
-    "jderobot-ide-interface": "0.1.69",
+    "jderobot-ide-interface": "0.1.72",
     "jszip": "^3.10.1",
     "react": "18.2.0",
     "react-color-palette": "^7.1.1",
