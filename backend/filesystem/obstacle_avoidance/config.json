@@ -1,0 +1,8 @@
+{
+    "name": "obstacle_avoidance",
+    "config": {
+        "editorShowAccentColors": true,
+        "theme": "dark",
+        "btOrder": "top-to-bottom"
+    }
+}
