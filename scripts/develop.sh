@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Initialize variables with default values
 gpu_mode="false"
@@ -58,8 +58,8 @@ if ! command -v yarn --version &> /dev/null; then
 fi
 
 # Prepare the frontend
-nvm install 17
-nvm use 17
+nvm install 20
+nvm use 20
 cd frontend/
 yarn install
 yarn build
