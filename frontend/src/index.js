@@ -8,6 +8,7 @@ import "beautiful-react-diagrams/styles.css";
 
 import { OptionsProvider } from "./components/options/Options";
 import { ErrorProvider } from "jderobot-ide-interface";
+import { BtThemeProvider } from "./contexts/BtThemeContext";
 
 // Load Google Font
 WebFont.load({
@@ -23,13 +24,15 @@ WebFont.load({
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  // <React.StrictMode>
-  <OptionsProvider>
-    <ErrorProvider>
-      <App />
-    </ErrorProvider>
-  </OptionsProvider>,
-  // </React.StrictMode>,
+  <React.StrictMode>
+    <OptionsProvider>
+      <ErrorProvider>
+        <BtThemeProvider>
+          <App />
+        </BtThemeProvider>
+      </ErrorProvider>
+    </OptionsProvider>
+  </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -1,33 +1,33 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
-  "private": true,
-  "proxy": "http://localhost:8000",
+  "name": "jderobot-bt-studio",
+  "version": "0.10.0",
+  "main": "index.js",
   "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.11",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.2",
+    "@mui/material": "^7.3.2",
     "@projectstorm/react-diagrams": "7.0.3",
     "@testing-library/jest-dom": "^5.14.1",
     "axios": "^1.7.7",
     "beautiful-react-diagrams": "^0.5.1",
     "eslint-config-react-app": "^7.0.1",
     "jderobot-commsmanager": "1.0.3",
-    "jderobot-ide-interface": "0.1.91",
+    "jderobot-ide-interface": "0.1.98",
     "jszip": "^3.10.1",
     "react": "18.2.0",
     "react-color-palette": "^7.1.1",
     "react-dom": "18.2.0",
     "react-scripts": "5.0.1",
+    "styled-components": "^6.1.19",
     "typescript": "^5.2.2",
     "web-vitals": "^2.1.0",
     "webfontloader": "^1.6.28"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "dev": "webpack --mode development --output-path ./static/frontend --watch",
+    "build": "webpack --mode development --output-path ./static/frontend",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write src/**/*.{js,jsx,css,tsx,html}"
   },
   "eslintConfig": {
@@ -49,7 +49,25 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
+    "@svgr/webpack": "^8.1.0",
+    "@types/react": "^19.1.12",
+    "@types/styled-components": "^5.1.34",
+    "babel-loader": "^10.0.0",
+    "css-loader": "^7.1.2",
+    "file-loader": "^6.2.0",
+    "mini-css-extract-plugin": "^2.9.4",
+    "path": "^0.12.7",
     "prettier": "^3.5.3",
-    "typescript": "^5.2.2"
+    "sass-loader": "^16.0.5",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.2.2",
+    "webpack": "^5.101.3",
+    "webpack-bundle-tracker": "^3.2.1",
+    "webpack-cli": "^6.0.1"
   }
 }

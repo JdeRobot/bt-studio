@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { ChildrenPortWidget } from "./ports/children_port/ChildrenPortWidget";
 import { ParentPortWidget } from "./ports/parent_port/ParentPortWidget";
 import { InputPortWidget } from "./ports/input_port/InputPortWidget";
