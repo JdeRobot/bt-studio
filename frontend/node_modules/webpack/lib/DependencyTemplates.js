@@ -5,20 +5,21 @@
 
 "use strict";
 
+const { DEFAULTS } = require("./config/defaults");
 const createHash = require("./util/createHash");
 
 /** @typedef {import("./Dependency")} Dependency */
 /** @typedef {import("./DependencyTemplate")} DependencyTemplate */
 /** @typedef {typeof import("./util/Hash")} Hash */
 
-/** @typedef {new (...args: any[]) => Dependency} DependencyConstructor */
+/** @typedef {new (...args: EXPECTED_ANY[]) => Dependency} DependencyConstructor */
 
 class DependencyTemplates {
 	/**
 	 * @param {string | Hash} hashFunction the hash function to use
 	 */
-	constructor(hashFunction = "md4") {
-		/** @type {Map<Function, DependencyTemplate>} */
+	constructor(hashFunction = DEFAULTS.HASH_FUNCTION) {
+		/** @type {Map<DependencyConstructor, DependencyTemplate>} */
 		this._map = new Map();
 		/** @type {string} */
 		this._hash = "31d6cfe0d16ae931b73c59d7e0c089c0";

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { InputPortWidget } from "./ports/input_port/TagInputPortWidget";
 import { OutputPortWidget } from "./ports/output_port/TagOutputPortWidget";
 

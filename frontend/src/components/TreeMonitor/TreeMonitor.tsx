@@ -241,7 +241,7 @@ const TreeMonitor = memo(
           setGoBack={setGoBack}
           subTreeName={subTreeName}
         />
-        {engine.current && (
+        {engine.current.getModel() && (
           <CanvasWidget className="bt-monitor-canvas" engine={engine.current} />
         )}
       </>

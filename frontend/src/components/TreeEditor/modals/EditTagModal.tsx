@@ -30,7 +30,7 @@ const EditTagModal = ({
   // model: DiagramModel;
   engine: DiagramEngine;
 }) => {
-  const focusInputRef = useRef(null);
+  const focusInputRef = useRef<any>(null);
   const [formState, setFormState] = useState(initialEditTagModalData);
 
   const handleInputChange = (event: any) => {

@@ -8,6 +8,7 @@ import { ReactComponent as HelpIcon } from "./img/help.svg";
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
 import { Menu, MenuItem } from "@mui/material";
 import { ImportIcon } from "../icons";
+import ParkRoundedIcon from "@mui/icons-material/ParkRounded";
 
 import {
   createSubtree,
@@ -24,6 +25,11 @@ import {
   MenuButtonStroke,
 } from "jderobot-ide-interface";
 import ImportSubtreeModal from "./modals/ImportSubtreeModal";
+import ZoomOutMapRoundedIcon from "@mui/icons-material/ZoomOutMapRounded";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
+import NorthRoundedIcon from "@mui/icons-material/NorthRounded";
 
 export const BTSelectorButtons = ({ project }: { project: string }) => {
   var NODE_MENU_ITEMS: Record<string, string[]> = {
@@ -262,7 +268,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
         }}
         title="Create Subtree"
       >
-        <SubtreeIcon className="bt-icon bt-action-icon" />
+        <ParkRoundedIcon className="bt-icon bt-action-icon" />
       </MenuButton>
       <MenuButtonStroke
         id="import-subtree-button"
@@ -300,15 +306,6 @@ export const OtherButtons = ({ project }: { project: string }) => {
     setBtOrder(settings.btOrder.value);
   }, [settings.btOrder.value]);
 
-  const openInNewTab = (url: URL) => {
-    const newWindow = window.open(url, "_blank");
-    if (newWindow) {
-      newWindow.focus();
-    } else {
-      console.error("Failed to open new tab/window.");
-    }
-  };
-
   return (
     <>
       <MenuButton
@@ -316,34 +313,23 @@ export const OtherButtons = ({ project }: { project: string }) => {
         onClick={() => publish("BTEditorDeleteCurrent")}
         title="Delete"
       >
-        <DeleteIcon className="bt-icon bt-action-icon" />
+        <DeleteRoundedIcon className="bt-icon bt-action-icon" />
       </MenuButton>
-      <MenuButtonStroke
+      <MenuButton
         id="node-action-edit-button"
         onClick={() => publish("BTEditorEditCurrent")}
         title="Edit"
       >
-        <EditActionIcon className="bt-icon bt-action-icon" />
-      </MenuButtonStroke>
+        <EditRoundedIcon className="bt-icon bt-action-icon" />
+      </MenuButton>
       <MenuButton
         id="bt-node-action-zoom-button"
         onClick={() => publish("BTEditorHomeZoom")}
         title="Zoom To Fit"
       >
-        <ZoomToFitIcon className="bt-icon bt-action-icon" />
+        <ZoomOutMapRoundedIcon className="bt-icon bt-action-icon" />
       </MenuButton>
       <MenuButton
-        id="bt-node-action-help-button"
-        onClick={() => {
-          openInNewTab(
-            new URL("https://jderobot.github.io/bt-studio/documentation/"),
-          );
-        }}
-        title="Help"
-      >
-        <HelpIcon className="bt-icon bt-action-icon" />
-      </MenuButton>
-      <MenuButtonStroke
         id="bt-node-action-help-button"
         title={"BT Order: " + btOrder}
         onClick={() => {
@@ -354,34 +340,12 @@ export const OtherButtons = ({ project }: { project: string }) => {
           }
         }}
       >
-        <svg
-          className="w-6 h-6 text-gray-800 dark:text-white"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          {btOrder === "bottom-to-top" ? (
-            <path
-              stroke="var(--icon)"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 6v13m0-13 4 4m-4-4-4 4"
-            />
-          ) : (
-            <path
-              stroke="var(--icon)"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 19V5m0 14-4-4m4 4 4-4"
-            />
-          )}
-        </svg>
-      </MenuButtonStroke>
+        {btOrder === "bottom-to-top" ? (
+          <NorthRoundedIcon className="bt-icon bt-action-icon" />
+        ) : (
+          <SouthRoundedIcon className="bt-icon bt-action-icon" />
+        )}
+      </MenuButton>
     </>
   );
 };

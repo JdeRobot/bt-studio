@@ -362,6 +362,7 @@ const TreeEditor = memo(
       attachLinkListener(model.current);
       attachNodesListener(model.current);
       engine.current.setModel(model.current);
+      console.log(engine.current.getModel(), "FGHJKLKJHG");
 
       // After deserialization, attach listeners to each node
       const nodes = model.current.getNodes();
@@ -400,7 +401,7 @@ const TreeEditor = memo(
 
     return (
       <>
-        {engine.current && (
+        {engine.current.getModel() && (
           <CanvasWidget className="bt-canvas" engine={engine.current} />
         )}
       </>

@@ -4,19 +4,10 @@ import HeaderMenu from "./components/HeaderMenu";
 import "./App.css";
 import { SimulatorIcon, TerminalIcon } from "./components/icons";
 import { CommsManager } from "jderobot-commsmanager";
-import {
-  getProjectConfig,
-  listProjects,
-  saveProjectConfig,
-} from "./api_helper/TreeWrapper";
+import { getProjectConfig, saveProjectConfig } from "./api_helper/TreeWrapper";
 
 import { OptionsContext } from "./components/options/Options";
-import IdeInterface, {
-  Theme,
-  ThemeProvider,
-  VncViewer,
-  useError,
-} from "jderobot-ide-interface";
+import IdeInterface, { VncViewer, useError } from "jderobot-ide-interface";
 import TreeEditorContainer, {
   AddSubtreeButton,
   BTSelectorButtons,
@@ -26,6 +17,10 @@ import TreeMonitorContainer from "./components/TreeMonitor";
 import { explorers } from "./components/Explorers";
 import { statusBar } from "./components/StatusBar";
 import { editorApi } from "./components/Editors";
+
+import TerminalRoundedIcon from "@mui/icons-material/TerminalRounded";
+import VideoCameraBackRoundedIcon from "@mui/icons-material/VideoCameraBackRounded";
+import AccountTreeRoundedIcon from "@mui/icons-material/AccountTreeRounded";
 
 const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const [currentProjectname, setCurrentProjectname] = useState<string>("");
@@ -184,7 +179,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         project={currentProjectname}
       />
     ),
-    icon: <SimulatorIcon />,
+    icon: <AccountTreeRoundedIcon />,
     name: "Tree Monitor",
     active: showMonitor,
     activate: setMonitorVisible,
@@ -192,7 +187,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
 
   const gazeboViewer = {
     component: <VncViewer commsManager={manager} port={6080} />,
-    icon: <SimulatorIcon />,
+    icon: <VideoCameraBackRoundedIcon />,
     name: "Gazebo",
     active: showSim,
     activate: setSimVisible,
@@ -200,7 +195,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
 
   const terminalViewer = {
     component: <VncViewer commsManager={manager} port={1108} />,
-    icon: <TerminalIcon />,
+    icon: <TerminalRoundedIcon />,
     name: "Terminal",
     active: showTerminal,
     activate: setTerminalVisible,
@@ -218,44 +213,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     trigger: [{ group: "Trees", extension: "json" }],
   };
 
-  const darkTheme: Theme = {
-    palette: {
-      text: "#ededf2",
-      darkText: "#000000",
-      placeholderText: "#a6a6bf",
-      success: "#29ac29",
-      warning: "#f9e86d",
-      error: "#802626",
-      background: "#16161d",
-      primary: "#444444ff",
-      secondary: "#666666ff",
-      scrollbar: "#6f6f90",
-      border: {
-        warning: "#ffe100",
-        error: "#772222",
-        info: "#134f53",
-      },
-      progressBar: {
-        background: "#134f53",
-        color: "#1d777c",
-      },
-      button: {
-        error: "#9e2e2e",
-        success: "#29ac29",
-        warning: "#ffe100",
-        info: "#134f53",
-        hoverError: "#c63939",
-        hoverSuccess: "#29ac29",
-        hoverWarning: "#ccb400",
-        hoverInfo: "#1d777c",
-      },
-      selectedGradient:
-        "linear-gradient( -45deg, #12494c 0%, #584f42 50%, #909c7b 100%)",
-    },
-    roundness: 5,
-    monacoTheme: "dark",
-  };
-
   return (
     <div
       className="bt-App"
@@ -269,21 +226,18 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
         isUnibotics={isUnibotics}
         setLayout={setLayout}
       />
-      <ThemeProvider>
-        {/* <ThemeProvider theme={darkTheme}> */}
-        <IdeInterface
-          commsManager={manager}
-          resetManager={resetManager}
-          project={currentProjectname}
-          explorers={explorers}
-          api={editorApi}
-          extraEditors={[treeEditor]}
-          viewers={[treeMonitor, gazeboViewer, terminalViewer]}
-          options={[]}
-          layout={layout}
-          statusBarComponents={statusBar}
-        />
-      </ThemeProvider>
+      <IdeInterface
+        commsManager={manager}
+        resetManager={resetManager}
+        project={currentProjectname}
+        explorers={explorers}
+        api={editorApi}
+        extraEditors={[treeEditor]}
+        viewers={[treeMonitor, gazeboViewer, terminalViewer]}
+        options={[]}
+        layout={layout}
+        statusBarComponents={statusBar}
+      />
     </div>
   );
 };

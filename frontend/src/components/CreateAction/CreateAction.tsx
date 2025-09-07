@@ -222,7 +222,7 @@ const CreateAction = ({
       <ModalRow type="input">
         <ModalInputBox
           isInputValid={isCreationAllowed || formState.fileName === ""}
-          ref={focusInputRef}
+          ref={focusInputRef as any}
           id="fileName"
           placeholder="File Name"
           onChange={handleInputChange}
