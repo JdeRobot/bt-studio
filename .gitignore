@@ -7,5 +7,5 @@ frontend/static/*
 frontend/__pycache__
 
 # react stuff
-node_modules/
-checksum.txt
+frontend/node_modules/
+frontend/checksum.txt
