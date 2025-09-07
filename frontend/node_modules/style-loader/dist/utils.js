@@ -24,43 +24,8 @@ exports.stringifyRequest = stringifyRequest;
 var _path = _interopRequireDefault(require("path"));
 var _isEqualLocals = _interopRequireDefault(require("./runtime/isEqualLocals"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-const matchRelativePath = /^\.\.?[/\\]/;
-function isAbsolutePath(str) {
-  return _path.default.posix.isAbsolute(str) || _path.default.win32.isAbsolute(str);
-}
-function isRelativePath(str) {
-  return matchRelativePath.test(str);
-}
-
-// TODO simplify for the next major release
 function stringifyRequest(loaderContext, request) {
-  if (typeof loaderContext.utils !== "undefined" && typeof loaderContext.utils.contextify === "function") {
-    return JSON.stringify(loaderContext.utils.contextify(loaderContext.context, request));
-  }
-  const splitted = request.split("!");
-  const {
-    context
-  } = loaderContext;
-  return JSON.stringify(splitted.map(part => {
-    // First, separate singlePath from query, because the query might contain paths again
-    const splittedPart = part.match(/^(.*?)(\?.*)/);
-    const query = splittedPart ? splittedPart[2] : "";
-    let singlePath = splittedPart ? splittedPart[1] : part;
-    if (isAbsolutePath(singlePath) && context) {
-      singlePath = _path.default.relative(context, singlePath);
-      if (isAbsolutePath(singlePath)) {
-        // If singlePath still matches an absolute path, singlePath was on a different drive than context.
-        // In this case, we leave the path platform-specific without replacing any separators.
-        // @see https://github.com/webpack/loader-utils/pull/14
-        return singlePath + query;
-      }
-      if (isRelativePath(singlePath) === false) {
-        // Ensure that the relative path starts at least with ./ otherwise it would be a request into the modules directory (like node_modules).
-        singlePath = `./${singlePath}`;
-      }
-    }
-    return singlePath.replace(/\\/g, "/") + query;
-  }).join("!"));
+  return JSON.stringify(loaderContext.utils.contextify(loaderContext.context, request));
 }
 function getImportLinkAPICode(esModule, loaderContext) {
   const modulePath = stringifyRequest(loaderContext, `!${_path.default.join(__dirname, "runtime/injectStylesIntoLinkTag.js")}`);
@@ -89,30 +54,20 @@ function getImportStyleContentCode(esModule, loaderContext, request) {
   return esModule ? `import content, * as namedExport from ${modulePath};` : `var content = require(${modulePath});`;
 }
 function getImportInsertBySelectorCode(esModule, loaderContext, insertType, options) {
-  if (insertType === "selector") {
-    const modulePath = stringifyRequest(loaderContext, `!${_path.default.join(__dirname, "runtime/insertBySelector.js")}`);
-    return esModule ? `import insertFn from ${modulePath};` : `var insertFn = require(${modulePath});`;
-  }
   if (insertType === "module-path") {
     const modulePath = stringifyRequest(loaderContext, `${options.insert}`);
     loaderContext.addBuildDependency(options.insert);
     return esModule ? `import insertFn from ${modulePath};` : `var insertFn = require(${modulePath});`;
   }
-  return "";
+  const modulePath = stringifyRequest(loaderContext, `!${_path.default.join(__dirname, "runtime/insertBySelector.js")}`);
+  return esModule ? `import insertFn from ${modulePath};` : `var insertFn = require(${modulePath});`;
 }
 function getInsertOptionCode(insertType, options) {
-  if (insertType === "selector") {
-    const insert = options.insert ? JSON.stringify(options.insert) : '"head"';
-    return `
-      options.insert = insertFn.bind(null, ${insert});
-    `;
-  }
   if (insertType === "module-path") {
     return `options.insert = insertFn;`;
   }
-
-  // Todo remove "function" type for insert option in next major release, because code duplication occurs. Leave require.resolve()
-  return `options.insert = ${options.insert.toString()};`;
+  const insert = options.insert ? JSON.stringify(options.insert) : '"head"';
+  return `options.insert = insertFn.bind(null, ${insert});`;
 }
 function getImportInsertStyleElementCode(esModule, loaderContext) {
   const modulePath = stringifyRequest(loaderContext, `!${_path.default.join(__dirname, "runtime/insertStyleElement.js")}`);
@@ -198,24 +153,20 @@ function getImportIsOldIECode(esModule, loaderContext) {
   const modulePath = stringifyRequest(loaderContext, `!${_path.default.join(__dirname, "runtime/isOldIE.js")}`);
   return esModule ? `import isOldIE from ${modulePath};` : `var isOldIE = require(${modulePath});`;
 }
-function getStyleTagTransformFnCode(esModule, loaderContext, options, isSingleton, styleTagTransformType) {
+function getStyleTagTransformFnCode(esModule, loaderContext, options, isSingleton) {
   if (isSingleton) {
     return "";
   }
-  if (styleTagTransformType === "default") {
-    const modulePath = stringifyRequest(loaderContext, `!${_path.default.join(__dirname, "runtime/styleTagTransform.js")}`);
-    return esModule ? `import styleTagTransformFn from ${modulePath};` : `var styleTagTransformFn = require(${modulePath});`;
-  }
-  if (styleTagTransformType === "module-path") {
+  if (typeof options.styleTagTransform !== "undefined") {
     const modulePath = stringifyRequest(loaderContext, `${options.styleTagTransform}`);
     loaderContext.addBuildDependency(options.styleTagTransform);
     return esModule ? `import styleTagTransformFn from ${modulePath};` : `var styleTagTransformFn = require(${modulePath});`;
   }
-  return "";
+  const modulePath = stringifyRequest(loaderContext, `!${_path.default.join(__dirname, "runtime/styleTagTransform.js")}`);
+  return esModule ? `import styleTagTransformFn from ${modulePath};` : `var styleTagTransformFn = require(${modulePath});`;
 }
 function getStyleTagTransformFn(options, isSingleton) {
-  // Todo remove "function" type for styleTagTransform option in next major release, because code duplication occurs. Leave require.resolve()
-  return isSingleton ? "" : typeof options.styleTagTransform === "function" ? `options.styleTagTransform = ${options.styleTagTransform.toString()}` : `options.styleTagTransform = styleTagTransformFn`;
+  return isSingleton ? "" : `options.styleTagTransform = styleTagTransformFn`;
 }
 function getExportStyleCode(esModule, loaderContext, request) {
   const modulePath = stringifyRequest(loaderContext, `!!${request}`);

@@ -7,25 +7,32 @@ exports.default = void 0;
 var _postcssValueParser = _interopRequireDefault(require("postcss-value-parser"));
 var _utils = require("../utils");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function isIgnoredAfterName(atRule) {
+  if (atRule.raws && atRule.raws.afterName && atRule.raws.afterName.trim().length > 0) {
+    const lastCommentIndex = atRule.raws.afterName.lastIndexOf("/*");
+    const matched = atRule.raws.afterName.slice(lastCommentIndex).match(_utils.WEBPACK_IGNORE_COMMENT_REGEXP);
+    if (matched && matched[2] === "true") {
+      return true;
+    }
+  }
+  return false;
+}
+function isIgnoredPrevNode(atRule) {
+  const prevNode = atRule.prev();
+  if (prevNode && prevNode.type === "comment") {
+    const matched = prevNode.text.match(_utils.WEBPACK_IGNORE_COMMENT_REGEXP);
+    if (matched && matched[2] === "true") {
+      return true;
+    }
+  }
+  return false;
+}
 function parseNode(atRule, key, options) {
   // Convert only top-level @import
   if (atRule.parent.type !== "root") {
     return;
   }
-  if (atRule.raws && atRule.raws.afterName && atRule.raws.afterName.trim().length > 0) {
-    const lastCommentIndex = atRule.raws.afterName.lastIndexOf("/*");
-    const matched = atRule.raws.afterName.slice(lastCommentIndex).match(_utils.WEBPACK_IGNORE_COMMENT_REGEXP);
-    if (matched && matched[2] === "true") {
-      return;
-    }
-  }
-  const prevNode = atRule.prev();
-  if (prevNode && prevNode.type === "comment") {
-    const matched = prevNode.text.match(_utils.WEBPACK_IGNORE_COMMENT_REGEXP);
-    if (matched && matched[2] === "true") {
-      return;
-    }
-  }
+  const isIgnored = isIgnoredAfterName(atRule) || isIgnoredPrevNode(atRule);
 
   // Nodes do not exists - `@import url('http://') :root {}`
   if (atRule.nodes) {
@@ -61,10 +68,14 @@ function parseNode(atRule, key, options) {
     url = isStringValue ? paramsNodes[0].nodes[0].value : _postcssValueParser.default.stringify(paramsNodes[0].nodes);
   }
   url = (0, _utils.normalizeUrl)(url, isStringValue);
-  const {
-    requestable,
-    needResolve
-  } = (0, _utils.isURLRequestable)(url, options);
+  let requestable = false;
+  let needResolve = false;
+  if (!isIgnored) {
+    ({
+      requestable,
+      needResolve
+    } = (0, _utils.isURLRequestable)(url, options));
+  }
   let prefix;
   if (requestable && needResolve) {
     const queryParts = url.split("!");
@@ -279,5 +290,4 @@ const plugin = (options = {}) => {
   };
 };
 plugin.postcss = true;
-var _default = plugin;
-exports.default = _default;
+var _default = exports.default = plugin;

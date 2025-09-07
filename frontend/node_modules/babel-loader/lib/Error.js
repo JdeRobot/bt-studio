@@ -1,5 +1,3 @@
-"use strict";
-
 const STRIP_FILENAME_RE = /^[^:]+: /;
 const format = err => {
   if (err instanceof SyntaxError) {
