@@ -26,11 +26,6 @@
       "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/4ae6759dc7f0b1977d14947a68dca206.svg",
       "sourceFilename": "src/components/icons/layout_icon.svg"
     },
-    "62cac5304ecb9c4d9d73acf5c89794de.svg": {
-      "name": "62cac5304ecb9c4d9d73acf5c89794de.svg",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/62cac5304ecb9c4d9d73acf5c89794de.svg",
-      "sourceFilename": "src/components/TreeEditor/img/edit_action.svg"
-    },
     "7dd50ec0079c5fcfb4d02e852d14a2c9.svg": {
       "name": "7dd50ec0079c5fcfb4d02e852d14a2c9.svg",
       "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/7dd50ec0079c5fcfb4d02e852d14a2c9.svg",
@@ -56,20 +51,10 @@
       "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/a18fbd43baa41dd0e7b12ceb059b53fa.svg",
       "sourceFilename": "src/components/TreeEditor/img/cancel.svg"
     },
-    "b46ef61b5bfa40d924121c4ffca94606.svg": {
-      "name": "b46ef61b5bfa40d924121c4ffca94606.svg",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/b46ef61b5bfa40d924121c4ffca94606.svg",
-      "sourceFilename": "src/components/TreeEditor/img/del_node.svg"
-    },
     "caefc7f71497ee71d0d7fc880c9c3335.svg": {
       "name": "caefc7f71497ee71d0d7fc880c9c3335.svg",
       "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/caefc7f71497ee71d0d7fc880c9c3335.svg",
       "sourceFilename": "src/components/icons/import.svg"
-    },
-    "cdf7f0a026eb7f661bfc819bc8c90004.svg": {
-      "name": "cdf7f0a026eb7f661bfc819bc8c90004.svg",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/cdf7f0a026eb7f661bfc819bc8c90004.svg",
-      "sourceFilename": "src/components/TreeEditor/img/subtree.svg"
     },
     "d2e4f1ae5170dfdb8cf34602cb79d7eb.svg": {
       "name": "d2e4f1ae5170dfdb8cf34602cb79d7eb.svg",
@@ -101,109 +86,13 @@
       "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/fed901ba6a232f5c26c66a7f340d30c4.svg",
       "sourceFilename": "src/components/TreeEditor/img/add.svg"
     },
-    "js/main.11b1e637.js": {
-      "name": "js/main.11b1e637.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.11b1e637.js"
+    "js/main.61d6c226.js": {
+      "name": "js/main.61d6c226.js",
+      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.61d6c226.js"
     },
-    "js/main.11b1e637.js.map": {
-      "name": "js/main.11b1e637.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.11b1e637.js.map"
-    },
-    "js/main.15e7c75e.js": {
-      "name": "js/main.15e7c75e.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.15e7c75e.js"
-    },
-    "js/main.15e7c75e.js.map": {
-      "name": "js/main.15e7c75e.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.15e7c75e.js.map"
-    },
-    "js/main.1a8d01fa.js": {
-      "name": "js/main.1a8d01fa.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.1a8d01fa.js"
-    },
-    "js/main.1a8d01fa.js.map": {
-      "name": "js/main.1a8d01fa.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.1a8d01fa.js.map"
-    },
-    "js/main.27ef5b5d.js": {
-      "name": "js/main.27ef5b5d.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.27ef5b5d.js"
-    },
-    "js/main.27ef5b5d.js.map": {
-      "name": "js/main.27ef5b5d.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.27ef5b5d.js.map"
-    },
-    "js/main.3b2265bc.js": {
-      "name": "js/main.3b2265bc.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.3b2265bc.js"
-    },
-    "js/main.3b2265bc.js.map": {
-      "name": "js/main.3b2265bc.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.3b2265bc.js.map"
-    },
-    "js/main.7820b90c.js": {
-      "name": "js/main.7820b90c.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.7820b90c.js"
-    },
-    "js/main.7820b90c.js.map": {
-      "name": "js/main.7820b90c.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.7820b90c.js.map"
-    },
-    "js/main.80f9913e.js": {
-      "name": "js/main.80f9913e.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.80f9913e.js"
-    },
-    "js/main.80f9913e.js.map": {
-      "name": "js/main.80f9913e.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.80f9913e.js.map"
-    },
-    "js/main.965cfa96.js": {
-      "name": "js/main.965cfa96.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.965cfa96.js"
-    },
-    "js/main.965cfa96.js.map": {
-      "name": "js/main.965cfa96.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.965cfa96.js.map"
-    },
-    "js/main.a22cc27b.js": {
-      "name": "js/main.a22cc27b.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.a22cc27b.js"
-    },
-    "js/main.a22cc27b.js.map": {
-      "name": "js/main.a22cc27b.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.a22cc27b.js.map"
-    },
-    "js/main.aec21976.js": {
-      "name": "js/main.aec21976.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.aec21976.js"
-    },
-    "js/main.aec21976.js.map": {
-      "name": "js/main.aec21976.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.aec21976.js.map"
-    },
-    "js/main.b5c628aa.js": {
-      "name": "js/main.b5c628aa.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.b5c628aa.js"
-    },
-    "js/main.b5c628aa.js.map": {
-      "name": "js/main.b5c628aa.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.b5c628aa.js.map"
-    },
-    "js/main.ecf71f91.js": {
-      "name": "js/main.ecf71f91.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.ecf71f91.js"
-    },
-    "js/main.ecf71f91.js.map": {
-      "name": "js/main.ecf71f91.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.ecf71f91.js.map"
-    },
-    "js/main.f494b820.js": {
-      "name": "js/main.f494b820.js",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.f494b820.js"
-    },
-    "js/main.f494b820.js.map": {
-      "name": "js/main.f494b820.js.map",
-      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.f494b820.js.map"
+    "js/main.61d6c226.js.map": {
+      "name": "js/main.61d6c226.js.map",
+      "path": "/home/javier/Code/Forks/bt-studio/frontend/static/frontend/js/main.61d6c226.js.map"
     },
     "js/node_modules_web-vitals_dist_web-vitals_js.dc631053.js": {
       "name": "js/node_modules_web-vitals_dist_web-vitals_js.dc631053.js",
@@ -216,7 +105,7 @@
   },
   "chunks": {
     "main": [
-      "js/main.80f9913e.js"
+      "js/main.61d6c226.js"
     ]
   }
 }

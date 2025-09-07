@@ -3,9 +3,12 @@ frontend/node_modules/.cache/
 backend/backend/__pycache__/
 backend/tree_api/__pycache__/
 .vscode/
-frontend/static/*
+frontend/static/frontend/*
 frontend/__pycache__
 
 # react stuff
 frontend/node_modules/
 frontend/checksum.txt
+
+docker-compose.yaml
+frontend/webpack-stats.json
