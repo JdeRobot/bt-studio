@@ -3,6 +3,9 @@ frontend/node_modules/.cache/
 backend/backend/__pycache__/
 backend/tree_api/__pycache__/
 .vscode/
-frontend/build/*
+frontend/static/*
 frontend/__pycache__
-frontend/node_modules/**
+
+# react stuff
+node_modules/
+checksum.txt
