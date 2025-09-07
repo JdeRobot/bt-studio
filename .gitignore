@@ -5,3 +5,4 @@ backend/tree_api/__pycache__/
 .vscode/
 frontend/build/*
 frontend/__pycache__
+frontend/node_modules
