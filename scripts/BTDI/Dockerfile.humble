@@ -12,6 +12,7 @@ RUN mkdir -p /home/ws/src
 RUN mv /opt/jderobot/CustomRobots /opt/jderobot/jderobot_drones /home/ws/src/
 RUN mv /opt/jderobot/resources /resources
 
+
 ARG IMAGE_TAG
 ENV IMAGE_TAG=${IMAGE_TAG}
 
@@ -21,6 +22,9 @@ RUN git clone https://github.com/JdeRobot/RoboticsApplicationManager.git -b $RAM
 
 # copy scripts
 RUN mv -t / /opt/jderobot/scripts/.env  /opt/jderobot/scripts/entrypoint.sh /opt/jderobot/scripts/start_vnc.sh  /opt/jderobot/scripts/start_vnc_gpu.sh /opt/jderobot/scripts/kill_all.sh /opt/jderobot/scripts/test/check_device.py /opt/jderobot/scripts/set_dri_name.sh
+
+# Move Window Manager config
+RUN mv -f /opt/jderobot/scripts/rc.xml /etc/xdg/openbox/LXDE/rc.xml
 
 # give execution permissions
 WORKDIR /
@@ -36,9 +40,8 @@ RUN /bin/bash -c "source /home/drones_ws/install/setup.bash"
 RUN /bin/bash -c "source /home/dev_ws/install/local_setup.bash"
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash; colcon build --symlink-install"
 
-# build frontend
-RUN /bin/bash -c "chmod +x /BtStudio/scripts/move_frontend.sh"
-RUN /bin/bash -c "cd /BtStudio/frontend/ && yarn install && yarn build && sh ../scripts/move_frontend.sh"
+# build react_fronted
+RUN cd /BtStudio/frontend/ && yarn install && yarn run build
 
 # Django server
 EXPOSE 7164
