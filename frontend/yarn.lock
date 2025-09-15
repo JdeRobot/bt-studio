@@ -2865,73 +2865,73 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
-"@projectstorm/geometry@7.0.2":
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/@projectstorm/geometry/-/geometry-7.0.2.tgz#5604b0a901102c6138bc00ebf9b5d57576c6dbd2"
-  integrity sha512-dLysSZGkYYCstgz0NW8FNFcQPqlNsX8svRznrVFvWDFqFNerqAepYa1qSSEaXibsNfcv/lZ6DNtyBCM1GqN2bA==
+"@projectstorm/geometry@7.0.3":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@projectstorm/geometry/-/geometry-7.0.3.tgz#0e24f56fccf38dd3fc2cc9c2899b8f04266db270"
+  integrity sha512-cwQ9IiOcLhMwVh9NsX0srcACGkpasXY1NA6659Tc9PeSYtAGySH5XC8DfL/nvPMXEdrBYS0S5zAdPC3RPcewog==
   dependencies:
     lodash "^4.17.21"
 
-"@projectstorm/react-canvas-core@7.0.2":
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/@projectstorm/react-canvas-core/-/react-canvas-core-7.0.2.tgz#b101efef0f782af1428cb5289305a74aa0f22112"
-  integrity sha512-VkLsxiMtkufwx39ycaqWKD1OlFai6NFujsT2jC85RxP0Jl3XYd+kYCTz40VYlHGdklAjoaznwNTSdeOthz8IMw==
+"@projectstorm/react-canvas-core@7.0.3", "@projectstorm/react-canvas-core@^7.0.3":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@projectstorm/react-canvas-core/-/react-canvas-core-7.0.3.tgz#9151a0ce07240f71a050f568c63b9a99f4d45b62"
+  integrity sha512-Vm19AprUGx3ea0uWSMPFfpTRclaEW/7s1/hbnRDFu9WSF1VScYhw2f/cVC95qfiedip/usn4YMsg3Av6M84d0g==
   dependencies:
     "@emotion/react" "^11.11.1"
     "@emotion/styled" "^11.11.0"
-    "@projectstorm/geometry" "7.0.2"
+    "@projectstorm/geometry" "7.0.3"
     lodash "^4.17.21"
     react "^18.2.0"
 
-"@projectstorm/react-diagrams-core@7.0.2":
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams-core/-/react-diagrams-core-7.0.2.tgz#6f7da72c2c4a759da6bd9b635ecf3c7565a663eb"
-  integrity sha512-vEyBUVb7XHwrQ6HuD6PMtZBzoJTvNsvmLDzE2jmFx5R5nBy10wYf91ghzb7Y8PLfmgZayFarWWcjEWmmdrEcvg==
+"@projectstorm/react-diagrams-core@7.0.3":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams-core/-/react-diagrams-core-7.0.3.tgz#930a12ebf665954bf5704ea4b1e6b84fdc936c3c"
+  integrity sha512-sbCy5Bk4OLfEvTtYrFK/qDc1WdgMhZzVY1rxmToVnCMP6bYiThHdopYNBX59fPHqKQebAHYER0vmlWyepqEZLQ==
   dependencies:
     "@emotion/styled" "^11.11.0"
-    "@projectstorm/geometry" "7.0.2"
-    "@projectstorm/react-canvas-core" "7.0.2"
+    "@projectstorm/geometry" "7.0.3"
+    "@projectstorm/react-canvas-core" "7.0.3"
     lodash "^4.17.21"
     react "^18.2.0"
     resize-observer-polyfill "^1.5.1"
 
-"@projectstorm/react-diagrams-defaults@7.1.2":
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams-defaults/-/react-diagrams-defaults-7.1.2.tgz#35dc9b60bd372fd56705f5628adadc0c2aa00fe9"
-  integrity sha512-UV/cm8rBPPDkFTC3adFkN7fHEqSnS9Yja3GqFJXoZjK2xqAi8sWD4j2hl3fR0S5JPPPIHGgedO2CsF7N0KoSNg==
+"@projectstorm/react-diagrams-defaults@7.1.3":
+  version "7.1.3"
+  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams-defaults/-/react-diagrams-defaults-7.1.3.tgz#a1c680a589d5f3a20cd30a3c369da1e7c24cdd07"
+  integrity sha512-T4KGgKiy4sUiH4pIq8VjR7Q+iM5SMDnVWyiwzpVFsx3D98V6r2w9qzWt3+9St/uZOKLrXj8VSCy73lmmkfNomQ==
   dependencies:
     "@emotion/react" "^11.11.1"
     "@emotion/styled" "^11.*"
-    "@projectstorm/geometry" "7.0.2"
-    "@projectstorm/react-canvas-core" "7.0.2"
-    "@projectstorm/react-diagrams-core" "7.0.2"
+    "@projectstorm/geometry" "7.0.3"
+    "@projectstorm/react-canvas-core" "7.0.3"
+    "@projectstorm/react-diagrams-core" "7.0.3"
     lodash "^4.17.21"
     react "^18.2.0"
 
-"@projectstorm/react-diagrams-routing@7.1.2":
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams-routing/-/react-diagrams-routing-7.1.2.tgz#31c8906bd33804583575bff657770a8a2270ef28"
-  integrity sha512-spnGyQ3PGuY7x/ot2OCPdvUbUMnL6dVnuUOjSphc0WlPBh4eRI3kbNbIYWHFU5Cuz3YlA4h94JKuSQZeOi2+bQ==
+"@projectstorm/react-diagrams-routing@7.1.3":
+  version "7.1.3"
+  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams-routing/-/react-diagrams-routing-7.1.3.tgz#25348377b2ad6ae7fd7b68d2ec9b75366254e70c"
+  integrity sha512-/Gbc7+8zoKQ3int6vVxoYMZ4hnqhIFwgulXUCuzYs21M7llnlaeOjOBEoifa3cNH6f8M4ht8xMhvEgg/gHiLiw==
   dependencies:
-    "@projectstorm/geometry" "7.0.2"
-    "@projectstorm/react-canvas-core" "7.0.2"
-    "@projectstorm/react-diagrams-core" "7.0.2"
-    "@projectstorm/react-diagrams-defaults" "7.1.2"
+    "@projectstorm/geometry" "7.0.3"
+    "@projectstorm/react-canvas-core" "7.0.3"
+    "@projectstorm/react-diagrams-core" "7.0.3"
+    "@projectstorm/react-diagrams-defaults" "7.1.3"
     dagre "^0.8.5"
     lodash "^4.17.21"
     pathfinding "^0.4.18"
     paths-js "^0.4.11"
     react "^18.2.0"
 
-"@projectstorm/react-diagrams@7.0.3":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams/-/react-diagrams-7.0.3.tgz#0b3450e6b744b6c515ee37f2cd9f73219c152f48"
-  integrity sha512-latfSxchvd7CiyKWPnblfuC4yeSBW/fKu3aMKhlqhET/eeQOoDtX16hBI1Hu7z+s9/mv3X3ggrJacKxHqjriVg==
+"@projectstorm/react-diagrams@^7.0.4":
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams/-/react-diagrams-7.0.4.tgz#9bd2e332ce5e212c222dd1864fbabf1aa95dbca4"
+  integrity sha512-GJLpo3zhJzjcmx3PfztNDTS7jpePj9TPjXV2CgJmCDZAPHDU8q/f4AyXoJfqvoWlmVnjrzQgtcOU2KbUlNu3dQ==
   dependencies:
-    "@projectstorm/react-canvas-core" "7.0.2"
-    "@projectstorm/react-diagrams-core" "7.0.2"
-    "@projectstorm/react-diagrams-defaults" "7.1.2"
-    "@projectstorm/react-diagrams-routing" "7.1.2"
+    "@projectstorm/react-canvas-core" "7.0.3"
+    "@projectstorm/react-diagrams-core" "7.0.3"
+    "@projectstorm/react-diagrams-defaults" "7.1.3"
+    "@projectstorm/react-diagrams-routing" "7.1.3"
 
 "@rollup/plugin-babel@^5.2.0":
   version "5.3.1"
@@ -9747,10 +9747,10 @@ react-app-polyfill@^3.0.0:
     regenerator-runtime "^0.13.9"
     whatwg-fetch "^3.6.2"
 
-react-color-palette@^7.1.1:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/react-color-palette/-/react-color-palette-7.1.1.tgz#939cffb4b1295c4f4140437a3805e64bfd5ff3e9"
-  integrity sha512-fBmTRWmTCrH08yZwU+5647pUKABRM6h4TS/43Q/mt/TLH1hyTfWopCc6wm2L9IoynPcOT7SaOm3Xmdz+goFEDw==
+react-color-palette@^7.3.1:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/react-color-palette/-/react-color-palette-7.3.1.tgz#0ddc7aa16b5f3bd717b0e7247cd1181f5a5c1fb0"
+  integrity sha512-O8eTbogOKExVbhFOCaQ6WACQtGznymLqbd95i4C42PZd8im9OwL1NjuGxswk2JxJR5jfcTu7KQzl7VbpU48m+g==
 
 react-dev-utils@^12.0.1:
   version "12.0.1"
