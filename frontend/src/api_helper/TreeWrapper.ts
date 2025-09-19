@@ -469,15 +469,12 @@ const getTreeStructure = async (projectName: string, btOrder: string) => {
 
   try {
     const response = await axios.get(apiUrl);
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to get subtree."); // Response error
-    }
-
     return response.data.tree_structure;
-  } catch (error: unknown) {
-    throw error; // Rethrow
+  } catch (e: unknown) {
+    const error = e as AxiosError<any, Record<string, unknown>>;
+    throw Error(
+      error.response?.data.error || "Failed to get subtree structure."
+    );
   }
 };
 
