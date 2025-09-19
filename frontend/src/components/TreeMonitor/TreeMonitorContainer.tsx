@@ -94,7 +94,7 @@ const TreeMonitorContainer = ({
     try {
       var tree_structure = await getTreeStructure(
         project,
-        settings.btOrder.value,
+        settings.btOrder.value
       );
       // Navigate until root using baseTree
       var path: number[] = [];
@@ -108,7 +108,7 @@ const TreeMonitorContainer = ({
           tree_structure = await getSubtreeStructure(
             project,
             nextSubtree,
-            settings.btOrder.value,
+            settings.btOrder.value
           );
         }
         console.log("TreePath", path);
@@ -119,7 +119,7 @@ const TreeMonitorContainer = ({
     } catch (e: unknown) {
       console.error("Error fetching graph:", e);
       if (e instanceof Error) {
-        error(e.message);
+        error(`The tree monitor will not work: \n${e.message}`);
       }
     }
   };
