@@ -147,12 +147,14 @@ def get_start_node_id(node_models, link_models):
 
         node_name = node_models[node_id]["name"]
         if node_name == "Tree Root":
+            try:
+                # Obtain the link to the next children (tree root must only have one children)
+                root_first_link_id = node_models[node_id]["ports"][0]["links"][0]
+                root_first_link = link_models[root_first_link_id]
 
-            # Obtain the link to the next children (tree root must only have one children)
-            root_first_link_id = node_models[node_id]["ports"][0]["links"][0]
-            root_first_link = link_models[root_first_link_id]
-
-            start_node_id = root_first_link["target"]
+                start_node_id = root_first_link["target"]
+            except:
+                raise RuntimeError(f"Tree only contains a Tree Root")
 
     return start_node_id
 
@@ -169,7 +171,6 @@ def translate_raw(content, raw_order):
 
         # Get the tree structure
         tree_structure = get_tree_structure(link_models, node_models)
-        print(tree_structure)
 
         # Get the order of bt: True = Ascendent; False = Descendent
         order = raw_order == "bottom-to-top"

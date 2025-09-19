@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { SettingsData } from "../components/options/Options";
 import { publish } from "../components/helper/TreeEditorHelper";
 
@@ -403,15 +403,10 @@ const generateLocalApp = async (
       },
       axiosExtra
     );
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to create app."); // Response error
-    }
-
     return response.data;
-  } catch (error: unknown) {
-    throw error; // Rethrow
+  } catch (e: unknown) {
+    const error = e as AxiosError<any, Record<string, unknown>>;
+    throw Error(error.response?.data.error || "Failed to create app.");
   }
 };
 
