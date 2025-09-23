@@ -77,6 +77,7 @@ const HeaderMenu = ({
             setProject={setCurrentProjectname}
             setAppRunning={setAppRunning}
           />
+          <ThemeButton/>
           <DownloadButton project={currentProjectname} />
           <LayoutButton setLayout={setLayout} />
           <SettingsButton project={currentProjectname} />

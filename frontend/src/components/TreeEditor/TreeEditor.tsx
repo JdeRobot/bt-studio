@@ -5,9 +5,6 @@ import createEngine, {
   DiagramModelGenerics,
   NodeModel,
 } from "@projectstorm/react-diagrams";
-import { CanvasWidget } from "@projectstorm/react-canvas-core";
-
-import "./TreeEditor.css";
 import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
 import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
 import { ChildrenPortModel } from "./nodes/basic_node/ports/children_port/ChildrenPortModel";
@@ -21,6 +18,8 @@ import {
   addActionFrame,
   getActionFrame,
 } from "../helper/TreeEditorHelper";
+import { StyledBTCanvas } from "Styles/TreeEditor/BTCanvas.styles";
+import { useBtTheme } from "Contexts/BtThemeContext";
 
 const TreeEditor = memo(
   ({
@@ -57,6 +56,8 @@ const TreeEditor = memo(
     render: MutableRefObject<boolean>;
   }) => {
     // VARS
+    const theme = useBtTheme();
+    
     // Initialize position and the last clicked node
     var lastMovedNodePosition = { x: 100, y: 100 };
     const lastClickedNodeId = useRef<string>("");
@@ -402,7 +403,7 @@ const TreeEditor = memo(
     return (
       <>
         {engine.current.getModel() && (
-          <CanvasWidget className="bt-canvas" engine={engine.current} />
+          <StyledBTCanvas bgColor={theme.palette.background} engine={engine.current} />
         )}
       </>
     );

@@ -1,24 +1,3 @@
-.bt-button-container {
-  display: flex;
-  justify-content: left;
-  align-self: center;
-}
-
-.bt-node-button {
-  height: 24px;
-  color: var(--text);
-  border: none;
-  font-size: 15px;
-  background-color: transparent;
-  margin: 0 5px 0 5px;
-  white-space: nowrap;
-}
-
-.bt-button:hover {
-  background-color: var(--buttons-hover);
-  border-radius: var(--border-radius);
-}
-
 .bt-node-header-container {
   display: flex;
   align-items: center;

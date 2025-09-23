@@ -5,15 +5,14 @@ import createEngine, {
   NodeModel,
   NodeModelGenerics,
 } from "@projectstorm/react-diagrams";
-import { CanvasWidget } from "@projectstorm/react-canvas-core";
+import { useBtTheme } from "Contexts/BtThemeContext";
 
 import { changeColorNode, configureEngine } from "../helper/TreeEditorHelper";
 import { BasicNodeModel } from "../TreeEditor/nodes/basic_node/BasicNodeModel";
 import { TagNodeModel } from "../TreeEditor/nodes/tag_node/TagNodeModel";
-
-import "./TreeMonitor.css";
 import TreeMonitorMenu from "./TreeMonitorMenu";
 import { CommsManager } from "jderobot-commsmanager";
+import { StyledBTCanvas } from "Styles/TreeEditor/BTCanvas.styles";
 
 const setTreeStatus = (
   model: DiagramModel,
@@ -157,6 +156,8 @@ const TreeMonitor = memo(
     enterSubtree: Function;
     render: MutableRefObject<boolean>;
   }) => {
+    const theme = useBtTheme();
+
     // Initialize the model and the engine
     const model = useRef(new DiagramModel());
     const engine = useRef(createEngine());
@@ -242,7 +243,7 @@ const TreeMonitor = memo(
           subTreeName={subTreeName}
         />
         {engine.current.getModel() && (
-          <CanvasWidget className="bt-monitor-canvas" engine={engine.current} />
+          <StyledBTCanvas bgColor={theme.palette.background} engine={engine.current} />
         )}
       </>
     );

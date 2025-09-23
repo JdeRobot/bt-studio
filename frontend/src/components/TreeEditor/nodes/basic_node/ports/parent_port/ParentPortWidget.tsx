@@ -1,6 +1,7 @@
 import React from "react";
 import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams";
-import "./ParentPort.css";
+import { StyledNodePort } from "Styles/TreeEditor/BTNode.styles";
+import { useBtTheme } from "Contexts/BtThemeContext";
 
 export const ParentPortWidget = ({
   engine,
@@ -9,9 +10,10 @@ export const ParentPortWidget = ({
   engine: DiagramEngine;
   port: any;
 }) => {
+  const theme = useBtTheme();
   return (
     <PortWidget port={port} engine={engine}>
-      <div className="bt-port-parent"></div>
+      <StyledNodePort color={theme.btEditor.border}/>
     </PortWidget>
   );
 };
