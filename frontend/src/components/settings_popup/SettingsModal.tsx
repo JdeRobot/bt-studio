@@ -6,8 +6,6 @@ import Section from "./sections/Section";
 import SubSection from "./sections/SubSection";
 import Setting from "./sections/Setting";
 
-import Dropdown from "./options/Dropdown";
-
 import { OptionsContext, SettingsData } from "../options/Options";
 import {
   useError,
@@ -18,6 +16,8 @@ import {
 
 import { saveProjectConfig } from "../../api_helper/TreeWrapper";
 import Checkbox from "./options/Checkbox";
+import { StyledSettingsListConatiner } from "Styles/Modal/Settings/Settings.styles";
+import { useBtTheme } from "Contexts/BtThemeContext";
 
 const SettingsModal = ({
   onSubmit,
@@ -30,7 +30,7 @@ const SettingsModal = ({
   onClose: Function;
   currentProjectname: string;
 }) => {
-  // const [color, setColor] = useColor("rgb(128 0 128)");
+  const theme = useBtTheme();
   const settings = useContext(OptionsContext);
   const { error } = useError();
 
@@ -82,7 +82,7 @@ const SettingsModal = ({
           }}
         />
         <ModalRow>
-          <ul className="bt-settings-entry-list">
+          <StyledSettingsListConatiner scrollbar={theme.palette.scrollbar}>
             {/* <Section title="General">
                 <SubSection title="Accent Colors">
                   <Setting title ="Turn on project accent color">
@@ -100,7 +100,7 @@ const SettingsModal = ({
                 </Setting>
               </SubSection>
             </Section>
-          </ul>
+          </StyledSettingsListConatiner>
         </ModalRow>
       </Modal>
     );

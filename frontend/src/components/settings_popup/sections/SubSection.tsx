@@ -1,9 +1,16 @@
+import { useBtTheme } from "Contexts/BtThemeContext";
+import {
+  StyledSettingsSubSection,
+  StyledSettingsSubSectionTitle,
+} from "Styles/Modal/Settings/Settings.styles";
 const SubSection = ({ title, children }: { title: string; children: any }) => {
+  const theme = useBtTheme();
+
   return (
-    <div className="bt-setting-subsection">
-      <label className="bt-setting-subsection-title">{title}</label>
+    <StyledSettingsSubSection color={theme.palette.text}>
+      <StyledSettingsSubSectionTitle>{title}</StyledSettingsSubSectionTitle>
       {children}
-    </div>
+    </StyledSettingsSubSection>
   );
 };
 

@@ -1,10 +1,18 @@
+import { useBtTheme } from "Contexts/BtThemeContext";
+import {
+  StyledSetting,
+  StyledSettingTitle,
+} from "Styles/Modal/Settings/Settings.styles";
+
 const Setting = ({ title, children }: { title: string; children: any }) => {
+  const theme = useBtTheme();
+
   return (
-    <div className="bt-setting-setting">
-      <label className="bt-setting-setting-title">{title}</label>
+    <StyledSetting color={theme.palette.text}>
+      <StyledSettingTitle>{title}</StyledSettingTitle>
       {/* Add settings info */}
       {children}
-    </div>
+    </StyledSetting>
   );
 };
 
