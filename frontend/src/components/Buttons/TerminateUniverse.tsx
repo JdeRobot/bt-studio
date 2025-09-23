@@ -1,4 +1,4 @@
-import { StyledHeaderButton } from "../../styles/headers/HeaderMenu.styles";
+import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
 import { useError } from "jderobot-ide-interface";
 import { CommsManager, states } from "jderobot-commsmanager";
 import StopCircleRoundedIcon from "@mui/icons-material/StopCircleRounded";

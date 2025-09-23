@@ -1,4 +1,4 @@
-import { StyledHeaderButton } from "../../styles/headers/HeaderMenu.styles";
+import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
 import HelpRoundedIcon from "@mui/icons-material/HelpRounded";
 import { useBtTheme } from "../../contexts/BtThemeContext";
 

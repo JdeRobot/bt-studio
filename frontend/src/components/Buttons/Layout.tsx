@@ -1,7 +1,7 @@
 import {
   StyledDropdown,
   StyledHeaderButton,
-} from "../../styles/headers/HeaderMenu.styles";
+} from "../../styles/Header/HeaderMenu.styles";
 import { useBtTheme } from "../../contexts/BtThemeContext";
 import SpaceDashboardRoundedIcon from "@mui/icons-material/SpaceDashboardRounded";
 import { useRef, useState } from "react";

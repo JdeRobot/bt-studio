@@ -216,7 +216,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   return (
     <div
       className="bt-App"
-      data-theme={settings.theme.value}
       style={{ display: "flex" }}
     >
       <HeaderMenu

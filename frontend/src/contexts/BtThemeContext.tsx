@@ -68,14 +68,14 @@ const lightTheme: BtTheme = {
     roundness: 10,
   },
   palette: {
-    text: "#ededf2",
-    darkText: "#000000",
+    text: "#000000",
+    darkText: "#ededf2",
     placeholderText: "#a6a6bf",
     success: "#29ac29",
     warning: "#f9e86d",
     error: "#802626",
-    background: "#ffffffff",
-    primary: "#134f53",
+    background: "#cacada",
+    primary: "#39a3aaff",
     secondary: "#1d777c",
     scrollbar: "#6f6f90",
     border: {
@@ -134,7 +134,7 @@ export const BtThemeProvider = ({theme, children }: BtThemeProviderProps) => {
   if (theme) {
     return (
       <BtThemeContext.Provider value={theme}>
-        <ThemeProvider theme={currentTheme}>{children}</ThemeProvider>
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
       </BtThemeContext.Provider>
     );
   }

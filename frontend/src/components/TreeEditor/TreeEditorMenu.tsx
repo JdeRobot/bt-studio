@@ -1,12 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./NodeMenu.css";
-
-import { ReactComponent as DeleteIcon } from "./img/del_node.svg";
-import { ReactComponent as SubtreeIcon } from "./img/subtree.svg";
-import { ReactComponent as EditActionIcon } from "./img/edit_action.svg";
-import { ReactComponent as HelpIcon } from "./img/help.svg";
-import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
-import { Menu, MenuItem } from "@mui/material";
+import { Menu, MenuItem, styled } from "@mui/material";
 import { ImportIcon } from "../icons";
 import ParkRoundedIcon from "@mui/icons-material/ParkRounded";
 
@@ -30,6 +24,39 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
 import NorthRoundedIcon from "@mui/icons-material/NorthRounded";
+import { useBtTheme } from "Contexts/BtThemeContext";
+
+const StyledMenu = styled(Menu)(
+  ({
+    bgColor,
+    textColor,
+    hoverColor,
+    roundness,
+  }: {
+    bgColor: string;
+    textColor: string;
+    checkboxColor: string;
+    hoverColor: string;
+    roundness: number;
+  }) => ({
+    "& .MuiPaper-root": {
+      border: "1px solid black",
+      borderRadius: roundness + "px",
+      backgroundColor: bgColor,
+      "& .MuiMenuItem-root": {
+        color: textColor,
+        "&:hover": {
+          backgroundColor: hoverColor,
+        },
+        "& .Mui-disabled": {
+          "& .MuiSvgIcon-root": {
+            opacity: "30%",
+          },
+        },
+      },
+    },
+  })
+);
 
 export const BTSelectorButtons = ({ project }: { project: string }) => {
   var NODE_MENU_ITEMS: Record<string, string[]> = {
@@ -48,6 +75,7 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
     Actions: [],
     "Port values": ["Input port value", "Output port value"],
   };
+  const theme = useBtTheme();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>();
@@ -86,7 +114,7 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
-    label: string,
+    label: string
   ) => {
     console.log(event, label);
     setAnchorEl(event.currentTarget);
@@ -108,7 +136,7 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
       nodeType = "Actions";
     } else {
       nodeType = Object.keys(NODE_MENU_ITEMS).find((key) =>
-        NODE_MENU_ITEMS[key].includes(nodeName),
+        NODE_MENU_ITEMS[key].includes(nodeName)
       );
     }
 
@@ -136,18 +164,28 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
         );
       })}
 
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+      <StyledMenu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        bgColor={theme.palette.primary!}
+        hoverColor={theme.palette.secondary!}
+        textColor={theme.palette.text!}
+        checkboxColor={theme.palette.text!}
+        roundness={theme.roundness!}
+      >
         {menuList.map((item) => (
           <MenuItem key={item} id={item} onClick={() => handleSelect(item)}>
             {item}
           </MenuItem>
         ))}
-      </Menu>
+      </StyledMenu>
     </>
   );
 };
 
 export const AddSubtreeButton = ({ project }: { project: string }) => {
+  const theme = useBtTheme();
   const { error } = useError();
 
   const [subtreesList, updateSubtreesList] = useState<string[]>([]);
@@ -205,7 +243,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
   const handleCloseCreateSubtree = () => {
     setNewSubtreeModalOpen(false);
     var subtree_input = document.getElementById(
-      "subTreeName",
+      "subTreeName"
     ) as HTMLInputElement;
     if (subtree_input) {
       subtree_input.value = "";
@@ -234,7 +272,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
   const handleCloseImportSubtree = () => {
     setImportSubtreeModalOpen(false);
     var subtree_input = document.getElementById(
-      "subtreeName",
+      "subtreeName"
     ) as HTMLInputElement;
     if (subtree_input) {
       subtree_input.value = "";
@@ -254,13 +292,22 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
         {"Subtrees"}
       </MenuButtonLabel>
 
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+      <StyledMenu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        bgColor={theme.palette.primary!}
+        hoverColor={theme.palette.secondary!}
+        textColor={theme.palette.text!}
+        checkboxColor={theme.palette.text!}
+        roundness={theme.roundness!}
+      >
         {subtreesList.map((item) => (
           <MenuItem key={item} id={item} onClick={() => handleSelect(item)}>
             {item}
           </MenuItem>
         ))}
-      </Menu>
+      </StyledMenu>
       <MenuButton
         id="bt-node-action-subtree-button"
         onClick={() => {

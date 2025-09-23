@@ -54,7 +54,7 @@ export const StyledNodeContainer = styled.div<StyledNodeContainerProps>`
   justify-content: space-between;
   border: 2px solid ${(p) => p.borderColor ?? primaryColor};
   border-radius: ${(p) => p.roundness ?? 1}px;
-  padding: ${(p) => p.roundness ?? 1}px;
+  padding: 10px;
   flex-direction: column;
   cursor: pointer;
   background-color: ${(p) => p.color};

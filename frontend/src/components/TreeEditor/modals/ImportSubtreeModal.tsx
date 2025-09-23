@@ -22,6 +22,8 @@ import createEngine, {
   DiagramModel,
 } from "@projectstorm/react-diagrams";
 import "./ImportSubtreeModal.css";
+import { StyledLibraryCanvas, StyledLibraryEntry } from "Styles/Modal/SubtreeLibrary.styles";
+import { useBtTheme } from "Contexts/BtThemeContext";
 
 const initialData = {
   subtreeName: "",
@@ -174,7 +176,7 @@ const ImportSubtreeModal = ({
       await importLibrarySubtree(
         project,
         selectedSubtree.name,
-        formState.subtreeName,
+        formState.subtreeName
       );
     } else {
       // Import from user library
@@ -182,7 +184,7 @@ const ImportSubtreeModal = ({
         project,
         selectedSubtree.name,
         selectedSubtree.project,
-        formState.subtreeName,
+        formState.subtreeName
       );
     }
     publish("updateSubtreeList");
@@ -288,12 +290,14 @@ const LibrarySubtree = ({
   subtrees: string[];
   onSelect: Function;
 }) => {
+  const theme = useBtTheme();
+
   const model = useRef(new DiagramModel());
   const engine = useRef(
     createEngine({
       registerDefaultZoomCanvasAction: false,
       registerDefaultPanAndZoomCanvasAction: false,
-    }),
+    })
   );
 
   configureEngine(engine);
@@ -312,12 +316,9 @@ const LibrarySubtree = ({
   }, []);
 
   return (
-    <div className="subtree-library-entry">
+    <StyledLibraryEntry>
       <ModalRow type="img">
-        <CanvasWidget
-          className={`subtree-library-canvas`}
-          engine={engine.current}
-        />
+        <StyledLibraryCanvas engine={engine.current} />
       </ModalRow>
       <ModalRowDataText title="Order" data={[btOrder]} />
       <ModalRowDataText title="Subtrees" data={subtrees} />
@@ -327,10 +328,11 @@ const LibrarySubtree = ({
           onClick={() => onSelect(name, project)}
           type="button"
           id="import-subtree"
+          style={{margin: "10px"}}
         >
           Select
         </button>
       </ModalRow>
-    </div>
+    </StyledLibraryEntry>
   );
 };

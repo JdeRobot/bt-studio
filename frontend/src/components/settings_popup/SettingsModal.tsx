@@ -94,28 +94,9 @@ const SettingsModal = ({
                 </SubSection>
               </Section> */}
             <Section title="Appearance">
-              <SubSection title="Color theme">
-                <Setting title="Set color theme">
-                  <Dropdown
-                    setting={settings.theme}
-                    possibleValues={["dark", "light"]}
-                  />
-                </Setting>
-              </SubSection>
               <SubSection title="Editor">
                 <Setting title="Show actions accent color">
                   <Checkbox setting={settings.editorShowAccentColors} />
-                </Setting>
-              </SubSection>
-            </Section>
-            <Section title="Behaviour Tree">
-              <SubSection title="Execution settings">
-                <Setting title="Order of execution of the behavior tree">
-                  {/* Add explanation here */}
-                  <Dropdown
-                    setting={settings.btOrder}
-                    possibleValues={["bottom-to-top", "top-to-bottom"]}
-                  />
                 </Setting>
               </SubSection>
             </Section>
