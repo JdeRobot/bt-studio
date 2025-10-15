@@ -9,7 +9,7 @@ const zipFile = async (
   file_path: string,
   file_name: string
 ) => {
-  var content = await getUniverseFile(project, universe_name, file_path);
+  const content = await getUniverseFile(project, universe_name, file_path);
   zip.file(file_name, content);
 };
 
@@ -83,7 +83,7 @@ export const createCustomUniverseConfig = async (
   const tools = configJson.ram_config.tools
     ? configJson.ram_config.tools
     : ["console", "simulator", "state_monitor"];
-  var tools_config = configJson.ram_config.tools_config
+  let tools_config = configJson.ram_config.tools_config
     ? configJson.ram_config.tools_config
     : {};
 

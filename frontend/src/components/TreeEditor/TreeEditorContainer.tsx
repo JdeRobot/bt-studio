@@ -1,3 +1,4 @@
+import React from "react";
 import { ExtraEditorProps } from "jderobot-ide-interface";
 import { getSubtreePath } from "../../api_helper/TreeWrapper";
 import { useEffect, useRef, useState } from "react";
@@ -107,7 +108,6 @@ const TreeEditorContainer = ({
               isOpen={editTagModalOpen}
               onClose={onEditTagModalClose}
               currentActionNode={node}
-              model={model}
               engine={engine}
             />
           )}

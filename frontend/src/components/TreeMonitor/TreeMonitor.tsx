@@ -1,4 +1,5 @@
-import { useRef, memo, MutableRefObject } from "react";
+import React from "react";
+import { useRef, MutableRefObject } from "react";
 import createEngine, {
   DiagramEngine,
   DiagramModel,
@@ -21,13 +22,13 @@ const setTreeStatus = (
   baseTree: any,
   subtreeHierarchy: number[],
 ) => {
-  var stateTree: any = updateTree;
+  let stateTree: any = updateTree;
   console.log(Object.values(stateTree));
   console.log("Base", baseTree);
   console.log("Hierarchy", subtreeHierarchy);
 
   for (let index = 0; index < subtreeHierarchy.length; index++) {
-    var moveTo = subtreeHierarchy[index];
+    const moveTo = subtreeHierarchy[index];
     stateTree = Object.values(stateTree)[0];
     stateTree = [stateTree["childs"][moveTo]];
   }
@@ -43,30 +44,32 @@ const setStatusNode = (
   baseTree: any,
   index: number = 0,
 ) => {
-  var nodeId = baseTree["id"];
+  const nodeId = baseTree["id"];
 
-  var nodeChilds;
+  let nodeChilds;
   try {
     nodeChilds = baseTree["childs"];
   } catch (error) {
     nodeChilds = [];
   }
 
-  var nodeStatus;
+  let nodeStatus;
   try {
     nodeStatus = updateTree[index]["state"];
   } catch (error) {
     nodeStatus = "NONE";
     //FIX: bug here
     if (updateTree) {
-      var nodeData = Object.entries(updateTree)[index][1] as { state: string };
+      const nodeData = Object.entries(updateTree)[index][1] as {
+        state: string;
+      };
       nodeStatus = nodeData.state;
     }
   }
 
-  var node = model.getNode(nodeId) as BasicNodeModel;
+  const node = model.getNode(nodeId) as BasicNodeModel;
 
-  var newIndex = 0;
+  let newIndex = 0;
   nodeChilds.forEach((element: any) => {
     setStatusNode(
       model,
@@ -80,7 +83,7 @@ const setStatusNode = (
 
   // node.setExecStatus(nodeStatus);
   // engine.repaintCanvas();
-  var rgb: [number, number, number] = [100, 100, 100];
+  let rgb: [number, number, number] = [100, 100, 100];
 
   switch (nodeStatus) {
     case "RUNNING":
@@ -119,10 +122,10 @@ const updateBlackboardValues = (
     console.log(element);
     for (let index = 0; index < tags.length; index++) {
       const tag = tags[index] as TagNodeModel;
-      let tagSplit = tag.getName().split(" = ");
+      const tagSplit = tag.getName().split(" = ");
       const tagStr = tagSplit[0].slice(1, -1); // Remove {}
       if (tagStr === element[0]) {
-        tag.setName(`{${tagStr}} = ${(element[1] as String).slice(0, 50)}`);
+        tag.setName(`{${tagStr}} = ${(element[1] as string).slice(0, 50)}`);
       } else {
         notFoundTags.push(tag);
       }
@@ -134,120 +137,121 @@ const updateBlackboardValues = (
   engine.repaintCanvas();
 };
 
-const TreeMonitor = memo(
-  ({
-    modelJson,
-    setResultJson,
-    manager,
-    treeStructure,
-    setGoBack,
-    subTreeName,
-    subTreeStructure,
-    enterSubtree,
-    render,
-  }: {
-    modelJson: any;
-    setResultJson: Function;
-    manager: CommsManager;
-    treeStructure: any;
-    setGoBack: Function;
-    subTreeName: MutableRefObject<string>;
-    subTreeStructure: number[];
-    enterSubtree: Function;
-    render: MutableRefObject<boolean>;
-  }) => {
-    const theme = useBtTheme();
+const TreeMonitor = ({
+  modelJson,
+  setResultJson,
+  manager,
+  treeStructure,
+  setGoBack,
+  subTreeName,
+  subTreeStructure,
+  enterSubtree,
+  render,
+}: {
+  modelJson: any;
+  setResultJson: (data: string) => void;
+  manager: CommsManager;
+  treeStructure: any;
+  setGoBack: (a: boolean) => void;
+  subTreeName: MutableRefObject<string>;
+  subTreeStructure: number[];
+  enterSubtree: (name?: string) => Promise<void>;
+  render: MutableRefObject<boolean>;
+}) => {
+  const theme = useBtTheme();
 
-    // Initialize the model and the engine
-    const model = useRef(new DiagramModel());
-    const engine = useRef(createEngine());
-    var lastClickedNodeId = "";
+  // Initialize the model and the engine
+  const model = useRef(new DiagramModel());
+  const engine = useRef(createEngine());
+  let lastClickedNodeId = "";
 
-    const updateExecState = (msg: any) => {
-      // TODO: add some kind of limit of updates per second to avoid crashes
-      if (msg && msg.command === "update" && msg.data.update !== "") {
-        const updateStatus = JSON.parse(msg.data.update);
-        console.log("Repaint");
-        const updateTree = updateStatus.tree;
-        const updateBlackboard = updateStatus.blackboard;
-        setTreeStatus(
-          model.current,
-          engine.current,
-          updateTree,
-          treeStructure,
-          subTreeStructure,
-        );
-        updateBlackboardValues(model.current, engine.current, updateBlackboard);
-      }
-    };
-
-    manager.unsubscribe("update", updateExecState);
-    manager.subscribe("update", updateExecState);
-
-    // MODAL MANAGEMENT
-    const openSubtree = () => {
-      const node = model.current.getNode(lastClickedNodeId);
-      lastClickedNodeId = "";
-      model.current.clearSelection();
-      if (node instanceof BasicNodeModel) {
-        if (node.getIsSubtree()) {
-          enterSubtree(node.getName());
-        }
-      }
-    };
-
-    // Click listener
-    const attachClickListener = (node: NodeModel) => {
-      node.registerListener({
-        selectionChanged: (event: any) => {
-          if (event.isSelected) {
-            lastClickedNodeId = node.getID();
-          }
-        },
-      });
-    };
-
-    const zoomToFit = () => {
-      engine.current.zoomToFitNodes({ margin: 50 });
-    };
-
-    if (render.current) {
-      // Configure the engine
-      configureEngine(engine, openSubtree);
-
-      // Deserialize and load the model
-      console.log("Diagram Visualizer");
-      model.current.deserializeModel(modelJson, engine.current);
-      model.current.setLocked(true);
-      engine.current.setModel(model.current);
-
-      // After deserialization, attach listeners to each node
-      const nodes = model.current.getNodes();
-      nodes.forEach((node) => {
-        attachClickListener(node);
-      });
-
-      // Fixes uncomplete first serialization
-      setTimeout(() => {
-        console.log("Rendered!");
-        setResultJson(model.current.serialize());
-      }, 1);
-      render.current = false;
+  const updateExecState = (msg: any) => {
+    // TODO: add some kind of limit of updates per second to avoid crashes
+    if (msg && msg.command === "update" && msg.data.update !== "") {
+      const updateStatus = JSON.parse(msg.data.update);
+      console.log("Repaint");
+      const updateTree = updateStatus.tree;
+      const updateBlackboard = updateStatus.blackboard;
+      setTreeStatus(
+        model.current,
+        engine.current,
+        updateTree,
+        treeStructure,
+        subTreeStructure,
+      );
+      updateBlackboardValues(model.current, engine.current, updateBlackboard);
     }
+  };
 
-    return (
-      <>
-        <TreeMonitorMenu
-          onZoomToFit={zoomToFit}
-          setGoBack={setGoBack}
-          subTreeName={subTreeName}
+  manager.unsubscribe("update", updateExecState);
+  manager.subscribe("update", updateExecState);
+
+  // MODAL MANAGEMENT
+  const openSubtree = () => {
+    const node = model.current.getNode(lastClickedNodeId);
+    lastClickedNodeId = "";
+    model.current.clearSelection();
+    if (node instanceof BasicNodeModel) {
+      if (node.getIsSubtree()) {
+        enterSubtree(node.getName());
+      }
+    }
+  };
+
+  // Click listener
+  const attachClickListener = (node: NodeModel) => {
+    node.registerListener({
+      selectionChanged: (event: any) => {
+        if (event.isSelected) {
+          lastClickedNodeId = node.getID();
+        }
+      },
+    });
+  };
+
+  const zoomToFit = () => {
+    engine.current.zoomToFitNodes({ margin: 50 });
+  };
+
+  if (render.current) {
+    // Configure the engine
+    configureEngine(engine, openSubtree);
+
+    // Deserialize and load the model
+    console.log("Diagram Visualizer");
+    model.current.deserializeModel(modelJson, engine.current);
+    model.current.setLocked(true);
+    engine.current.setModel(model.current);
+
+    // After deserialization, attach listeners to each node
+    const nodes = model.current.getNodes();
+    nodes.forEach((node) => {
+      attachClickListener(node);
+    });
+
+    // Fixes uncomplete first serialization
+    setTimeout(() => {
+      console.log("Rendered!");
+      setResultJson(model.current.serialize());
+    }, 1);
+    render.current = false;
+  }
+
+  return (
+    <>
+      <TreeMonitorMenu
+        onZoomToFit={zoomToFit}
+        setGoBack={setGoBack}
+        subTreeName={subTreeName}
+      />
+      {engine.current.getModel() && (
+        <StyledBTCanvas
+          bgColor={theme.palette.background}
+          engine={engine.current}
         />
-        {engine.current.getModel() && (
-          <StyledBTCanvas bgColor={theme.palette.background} engine={engine.current} />
-        )}
-      </>
-    );
-  },
-);
+      )}
+    </>
+  );
+};
 
 export default TreeMonitor;

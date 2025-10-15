@@ -1,5 +1,5 @@
 import React from "react";
-import { DiagramEngine} from "@projectstorm/react-diagrams";
+import { DiagramEngine } from "@projectstorm/react-diagrams";
 import {
   StyledNodeTagPort,
   StyledNodeTagPortContainer,

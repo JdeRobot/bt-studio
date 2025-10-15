@@ -88,7 +88,7 @@ const ImportCustomPage = ({
     await JSZip.loadAsync(zip).then(async function (zip) {
       const files = Object.keys(zip.files);
       const n_files = files.length;
-      var n_files_uploaded = 0;
+      let n_files_uploaded = 0;
 
       for (const index in files) {
         const filename = files[index];

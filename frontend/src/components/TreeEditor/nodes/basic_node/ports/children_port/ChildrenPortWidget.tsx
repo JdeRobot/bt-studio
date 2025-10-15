@@ -13,7 +13,7 @@ export const ChildrenPortWidget = ({
   const theme = useBtTheme();
   return (
     <PortWidget port={port} engine={engine}>
-      <StyledNodePort color={theme.btEditor.border}/>
+      <StyledNodePort color={theme.btEditor.border} />
     </PortWidget>
   );
 };

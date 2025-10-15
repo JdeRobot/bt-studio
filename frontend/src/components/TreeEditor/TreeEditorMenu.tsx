@@ -55,11 +55,11 @@ const StyledMenu = styled(Menu)(
         },
       },
     },
-  })
+  }),
 );
 
 export const BTSelectorButtons = ({ project }: { project: string }) => {
-  var NODE_MENU_ITEMS: Record<string, string[]> = {
+  const NODE_MENU_ITEMS: Record<string, string[]> = {
     Sequences: ["Sequence", "ReactiveSequence", "SequenceWithMemory"],
     Fallbacks: ["Fallback", "ReactiveFallback"],
     Decorators: [
@@ -114,7 +114,7 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
-    label: string
+    label: string,
   ) => {
     console.log(event, label);
     setAnchorEl(event.currentTarget);
@@ -130,13 +130,13 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
 
   const handleSelect = (nodeName: string) => {
     console.log("Selected: " + nodeName);
-    var nodeType: string | undefined;
+    let nodeType: string | undefined;
 
     if (menuLabel === "Actions") {
       nodeType = "Actions";
     } else {
       nodeType = Object.keys(NODE_MENU_ITEMS).find((key) =>
-        NODE_MENU_ITEMS[key].includes(nodeName)
+        NODE_MENU_ITEMS[key].includes(nodeName),
       );
     }
 
@@ -242,8 +242,8 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
 
   const handleCloseCreateSubtree = () => {
     setNewSubtreeModalOpen(false);
-    var subtree_input = document.getElementById(
-      "subTreeName"
+    const subtree_input = document.getElementById(
+      "subTreeName",
     ) as HTMLInputElement;
     if (subtree_input) {
       subtree_input.value = "";
@@ -271,8 +271,8 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
 
   const handleCloseImportSubtree = () => {
     setImportSubtreeModalOpen(false);
-    var subtree_input = document.getElementById(
-      "subtreeName"
+    const subtree_input = document.getElementById(
+      "subtreeName",
     ) as HTMLInputElement;
     if (subtree_input) {
       subtree_input.value = "";

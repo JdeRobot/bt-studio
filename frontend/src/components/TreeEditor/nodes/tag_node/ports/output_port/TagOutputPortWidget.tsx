@@ -1,7 +1,10 @@
 import React from "react";
-import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams";
+import { DiagramEngine } from "@projectstorm/react-diagrams";
 import { useBtTheme } from "Contexts/BtThemeContext";
-import { StyledNodeTagPort, StyledNodeTagPortContainer } from "Styles/TreeEditor/BTNode.styles";
+import {
+  StyledNodeTagPort,
+  StyledNodeTagPortContainer,
+} from "Styles/TreeEditor/BTNode.styles";
 
 export const OutputPortWidget = ({
   engine,

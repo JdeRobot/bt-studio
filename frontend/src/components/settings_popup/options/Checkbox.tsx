@@ -1,3 +1,4 @@
+import React from "react";
 import { SettingData } from "../../options/Options";
 import "./Checkbox.css";
 

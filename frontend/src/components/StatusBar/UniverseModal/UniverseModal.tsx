@@ -33,7 +33,7 @@ const UniverseModal = ({
 
   const focusInputRef = useRef<any>(null);
   const [existingUniverses, setUniversesProjects] = useState([]);
-  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  // const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [universeAdded, setUniverseAdded] = useState(false);
   const [creationMenu, showCreationMenu] = useState<boolean>(false);
   const [creationType, changeCreationType] = useState<UniverseTypes>(
@@ -110,9 +110,9 @@ const UniverseModal = ({
     changeCreationType(UniverseTypes.ZIP);
   };
 
-  const handleCloseUploadUniverseModal = (universe_name: string) => {
-    setUploadModalOpen(false);
-  };
+  // const handleCloseUploadUniverseModal = (universe_name: string) => {
+  //   setUploadModalOpen(false);
+  // };
 
   return (
     <Modal

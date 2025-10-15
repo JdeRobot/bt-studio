@@ -1,3 +1,4 @@
+import React from "react";
 import { ThemeProvider } from "jderobot-ide-interface";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { BtTheme } from "../types";
@@ -8,7 +9,7 @@ interface BtThemeProviderProps {
 }
 
 const darkTheme: BtTheme = {
-  switch: (themeType: string) => {},
+  switch: () => {},
   btEditor: {
     border: "#ededf2",
     shadow: "#ededf2",
@@ -57,7 +58,7 @@ const darkTheme: BtTheme = {
 };
 
 const lightTheme: BtTheme = {
-  switch: (themeType: string) => {},
+  switch: () => {},
   btEditor: {
     border: "#000000",
     shadow: "#000000",
@@ -108,7 +109,7 @@ const lightTheme: BtTheme = {
 const BtThemeContext = createContext(darkTheme);
 export const useBtTheme = () => useContext(BtThemeContext) ?? darkTheme;
 
-export const BtThemeProvider = ({theme, children }: BtThemeProviderProps) => {
+export const BtThemeProvider = ({ theme, children }: BtThemeProviderProps) => {
   const [currentTheme, setCurrentTheme] = useState<BtTheme>(
     window.localStorage.getItem("themeType") !== null
       ? window.localStorage.getItem("themeType") === "light"

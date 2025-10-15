@@ -197,7 +197,7 @@ def main():
 
 const packageInfo = (name: string, extraDependencies: string[]) => {
   //TODO: add also more user info
-  var dependStr = `<exec_depend>rclpy</exec_depend>`;
+  let dependStr = `<exec_depend>rclpy</exec_depend>`;
 
   extraDependencies.forEach((depend) => {
     dependStr +=

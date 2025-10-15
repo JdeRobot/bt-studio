@@ -1,8 +1,11 @@
-import React, { JSX } from "react";
+import React, { ReactElement } from "react";
 import { InputPortWidget } from "./ports/input_port/TagInputPortWidget";
 import { OutputPortWidget } from "./ports/output_port/TagOutputPortWidget";
 import { DiagramEngine } from "@projectstorm/react-diagrams";
-import { StyledNodeSection, StyledTagContainer } from "Styles/TreeEditor/BTNode.styles";
+import {
+  StyledNodeSection,
+  StyledTagContainer,
+} from "Styles/TreeEditor/BTNode.styles";
 import { useBtTheme } from "Contexts/BtThemeContext";
 
 // The node widget controls the visualization of the custom node
@@ -16,11 +19,11 @@ export const TagNodeWidget = ({
   const theme = useBtTheme();
 
   // Ports list
-  const inputPorts: JSX.Element[] = [];
-  const outputPorts: JSX.Element[] = [];
+  const inputPorts: ReactElement[] = [];
+  const outputPorts: ReactElement[] = [];
 
   // Initial class
-  var type: "input" | "output" = "input";
+  let type: "input" | "output" = "input";
 
   // Get all the ports from the node and classify them
   Object.keys(node.getPorts()).forEach((portName) => {
@@ -29,11 +32,11 @@ export const TagNodeWidget = ({
 
     if (port.options.type === "tag input") {
       inputPorts.push(
-        <InputPortWidget key={portName} engine={engine} port={port} />
+        <InputPortWidget key={portName} engine={engine} port={port} />,
       );
     } else if (port.options.type === "tag output") {
       outputPorts.push(
-        <OutputPortWidget key={portName} engine={engine} port={port} />
+        <OutputPortWidget key={portName} engine={engine} port={port} />,
       );
     }
   });

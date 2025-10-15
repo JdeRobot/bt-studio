@@ -1,3 +1,4 @@
+import React from "react";
 import {
   StyledDropdown,
   StyledHeaderButton,
@@ -96,7 +97,9 @@ const Dropdown = ({
           style={{ width: `${width}px`, left: `${right}px` }}
         >
           {possibleValues.map((name, index) => (
-            <button onClick={(e: any) => changeValue(e, name)}>{name}</button>
+            <button key={index} onClick={(e: any) => changeValue(e, name)}>
+              {name}
+            </button>
           ))}
         </StyledDropdown>
       )}

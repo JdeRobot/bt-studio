@@ -25,13 +25,13 @@ WebFont.load({
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <OptionsProvider>
-      <ErrorProvider>
-        <BtThemeProvider>
+    <BtThemeProvider>
+      <OptionsProvider>
+        <ErrorProvider>
           <App />
-        </BtThemeProvider>
-      </ErrorProvider>
-    </OptionsProvider>
+        </ErrorProvider>
+      </OptionsProvider>
+    </BtThemeProvider>
   </React.StrictMode>,
 );
 

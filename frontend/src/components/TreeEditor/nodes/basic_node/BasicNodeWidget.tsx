@@ -1,4 +1,4 @@
-import React, { JSX } from "react";
+import React, { ReactElement } from "react";
 import { ChildrenPortWidget } from "./ports/children_port/ChildrenPortWidget";
 import { ParentPortWidget } from "./ports/parent_port/ParentPortWidget";
 import { InputPortWidget } from "./ports/input_port/InputPortWidget";
@@ -25,10 +25,10 @@ export const BasicNodeWidget = ({
   const theme = useBtTheme();
 
   // Ports list
-  const parentPorts: JSX.Element[] = [];
-  const childrenPorts: JSX.Element[] = [];
-  const inputPorts: JSX.Element[] = [];
-  const outputPorts: JSX.Element[] = [];
+  const parentPorts: ReactElement[] = [];
+  const childrenPorts: ReactElement[] = [];
+  const inputPorts: ReactElement[] = [];
+  const outputPorts: ReactElement[] = [];
 
   // Get all the ports from the node and classify them
   Object.keys(node.getPorts()).forEach((portName) => {
@@ -37,19 +37,19 @@ export const BasicNodeWidget = ({
 
     if (port.options.type === "parent") {
       parentPorts.push(
-        <ParentPortWidget key={portName} engine={engine} port={port} />
+        <ParentPortWidget key={portName} engine={engine} port={port} />,
       );
     } else if (port.options.type === "children") {
       childrenPorts.push(
-        <ChildrenPortWidget key={portName} engine={engine} port={port} />
+        <ChildrenPortWidget key={portName} engine={engine} port={port} />,
       );
     } else if (port.options.type === "input") {
       inputPorts.push(
-        <InputPortWidget key={portName} engine={engine} port={port} />
+        <InputPortWidget key={portName} engine={engine} port={port} />,
       );
     } else if (port.options.type === "output") {
       outputPorts.push(
-        <OutputPortWidget key={portName} engine={engine} port={port} />
+        <OutputPortWidget key={portName} engine={engine} port={port} />,
       );
     }
   });

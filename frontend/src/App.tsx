@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useUnload } from "./hooks/useUnload";
 import HeaderMenu from "./components/HeaderMenu";
 import "./App.css";
-import { SimulatorIcon, TerminalIcon } from "./components/icons";
 import { CommsManager } from "jderobot-commsmanager";
 import { getProjectConfig, saveProjectConfig } from "./api_helper/TreeWrapper";
 
@@ -41,10 +40,10 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const { error_critical } = useError();
 
   const settings = React.useContext(OptionsContext);
-  const settingsToSave = React.useRef<Object>(settings);
+  const settingsToSave = React.useRef<object>(settings);
 
   const saveSettings = async (project: string) => {
-    let json_settings: { name: string; config: { [id: string]: any } } = {
+    const json_settings: { name: string; config: { [id: string]: any } } = {
       name: project,
       config: {},
     };
@@ -93,12 +92,6 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
     };
   }, []);
 
-  const resetManager = () => {
-    CommsManager.deleteInstance();
-    const manager = CommsManager.getInstance();
-    setManager(manager);
-  };
-
   /////////////////////////////Functions only used in Unibotics///////////////////////////////////////////////////
 
   const addUser = () => {
@@ -125,17 +118,33 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  const connectWithRetry = async () => {
+  const connectWithRetry = async (
+    desiredState?: string,
+    callback?: () => void,
+  ) => {
     if (!manager || connected.current) {
       return;
     }
     try {
-      await manager.connect();
-      console.log("Connected!", manager.getState());
+      const currManager = CommsManager.getInstance();
+      await currManager.connect();
+      console.log("Connected!", currManager.getState());
       connected.current = true;
-    } catch (error) {
+      setManager(currManager);
+      if (callback) {
+        waitManagerState(desiredState ? desiredState : "connected", callback);
+      }
+    } catch (e: unknown) {
       console.log("Connection failed, trying again!");
-      setTimeout(connectWithRetry, 1000);
+      setTimeout(connectWithRetry, 2000, desiredState, callback);
+    }
+  };
+
+  const waitManagerState = async (state: string, callback: any) => {
+    if (manager?.getState() === state) {
+      callback();
+    } else {
+      return setTimeout(waitManagerState, 100, state, callback);
     }
   };
 
@@ -152,7 +161,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       manager.disconnect();
       connected.current = false;
     }
-    saveSettings(projectToSave.current);
+    // saveSettings(projectToSave.current);
     return (event.returnValue = "");
   });
 
@@ -204,9 +213,12 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   const treeEditor = {
     component: TreeEditorContainer,
     buttons: [
-      <BTSelectorButtons project={currentProjectname} />,
-      <AddSubtreeButton project={currentProjectname} />,
-      <OtherButtons project={currentProjectname} />,
+      <BTSelectorButtons
+        key="BTSelectorButtons"
+        project={currentProjectname}
+      />,
+      <AddSubtreeButton key="AddSubtreeButton" project={currentProjectname} />,
+      <OtherButtons key="OtherButtons" project={currentProjectname} />,
     ],
     name: "Tree editor",
     language: "custom_tree_editor",
@@ -214,10 +226,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   };
 
   return (
-    <div
-      className="bt-App"
-      style={{ display: "flex" }}
-    >
+    <div className="bt-App" style={{ display: "flex" }}>
       <HeaderMenu
         currentProjectname={currentProjectname}
         setCurrentProjectname={setCurrentProjectname}
@@ -227,7 +236,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
       />
       <IdeInterface
         commsManager={manager}
-        resetManager={resetManager}
+        connectManager={connectWithRetry}
         project={currentProjectname}
         explorers={explorers}
         api={editorApi}

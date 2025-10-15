@@ -1,3 +1,4 @@
+import React from "react";
 import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
 import { Entry, useError } from "jderobot-ide-interface";
 import { CommsManager } from "jderobot-commsmanager";
@@ -15,7 +16,7 @@ import {
 import TreeGardener from "../../templates/TreeGardener";
 import RosTemplates from "../../templates/RosTemplates";
 import { OptionsContext } from "../options/Options";
-import { publish, subscribe, unsubscribe } from "../helper/TreeEditorHelper";
+import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 
 const PlayPauseButton = ({
   project,
@@ -32,7 +33,7 @@ const PlayPauseButton = ({
   const theme = useBtTheme();
   const { warning, error } = useError();
   const isCodeUpdatedRef = useRef<boolean | undefined>(undefined);
-  const [isCodeUpdated, _updateCode] = useState<boolean | undefined>(false);
+  const [, _updateCode] = useState<boolean | undefined>(false);
 
   const updateCode = (data?: boolean) => {
     isCodeUpdatedRef.current = data;
@@ -124,7 +125,7 @@ const PlayPauseButton = ({
 
       const files: Entry[] = JSON.parse(file_list);
 
-      var actions = undefined;
+      let actions = undefined;
       for (const file of files) {
         if (file.is_dir && file.name === "actions") {
           actions = file;
@@ -171,7 +172,7 @@ const PlayPauseButton = ({
     file_path: string,
     file_name: string,
   ) => {
-    var content = await getFile(project, file_path);
+    const content = await getFile(project, file_path);
     zip.file(file_name, content);
   };
 

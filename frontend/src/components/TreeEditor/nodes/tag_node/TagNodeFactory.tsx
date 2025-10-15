@@ -1,4 +1,4 @@
-import React, { JSX } from "react";
+import React, { ReactElement } from "react";
 import {
   AbstractReactFactory,
   GenerateModelEvent,
@@ -21,7 +21,7 @@ export class TagNodeFactory extends AbstractReactFactory<NodeModel, any> {
     return new TagNodeModel();
   }
 
-  generateReactWidget(event: GenerateWidgetEvent<NodeModel>): JSX.Element {
+  generateReactWidget(event: GenerateWidgetEvent<NodeModel>): ReactElement {
     return (
       <div onDoubleClick={this.callback}>
         <TagNodeWidget engine={this.engine} node={event.model} />

@@ -1,3 +1,4 @@
+import React from "react";
 import { useBtTheme } from "Contexts/BtThemeContext";
 import {
   StyledSettingsSection,

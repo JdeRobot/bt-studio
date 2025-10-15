@@ -1,3 +1,4 @@
+import React from "react";
 import { useContext } from "react";
 import "react-color-palette/css";
 import "./SettingsModal.css";
@@ -41,7 +42,7 @@ const SettingsModal = ({
 
   const handleCancel = async (settings: SettingsData) => {
     // Save settings
-    let json_settings: { name: string; config: { [id: string]: any } } = {
+    const json_settings: { name: string; config: { [id: string]: any } } = {
       name: currentProjectname,
       config: {},
     };
@@ -105,6 +106,8 @@ const SettingsModal = ({
       </Modal>
     );
   }
+
+  return <></>;
 };
 
 export default SettingsModal;

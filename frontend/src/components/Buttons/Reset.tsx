@@ -1,3 +1,4 @@
+import React from "react";
 import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
 import { useError } from "jderobot-ide-interface";
 import { CommsManager } from "jderobot-commsmanager";

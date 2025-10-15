@@ -1,3 +1,4 @@
+import React from "react";
 import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
 import { useBtTheme } from "../../contexts/BtThemeContext";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";

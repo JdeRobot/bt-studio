@@ -1,3 +1,4 @@
+import React from "react";
 import { useContext, useRef } from "react";
 import { useState, useEffect } from "react";
 import {
@@ -10,12 +11,13 @@ import { findSubtree } from "../helper/TreeEditorHelper";
 import { OptionsContext } from "../options/Options";
 import { useError } from "jderobot-ide-interface";
 import TreeMonitor from "./TreeMonitor";
+import { CommsManager } from "jderobot-commsmanager";
 
 const TreeMonitorContainer = ({
   commsManager,
   project,
 }: {
-  commsManager: any;
+  commsManager: CommsManager;
   project: string;
 }) => {
   const settings = useContext(OptionsContext);
@@ -58,7 +60,7 @@ const TreeMonitorContainer = ({
 
     // Fetch the new subtree or project graph
     load();
-  }, [, project]);
+  }, [project]);
 
   useEffect(() => {
     // Reset everything
@@ -92,23 +94,23 @@ const TreeMonitorContainer = ({
 
   const getBTTree = async () => {
     try {
-      var tree_structure = await getTreeStructure(
+      let tree_structure = await getTreeStructure(
         project,
-        settings.btOrder.value
+        settings.btOrder.value,
       );
       // Navigate until root using baseTree
-      var path: number[] = [];
+      let path: number[] = [];
       for (let index = 0; index < treeHierarchy.length; index++) {
-        var nextSubtree = treeHierarchy[index];
+        const nextSubtree = treeHierarchy[index];
         if (nextSubtree) {
-          var new_path = findSubtree(tree_structure, nextSubtree);
+          const new_path = findSubtree(tree_structure, nextSubtree);
           if (new_path) {
             path = path.concat(new_path); //TODO: check if its not new_path.concat(path)
           }
           tree_structure = await getSubtreeStructure(
             project,
             nextSubtree,
-            settings.btOrder.value
+            settings.btOrder.value,
           );
         }
         console.log("TreePath", path);
