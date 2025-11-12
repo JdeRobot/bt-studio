@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect, useRef } from "react";
 import {
   Modal,
@@ -117,7 +118,7 @@ const CreateAction = ({
     let search_list = fileList;
 
     if (orig_path) {
-      var path = orig_path.split("/");
+      const path = orig_path.split("/");
 
       for (let index = 0; index < path.length; index++) {
         const find = search_list.find(
@@ -153,8 +154,8 @@ const CreateAction = ({
   };
 
   const updateCreation = (newName: string) => {
-    var isValidName = true;
-    var preCheck, checkList;
+    let isValidName = true;
+    let preCheck, checkList;
 
     if (creationType === "actions") {
       preCheck =
@@ -167,7 +168,7 @@ const CreateAction = ({
 
     if (preCheck && checkList) {
       checkList.some((element) => {
-        var name = element.name;
+        let name = element.name;
 
         if (creationType === "actions") {
           name = name.replace(".py", "");

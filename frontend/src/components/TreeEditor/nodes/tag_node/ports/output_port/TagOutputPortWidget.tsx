@@ -1,6 +1,10 @@
 import React from "react";
-import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams";
-import "./TagOutputPort.css";
+import { DiagramEngine } from "@projectstorm/react-diagrams";
+import { useBtTheme } from "Contexts/BtThemeContext";
+import {
+  StyledNodeTagPort,
+  StyledNodeTagPortContainer,
+} from "Styles/TreeEditor/BTNode.styles";
 
 export const OutputPortWidget = ({
   engine,
@@ -9,13 +13,14 @@ export const OutputPortWidget = ({
   engine: DiagramEngine;
   port: any;
 }) => {
+  const theme = useBtTheme();
   return (
-    <div className="bt-tag-output-container">
-      <PortWidget
+    <StyledNodeTagPortContainer type="output">
+      <StyledNodeTagPort
         port={port}
         engine={engine}
-        className="bt-tag-output-port"
-      ></PortWidget>
-    </div>
+        color={theme.btEditor.border}
+      />
+    </StyledNodeTagPortContainer>
   );
 };

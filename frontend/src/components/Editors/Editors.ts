@@ -30,7 +30,7 @@ export const editorApi: ExtraApi = {
     get_config: async (project: string, universe: string) => {
       const config = await getUniverseConfig(universe, project);
       const configJson = JSON.parse(config);
-      var universeConfig;
+      let universeConfig;
 
       if (configJson.type === "robotics_backend") {
         universeConfig = await getRoboticsBackendUniverse(configJson.id);

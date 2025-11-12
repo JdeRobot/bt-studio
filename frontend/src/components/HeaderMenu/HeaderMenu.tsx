@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import React from "react";
+import { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import { CommsManager, states } from "jderobot-commsmanager";
 
 import { ReactComponent as LogoIcon } from "../icons/logo_jderobot_monocolor.svg";
 import { ReactComponent as LogoUniboticsIcon } from "../icons/logo_unibotics_monocolor.svg";
-
-import "./HeaderMenu.css";
 import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 import {
   DocumentationButton,
@@ -19,6 +18,12 @@ import {
   TerminateUniverseButton,
   ThemeButton,
 } from "../Buttons";
+import {
+  StyledHeaderButtonContainer,
+  StyledHeaderText,
+  StyledProject,
+} from "Styles/Header/HeaderMenu.styles";
+import { useBtTheme } from "Contexts/BtThemeContext";
 
 const HeaderMenu = ({
   currentProjectname,
@@ -33,6 +38,8 @@ const HeaderMenu = ({
   isUnibotics: boolean;
   setLayout: Function;
 }) => {
+  const theme = useBtTheme();
+
   // App state
   const [appRunning, setAppRunning] = useState(false);
 
@@ -52,31 +59,38 @@ const HeaderMenu = ({
     <AppBar position="static">
       <Toolbar
         style={{
-          backgroundColor: "var(--header)",
+          backgroundColor: theme.palette.primary,
           height: "50px",
           minHeight: "50px",
         }}
       >
         {isUnibotics ? (
           <a href="/apps">
-            <LogoUniboticsIcon className="bt-jde-icon" fill="var(--icon)" />
+            <LogoUniboticsIcon
+              style={{ width: "40px", height: "40px", marginRight: "10px" }}
+              fill={theme.palette.text}
+            />
           </a>
         ) : (
-          <LogoIcon className="bt-jde-icon" fill="var(--icon)" />
+          <LogoIcon
+            style={{ width: "40px", height: "40px", marginRight: "10px" }}
+            fill={theme.palette.text}
+          />
         )}
-        <h1 className="bt-Header-text">
+        <StyledHeaderText color={theme.palette.text}>
           {isUnibotics ? "Projects" : "BT Studio IDE"}
-        </h1>
-        <span className="bt-project-name-box">
-          <div className="bt-project-name">{currentProjectname}</div>
-        </span>
-        <div className="bt-header-button-container">
+        </StyledHeaderText>
+        <StyledProject color={theme.palette.text}>
+          <div>{currentProjectname}</div>
+        </StyledProject>
+        <StyledHeaderButtonContainer>
           <HomeButton
             project={currentProjectname}
             manager={null}
             setProject={setCurrentProjectname}
             setAppRunning={setAppRunning}
           />
+          <ThemeButton />
           <DownloadButton project={currentProjectname} />
           <LayoutButton setLayout={setLayout} />
           <SettingsButton project={currentProjectname} />
@@ -92,7 +106,7 @@ const HeaderMenu = ({
             setAppRunning={setAppRunning}
           />
           <DocumentationButton />
-        </div>
+        </StyledHeaderButtonContainer>
       </Toolbar>
     </AppBar>
   );

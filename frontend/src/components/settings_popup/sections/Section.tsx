@@ -1,9 +1,21 @@
+import React from "react";
+import { useBtTheme } from "Contexts/BtThemeContext";
+import {
+  StyledSettingsSection,
+  StyledSettingsSectionTitle,
+} from "Styles/Modal/Settings/Settings.styles";
+
 const Section = ({ title, children }: { title: string; children: any }) => {
+  const theme = useBtTheme();
+
   return (
-    <div className="bt-setting-section">
-      <label className="bt-setting-section-title">{title}</label>
+    <StyledSettingsSection
+      bgColor={theme.palette.background}
+      color={theme.palette.text}
+    >
+      <StyledSettingsSectionTitle>{title}</StyledSettingsSectionTitle>
       {children}
-    </div>
+    </StyledSettingsSection>
   );
 };
 

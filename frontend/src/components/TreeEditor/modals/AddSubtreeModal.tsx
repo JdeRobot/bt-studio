@@ -38,7 +38,7 @@ const AddSubtreeModal = ({
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    var isValidName = true;
+    let isValidName = true;
 
     setFormState((prevFormData) => ({
       ...prevFormData,

@@ -1,4 +1,4 @@
-import React, { JSX } from "react";
+import React, { ReactElement } from "react";
 import {
   AbstractReactFactory,
   GenerateModelEvent,
@@ -21,7 +21,7 @@ export class BasicNodeFactory extends AbstractReactFactory<NodeModel, any> {
     return new BasicNodeModel();
   }
 
-  generateReactWidget(event: GenerateWidgetEvent<NodeModel>): JSX.Element {
+  generateReactWidget(event: GenerateWidgetEvent<NodeModel>): ReactElement {
     return (
       <div onDoubleClick={this.callback}>
         <BasicNodeWidget engine={this.engine} node={event.model} />

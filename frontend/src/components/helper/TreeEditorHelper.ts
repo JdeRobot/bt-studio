@@ -109,7 +109,7 @@ export class ActionFrame {
   }
 }
 
-var actionFrames: ActionFrame[] = [];
+let actionFrames: ActionFrame[] = [];
 
 export const getActionFrame = (name: string) => {
   for (let index = 0; index < actionFrames.length; index++) {
@@ -135,8 +135,8 @@ export const addActionFrame = (
     return; // Already exists
   }
 
-  var inputs: string[] = [];
-  var outputs: string[] = [];
+  const inputs: string[] = [];
+  const outputs: string[] = [];
 
   Object.values(ports).forEach((port) => {
     if (port instanceof InputPortModel) {
@@ -146,7 +146,7 @@ export const addActionFrame = (
     }
   });
 
-  var newActionFrame = new ActionFrame(name, color, inputs, outputs);
+  const newActionFrame = new ActionFrame(name, color, inputs, outputs);
 
   publish("updateAccentColor", { name: name, color: color });
   actionFrames.push(newActionFrame);
@@ -193,14 +193,12 @@ export const addPort = (
   }
 
   model.getNodes().forEach((oldNode: NodeModel) => {
-    var convNode;
-    var name;
     if (oldNode.getOptions().type === "tag") {
       return;
     }
 
-    convNode = oldNode as BasicNodeModel;
-    name = convNode.getName();
+    const convNode = oldNode as BasicNodeModel;
+    const name = convNode.getName();
     if (isActionNode(name)) {
       if (name === node.getName() && node !== convNode) {
         if (type === ActionNodePortType.Input) {
@@ -222,7 +220,7 @@ const deletePortLink = (
   portName: string,
   node: BasicNodeModel
 ) => {
-  var link: LinkModel | undefined;
+  let link: LinkModel | undefined;
   const nodePort = node.getPort(portName);
 
   if (nodePort) {
@@ -265,14 +263,12 @@ export const removePort = (
   }
 
   model.getNodes().forEach((oldNode: NodeModel) => {
-    var convNode;
-    var name;
     if (oldNode.getOptions().type === "tag") {
       return;
     }
 
-    convNode = oldNode as BasicNodeModel;
-    name = convNode.getName();
+    const convNode = oldNode as BasicNodeModel;
+    const name = convNode.getName();
     if (!isActionNode(name)) {
       return;
     }
@@ -319,14 +315,12 @@ export const changeColorNode = (
     publish("updateAccentColor", { name: node.getName(), color: color });
 
     model.getNodes().forEach((oldNode: NodeModel) => {
-      var convNode;
-      var name;
       if (oldNode.getOptions().type === "tag") {
         return;
       }
 
-      convNode = oldNode as BasicNodeModel;
-      name = convNode.getName();
+      const convNode = oldNode as BasicNodeModel;
+      const name = convNode.getName();
       if (!isActionNode(name)) {
         return;
       }
@@ -359,32 +353,32 @@ export const configureEngine = (
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("children", (config) => new ChildrenPortModel())
+      new SimplePortFactory("children", () => new ChildrenPortModel())
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("parent", (config) => new ParentPortModel())
+      new SimplePortFactory("parent", () => new ParentPortModel())
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("output", (config) => new OutputPortModel(""))
+      new SimplePortFactory("output", () => new OutputPortModel(""))
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("input", (config) => new InputPortModel(""))
+      new SimplePortFactory("input", () => new InputPortModel(""))
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("tag output", (config) => new TagOutputPortModel())
+      new SimplePortFactory("tag output", () => new TagOutputPortModel())
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("tag input", (config) => new TagInputPortModel())
+      new SimplePortFactory("tag input", () => new TagInputPortModel())
     );
 
   // Disable loose links
@@ -403,9 +397,9 @@ export const findSubtree = (
   subTree: string,
   oldIndex: number = -1
 ): number[] | undefined => {
-  var path: number[] = [];
-  var nodeChilds;
-  var name = baseTree.name;
+  let path: number[] = [];
+  let nodeChilds;
+  const name = baseTree.name;
 
   if (name === subTree) {
     return oldIndex >= 0 ? [] : undefined;
@@ -418,7 +412,7 @@ export const findSubtree = (
   }
 
   for (let index = 0; index < nodeChilds.length; index++) {
-    var result = findSubtree(nodeChilds[index], subTree, index);
+    const result = findSubtree(nodeChilds[index], subTree, index);
     if (result) {
       path = [index].concat(result);
       return path;

@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef, MutableRefObject } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Modal,
   ModalActionList,
-  ModalEditableList,
   ModalInputBox,
   ModalRow,
   ModalTitlebar,
@@ -17,11 +16,12 @@ import {
   importUserLibrarySubtree,
 } from "../../../api_helper/TreeWrapper";
 import { configureEngine, publish } from "../../helper/TreeEditorHelper";
-import createEngine, {
-  CanvasWidget,
-  DiagramModel,
-} from "@projectstorm/react-diagrams";
+import createEngine, { DiagramModel } from "@projectstorm/react-diagrams";
 import "./ImportSubtreeModal.css";
+import {
+  StyledLibraryCanvas,
+  StyledLibraryEntry,
+} from "Styles/Modal/SubtreeLibrary.styles";
 
 const initialData = {
   subtreeName: "",
@@ -52,7 +52,7 @@ const ImportSubtreeModal = ({
   const getSubtrees = async () => {
     try {
       const response = await getSubtreeLibrary();
-      var entry_list = [];
+      const entry_list = [];
       for (const entry of response) {
         const entryData = await getLibraryTree(entry);
 
@@ -90,7 +90,7 @@ const ImportSubtreeModal = ({
   const getUserSubtrees = async () => {
     try {
       const response = await getUserSubtreeLibrary(project);
-      var entry_list = [];
+      const entry_list = [];
       for (const entry of response) {
         const entryData = await getUserLibraryTree(entry.project, entry.tree);
         entry_list.push({
@@ -136,7 +136,7 @@ const ImportSubtreeModal = ({
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    var isValidName = true;
+    let isValidName = true;
 
     setFormState((prevFormData) => ({
       ...prevFormData,
@@ -312,12 +312,9 @@ const LibrarySubtree = ({
   }, []);
 
   return (
-    <div className="subtree-library-entry">
+    <StyledLibraryEntry>
       <ModalRow type="img">
-        <CanvasWidget
-          className={`subtree-library-canvas`}
-          engine={engine.current}
-        />
+        <StyledLibraryCanvas engine={engine.current} />
       </ModalRow>
       <ModalRowDataText title="Order" data={[btOrder]} />
       <ModalRowDataText title="Subtrees" data={subtrees} />
@@ -327,10 +324,11 @@ const LibrarySubtree = ({
           onClick={() => onSelect(name, project)}
           type="button"
           id="import-subtree"
+          style={{ margin: "10px" }}
         >
           Select
         </button>
       </ModalRow>
-    </div>
+    </StyledLibraryEntry>
   );
 };

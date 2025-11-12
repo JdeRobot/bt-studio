@@ -69,7 +69,9 @@ const EditActionModal = ({
     setFormState(initialEditActionModalData);
     document.getElementById("node-editor-modal")!.focus();
     if (currentActionNode) {
-      var rgb: IColor["rgb"] = ColorService.toRgb(currentActionNode.getColor());
+      const rgb: IColor["rgb"] = ColorService.toRgb(
+        currentActionNode.getColor(),
+      );
 
       const newColor: IColor = {
         hex: ColorService.rgb2hex(rgb),
@@ -89,13 +91,13 @@ const EditActionModal = ({
 
   useEffect(() => {
     if (currentActionNode && color) {
-      var rgb: [number, number, number] = [
+      const rgb: [number, number, number] = [
         color.rgb["r"],
         color.rgb["g"],
         color.rgb["b"],
       ];
 
-      var actionFrame = getActionFrame(currentActionNode.getName());
+      const actionFrame = getActionFrame(currentActionNode.getName());
 
       changeColorNode(
         rgb,
@@ -148,10 +150,10 @@ const EditActionModal = ({
   };
 
   const isInputNameValid = (name: string) => {
-    var inputPorts = Object.entries(currentActionNode.getPorts()).filter(
+    const inputPorts = Object.entries(currentActionNode.getPorts()).filter(
       (item) => item[1] instanceof InputPortModel,
     );
-    var merged = [].concat.apply(
+    const merged = [].concat.apply(
       inputPorts.map((x) => x[0]),
       [],
     );
@@ -161,10 +163,10 @@ const EditActionModal = ({
   };
 
   const isOutputNameValid = (name: string) => {
-    var outputPorts = Object.entries(currentActionNode.getPorts()).filter(
+    const outputPorts = Object.entries(currentActionNode.getPorts()).filter(
       (item) => item[1] instanceof OutputPortModel,
     );
-    var merged = [].concat.apply(
+    const merged = [].concat.apply(
       outputPorts.map((x) => x[0]),
       [],
     );
@@ -176,7 +178,7 @@ const EditActionModal = ({
   const addInput = () => {
     //TODO: Maybe display some error message when the name is invalid
     if (isInputNameValid(formState["newInputName"])) {
-      var actionFrame = getActionFrame(currentActionNode.getName());
+      const actionFrame = getActionFrame(currentActionNode.getName());
 
       addPort(
         formState["newInputName"],
@@ -196,7 +198,7 @@ const EditActionModal = ({
   const addOutput = () => {
     //TODO: Maybe display some error message when the name is invalid
     if (isOutputNameValid(formState["newOutputName"])) {
-      var actionFrame = getActionFrame(currentActionNode.getName());
+      const actionFrame = getActionFrame(currentActionNode.getName());
 
       addPort(
         formState["newOutputName"],
@@ -214,7 +216,7 @@ const EditActionModal = ({
   };
 
   const removeInput = (port: InputPortModel) => {
-    var actionFrame = getActionFrame(currentActionNode.getName());
+    const actionFrame = getActionFrame(currentActionNode.getName());
 
     removePort(
       port,
@@ -230,7 +232,7 @@ const EditActionModal = ({
   };
 
   const removeOutput = (port: OutputPortModel) => {
-    var actionFrame = getActionFrame(currentActionNode.getName());
+    const actionFrame = getActionFrame(currentActionNode.getName());
 
     removePort(
       port,

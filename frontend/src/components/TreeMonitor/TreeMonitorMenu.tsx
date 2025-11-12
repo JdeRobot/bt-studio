@@ -1,3 +1,4 @@
+import React from "react";
 import { MouseEventHandler, MutableRefObject } from "react";
 
 import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
@@ -9,7 +10,7 @@ const TreeMonitorMenu = ({
   subTreeName,
 }: {
   onZoomToFit: MouseEventHandler;
-  setGoBack: Function;
+  setGoBack: (a: boolean) => void;
   subTreeName: MutableRefObject<string>;
 }) => {
   return (

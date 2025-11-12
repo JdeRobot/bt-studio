@@ -1,13 +1,18 @@
-import React, { JSX } from "react";
+import React, { ReactElement } from "react";
 import { ChildrenPortWidget } from "./ports/children_port/ChildrenPortWidget";
 import { ParentPortWidget } from "./ports/parent_port/ParentPortWidget";
 import { InputPortWidget } from "./ports/input_port/InputPortWidget";
 import { OutputPortWidget } from "./ports/output_port/OutputPortWidget";
-
-import { strRGBToLuminance } from "../../../helper/colorHelper";
-
-import "./BasicNode.css";
 import { DiagramEngine } from "@projectstorm/react-diagrams";
+import {
+  StyledNodeContainer,
+  StyledNodeDiagramPorts,
+  StyledNodePort,
+  StyledNodeSection,
+  StyledNodeTagPorts,
+  StyledNodeTitle,
+} from "Styles/TreeEditor/BTNode.styles";
+import { useBtTheme } from "Contexts/BtThemeContext";
 
 // The node widget controls the visualization of the custom node
 export const BasicNodeWidget = ({
@@ -17,40 +22,13 @@ export const BasicNodeWidget = ({
   engine: DiagramEngine;
   node: any;
 }) => {
-  // Choose the font color
-  let showLightText = strRGBToLuminance(node.getColor()) <= 0.5;
-
-  // Node style
-  let nodeStyle: React.CSSProperties = {
-    background: node.getColor() || "var(--bt-action-default-color)",
-    color: showLightText ? "var(--bt-light-text)" : "var(--bt-dark-text)",
-    ...(node.isSelected() && {
-      boxShadow: "0 0 12px var(--bt-selected-shadow-color)", // Add a shadow to highlight the selection
-    }),
-  };
-
-  switch (node.getExecStatus()) {
-    case "RUNNING":
-      nodeStyle["background"] = "var(--bt-status-running)";
-      break;
-    case "SUCCESS":
-      nodeStyle["background"] = "var(--bt-status-success)";
-      break;
-    case "FAILURE":
-      nodeStyle["background"] = "var(--bt-status-failure)";
-      break;
-    case "INVALID":
-      nodeStyle["background"] = "var(--bt-status-invalid)";
-      break;
-    default:
-      break;
-  }
+  const theme = useBtTheme();
 
   // Ports list
-  const parentPorts: JSX.Element[] = [];
-  const childrenPorts: JSX.Element[] = [];
-  const inputPorts: JSX.Element[] = [];
-  const outputPorts: JSX.Element[] = [];
+  const parentPorts: ReactElement[] = [];
+  const childrenPorts: ReactElement[] = [];
+  const inputPorts: ReactElement[] = [];
+  const outputPorts: ReactElement[] = [];
 
   // Get all the ports from the node and classify them
   Object.keys(node.getPorts()).forEach((portName) => {
@@ -78,28 +56,40 @@ export const BasicNodeWidget = ({
 
   // Return the node to render
   return (
-    <div className="bt-basic-node" style={nodeStyle}>
-      <div className="bt-basic-layer">
-        <div className="bt-basic-parent-port">
+    <StyledNodeContainer
+      className="bt-basic-node"
+      borderColor={theme.btEditor.border}
+      roundness={theme.btEditor.roundness}
+      color={node.getColor()}
+      selected={node.isSelected()}
+      status={node.getExecStatus()}
+      statusRunning={theme.btEditor.running}
+      statusSuccess={theme.btEditor.success}
+      statusFailure={theme.btEditor.failure}
+      statusInvalid={theme.btEditor.invalid}
+      shadowColor={theme.btEditor.shadow}
+    >
+      <StyledNodeSection className="bt-basic-layer">
+        <StyledNodeDiagramPorts type="parent">
           {parentPorts.length > 0 ? (
             parentPorts
           ) : (
-            <div className="bt-basic-placeholder"></div>
+            <StyledNodePort color={"unset"} />
           )}
-        </div>
-        <div className="bt-basic-title">{node.getName()}</div>
-        <div className="bt-basic-children-port">
+        </StyledNodeDiagramPorts>
+        <StyledNodeTitle id="bt-node-title">{node.getName()}</StyledNodeTitle>
+        <StyledNodeDiagramPorts type="children">
           {childrenPorts.length > 0 ? (
             childrenPorts
           ) : (
-            <div className="bt-basic-placeholder"></div>
+            <StyledNodePort color={"unset"} />
           )}
-        </div>
-      </div>
-      <div className="bt-basic-layer">
-        <div className="bt-basic-left-ports">{inputPorts}</div>
-        <div className="bt-basic-right-ports">{outputPorts}</div>
-      </div>
-    </div>
+        </StyledNodeDiagramPorts>
+      </StyledNodeSection>
+      <StyledNodeSection className="bt-basic-layer">
+        <StyledNodeTagPorts type="input">{inputPorts}</StyledNodeTagPorts>
+        <StyledNodeTagPorts type="output">{outputPorts}</StyledNodeTagPorts>
+      </StyledNodeSection>
+    </StyledNodeContainer>
   );
 };

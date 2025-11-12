@@ -1,13 +1,24 @@
+import React from "react";
 import { ThemeProvider } from "jderobot-ide-interface";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { BtTheme } from "../types";
 
 interface BtThemeProviderProps {
+  theme?: BtTheme;
   children?: ReactNode;
 }
 
 const darkTheme: BtTheme = {
-  switch: (themeType: string) => {},
+  switch: () => {},
+  btEditor: {
+    border: "#ededf2",
+    shadow: "#ededf2",
+    running: "#c4761e",
+    success: "#29ac29",
+    failure: "#b11111",
+    invalid: "#494949",
+    roundness: 10,
+  },
   palette: {
     text: "#ededf2",
     darkText: "#000000",
@@ -47,16 +58,25 @@ const darkTheme: BtTheme = {
 };
 
 const lightTheme: BtTheme = {
-  switch: (themeType: string) => {},
+  switch: () => {},
+  btEditor: {
+    border: "#000000",
+    shadow: "#000000",
+    running: "#c4761e",
+    success: "#29ac29",
+    failure: "#b11111",
+    invalid: "#494949",
+    roundness: 10,
+  },
   palette: {
-    text: "#ededf2",
-    darkText: "#000000",
+    text: "#000000",
+    darkText: "#ededf2",
     placeholderText: "#a6a6bf",
     success: "#29ac29",
     warning: "#f9e86d",
     error: "#802626",
-    background: "#ffffffff",
-    primary: "#134f53",
+    background: "#cacada",
+    primary: "#39a3aaff",
     secondary: "#1d777c",
     scrollbar: "#6f6f90",
     border: {
@@ -89,7 +109,7 @@ const lightTheme: BtTheme = {
 const BtThemeContext = createContext(darkTheme);
 export const useBtTheme = () => useContext(BtThemeContext) ?? darkTheme;
 
-export const BtThemeProvider = ({ children }: BtThemeProviderProps) => {
+export const BtThemeProvider = ({ theme, children }: BtThemeProviderProps) => {
   const [currentTheme, setCurrentTheme] = useState<BtTheme>(
     window.localStorage.getItem("themeType") !== null
       ? window.localStorage.getItem("themeType") === "light"
@@ -111,6 +131,14 @@ export const BtThemeProvider = ({ children }: BtThemeProviderProps) => {
         break;
     }
   };
+
+  if (theme) {
+    return (
+      <BtThemeContext.Provider value={theme}>
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      </BtThemeContext.Provider>
+    );
+  }
 
   return (
     <BtThemeContext.Provider

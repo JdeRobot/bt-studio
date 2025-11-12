@@ -1,8 +1,9 @@
-import { StyledHeaderButton } from "../../styles/headers/HeaderMenu.styles";
+import React from "react";
+import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
 import { useBtTheme } from "../../contexts/BtThemeContext";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import { useContext, useEffect, useRef, useState } from "react";
-import { publish, subscribe, unsubscribe } from "../helper/TreeEditorHelper";
+import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 import {
   generateLocalApp,
   getFile,
@@ -19,7 +20,7 @@ const DownloadButton = ({ project }: { project: string }) => {
   const settings = useContext(OptionsContext);
   const { error } = useError();
   const isCodeUpdatedRef = useRef<boolean | undefined>(undefined);
-  const [isCodeUpdated, _updateCode] = useState<boolean | undefined>(false);
+  const [, _updateCode] = useState<boolean | undefined>(false);
 
   const updateCode = (data?: boolean) => {
     isCodeUpdatedRef.current = data;
@@ -73,7 +74,7 @@ const DownloadButton = ({ project }: { project: string }) => {
 
       const files: Entry[] = JSON.parse(file_list);
 
-      var actions = undefined;
+      let actions = undefined;
       for (const file of files) {
         if (file.is_dir && file.name === "actions") {
           actions = file;
@@ -112,7 +113,7 @@ const DownloadButton = ({ project }: { project: string }) => {
     file_path: string,
     file_name: string,
   ) => {
-    var content = await getFile(project, file_path);
+    const content = await getFile(project, file_path);
     zip.file(file_name, content);
   };
 

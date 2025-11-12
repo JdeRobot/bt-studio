@@ -1,3 +1,4 @@
+import React from "react";
 import { useContext } from "react";
 import "react-color-palette/css";
 import "./SettingsModal.css";
@@ -5,8 +6,6 @@ import "./SettingsModal.css";
 import Section from "./sections/Section";
 import SubSection from "./sections/SubSection";
 import Setting from "./sections/Setting";
-
-import Dropdown from "./options/Dropdown";
 
 import { OptionsContext, SettingsData } from "../options/Options";
 import {
@@ -18,6 +17,8 @@ import {
 
 import { saveProjectConfig } from "../../api_helper/TreeWrapper";
 import Checkbox from "./options/Checkbox";
+import { StyledSettingsListConatiner } from "Styles/Modal/Settings/Settings.styles";
+import { useBtTheme } from "Contexts/BtThemeContext";
 
 const SettingsModal = ({
   onSubmit,
@@ -30,7 +31,7 @@ const SettingsModal = ({
   onClose: Function;
   currentProjectname: string;
 }) => {
-  // const [color, setColor] = useColor("rgb(128 0 128)");
+  const theme = useBtTheme();
   const settings = useContext(OptionsContext);
   const { error } = useError();
 
@@ -41,7 +42,7 @@ const SettingsModal = ({
 
   const handleCancel = async (settings: SettingsData) => {
     // Save settings
-    let json_settings: { name: string; config: { [id: string]: any } } = {
+    const json_settings: { name: string; config: { [id: string]: any } } = {
       name: currentProjectname,
       config: {},
     };
@@ -82,7 +83,7 @@ const SettingsModal = ({
           }}
         />
         <ModalRow>
-          <ul className="bt-settings-entry-list">
+          <StyledSettingsListConatiner scrollbar={theme.palette.scrollbar}>
             {/* <Section title="General">
                 <SubSection title="Accent Colors">
                   <Setting title ="Turn on project accent color">
@@ -94,36 +95,19 @@ const SettingsModal = ({
                 </SubSection>
               </Section> */}
             <Section title="Appearance">
-              <SubSection title="Color theme">
-                <Setting title="Set color theme">
-                  <Dropdown
-                    setting={settings.theme}
-                    possibleValues={["dark", "light"]}
-                  />
-                </Setting>
-              </SubSection>
               <SubSection title="Editor">
                 <Setting title="Show actions accent color">
                   <Checkbox setting={settings.editorShowAccentColors} />
                 </Setting>
               </SubSection>
             </Section>
-            <Section title="Behaviour Tree">
-              <SubSection title="Execution settings">
-                <Setting title="Order of execution of the behavior tree">
-                  {/* Add explanation here */}
-                  <Dropdown
-                    setting={settings.btOrder}
-                    possibleValues={["bottom-to-top", "top-to-bottom"]}
-                  />
-                </Setting>
-              </SubSection>
-            </Section>
-          </ul>
+          </StyledSettingsListConatiner>
         </ModalRow>
       </Modal>
     );
   }
+
+  return <></>;
 };
 
 export default SettingsModal;

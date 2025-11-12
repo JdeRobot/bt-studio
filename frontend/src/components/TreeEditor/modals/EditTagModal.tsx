@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import React from "react";
+import { useEffect, useRef } from "react";
 import { DiagramEngine } from "@projectstorm/react-diagrams";
 
 import {
@@ -10,35 +11,23 @@ import {
 
 import { TagNodeModel } from "../nodes/tag_node/TagNodeModel";
 
-const initialEditTagModalData = {
-  tagName: "",
-};
-
 const EditTagModal = ({
   setFileContent,
   isOpen,
   onClose,
   currentActionNode,
-  model,
   engine,
 }: {
   setFileContent: Function;
   isOpen: boolean;
   onClose: Function;
   currentActionNode: TagNodeModel;
-  model: any;
-  // model: DiagramModel;
   engine: DiagramEngine;
 }) => {
   const focusInputRef = useRef<any>(null);
-  const [formState, setFormState] = useState(initialEditTagModalData);
 
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
-    setFormState((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
     currentActionNode.setName(value);
 
     setFileContent();
@@ -46,10 +35,9 @@ const EditTagModal = ({
   };
 
   useEffect(() => {
-    setFormState(initialEditTagModalData);
     document.getElementById("tag-editor-modal")!.focus();
     if (currentActionNode) {
-      var tagName: HTMLInputElement | null = document.getElementById(
+      const tagName: HTMLInputElement | null = document.getElementById(
         "tagName",
       ) as HTMLInputElement;
       if (tagName) {

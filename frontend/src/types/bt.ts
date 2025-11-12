@@ -1,0 +1,1 @@
+export type BTStatus = "RUNNING" | "SUCCESS" | "FAILURE" | "INVALID"

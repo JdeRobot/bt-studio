@@ -1,7 +1,8 @@
+import React from "react";
 import {
   StyledDropdown,
   StyledHeaderButton,
-} from "../../styles/headers/HeaderMenu.styles";
+} from "../../styles/Header/HeaderMenu.styles";
 import { useBtTheme } from "../../contexts/BtThemeContext";
 import SpaceDashboardRoundedIcon from "@mui/icons-material/SpaceDashboardRounded";
 import { useRef, useState } from "react";
@@ -96,7 +97,9 @@ const Dropdown = ({
           style={{ width: `${width}px`, left: `${right}px` }}
         >
           {possibleValues.map((name, index) => (
-            <button onClick={(e: any) => changeValue(e, name)}>{name}</button>
+            <button key={index} onClick={(e: any) => changeValue(e, name)}>
+              {name}
+            </button>
           ))}
         </StyledDropdown>
       )}
