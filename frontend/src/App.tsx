@@ -203,7 +203,7 @@ const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
   };
 
   const terminalViewer = {
-    component: <VncViewer commsManager={manager} port={1108} />,
+    component: <VncViewer commsManager={manager} port={6082} />,
     icon: <TerminalRoundedIcon />,
     name: "Terminal",
     active: showTerminal,
