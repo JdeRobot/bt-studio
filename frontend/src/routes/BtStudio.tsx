@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useUnload } from "BtHooks/useUnload";
 import HeaderMenu from "BtComponents/HeaderMenu";
-import "./App.css";
+import "./BtStudio.css";
 import { CommsManager } from "jderobot-commsmanager";
 import { getProjectConfig, saveProjectConfig } from "BtApi/TreeWrapper";
 
@@ -20,9 +20,17 @@ import { editorApi } from "BtComponents/Editors";
 import TerminalRoundedIcon from "@mui/icons-material/TerminalRounded";
 import VideoCameraBackRoundedIcon from "@mui/icons-material/VideoCameraBackRounded";
 import AccountTreeRoundedIcon from "@mui/icons-material/AccountTreeRounded";
+import { useParams } from "react-router-dom";
 
-const App = ({ isUnibotics }: { isUnibotics: boolean }) => {
-  const [currentProjectname, setCurrentProjectname] = useState<string>("");
+const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
+  const {proj_id} = useParams();
+  const currentProjectname = proj_id;
+
+  if (currentProjectname === undefined) {
+    return
+  }
+
+  const setCurrentProjectname = () => {}
   // const [projectToSave, setProjectToSave] = useState(currentProjectname);
   const [manager, setManager] = useState<CommsManager | null>(null);
   const [showSim, setSimVisible] = useState<boolean>(false);

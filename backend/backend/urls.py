@@ -18,10 +18,12 @@ Including another URLconf
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import path, include
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("bt_studio/", include("backend.tree_api.urls")),
-    path("frontend/", include("frontend.urls")),
-    path("", lambda request: redirect("frontend/", permanent=True)),
+    path("home/", include("frontend.urls")),
+    path("", lambda request: redirect("/home", permanent=True)),
+    path("studio/<slug:proj_id>/", RedirectView.as_view(url="/home", permanent=True)),
 ]

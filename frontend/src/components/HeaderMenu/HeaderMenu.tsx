@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import { CommsManager, states } from "jderobot-commsmanager";
+import { Link } from "react-router-dom";
 
-import { ReactComponent as LogoIcon } from "BtIcons/logo_jderobot_monocolor.svg";
-import { ReactComponent as LogoUniboticsIcon } from "BtIcons/logo_unibotics_monocolor.svg";
+import { ReactComponent as LogoIcon } from "BtComponents/icons/logo_jderobot_monocolor.svg";
+import { ReactComponent as LogoUniboticsIcon } from "BtComponents/icons/logo_unibotics_monocolor.svg";
 import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 import {
   DocumentationButton,

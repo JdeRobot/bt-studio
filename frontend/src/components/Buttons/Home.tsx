@@ -7,6 +7,7 @@ import ProjectModal from "../HeaderMenu/modals/ProjectModal";
 import { CommsManager, states } from "jderobot-commsmanager";
 import { useError } from "jderobot-ide-interface";
 import { createProject } from "BtApi/TreeWrapper";
+import { Link } from "react-router-dom";
 
 const HomeButton = ({
   project,
@@ -28,7 +29,7 @@ const HomeButton = ({
     if (!manager) {
       console.error("Manager is not running");
       warning(
-        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
+        "Failed to connect with the Robotics Backend docker. Please make sure it is connected."
       );
       return;
     }
@@ -42,7 +43,7 @@ const HomeButton = ({
     if (state === states.IDLE || state === states.CONNECTED) {
       console.error("Simulation is not ready!");
       warning(
-        "Failed to found a running simulation. Please make sure an universe is selected.",
+        "Failed to found a running simulation. Please make sure an universe is selected."
       );
       return;
     }
@@ -102,17 +103,29 @@ const HomeButton = ({
     setProjectModalOpen(false);
   };
 
+  // <Link>
+  //   <ProjectModal
+  //     isOpen={isProjectModalOpen}
+  //     onSubmit={(data: unknown) => {}}
+  //     onClose={onCloseProjectModal}
+  //     currentProject={project}
+  //     existingProjects={existingProjects}
+  //     setExistingProjects={setExistingProjects}
+  //     createProject={onCreateProject}
+  //   />
+  //   <StyledHeaderButton
+  //     bgColor={theme.palette.primary}
+  //     hoverColor={theme.palette.secondary}
+  //     roundness={theme.roundness}
+  //     id="return-academy"
+  //     title="Return to Home"
+  //     onClick={onOpenProjectModal}
+  //   >
+  //     <HomeRoundedIcon htmlColor={theme.palette.text} />
+  //   </StyledHeaderButton>
+  // </>
   return (
-    <>
-      <ProjectModal
-        isOpen={isProjectModalOpen}
-        onSubmit={(data: unknown) => {}}
-        onClose={onCloseProjectModal}
-        currentProject={project}
-        existingProjects={existingProjects}
-        setExistingProjects={setExistingProjects}
-        createProject={onCreateProject}
-      />
+    <Link to="/home">
       <StyledHeaderButton
         bgColor={theme.palette.primary}
         hoverColor={theme.palette.secondary}
@@ -123,7 +136,7 @@ const HomeButton = ({
       >
         <HomeRoundedIcon htmlColor={theme.palette.text} />
       </StyledHeaderButton>
-    </>
+    </Link>
   );
 };
 
