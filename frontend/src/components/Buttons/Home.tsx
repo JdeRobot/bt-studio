@@ -116,7 +116,7 @@ const HomeButton = ({
   return (
     <Link to="/home">
       <StyledHeaderButton
-        bgColor={theme.palette.primary}
+        bgColor={theme.palette.bg}
         hoverColor={theme.palette.secondary}
         roundness={theme.roundness}
         id="return-academy"

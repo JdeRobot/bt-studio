@@ -25,7 +25,7 @@ const Header = ({ section }: { section?: string }) => {
     <AppBar position="static">
       <Toolbar
         style={{
-          backgroundColor: theme.palette.primary,
+          backgroundColor: theme.palette.bg,
           height: "50px",
           minHeight: "50px",
         }}

@@ -1,25 +1,17 @@
-import React, { lazy, Suspense } from "react";
+import React from "react";
 import { HomeHeader } from "BtComponents/HeaderMenu";
-import { StyledAppContainer } from "BtStyles/App.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
-import {
-  StyledAction,
-  StyledActionsContainer,
-  StyledHomeContainer,
-  StyledHomeContent,
-} from "BtStyles/Pages/Home.styles";
-import { LoadingMenu} from "BtComponents/ProjectsMenu";
+import { StyledAppContainer } from "BtStyles/App.styles";
+import { StyledAction, StyledActionsContainer, StyledHomeContainer, StyledHomeContent } from "BtStyles/Pages/Home.styles";
+import { useParams } from "react-router-dom";
 
 const App = () => {
   const theme = useBtTheme();
-
-  const ProjectsMenu = lazy(() =>
-    import("BtComponents/ProjectsMenu")
-  );
-
+  const {proj_id} = useParams();
+  
   return (
     <StyledAppContainer bg={theme.palette.bg} hoverStyle={theme.hoverStyle}>
-      <HomeHeader />
+      <HomeHeader section={`Edit ${proj_id} project`}/>
       <StyledHomeContainer bg={theme.palette.bg}>
         <StyledActionsContainer>
           <StyledAction
@@ -28,13 +20,10 @@ const App = () => {
             roundness={theme.roundness}
             to="/create_project"
           >
-            New project
+            Another action
           </StyledAction>
         </StyledActionsContainer>
         <StyledHomeContent bg={theme.palette.bgDark}>
-          <Suspense fallback={<LoadingMenu />}>
-            <ProjectsMenu/>
-          </Suspense>
         </StyledHomeContent>
       </StyledHomeContainer>
     </StyledAppContainer>

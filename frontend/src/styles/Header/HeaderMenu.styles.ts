@@ -18,21 +18,27 @@ interface StyledProjectProps {
 
 export const StyledProject = styled.span<StyledProjectProps>`
   display: flex;
+  font-size: 25px;
   flex-direction: column;
   background-color: none;
   color: ${(p) => p.color ?? primaryColor};
   padding: 10px;
   justify-content: center;
   margin-left: auto;
+  position: absolute;
+  right: 50%;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: fit-content;
 
   & div {
     font-weight: bold;
   }
 `;
 
-export const StyledSection = styled.span<StyledProjectProps>`
+export const StyledSection = styled.h3<StyledProjectProps>`
   display: flex;
-  font-size: 25px;
   flex-direction: column;
   background-color: none;
   color: ${(p) => p.color ?? primaryColor};

@@ -75,7 +75,7 @@ const Dropdown = ({
   return (
     <div ref={dropdown}>
       <StyledHeaderButton
-        bgColor={theme.palette.primary}
+        bgColor={theme.palette.bg}
         hoverColor={theme.palette.secondary}
         roundness={theme.roundness}
         id={id}
@@ -91,7 +91,7 @@ const Dropdown = ({
       {open && (
         <StyledDropdown
           color={theme.palette.text}
-          bgColor={theme.palette.primary}
+          bgColor={theme.palette.bg}
           hoverColor={theme.palette.secondary}
           roundness={theme.roundness}
           style={{ width: `${width}px`, left: `${right}px` }}

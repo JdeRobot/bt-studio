@@ -10,5 +10,6 @@ export interface BtTheme extends Theme {
     failure: string;
     invalid: string;
     roundness?: number;
-  }
+  },
+  hoverStyle: string;
 }

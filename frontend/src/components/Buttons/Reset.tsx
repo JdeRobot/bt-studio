@@ -43,7 +43,7 @@ const ResetButton = ({
 
   return (
     <StyledHeaderButton
-      bgColor={theme.palette.primary}
+      bgColor={theme.palette.bg}
       hoverColor={theme.palette.secondary}
       roundness={theme.roundness}
       id="reset-app"
