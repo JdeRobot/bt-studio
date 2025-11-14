@@ -25,5 +25,6 @@ urlpatterns = [
     path("bt_studio/", include("backend.tree_api.urls")),
     path("home/", include("frontend.urls")),
     path("", lambda request: redirect("/home", permanent=True)),
+    path("create_project/", lambda request: redirect("/home", permanent=True)),
     path("studio/<slug:proj_id>/", RedirectView.as_view(url="/home", permanent=True)),
 ]

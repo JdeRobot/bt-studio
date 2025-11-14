@@ -30,6 +30,22 @@ export const StyledProject = styled.span<StyledProjectProps>`
   }
 `;
 
+export const StyledSection = styled.span<StyledProjectProps>`
+  display: flex;
+  font-size: 25px;
+  flex-direction: column;
+  background-color: none;
+  color: ${(p) => p.color ?? primaryColor};
+  padding: 10px;
+  justify-content: center;
+  margin-left: auto;
+
+  & div {
+    font-weight: bold;
+  }
+`;
+
+
 export const StyledHeaderButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;

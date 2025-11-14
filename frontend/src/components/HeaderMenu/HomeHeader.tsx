@@ -4,16 +4,22 @@ import Toolbar from "@mui/material/Toolbar";
 
 import { ReactComponent as LogoIcon } from "BtComponents/icons/logo_jderobot_monocolor.svg";
 import { ReactComponent as LogoUniboticsIcon } from "BtComponents/icons/logo_unibotics_monocolor.svg";
-import { DocumentationButton, ThemeButton } from "BtComponents/Buttons";
+import {
+  DocumentationButton,
+  HomeButton,
+  ThemeButton,
+} from "BtComponents/Buttons";
 import {
   StyledHeaderButtonContainer,
   StyledHeaderText,
+  StyledSection,
 } from "BtStyles/Header/HeaderMenu.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 
-const Header = () => {
+const Header = ({ section }: { section?: string }) => {
   const theme = useBtTheme();
   const isUnibotics = window.location.href.includes("unibotics");
+  const isHome = window.location.href.includes("home");
 
   return (
     <AppBar position="static">
@@ -40,7 +46,20 @@ const Header = () => {
         <StyledHeaderText color={theme.palette.text}>
           {isUnibotics ? "Projects" : "BT Studio IDE"}
         </StyledHeaderText>
+        {section && (
+          <StyledSection color={theme.palette.text}>
+            <div>{section}</div>
+          </StyledSection>
+        )}
         <StyledHeaderButtonContainer>
+          {!isHome && (
+            <HomeButton
+              project={""}
+              manager={null}
+              setProject={() => {}}
+              setAppRunning={() => {}}
+            />
+          )}
           <ThemeButton />
           <DocumentationButton />
         </StyledHeaderButtonContainer>

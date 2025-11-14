@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { HomeHeader } from "BtComponents/HeaderMenu";
-import {
-  ModalEditableList,
-  ModalRow,
-  useError,
-} from "jderobot-ide-interface";
+import { ModalEditableList, ModalRow, useError } from "jderobot-ide-interface";
 import { deleteProject, listProjects } from "BtApi/TreeWrapper";
+import { StyledAppContainer } from "BtStyles/App.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 const App = () => {
   const { error } = useError();
+  const theme = useBtTheme();
   const [projects, setProjects] = useState([]);
 
   const navigate = useNavigate();
@@ -46,22 +45,23 @@ const App = () => {
   };
 
   return (
-    <div className="bt-App" style={{ display: "flex" }}>
-      <HomeHeader/>
-    <h1>Home Page</h1>
-    <ModalRow type="all">
-      <ModalEditableList
-        list={Object.values(projects)}
-        onSelect={(e: any, entry: string) => {
-          navigate('/studio/' + entry);
-        }}
-        onDelete={(e: any, entry: string) => {
-          deleteProjectFunc(entry);
-          e.stopPropagation();
-        }}
-      />
-    </ModalRow>
-    </div>
+    <StyledAppContainer bg={theme.palette.background}>
+      <HomeHeader />
+      <h1>Home Page</h1>
+      <Link to="/create_project">New project</Link>
+      <ModalRow type="all">
+        <ModalEditableList
+          list={Object.values(projects)}
+          onSelect={(e: any, entry: string) => {
+            navigate("/studio/" + entry);
+          }}
+          onDelete={(e: any, entry: string) => {
+            deleteProjectFunc(entry);
+            e.stopPropagation();
+          }}
+        />
+      </ModalRow>
+    </StyledAppContainer>
   );
 };
 

@@ -21,13 +21,16 @@ import TerminalRoundedIcon from "@mui/icons-material/TerminalRounded";
 import VideoCameraBackRoundedIcon from "@mui/icons-material/VideoCameraBackRounded";
 import AccountTreeRoundedIcon from "@mui/icons-material/AccountTreeRounded";
 import { useParams } from "react-router-dom";
+import { StyledAppContainer } from "BtStyles/App.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
+  const theme = useBtTheme();
   const {proj_id} = useParams();
   const currentProjectname = proj_id;
 
   if (currentProjectname === undefined) {
-    return
+    return (<></>)
   }
 
   const setCurrentProjectname = () => {}
@@ -234,7 +237,7 @@ const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
   };
 
   return (
-    <div className="bt-App" style={{ display: "flex" }}>
+    <StyledAppContainer bg={theme.palette.background}>
       <HeaderMenu
         currentProjectname={currentProjectname}
         setCurrentProjectname={setCurrentProjectname}
@@ -254,7 +257,7 @@ const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
         layout={layout}
         statusBarComponents={statusBar}
       />
-    </div>
+    </StyledAppContainer>
   );
 };
 

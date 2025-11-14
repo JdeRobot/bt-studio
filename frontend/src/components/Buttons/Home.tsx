@@ -92,17 +92,6 @@ const HomeButton = ({
     }
   };
 
-  const onOpenProjectModal = (e: any) => {
-    setProjectModalOpen(true);
-  };
-
-  const onCloseProjectModal = async (projectName: string) => {
-    if (projectName) {
-      await onChangeProject(projectName);
-    }
-    setProjectModalOpen(false);
-  };
-
   // <Link>
   //   <ProjectModal
   //     isOpen={isProjectModalOpen}
@@ -132,7 +121,6 @@ const HomeButton = ({
         roundness={theme.roundness}
         id="return-academy"
         title="Return to Home"
-        onClick={onOpenProjectModal}
       >
         <HomeRoundedIcon htmlColor={theme.palette.text} />
       </StyledHeaderButton>
