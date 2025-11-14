@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useUnload } from "BtHooks/useUnload";
 import HeaderMenu from "BtComponents/HeaderMenu";
-import "./BtStudio.css";
 import { CommsManager } from "jderobot-commsmanager";
 import { getProjectConfig, saveProjectConfig } from "BtApi/TreeWrapper";
 
