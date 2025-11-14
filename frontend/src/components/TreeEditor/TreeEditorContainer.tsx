@@ -1,6 +1,6 @@
 import React from "react";
 import { ExtraEditorProps } from "jderobot-ide-interface";
-import { getSubtreePath } from "../../api_helper/TreeWrapper";
+import { getSubtreePath } from "BtApi/TreeWrapper";
 import { useEffect, useRef, useState } from "react";
 import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
 import EditActionModal from "./modals/EditActionModal";

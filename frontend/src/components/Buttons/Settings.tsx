@@ -1,6 +1,6 @@
 import React from "react";
-import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
-import { useBtTheme } from "../../contexts/BtThemeContext";
+import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import { useState } from "react";
 import SettingsModal from "../settings_popup/SettingsModal";

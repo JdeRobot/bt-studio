@@ -1,7 +1,7 @@
 import { PortWidget } from "@projectstorm/react-diagrams";
-import { strRGBToLuminance } from "Components/helper/colorHelper";
+import { strRGBToLuminance } from "BtComponents/helper/colorHelper";
 import styled from "styled-components";
-import { BTStatus } from "Types/index";
+import { BTStatus } from "BtTypes/index";
 
 const primaryColor = "#666";
 

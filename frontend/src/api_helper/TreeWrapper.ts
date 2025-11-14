@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { SettingsData } from "../components/options/Options";
-import { publish } from "../components/helper/TreeEditorHelper";
+import { SettingsData } from "BtComponents/options/Options";
+import { publish } from "BtComponents/helper/TreeEditorHelper";
 
 // Helpers
 

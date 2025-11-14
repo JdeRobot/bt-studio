@@ -6,7 +6,7 @@ import {
   ModalTitlebar,
 } from "jderobot-ide-interface";
 import CreatePage from "./CreatePage";
-import { deleteUniverse, listUniverses } from "../../../api_helper/TreeWrapper";
+import { deleteUniverse, listUniverses } from "BtApi/TreeWrapper";
 import { useError } from "jderobot-ide-interface";
 import CreateCustomPage from "./CreateCustomPage";
 import ImportCustomPage from "./ImportCustomPage";

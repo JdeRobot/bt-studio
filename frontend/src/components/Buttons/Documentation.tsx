@@ -1,7 +1,7 @@
 import React from "react";
-import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
+import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import HelpRoundedIcon from "@mui/icons-material/HelpRounded";
-import { useBtTheme } from "../../contexts/BtThemeContext";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 const DocumentationButton = () => {
   const theme = useBtTheme();

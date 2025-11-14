@@ -4,8 +4,8 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import { CommsManager, states } from "jderobot-commsmanager";
 
-import { ReactComponent as LogoIcon } from "../icons/logo_jderobot_monocolor.svg";
-import { ReactComponent as LogoUniboticsIcon } from "../icons/logo_unibotics_monocolor.svg";
+import { ReactComponent as LogoIcon } from "BtIcons/logo_jderobot_monocolor.svg";
+import { ReactComponent as LogoUniboticsIcon } from "BtIcons/logo_unibotics_monocolor.svg";
 import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 import {
   DocumentationButton,
@@ -22,8 +22,8 @@ import {
   StyledHeaderButtonContainer,
   StyledHeaderText,
   StyledProject,
-} from "Styles/Header/HeaderMenu.styles";
-import { useBtTheme } from "Contexts/BtThemeContext";
+} from "BtStyles/Header/HeaderMenu.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 const HeaderMenu = ({
   currentProjectname,

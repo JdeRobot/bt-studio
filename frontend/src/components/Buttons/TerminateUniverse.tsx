@@ -1,9 +1,9 @@
 import React from "react";
-import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
+import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import { useError } from "jderobot-ide-interface";
 import { CommsManager, states } from "jderobot-commsmanager";
 import StopCircleRoundedIcon from "@mui/icons-material/StopCircleRounded";
-import { useBtTheme } from "../../contexts/BtThemeContext";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 const TerminateUniverseButton = ({
   manager,

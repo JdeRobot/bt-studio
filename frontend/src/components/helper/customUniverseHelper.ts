@@ -1,5 +1,5 @@
 import JSZip from "jszip";
-import { getFileList, getUniverseFile } from "../../api_helper/TreeWrapper";
+import { getFileList, getUniverseFile } from "BtApi/TreeWrapper";
 import { Entry } from "jderobot-ide-interface";
 
 const zipFile = async (

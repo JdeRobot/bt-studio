@@ -15,10 +15,10 @@ import {
   ModalRow,
 } from "jderobot-ide-interface";
 
-import { saveProjectConfig } from "../../api_helper/TreeWrapper";
+import { saveProjectConfig } from "BtApi/TreeWrapper";
 import Checkbox from "./options/Checkbox";
-import { StyledSettingsListConatiner } from "Styles/Modal/Settings/Settings.styles";
-import { useBtTheme } from "Contexts/BtThemeContext";
+import { StyledSettingsListConatiner } from "BtStyles/Modal/Settings/Settings.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 const SettingsModal = ({
   onSubmit,

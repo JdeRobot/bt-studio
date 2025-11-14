@@ -8,7 +8,7 @@ import {
   createSubtree,
   getSubtreeList,
   getActionsList,
-} from "../../api_helper/TreeWrapper";
+} from "BtApi/TreeWrapper";
 import { publish, subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 import AddSubtreeModal from "./modals/AddSubtreeModal";
 import { useError } from "jderobot-ide-interface";
@@ -24,7 +24,7 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
 import NorthRoundedIcon from "@mui/icons-material/NorthRounded";
-import { useBtTheme } from "Contexts/BtThemeContext";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 const StyledMenu = styled(Menu)(
   ({

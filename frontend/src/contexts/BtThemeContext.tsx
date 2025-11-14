@@ -1,7 +1,7 @@
 import React from "react";
 import { ThemeProvider } from "jderobot-ide-interface";
 import { createContext, ReactNode, useContext, useState } from "react";
-import { BtTheme } from "../types";
+import { BtTheme } from "BtTypes/index";
 
 interface BtThemeProviderProps {
   theme?: BtTheme;

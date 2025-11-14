@@ -1,10 +1,10 @@
 import React from "react";
-import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
+import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import { Entry, useError } from "jderobot-ide-interface";
 import { CommsManager } from "jderobot-commsmanager";
 import JSZip from "jszip";
 import { useContext, useEffect, useRef, useState } from "react";
-import { useBtTheme } from "../../contexts/BtThemeContext";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import PauseRoundedIcon from "@mui/icons-material/PauseRounded";
@@ -12,9 +12,9 @@ import {
   generateDockerizedApp,
   getFile,
   getFileList,
-} from "../../api_helper/TreeWrapper";
-import TreeGardener from "../../templates/TreeGardener";
-import RosTemplates from "../../templates/RosTemplates";
+} from "BtApi/TreeWrapper";
+import TreeGardener from "BtTemplates/TreeGardener";
+import RosTemplates from "BtTemplates/RosTemplates";
 import { OptionsContext } from "../options/Options";
 import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 

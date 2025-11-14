@@ -1,12 +1,12 @@
 import React from "react";
 import { useState } from "react";
-import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
-import { useBtTheme } from "../../contexts/BtThemeContext";
+import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import ProjectModal from "../HeaderMenu/modals/ProjectModal";
 import { CommsManager, states } from "jderobot-commsmanager";
 import { useError } from "jderobot-ide-interface";
-import { createProject } from "../../api_helper/TreeWrapper";
+import { createProject } from "BtApi/TreeWrapper";
 
 const HomeButton = ({
   project,

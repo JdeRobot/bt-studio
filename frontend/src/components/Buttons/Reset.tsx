@@ -1,9 +1,9 @@
 import React from "react";
-import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
+import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import { useError } from "jderobot-ide-interface";
 import { CommsManager } from "jderobot-commsmanager";
 import ReplayRoundedIcon from "@mui/icons-material/ReplayRounded";
-import { useBtTheme } from "../../contexts/BtThemeContext";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 const ResetButton = ({
   manager,

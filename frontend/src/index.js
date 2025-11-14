@@ -6,9 +6,9 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "beautiful-react-diagrams/styles.css";
 
-import { OptionsProvider } from "./components/options/Options";
+import { OptionsProvider } from "BtComponents/options/Options";
 import { ErrorProvider } from "jderobot-ide-interface";
-import { BtThemeProvider } from "./contexts/BtThemeContext";
+import { BtThemeProvider } from "BtContexts/BtThemeContext";
 
 // Load Google Font
 WebFont.load({

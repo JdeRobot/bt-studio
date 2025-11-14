@@ -6,7 +6,7 @@ import {
   getSubtree,
   getSubtreeStructure,
   getTreeStructure,
-} from "../../api_helper/TreeWrapper";
+} from "BtApi/TreeWrapper";
 import { findSubtree } from "../helper/TreeEditorHelper";
 import { OptionsContext } from "../options/Options";
 import { useError } from "jderobot-ide-interface";

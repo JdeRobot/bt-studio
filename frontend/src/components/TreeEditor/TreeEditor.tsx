@@ -19,8 +19,8 @@ import {
   addActionFrame,
   getActionFrame,
 } from "../helper/TreeEditorHelper";
-import { StyledBTCanvas } from "Styles/TreeEditor/BTCanvas.styles";
-import { useBtTheme } from "Contexts/BtThemeContext";
+import { StyledBTCanvas } from "BtStyles/TreeEditor/BTCanvas.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 const TreeEditor = ({
   fileContent,
