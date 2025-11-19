@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 import {
   StyledActionButton,
@@ -14,19 +14,24 @@ import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
+import NorthRoundedIcon from '@mui/icons-material/NorthRounded';
+
 import { useError } from "jderobot-ide-interface";
 import { deleteProject } from "BtApi/TreeWrapper";
 import { publish } from "BtComponents/helper/TreeEditorHelper";
 
 interface Project {
-  id: string,
-  name: string,
-  creator: string,
-  last_modified: string,
+  id: string;
+  name: string;
+  creator: string;
+  last_modified: string;
 }
 
 const ProjectEntry = ({ projects }: { projects: Project[] }) => {
   const theme = useBtTheme();
+  const [sort, setSort] = useState("last_modified");
+  const [order, setOrder] = useState(true); // True = descending / False = ascending
 
   const entryStyle = {
     bg: theme.palette.bg,
@@ -37,46 +42,85 @@ const ProjectEntry = ({ projects }: { projects: Project[] }) => {
   const parseTime = (time: string) => {
     const last_date = new Date(time);
     const now = new Date();
-    const year_diff = now.getUTCFullYear() - last_date.getUTCFullYear()
+    const year_diff = now.getUTCFullYear() - last_date.getUTCFullYear();
     if (year_diff > 0) {
-      return `${year_diff > 1 ? year_diff : "a"} year${year_diff > 1 ? "s" : ""} ago`
+      return `${year_diff > 1 ? year_diff : "a"} year${year_diff > 1 ? "s" : ""} ago`;
     }
 
-    const month_diff = now.getUTCMonth() - last_date.getUTCMonth()
+    const month_diff = now.getUTCMonth() - last_date.getUTCMonth();
     if (month_diff > 0) {
-      return `${month_diff > 1 ? month_diff : "a"} month${month_diff > 1 ? "s" : ""} ago`
+      return `${month_diff > 1 ? month_diff : "a"} month${month_diff > 1 ? "s" : ""} ago`;
     }
 
-    const day_diff = now.getUTCDate() - last_date.getUTCDate()
+    const day_diff = now.getUTCDate() - last_date.getUTCDate();
     if (day_diff > 0) {
-      return `${day_diff > 1 ? day_diff : "a"} day${day_diff > 1 ? "s" : ""} ago`
+      return `${day_diff > 1 ? day_diff : "a"} day${day_diff > 1 ? "s" : ""} ago`;
     }
 
-    const hour_diff = now.getUTCHours() - last_date.getUTCHours()
+    const hour_diff = now.getUTCHours() - last_date.getUTCHours();
     if (hour_diff > 0) {
-      return `${hour_diff > 1 ? hour_diff : "an"} hour${hour_diff > 1 ? "s" : ""} ago`
+      return `${hour_diff > 1 ? hour_diff : "an"} hour${hour_diff > 1 ? "s" : ""} ago`;
     }
 
-    const min_diff = now.getUTCMinutes() - last_date.getUTCMinutes()
+    const min_diff = now.getUTCMinutes() - last_date.getUTCMinutes();
     if (min_diff > 0) {
-      return `${min_diff > 1 ? min_diff : "a"} minute${min_diff > 1 ? "s" : ""} ago`
+      return `${min_diff > 1 ? min_diff : "a"} minute${min_diff > 1 ? "s" : ""} ago`;
     }
 
-    console.log(now, last_date)
-    return "now"
+    console.log(now, last_date);
+    return "now";
+  };
+
+  const onSort = (id: string) => {
+    if (id === sort) {
+      setOrder(!order);
+    } else {
+      setSort(id);
+      setOrder(true);
+    }
+  };
+
+  if (sort !== undefined) {
+    const o1 = order ? -1 : 1;
+    const o2 = order ? 1 : -1;
+    switch (sort) {
+      case "last_modified":
+        projects.sort((a, b) =>
+          new Date(a[sort]) > new Date(b[sort]) ? o1 : o2
+        );
+        break;
+      case "name":
+      case "creator":
+        projects.sort((a, b) => (a[sort] < b[sort] ? o1 : o2));
+        break;
+    }
   }
-
-
-  projects.sort((a, b) => (new Date(a['last_modified']) > new Date(b['last_modified']) ? -1 : 1));
-  // projects.sort((a, b) => (new Date(a.last_modified) < new Date(b.last_modified) ? -1 : 1));
 
   return (
     <StyledEntryContainer bg={theme.palette.bg}>
-      <StyledEntry {...entryStyle} style={{ pointerEvents: "none" }}>
-        <h3>Project Name</h3>
-        <h3>Creator</h3>
-        <h3>Last modified</h3>
-        <h3 style={{ textAlign: "end" }}>Actions</h3>
+      <StyledEntry {...entryStyle} noHover={true}>
+        <SortedButton
+          title="Project Name"
+          onSort={onSort}
+          sort_id="name"
+          curr_sort={sort}
+          curr_order={order}
+        />
+        <SortedButton
+          title="Creator"
+          onSort={onSort}
+          sort_id="creator"
+          curr_sort={sort}
+          curr_order={order}
+        />
+        <SortedButton
+          title="Last modified"
+          onSort={onSort}
+          sort_id="last_modified"
+          curr_sort={sort}
+          curr_order={order}
+        />
+        <h3 style={{textAlign: "end" }}>Actions</h3>
       </StyledEntry>
       <StyledSpacer bg={theme.palette.bgLight} />
 
@@ -94,6 +138,36 @@ const ProjectEntry = ({ projects }: { projects: Project[] }) => {
         </>
       ))}
     </StyledEntryContainer>
+  );
+};
+
+const SortedButton = ({
+  title,
+  onSort,
+  sort_id,
+  curr_sort,
+  curr_order,
+}: {
+  title: string;
+  onSort: (sort_id: string) => void;
+  sort_id: string;
+  curr_sort: string;
+  curr_order: boolean;
+}) => {
+  const theme = useBtTheme();
+  return (
+    <h3 style={{ cursor: "pointer" }} onClick={() => onSort(sort_id)}>
+      {`${title} `}
+      {curr_sort === sort_id && (
+        <>
+          {curr_order ? (
+            <SouthRoundedIcon style={{fontSize: "1rem"}} htmlColor={theme.palette.text} />
+          ) : (
+            <NorthRoundedIcon style={{fontSize: "1rem"}} htmlColor={theme.palette.text} />
+          )}
+        </>
+      )}
+    </h3>
   );
 };
 
