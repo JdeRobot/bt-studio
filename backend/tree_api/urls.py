@@ -5,6 +5,7 @@ urlpatterns = [
     # Project Management
     path("create_project/", views.create_project, name="create_project"),
     path("delete_project/", views.delete_project, name="delete_project"),
+    path("get_project_info/", views.get_project_info, name="get_project_info"),
     path("get_project_list/", views.get_project_list, name="get_project_list"),
     path(
         "save_project_configuration/",

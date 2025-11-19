@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.auth.models import User
 
 StatusChoice = (
     ("ACTIVE", "ACTIVE"),
@@ -22,7 +23,8 @@ class Tool(models.Model):
     Modelo Tool para Robotics Academy
     """
 
-    name = models.CharField(max_length=50, blank=False, unique=True, primary_key=True)
+    name = models.CharField(max_length=50, blank=False,
+                            unique=True, primary_key=True)
     base_config = models.CharField(max_length=200, blank=False)
 
     def __str__(self):
@@ -55,7 +57,8 @@ class World(models.Model):
     name = models.CharField(max_length=100, blank=False, unique=True)
     launch_file_path = models.CharField(max_length=200, blank=False)
     tools_config = models.CharField(max_length=200, blank=False)
-    ros_version = models.CharField(max_length=4, choices=RosVersion, default="none")
+    ros_version = models.CharField(
+        max_length=4, choices=RosVersion, default="none")
     type = models.CharField(
         max_length=50, choices=UniverseType, default="none", blank=False
     )
@@ -93,3 +96,21 @@ class Universe(models.Model):
 
     class Meta:
         db_table = '"universes"'
+
+
+class Project(models.Model):
+    """
+    Project Model
+    """
+
+    id = models.SlugField(max_length=100, blank=False, unique=True, primary_key=True)
+    name = models.CharField(max_length=100, blank=False, unique=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, db_column='"creator"')
+    last_modified = models.DateTimeField(blank=False)
+    size = models.BigIntegerField(default=-1, blank=False)
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        db_table = '"projects"'

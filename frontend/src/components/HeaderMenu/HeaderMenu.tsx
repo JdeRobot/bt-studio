@@ -25,6 +25,7 @@ import {
   StyledProject,
 } from "BtStyles/Header/HeaderMenu.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
+import { getProjectInfo } from "BtApi/TreeWrapper";
 
 const HeaderMenu = ({
   currentProjectname,
@@ -40,6 +41,7 @@ const HeaderMenu = ({
   setLayout: Function;
 }) => {
   const theme = useBtTheme();
+  const [name, setName] = useState<string | undefined>(undefined);
 
   // App state
   const [appRunning, setAppRunning] = useState(false);
@@ -54,6 +56,17 @@ const HeaderMenu = ({
     return () => {
       unsubscribe("CommsManagerStateChange", () => {});
     };
+  }, []);
+
+  const getInfo = async (id: string) => {
+    const info = await getProjectInfo(id);
+    setName(info.name);
+  };
+
+  useEffect(() => {
+    if (currentProjectname) {
+      getInfo(currentProjectname);
+    }
   }, []);
 
   return (
@@ -82,7 +95,7 @@ const HeaderMenu = ({
           {isUnibotics ? "Projects" : "BT Studio IDE"}
         </StyledHeaderText>
         <StyledProject color={theme.palette.text}>
-          <div>{currentProjectname}</div>
+          <div>{name}</div>
         </StyledProject>
         <StyledHeaderButtonContainer>
           <HomeButton

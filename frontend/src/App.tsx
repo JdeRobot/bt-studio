@@ -14,7 +14,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/home" element={<Home />} />
-              <Route path="/create_project" element={<CreatePage />} />
+              <Route path="/create_project/*" element={<CreatePage />} />
               <Route path="/edit/:proj_id" element={<EditPage />} />
               <Route path="/studio/:proj_id" element={<BtStudio />} />
             </Routes>

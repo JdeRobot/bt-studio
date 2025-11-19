@@ -18,11 +18,10 @@ export const StyledEntry = styled.div<StyledEntryProps>`
   min-height: 3rem;
   padding: 5px 20px;
 
-  display: flex;
-  gap: 5px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  align-content: center;
+
+  display: grid;
+  grid-template-columns: auto 20% 20% 15%;
 
   &:hover {
     filter: var(--hover-light);
@@ -38,7 +37,7 @@ export const StyledEntry = styled.div<StyledEntryProps>`
     border-bottom-left-radius: ${(p) => p.roundness ?? 1}px;
   }
 
-  & a {
+  & a, label {
     text-decoration: none;
     color: inherit;
     align-self: center;
@@ -90,4 +89,5 @@ export const StyledActionContainer = styled.div<StyledEntryProps>`
   display: flex;
   flex-direction:row;
   gap: 5px;
+  justify-content: flex-end;
 `;

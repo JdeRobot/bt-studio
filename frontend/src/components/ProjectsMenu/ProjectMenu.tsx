@@ -3,6 +3,7 @@ import { listProjects } from "BtApi/TreeWrapper";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 import { StyledSectionName } from "BtStyles/ProjectMenu/ProjectMenu.styles";
 import ProjectEntry from "./ProjectEntry";
+import { subscribe, unsubscribe } from "BtComponents/helper/TreeEditorHelper";
 
 const Menu = () => {
   const theme = useBtTheme();
@@ -24,6 +25,12 @@ const Menu = () => {
 
   useEffect(() => {
     getProjects();
+
+    subscribe("updateProjects", getProjects);
+
+    return () => {
+      unsubscribe("updateProjects", () => {});
+    };
   }, []);
 
   return (

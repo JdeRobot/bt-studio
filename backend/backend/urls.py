@@ -26,5 +26,6 @@ urlpatterns = [
     path("home/", include("frontend.urls")),
     path("", lambda request: redirect("/home", permanent=True)),
     path("create_project/", lambda request: redirect("/home", permanent=True)),
+    path("create_project/<slug:proj_id>", RedirectView.as_view(url="/home", permanent=True)),
     path("studio/<slug:proj_id>/", RedirectView.as_view(url="/home", permanent=True)),
 ]
