@@ -86,7 +86,9 @@ def delete_project(request):
 @error_wrapper("GET", ["project_id"])
 def get_project_info(request):
     project_id = request.GET.get("project_id")
-    project = Project.objects.get(id=project_id)
+
+    user = User.objects.get(username="user")
+    project = Project.objects.get(id=project_id, creator=user)
     data = ProjectSerializer(project).data
     if data["creator"] == "user":
         data["creator"] = "You"
@@ -96,7 +98,9 @@ def get_project_info(request):
 @error_wrapper("GET")
 def get_project_list(request):
     project_list = []
-    projects = Project.objects.all()
+
+    user = User.objects.get(username="user")
+    projects = Project.objects.filter(creator=user)
     for project in projects:
         data = ProjectSerializer(project).data
         if data["creator"] == "user":
