@@ -83,7 +83,7 @@ const lightTheme: BtTheme = {
     bg: "#d1dfe0ff",
     bgLight: "#e0eaebff",
     primary: "#40b7bfff",
-    secondary: "#1d777c",
+    secondary: "#8cd5d9ff",
     scrollbar: "#6f6f90",
     border: {
       warning: "#ffe100",
