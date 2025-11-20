@@ -16,6 +16,7 @@ from . import json_translator
 from . import app_generator
 from slugify import slugify
 from django.utils import timezone
+
 # PROJECT MANAGEMENT
 
 
@@ -430,11 +431,9 @@ def create_file(request):
     filename = request.data.get("file_name")
     universe = request.data.get("universe")
 
-
     project = Project.objects.get(id=project_id)
     project.last_modified = timezone.now()
     project.save()
-
 
     if universe is not None:
         path = fal.universes_path(project_id)

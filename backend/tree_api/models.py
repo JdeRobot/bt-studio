@@ -23,8 +23,7 @@ class Tool(models.Model):
     Modelo Tool para Robotics Academy
     """
 
-    name = models.CharField(max_length=50, blank=False,
-                            unique=True, primary_key=True)
+    name = models.CharField(max_length=50, blank=False, unique=True, primary_key=True)
     base_config = models.CharField(max_length=200, blank=False)
 
     def __str__(self):
@@ -57,8 +56,7 @@ class World(models.Model):
     name = models.CharField(max_length=100, blank=False, unique=True)
     launch_file_path = models.CharField(max_length=200, blank=False)
     tools_config = models.CharField(max_length=200, blank=False)
-    ros_version = models.CharField(
-        max_length=4, choices=RosVersion, default="none")
+    ros_version = models.CharField(max_length=4, choices=RosVersion, default="none")
     type = models.CharField(
         max_length=50, choices=UniverseType, default="none", blank=False
     )
