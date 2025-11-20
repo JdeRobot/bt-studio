@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import "./NodeMenu.css";
 import { Menu, MenuItem, styled } from "@mui/material";
 import { ImportIcon } from "../icons";
-import ParkRoundedIcon from "@mui/icons-material/ParkRounded";
 
 import {
   createSubtree,
@@ -19,12 +18,8 @@ import {
   MenuButtonStroke,
 } from "jderobot-ide-interface";
 import ImportSubtreeModal from "./modals/ImportSubtreeModal";
-import ZoomOutMapRoundedIcon from "@mui/icons-material/ZoomOutMapRounded";
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
-import NorthRoundedIcon from "@mui/icons-material/NorthRounded";
 import { useBtTheme } from "BtContexts/BtThemeContext";
+import { DeleteIcon, DownArrowIcon, EditIcon, TreeIcon, UpArrowIcon, ZoomIcon } from "BtIcons";
 
 const StyledMenu = styled(Menu)(
   ({
@@ -315,7 +310,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
         }}
         title="Create Subtree"
       >
-        <ParkRoundedIcon className="bt-icon bt-action-icon" />
+        <TreeIcon className="bt-icon bt-action-icon" />
       </MenuButton>
       <MenuButtonStroke
         id="import-subtree-button"
@@ -360,21 +355,21 @@ export const OtherButtons = ({ project }: { project: string }) => {
         onClick={() => publish("BTEditorDeleteCurrent")}
         title="Delete"
       >
-        <DeleteRoundedIcon className="bt-icon bt-action-icon" />
+        <DeleteIcon className="bt-icon bt-action-icon" />
       </MenuButton>
       <MenuButton
         id="node-action-edit-button"
         onClick={() => publish("BTEditorEditCurrent")}
         title="Edit"
       >
-        <EditRoundedIcon className="bt-icon bt-action-icon" />
+        <EditIcon className="bt-icon bt-action-icon" />
       </MenuButton>
       <MenuButton
         id="bt-node-action-zoom-button"
         onClick={() => publish("BTEditorHomeZoom")}
         title="Zoom To Fit"
       >
-        <ZoomOutMapRoundedIcon className="bt-icon bt-action-icon" />
+        <ZoomIcon className="bt-icon bt-action-icon" />
       </MenuButton>
       <MenuButton
         id="bt-node-action-help-button"
@@ -388,9 +383,9 @@ export const OtherButtons = ({ project }: { project: string }) => {
         }}
       >
         {btOrder === "bottom-to-top" ? (
-          <NorthRoundedIcon className="bt-icon bt-action-icon" />
+          <UpArrowIcon className="bt-icon bt-action-icon" />
         ) : (
-          <SouthRoundedIcon className="bt-icon bt-action-icon" />
+          <DownArrowIcon className="bt-icon bt-action-icon" />
         )}
       </MenuButton>
     </>

@@ -36,6 +36,7 @@ const zipFolder = async (
   }
 };
 
+
 const zipToData = (zip: JSZip) => {
   return new Promise((resolve) => {
     const reader = new FileReader();

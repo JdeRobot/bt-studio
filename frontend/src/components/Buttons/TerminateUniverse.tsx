@@ -2,8 +2,8 @@ import React from "react";
 import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import { useError } from "jderobot-ide-interface";
 import { CommsManager, states } from "jderobot-commsmanager";
-import StopCircleRoundedIcon from "@mui/icons-material/StopCircleRounded";
 import { useBtTheme } from "BtContexts/BtThemeContext";
+import { StopIcon } from "BtIcons";
 
 const TerminateUniverseButton = ({
   manager,
@@ -61,7 +61,7 @@ const TerminateUniverseButton = ({
       onClick={terminateUniverse}
       title="Stop Universe"
     >
-      <StopCircleRoundedIcon htmlColor={theme.palette.text} />
+      <StopIcon htmlColor={theme.palette.text} />
     </StyledHeaderButton>
   );
 };

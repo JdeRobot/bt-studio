@@ -8,17 +8,22 @@ import {
   StyledTextField,
   StyledToggleButtonGroup,
 } from "BtStyles/CreateProject/CreateProject.styles";
-import { createProject, getProjectInfo } from "BtApi/TreeWrapper";
+import { createProject, getProjectConfigRaw, getProjectInfo } from "BtApi/TreeWrapper";
 import { useError } from "jderobot-ide-interface";
 import { useNavigate } from "react-router-dom";
-import { EmptyAddIcon, GazeboIcon, RvizIcon, SequentialIcon, TerminalIcon, TreeMonitorIcon, WebGUIIcon } from "BtIcons";
+import {
+  GazeboIcon,
+  RvizIcon,
+  TerminalIcon,
+  TreeMonitorIcon,
+  WebGUIIcon,
+} from "BtIcons";
 
-const Menu = ({ projId }: { projId?: string }) => {
+const Menu = ({ projId }: { projId: string }) => {
   const theme = useBtTheme();
   const navigate = useNavigate();
   const { error } = useError();
   const [name, setName] = useState<string | undefined>(undefined);
-  const [template, setTemplate] = useState("Behaviour Tree");
   const [loading, setLoading] = useState(false);
   const [tools, setTools] = useState(() => ["Simulator", "Terminal"]);
 
@@ -29,46 +34,45 @@ const Menu = ({ projId }: { projId?: string }) => {
     setTools(newTools);
   };
 
-  const handleTemplate = (
-    event: React.MouseEvent<HTMLElement>,
-    newTemplate: string
-  ) => {
-    setTemplate(newTemplate);
-  };
-
   const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setName(value);
   };
+
+  function sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   const onCreateProject = async () => {
     if (name === undefined) {
       error("Project Name is missing");
       return;
     }
-    setLoading(true)
+    setLoading(true);
     try {
-      await createProject(name);
+      console.log("Edit project", name);
+      // await createProject(name);
+      await sleep(10000);
       navigate("/home");
-      console.log("Project created successfully");
+      console.log("Project edited successfully");
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error("Error creating project: " + e.message);
-        error("Error creating project: " + e.message);
+        console.error("Error editing project: " + e.message);
+        error("Error editing project: " + e.message);
       }
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const getInfo = async (id: string) => {
     const info = await getProjectInfo(id);
-    setName(info.name + " (copy)");
+    setName(info.name);
+    // const settings = await getProjectConfigRaw(id);
+    // setTools(info.tools);
   };
 
   useEffect(() => {
-    if (projId) {
-      getInfo(projId);
-    }
+    getInfo(projId);
   }, []);
 
   return (
@@ -99,35 +103,7 @@ const Menu = ({ projId }: { projId?: string }) => {
         color={theme.palette.text}
         style={{ textAlign: "center" }}
       >
-        Select starting template
-      </StyledSectionName>
-      <StyledToggleButtonGroup
-        value={template}
-        onChange={handleTemplate}
-        exclusive
-        bg={theme.palette.bg}
-        selBg={theme.palette.primary!}
-        text={theme.palette.text!}
-        roundness={theme.roundness ?? 1}
-      >
-        <ToggleButton value="Empty" disabled>
-          <EmptyAddIcon htmlColor={theme.palette.text} />
-          <label>Empty</label>
-        </ToggleButton>
-        <ToggleButton value="Sequential + Iterative" disabled>
-          <SequentialIcon htmlColor={theme.palette.text} />
-          <label>Sequential + Iterative</label>
-        </ToggleButton>
-        <ToggleButton value="Behaviour Tree">
-          <TreeMonitorIcon htmlColor={theme.palette.text} />
-          <label>Behaviour Tree</label>
-        </ToggleButton>
-      </StyledToggleButtonGroup>
-      <StyledSectionName
-        color={theme.palette.text}
-        style={{ textAlign: "center" }}
-      >
-        Select Tools
+        Change Tools
       </StyledSectionName>
       <StyledToggleButtonGroup
         value={tools}
@@ -174,7 +150,7 @@ const Menu = ({ projId }: { projId?: string }) => {
           loading={loading}
           loadingPosition="end"
         >
-          Create
+          Edit
         </StyledButton>
       </div>
     </>

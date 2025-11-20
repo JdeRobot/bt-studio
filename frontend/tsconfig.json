@@ -12,6 +12,7 @@
       "BtTypes/*": [ "src/types/*"],
       "BtTemplates/*": [ "src/templates/*"],
       "BtRoutes": [ "src/routes/index.ts"],
+      "BtIcons": [ "src/icons/index.ts"],
     },
     "baseUrl": "./",
     "rootDir": "./src",

@@ -10,16 +10,28 @@ import {
 } from "BtStyles/ProjectMenu/ProjectEntry.styles";
 import { Link } from "react-router-dom";
 
-import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
-import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
-import NorthRoundedIcon from '@mui/icons-material/NorthRounded';
-
-import { useError } from "jderobot-ide-interface";
-import { deleteProject } from "BtApi/TreeWrapper";
+import { Entry, useError } from "jderobot-ide-interface";
+import {
+  deleteProject,
+  generateLocalApp,
+  getFile,
+  getFileList,
+  getProjectConfig,
+  getProjectConfigRaw,
+} from "BtApi/TreeWrapper";
 import { publish } from "BtComponents/helper/TreeEditorHelper";
+import JSZip from "jszip";
+import TreeGardener from "BtTemplates/TreeGardener";
+import RosTemplates from "BtTemplates/RosTemplates";
+
+import {
+  CopyIcon,
+  DeleteIcon,
+  DownArrowIcon,
+  DownloadIcon,
+  EditIcon,
+  UpArrowIcon,
+} from "BtIcons";
 
 interface Project {
   id: string;
@@ -28,7 +40,13 @@ interface Project {
   last_modified: string;
 }
 
-const ProjectEntry = ({ projects }: { projects: Project[] }) => {
+const ProjectEntry = ({
+  projects,
+  userFilter,
+}: {
+  projects: Project[];
+  userFilter?: string;
+}) => {
   const theme = useBtTheme();
   const [sort, setSort] = useState("last_modified");
   const [order, setOrder] = useState(true); // True = descending / False = ascending
@@ -80,19 +98,26 @@ const ProjectEntry = ({ projects }: { projects: Project[] }) => {
     }
   };
 
+  let display_proj = projects;
+
   if (sort !== undefined) {
     const o1 = order ? -1 : 1;
     const o2 = order ? 1 : -1;
     switch (sort) {
       case "last_modified":
-        projects.sort((a, b) =>
+        display_proj.sort((a, b) =>
           new Date(a[sort]) > new Date(b[sort]) ? o1 : o2
         );
         break;
       case "name":
       case "creator":
-        projects.sort((a, b) => (a[sort] < b[sort] ? o1 : o2));
+        display_proj.sort((a, b) => (a[sort] < b[sort] ? o1 : o2));
         break;
+    }
+    if (userFilter === "You") {
+      display_proj = projects.filter((a) => a.creator === "You");
+    } else if (userFilter === "shared") {
+      display_proj = projects.filter((a) => a.creator !== "You");
     }
   }
 
@@ -120,11 +145,11 @@ const ProjectEntry = ({ projects }: { projects: Project[] }) => {
           curr_sort={sort}
           curr_order={order}
         />
-        <h3 style={{textAlign: "end" }}>Actions</h3>
+        <h3 style={{ textAlign: "end" }}>Actions</h3>
       </StyledEntry>
       <StyledSpacer bg={theme.palette.bgLight} />
 
-      {projects.map((project, index) => (
+      {display_proj.map((project, index) => (
         <>
           <StyledEntry {...entryStyle} key={project.id}>
             <Link to={"/studio/" + project.id}>{project.name}</Link>
@@ -132,7 +157,7 @@ const ProjectEntry = ({ projects }: { projects: Project[] }) => {
             <label>{parseTime(project.last_modified)}</label>
             <Actions project={project.id} />
           </StyledEntry>
-          {index < projects.length - 1 && (
+          {index < display_proj.length - 1 && (
             <StyledSpacer bg={theme.palette.bgLight} />
           )}
         </>
@@ -161,9 +186,15 @@ const SortedButton = ({
       {curr_sort === sort_id && (
         <>
           {curr_order ? (
-            <SouthRoundedIcon style={{fontSize: "1rem"}} htmlColor={theme.palette.text} />
+            <DownArrowIcon
+              style={{ fontSize: "1rem" }}
+              htmlColor={theme.palette.text}
+            />
           ) : (
-            <NorthRoundedIcon style={{fontSize: "1rem"}} htmlColor={theme.palette.text} />
+            <UpArrowIcon
+              style={{ fontSize: "1rem" }}
+              htmlColor={theme.palette.text}
+            />
           )}
         </>
       )}
@@ -194,6 +225,93 @@ const Actions = ({ project }: { project: string }) => {
     }
   };
 
+  const onDownload = async (): Promise<void> => {
+    try {
+      // Get the blob from the API wrapper
+      const settings = await getProjectConfigRaw(project);
+      const appFiles = await generateLocalApp(project, settings.btOrder);
+
+      // Create the zip with the files
+      const zip = new JSZip();
+
+      TreeGardener.addLocalFiles(zip);
+      RosTemplates.addLocalFiles(
+        zip,
+        project,
+        appFiles.tree,
+        appFiles.dependencies
+      );
+
+      const project_dir = zip.folder(project);
+
+      if (project_dir === null) {
+        throw Error("Project directory could not be found");
+      }
+
+      const file_list = await getFileList(project);
+
+      const files: Entry[] = JSON.parse(file_list);
+
+      let actions = undefined;
+      for (const file of files) {
+        if (file.is_dir && file.name === "actions") {
+          actions = file;
+        }
+      }
+
+      if (actions === undefined) {
+        throw Error("Action directory not found");
+      }
+
+      await zipCodeFolder(project_dir, actions);
+
+      zip.generateAsync({ type: "blob" }).then(function (content) {
+        // Create a download link and trigger download
+        const url = window.URL.createObjectURL(content);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = `${project}.zip`; // Set the downloaded file's name
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url); // Clean up after the download
+      });
+
+      console.log("App downloaded successfully");
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Error downloading app: " + e.message);
+        error("Error downloading app: " + e.message);
+      }
+    }
+  };
+
+  const zipCodeFile = async (
+    zip: JSZip,
+    file_path: string,
+    file_name: string
+  ) => {
+    const content = await getFile(project, file_path);
+    zip.file(file_name, content);
+  };
+
+  const zipCodeFolder = async (zip: JSZip, file: Entry) => {
+    const folder = zip.folder(file.name);
+
+    if (folder === null) {
+      return;
+    }
+
+    for (let index = 0; index < file.files.length; index++) {
+      const element = file.files[index];
+      if (element.is_dir) {
+        await zipCodeFolder(folder, element);
+      } else {
+        await zipCodeFile(folder, element.path, element.name);
+      }
+    }
+  };
+
   return (
     <StyledActionContainer>
       <Link to={"/create_project/" + project}>
@@ -202,15 +320,15 @@ const Actions = ({ project }: { project: string }) => {
           onClick={() => console.log("Copy project")}
           title="Copy project"
         >
-          <ContentCopyRoundedIcon htmlColor={theme.palette.text} />
+          <CopyIcon htmlColor={theme.palette.text} />
         </StyledActionButton>
       </Link>
       <StyledActionButton
         {...style}
-        onClick={() => console.log("Download project")}
+        onClick={onDownload}
         title="Download project"
       >
-        <FileDownloadRoundedIcon htmlColor={theme.palette.text} />
+        <DownloadIcon htmlColor={theme.palette.text} />
       </StyledActionButton>
       <Link to={"/edit/" + project}>
         <StyledActionButton
@@ -218,7 +336,7 @@ const Actions = ({ project }: { project: string }) => {
           onClick={() => console.log("edit project")}
           title="Edit project"
         >
-          <EditRoundedIcon htmlColor={theme.palette.text} />
+          <EditIcon htmlColor={theme.palette.text} />
         </StyledActionButton>
       </Link>
       <StyledActionButton
@@ -226,7 +344,7 @@ const Actions = ({ project }: { project: string }) => {
         onClick={onDeleteProject}
         title="Delete project"
       >
-        <DeleteForeverRoundedIcon htmlColor={theme.palette.text} />
+        <DeleteIcon htmlColor={theme.palette.text} />
       </StyledActionButton>
     </StyledActionContainer>
   );

@@ -5,7 +5,7 @@ import { StyledSectionName } from "BtStyles/ProjectMenu/ProjectMenu.styles";
 import ProjectEntry from "./ProjectEntry";
 import { subscribe, unsubscribe } from "BtComponents/helper/TreeEditorHelper";
 
-const Menu = () => {
+const Menu = ({userFilter} : {userFilter?: string}) => {
   const theme = useBtTheme();
 
   const [projects, setProjects] = useState([]);
@@ -38,7 +38,7 @@ const Menu = () => {
       <StyledSectionName color={theme.palette.text}>
         My projects
       </StyledSectionName>
-      <ProjectEntry projects={projects}/>
+      <ProjectEntry projects={projects} userFilter={userFilter}/>
     </>
   );
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
-import HelpRoundedIcon from "@mui/icons-material/HelpRounded";
 import { useBtTheme } from "BtContexts/BtThemeContext";
+import { HelpIcon } from "BtIcons";
 
 const DocumentationButton = () => {
   const theme = useBtTheme();
@@ -20,15 +20,15 @@ const DocumentationButton = () => {
       bgColor={theme.palette.bg}
       hoverColor={theme.palette.secondary}
       roundness={theme.roundness}
-      id="reset-app"
+      id="documentation-button"
       onClick={() => {
         openInNewTab(
           new URL("https://jderobot.github.io/bt-studio/documentation/"),
         );
       }}
-      title="Go to forum"
+      title="Go to documentation"
     >
-      <HelpRoundedIcon htmlColor={theme.palette.text} />
+      <HelpIcon htmlColor={theme.palette.text} />
     </StyledHeaderButton>
   );
 };

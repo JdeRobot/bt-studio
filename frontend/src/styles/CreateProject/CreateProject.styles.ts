@@ -139,6 +139,7 @@ export const StyledButton = styled(Button)(({
     backgroundColor: `${bg} !important`,
     borderRadius: `${roundness}px`,
     boxShadow: "var(--shadow) !important",
+    transition: "none",
     color: `${text} !important`,
     "&:hover": {
       filter: "var(--hover-strong)",

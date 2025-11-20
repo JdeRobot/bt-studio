@@ -90,7 +90,7 @@ def get_project_info(request):
     user = User.objects.get(username="user")
     project = Project.objects.get(id=project_id, creator=user)
     data = ProjectSerializer(project).data
-    if data["creator"] == "user":
+    if project.creator == user:
         data["creator"] = "You"
     return Response(data, status=200)
 

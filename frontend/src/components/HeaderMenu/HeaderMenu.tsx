@@ -29,19 +29,17 @@ import { getProjectInfo } from "BtApi/TreeWrapper";
 
 const HeaderMenu = ({
   currentProjectname,
-  setCurrentProjectname,
   manager,
-  isUnibotics,
   setLayout,
 }: {
   currentProjectname: string;
   setCurrentProjectname: Function;
   manager: CommsManager | null;
-  isUnibotics: boolean;
   setLayout: Function;
 }) => {
   const theme = useBtTheme();
   const [name, setName] = useState<string | undefined>(undefined);
+  const isUnibotics = window.location.href.includes("unibotics");
 
   // App state
   const [appRunning, setAppRunning] = useState(false);
@@ -98,12 +96,7 @@ const HeaderMenu = ({
           <div>{name}</div>
         </StyledProject>
         <StyledHeaderButtonContainer>
-          <HomeButton
-            project={currentProjectname}
-            manager={null}
-            setProject={setCurrentProjectname}
-            setAppRunning={setAppRunning}
-          />
+          <HomeButton />
           <ThemeButton />
           <DownloadButton project={currentProjectname} />
           <LayoutButton setLayout={setLayout} />

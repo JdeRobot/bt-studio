@@ -130,6 +130,29 @@ const getProjectConfig = async (
   }
 };
 
+const getProjectConfigRaw = async (projectId: string) => {
+  if (!projectId) throw new Error("Current Project name is not set");
+
+  const apiUrl = `/bt_studio/get_project_configuration?project_id=${projectId}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    if (!isSuccessful(response)) {
+      throw new Error(
+        response.data.message || "Failed to retrieve project config"
+      );
+    }
+
+    const raw_config = JSON.parse(response.data);
+
+    return raw_config.config;
+  } catch (error) {
+    console.log("Loading default settings");
+    throw error;
+  }
+};
+
 const saveProjectConfig = async (
   currentProjectname: string,
   settings: string
@@ -160,10 +183,7 @@ const saveProjectConfig = async (
 
 //////////////////////////// Universe management ///////////////////////////////
 
-const createEmptyUniverse = async (
-  projectId: string,
-  universeName: string
-) => {
+const createEmptyUniverse = async (projectId: string, universeName: string) => {
   if (!projectId) throw new Error("The universe name is not set");
   if (!universeName) throw new Error("The universe name is not set");
   if (!projectId.trim()) throw new Error("Project name cannot be empty.");
@@ -791,13 +811,7 @@ const uploadFileUniverse = async (
   if (!content) throw new Error("Content is not defined");
   if (!universeName) throw new Error("Universe name is not set");
 
-  return await uploadFile(
-    projectId,
-    fileName,
-    location,
-    content,
-    universeName
-  );
+  return await uploadFile(projectId, fileName, location, content, universeName);
 };
 
 const getFileList = async (
@@ -1140,4 +1154,5 @@ export {
   getUserLibraryTree,
   importLibrarySubtree,
   importUserLibrarySubtree,
+  getProjectConfigRaw
 };

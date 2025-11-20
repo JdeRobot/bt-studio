@@ -1,9 +1,9 @@
 import React from "react";
 import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
-import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import { useState } from "react";
 import SettingsModal from "../settings_popup/SettingsModal";
+import { SettingsIcon } from "BtIcons";
 
 const SettingsButton = ({ project }: { project: string }) => {
   const theme = useBtTheme();
@@ -33,7 +33,7 @@ const SettingsButton = ({ project }: { project: string }) => {
         onClick={onOpenSettingsModal}
         title="Settings"
       >
-        <SettingsRoundedIcon htmlColor={theme.palette.text} />
+        <SettingsIcon htmlColor={theme.palette.text} />
       </StyledHeaderButton>
     </>
   );

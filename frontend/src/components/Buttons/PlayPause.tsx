@@ -6,8 +6,6 @@ import JSZip from "jszip";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 
-import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import PauseRoundedIcon from "@mui/icons-material/PauseRounded";
 import {
   generateDockerizedApp,
   getFile,
@@ -17,6 +15,7 @@ import TreeGardener from "BtTemplates/TreeGardener";
 import RosTemplates from "BtTemplates/RosTemplates";
 import { OptionsContext } from "../options/Options";
 import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
+import { PauseIcon, PlayIcon } from "BtIcons";
 
 const PlayPauseButton = ({
   project,
@@ -203,9 +202,9 @@ const PlayPauseButton = ({
       title="Run app"
     >
       {appRunning ? (
-        <PauseRoundedIcon htmlColor={theme.palette.text} />
+        <PauseIcon htmlColor={theme.palette.text} />
       ) : (
-        <PlayArrowRoundedIcon htmlColor={theme.palette.text} />
+        <PlayIcon htmlColor={theme.palette.text} />
       )}
     </StyledHeaderButton>
   );

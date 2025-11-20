@@ -20,14 +20,6 @@ const App = () => {
       <HomeHeader section="Create new project" />
       <StyledHomeContainer bg={theme.palette.bg}>
         <StyledActionsContainer>
-          <StyledAction
-            bg={theme.palette.primary}
-            color={theme.palette.text}
-            roundness={theme.roundness}
-            to="/create_project"
-          >
-            Another action
-          </StyledAction>
         </StyledActionsContainer>
         <StyledHomeContent bg={theme.palette.bgDark}>
           <CreateProjectMenu projId={projId === "" ? undefined : projId} />

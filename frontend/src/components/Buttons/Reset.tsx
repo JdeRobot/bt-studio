@@ -2,8 +2,8 @@ import React from "react";
 import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import { useError } from "jderobot-ide-interface";
 import { CommsManager } from "jderobot-commsmanager";
-import ReplayRoundedIcon from "@mui/icons-material/ReplayRounded";
 import { useBtTheme } from "BtContexts/BtThemeContext";
+import { ResetIcon } from "BtIcons";
 
 const ResetButton = ({
   manager,
@@ -50,7 +50,7 @@ const ResetButton = ({
       onClick={onResetApp}
       title="Reset app"
     >
-      <ReplayRoundedIcon htmlColor={theme.palette.text} />
+      <ResetIcon htmlColor={theme.palette.text} />
     </StyledHeaderButton>
   );
 };

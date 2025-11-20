@@ -1,7 +1,6 @@
 import React from "react";
 import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
-import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import { useContext, useEffect, useRef, useState } from "react";
 import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 import {
@@ -14,6 +13,7 @@ import TreeGardener from "BtTemplates/TreeGardener";
 import RosTemplates from "BtTemplates/RosTemplates";
 import { Entry, useError } from "jderobot-ide-interface";
 import { OptionsContext } from "../options/Options";
+import { DownloadIcon } from "BtIcons";
 
 const DownloadButton = ({ project }: { project: string }) => {
   const theme = useBtTheme();
@@ -141,9 +141,9 @@ const DownloadButton = ({ project }: { project: string }) => {
       roundness={theme.roundness}
       id="download-code"
       onClick={() => saveFile(undefined)}
-      title="Download code"
+      title="Download project"
     >
-      <FileDownloadRoundedIcon htmlColor={theme.palette.text} />
+      <DownloadIcon htmlColor={theme.palette.text} />
     </StyledHeaderButton>
   );
 };

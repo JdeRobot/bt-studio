@@ -19,7 +19,14 @@ export const StyledActionsContainer = styled.div`
   width: 15%;
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
+  align-items: center;
+`;
+
+export const StyledActionsSection = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
   align-items: center;
 `;
 
@@ -28,7 +35,10 @@ export const StyledHomeContent = styled.div<StyledHomeContainerProps>`
   border-radius: 25px 0 0 0;
   padding: 25px;
   background-color: ${(p) => p.bg ?? primaryColor};
-  box-shadow: inset 0 1px 2px #ffffff30, 0 1px 2px #00000030, 0 2px 4px #00000015;
+  box-shadow:
+    inset 0 1px 2px #ffffff30,
+    0 1px 2px #00000030,
+    0 2px 4px #00000015;
 `;
 
 interface StyledActionProps {
@@ -40,14 +50,15 @@ interface StyledActionProps {
 export const StyledAction = styled(Link)<StyledActionProps>`
   align-content: center;
   text-align: center;
-  border-radius: ${(p) => p.roundness ?? 1}px;
+  border-radius: ${(p) => (p.roundness ? p.roundness * 2 : 1)}px;
   width: 90%;
   font-size: 20px;
   padding: 5px;
   background-color: ${(p) => p.bg ?? primaryColor};
   color: ${(p) => p.color ?? primaryColor};
+  margin: 40px 0;
 
   &:link {
-        text-decoration: none;
+    text-decoration: none;
   }
 `;

@@ -4,10 +4,15 @@ import { useBtTheme } from "BtContexts/BtThemeContext";
 import { StyledAppContainer } from "BtStyles/App.styles";
 import { StyledAction, StyledActionsContainer, StyledHomeContainer, StyledHomeContent } from "BtStyles/Pages/Home.styles";
 import { useParams } from "react-router-dom";
+import { EditProjectMenu } from "BtComponents/EditProject";
 
 const App = () => {
   const theme = useBtTheme();
   const {proj_id} = useParams();
+
+  if (proj_id === undefined) {
+    return <></>
+  }
   
   return (
     <StyledAppContainer bg={theme.palette.bg} hoverStyle={theme.hoverStyle}>
@@ -24,6 +29,7 @@ const App = () => {
           </StyledAction>
         </StyledActionsContainer>
         <StyledHomeContent bg={theme.palette.bgDark}>
+          <EditProjectMenu projId={proj_id}/>
         </StyledHomeContent>
       </StyledHomeContainer>
     </StyledAppContainer>

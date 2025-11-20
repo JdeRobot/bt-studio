@@ -4,8 +4,8 @@ import {
   StyledHeaderButton,
 } from "BtStyles/Header/HeaderMenu.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
-import SpaceDashboardRoundedIcon from "@mui/icons-material/SpaceDashboardRounded";
 import { useRef, useState } from "react";
+import { LayoutIcon } from "BtIcons";
 
 const LayoutButton = ({ setLayout }: { setLayout: Function }) => {
   const theme = useBtTheme();
@@ -18,7 +18,7 @@ const LayoutButton = ({ setLayout }: { setLayout: Function }) => {
       setter={setLayout}
       possibleValues={["only-editor", "only-viewers", "both"]}
     >
-      <SpaceDashboardRoundedIcon htmlColor={theme.palette.text} />
+      <LayoutIcon htmlColor={theme.palette.text} />
     </Dropdown>
   );
 };

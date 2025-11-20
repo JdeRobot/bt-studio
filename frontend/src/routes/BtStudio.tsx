@@ -16,37 +16,35 @@ import { explorers } from "BtComponents/Explorers";
 import { statusBar } from "BtComponents/StatusBar";
 import { editorApi } from "BtComponents/Editors";
 
-import TerminalRoundedIcon from "@mui/icons-material/TerminalRounded";
-import VideoCameraBackRoundedIcon from "@mui/icons-material/VideoCameraBackRounded";
-import AccountTreeRoundedIcon from "@mui/icons-material/AccountTreeRounded";
 import { useParams } from "react-router-dom";
 import { StyledAppContainer } from "BtStyles/App.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
+import { GazeboIcon, TerminalIcon, TreeMonitorIcon } from "BtIcons";
 
-const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
+const App = () => {
   const theme = useBtTheme();
-  const {proj_id} = useParams();
-  const currentProjectname = proj_id;
+  const isUnibotics = window.location.href.includes("unibotics");
+  const { proj_id } = useParams();
+  const projectId = proj_id;
 
-  if (currentProjectname === undefined) {
-    return (<></>)
+  if (projectId === undefined) {
+    return <></>;
   }
 
-  const setCurrentProjectname = () => {}
   // const [projectToSave, setProjectToSave] = useState(currentProjectname);
   const [manager, setManager] = useState<CommsManager | null>(null);
   const [showSim, setSimVisible] = useState<boolean>(false);
   const [showMonitor, setMonitorVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
   const [layout, setLayout] = useState<"only-editor" | "only-viewers" | "both">(
-    "both",
+    "both"
   );
 
   //Only needed in Unibotics
   const maxUsers = 15;
   const currentUsers = React.useRef<number>(0);
   const btAtMaxCapacity = React.useRef<boolean>(false);
-  const projectToSave = React.useRef<string>(currentProjectname);
+  const projectToSave = React.useRef<string>(projectId);
   const { error_critical } = useError();
 
   const settings = React.useContext(OptionsContext);
@@ -80,16 +78,16 @@ const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
     addUser();
     console.log(
       "Now the updated value of users connected is: ",
-      currentUsers.current,
+      currentUsers.current
     );
     console.log(
       "Current value of UsersAtMaxCapacity: ",
-      btAtMaxCapacity.current,
+      btAtMaxCapacity.current
     );
     updateBtAtMaxCapacity(currentUsers.current);
     console.log(
       "Updated value of UsersAtMaxCapacity: ",
-      btAtMaxCapacity.current,
+      btAtMaxCapacity.current
     );
 
     const manager = CommsManager.getInstance();
@@ -118,7 +116,7 @@ const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
       console.log("Too much users!");
       btAtMaxCapacity.current = true;
       error_critical(
-        "There's not enough room for you to enter BT-studio. Please try again later.",
+        "There's not enough room for you to enter BT-studio. Please try again later."
       );
     } else {
       console.log("The user can go in");
@@ -130,7 +128,7 @@ const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
 
   const connectWithRetry = async (
     desiredState?: string,
-    callback?: () => void,
+    callback?: () => void
   ) => {
     if (!manager || connected.current) {
       return;
@@ -177,14 +175,14 @@ const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
 
   useEffect(() => {
     const func = async () => {
-      if (currentProjectname !== "") {
-        getProjectConfig(currentProjectname, settings);
+      if (projectId !== "") {
+        getProjectConfig(projectId, settings);
       }
       await saveSettings(projectToSave.current);
-      projectToSave.current = currentProjectname;
+      projectToSave.current = projectId;
     };
     func();
-  }, [currentProjectname]); // Reload project configuration
+  }, [projectId]); // Reload project configuration
 
   useEffect(() => {
     console.log("change settings");
@@ -193,12 +191,9 @@ const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
 
   const treeMonitor = {
     component: (
-      <TreeMonitorContainer
-        commsManager={manager}
-        project={currentProjectname}
-      />
+      <TreeMonitorContainer commsManager={manager} project={projectId} />
     ),
-    icon: <AccountTreeRoundedIcon />,
+    icon: <TreeMonitorIcon />,
     name: "Tree Monitor",
     active: showMonitor,
     activate: setMonitorVisible,
@@ -206,7 +201,7 @@ const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
 
   const gazeboViewer = {
     component: <VncViewer commsManager={manager} port={6080} />,
-    icon: <VideoCameraBackRoundedIcon />,
+    icon: <GazeboIcon />,
     name: "Gazebo",
     active: showSim,
     activate: setSimVisible,
@@ -214,7 +209,7 @@ const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
 
   const terminalViewer = {
     component: <VncViewer commsManager={manager} port={6082} />,
-    icon: <TerminalRoundedIcon />,
+    icon: <TerminalIcon />,
     name: "Terminal",
     active: showTerminal,
     activate: setTerminalVisible,
@@ -223,12 +218,9 @@ const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
   const treeEditor = {
     component: TreeEditorContainer,
     buttons: [
-      <BTSelectorButtons
-        key="BTSelectorButtons"
-        project={currentProjectname}
-      />,
-      <AddSubtreeButton key="AddSubtreeButton" project={currentProjectname} />,
-      <OtherButtons key="OtherButtons" project={currentProjectname} />,
+      <BTSelectorButtons key="BTSelectorButtons" project={projectId} />,
+      <AddSubtreeButton key="AddSubtreeButton" project={projectId} />,
+      <OtherButtons key="OtherButtons" project={projectId} />,
     ],
     name: "Tree editor",
     language: "custom_tree_editor",
@@ -236,18 +228,16 @@ const App = ({ isUnibotics }: { isUnibotics?: boolean }) => {
   };
 
   return (
-    <StyledAppContainer bg={theme.palette.background}>
+    <StyledAppContainer bg={theme.palette.bg}>
       <HeaderMenu
-        currentProjectname={currentProjectname}
-        setCurrentProjectname={setCurrentProjectname}
+        currentProjectname={projectId}
         manager={manager}
-        isUnibotics={isUnibotics}
         setLayout={setLayout}
       />
       <IdeInterface
         commsManager={manager}
         connectManager={connectWithRetry}
-        project={currentProjectname}
+        project={projectId}
         explorers={explorers}
         api={editorApi}
         extraEditors={[treeEditor]}
