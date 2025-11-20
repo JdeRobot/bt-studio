@@ -11,7 +11,15 @@ import {
 import { createProject, getProjectInfo } from "BtApi/TreeWrapper";
 import { useError } from "jderobot-ide-interface";
 import { useNavigate } from "react-router-dom";
-import { EmptyAddIcon, GazeboIcon, RvizIcon, SequentialIcon, TerminalIcon, TreeMonitorIcon, WebGUIIcon } from "BtIcons";
+import {
+  EmptyAddIcon,
+  GazeboIcon,
+  RvizIcon,
+  SequentialIcon,
+  TerminalIcon,
+  TreeMonitorIcon,
+  WebGUIIcon,
+} from "BtIcons";
 
 const Menu = ({ projId }: { projId?: string }) => {
   const theme = useBtTheme();
@@ -24,14 +32,14 @@ const Menu = ({ projId }: { projId?: string }) => {
 
   const handleTools = (
     event: React.MouseEvent<HTMLElement>,
-    newTools: string[]
+    newTools: string[],
   ) => {
     setTools(newTools);
   };
 
   const handleTemplate = (
     event: React.MouseEvent<HTMLElement>,
-    newTemplate: string
+    newTemplate: string,
   ) => {
     setTemplate(newTemplate);
   };
@@ -46,7 +54,7 @@ const Menu = ({ projId }: { projId?: string }) => {
       error("Project Name is missing");
       return;
     }
-    setLoading(true)
+    setLoading(true);
     try {
       await createProject(name);
       navigate("/home");
@@ -57,7 +65,7 @@ const Menu = ({ projId }: { projId?: string }) => {
         error("Error creating project: " + e.message);
       }
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const getInfo = async (id: string) => {

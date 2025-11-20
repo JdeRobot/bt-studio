@@ -57,5 +57,5 @@ export const StyledVertToggleGroup = styled(ToggleButtonGroup)(
         filter: "var(--hover-strong)",
       },
     },
-  })
+  }),
 );

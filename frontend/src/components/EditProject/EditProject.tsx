@@ -8,7 +8,11 @@ import {
   StyledTextField,
   StyledToggleButtonGroup,
 } from "BtStyles/CreateProject/CreateProject.styles";
-import { createProject, getProjectConfigRaw, getProjectInfo } from "BtApi/TreeWrapper";
+import {
+  createProject,
+  getProjectConfigRaw,
+  getProjectInfo,
+} from "BtApi/TreeWrapper";
 import { useError } from "jderobot-ide-interface";
 import { useNavigate } from "react-router-dom";
 import {
@@ -29,7 +33,7 @@ const Menu = ({ projId }: { projId: string }) => {
 
   const handleTools = (
     event: React.MouseEvent<HTMLElement>,
-    newTools: string[]
+    newTools: string[],
   ) => {
     setTools(newTools);
   };

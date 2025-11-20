@@ -19,7 +19,14 @@ import {
 } from "jderobot-ide-interface";
 import ImportSubtreeModal from "./modals/ImportSubtreeModal";
 import { useBtTheme } from "BtContexts/BtThemeContext";
-import { DeleteIcon, DownArrowIcon, EditIcon, TreeIcon, UpArrowIcon, ZoomIcon } from "BtIcons";
+import {
+  DeleteIcon,
+  DownArrowIcon,
+  EditIcon,
+  TreeIcon,
+  UpArrowIcon,
+  ZoomIcon,
+} from "BtIcons";
 
 const StyledMenu = styled(Menu)(
   ({

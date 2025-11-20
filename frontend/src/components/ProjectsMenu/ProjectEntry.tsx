@@ -106,7 +106,7 @@ const ProjectEntry = ({
     switch (sort) {
       case "last_modified":
         display_proj.sort((a, b) =>
-          new Date(a[sort]) > new Date(b[sort]) ? o1 : o2
+          new Date(a[sort]) > new Date(b[sort]) ? o1 : o2,
         );
         break;
       case "name":
@@ -239,7 +239,7 @@ const Actions = ({ project }: { project: string }) => {
         zip,
         project,
         appFiles.tree,
-        appFiles.dependencies
+        appFiles.dependencies,
       );
 
       const project_dir = zip.folder(project);
@@ -289,7 +289,7 @@ const Actions = ({ project }: { project: string }) => {
   const zipCodeFile = async (
     zip: JSZip,
     file_path: string,
-    file_name: string
+    file_name: string,
   ) => {
     const content = await getFile(project, file_path);
     zip.file(file_name, content);
