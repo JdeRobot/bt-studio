@@ -970,8 +970,8 @@ def import_user_library_tree(request):
     entry = request.data.get("entry")
     name = request.data.get("name")
 
-    curr_project = Project.objects.get(id=project_id)
-    curr_project.last_modified = timezone.now()
+    project = Project.objects.get(id=project_id)
+    project.last_modified = timezone.now()
     project.save()
 
     if entry == "main":
