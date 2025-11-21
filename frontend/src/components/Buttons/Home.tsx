@@ -8,7 +8,7 @@ const HomeButton = () => {
   const theme = useBtTheme();
 
   return (
-    <Link to="/projects">
+    <Link to="..">
       <StyledHeaderButton
         bgColor={theme.palette.bg}
         hoverColor={theme.palette.secondary}

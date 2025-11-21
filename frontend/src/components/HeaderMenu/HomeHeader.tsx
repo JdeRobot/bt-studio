@@ -19,7 +19,7 @@ import { useBtTheme } from "BtContexts/BtThemeContext";
 const Header = ({ section }: { section?: string }) => {
   const theme = useBtTheme();
   const isUnibotics = window.location.href.includes("unibotics");
-  const isHome = window.location.href.includes("home");
+  const isHome = window.location.href.endsWith("projects") || window.location.href.endsWith("projects/");
 
   return (
     <AppBar position="static">
