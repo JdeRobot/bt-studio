@@ -1,12 +1,10 @@
 import os
-import shutil
 import json
 import base64
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
 from django.conf import settings
-from django.contrib.auth.models import User
 from .serializers import FileContentSerializer, ProjectSerializer
 from .project_view import EntryEncoder
 from .models import Universe, Project
@@ -23,7 +21,7 @@ from django.utils import timezone
 fal = FAL(settings.BASE_DIR)
 
 
-@error_wrapper("POST", ["project_name"])
+@error_wrapper(fal, "POST", ["project_name"])
 def create_project(request):
     project_name = request.data.get("project_name")
     project_id = slugify(project_name)
@@ -31,7 +29,7 @@ def create_project(request):
     Project.objects.create(
         id=slugify(project_name),
         name=project_name,
-        creator=User.objects.get(username="user"),
+        creator=fal.user,
         last_modified=timezone.now(),
     )
 
@@ -74,7 +72,7 @@ def create_project(request):
     )
 
 
-@error_wrapper("POST", ["project_id"])
+@error_wrapper(fal, "POST", ["project_id"])
 def delete_project(request):
     project_id = request.data.get("project_id")
     project = Project.objects.get(id=project_id)
@@ -84,11 +82,11 @@ def delete_project(request):
     return Response({"success": True}, status=200)
 
 
-@error_wrapper("GET", ["project_id"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_project_info(request):
     project_id = request.GET.get("project_id")
 
-    user = User.objects.get(username="user")
+    user = fal.user
     project = Project.objects.get(id=project_id, creator=user)
     data = ProjectSerializer(project).data
     if project.creator == user:
@@ -96,11 +94,11 @@ def get_project_info(request):
     return Response(data, status=200)
 
 
-@error_wrapper("GET")
+@error_wrapper(fal, "GET")
 def get_project_list(request):
     project_list = []
 
-    user = User.objects.get(username="user")
+    user = fal.user
     projects = Project.objects.filter(creator=user)
     for project in projects:
         data = ProjectSerializer(project).data
@@ -110,7 +108,7 @@ def get_project_list(request):
     return Response({"project_list": project_list})
 
 
-@error_wrapper("GET", ["project_id"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_base_tree(request):
     project_id = request.GET.get("project_id")
 
@@ -122,7 +120,7 @@ def get_base_tree(request):
     return JsonResponse({"success": True, "graph_json": graph_data})
 
 
-@error_wrapper("GET", ["project_id"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_project_configuration(request):
     project_id = request.GET.get("project_id")
 
@@ -132,7 +130,7 @@ def get_project_configuration(request):
     return Response(content)
 
 
-@error_wrapper("GET", ["project_id", "bt_order"])
+@error_wrapper(fal, "GET", ["project_id", "bt_order"])
 def get_tree_structure(request):
     project_id = request.GET.get("project_id")
     bt_order = request.GET.get("bt_order")
@@ -148,7 +146,7 @@ def get_tree_structure(request):
     return JsonResponse({"success": True, "tree_structure": tree_structure})
 
 
-@error_wrapper("GET", ["project_id", "subtree_name", "bt_order"])
+@error_wrapper(fal, "GET", ["project_id", "subtree_name", "bt_order"])
 def get_subtree_structure(request):
     project_id = request.GET.get("project_id")
     subtree_name = request.GET.get("subtree_name")
@@ -165,7 +163,7 @@ def get_subtree_structure(request):
     return JsonResponse({"success": True, "tree_structure": tree_structure})
 
 
-@error_wrapper("POST", ["project_id", "settings"])
+@error_wrapper(fal, "POST", ["project_id", "settings"])
 def save_project_configuration(request):
     project_id = request.data.get("project_id")
     content = request.data.get("settings")
@@ -190,7 +188,7 @@ def save_project_configuration(request):
 # SUBTREE MANAGEMENT
 
 
-@error_wrapper("POST", ["project_id", "subtree_name"])
+@error_wrapper(fal, "POST", ["project_id", "subtree_name"])
 def create_subtree(request):
     project_id = request.data.get("project_id")
     subtree_name = request.data.get("subtree_name")
@@ -199,23 +197,10 @@ def create_subtree(request):
     project.last_modified = timezone.now()
     project.save()
 
-    project_actions_path = fal.actions_path(project_id)
     project_subtree_path = fal.subtrees_path(project_id)
-
-    library_base_path = fal.path_join(settings.BASE_DIR, "library")
-    library_path = fal.path_join(library_base_path, subtree_name)
-    library_actions_path = fal.path_join(library_path, "actions")
     template_path = fal.path_join(settings.BASE_DIR, "templates")
     project_json_path = fal.path_join(project_subtree_path, f"{subtree_name}.json")
     src_path = template_path
-
-    # Check if the subtree is already implemented on the library
-    if fal.exists(library_path):
-        src_path = library_path
-        if fal.exists(library_actions_path):
-            shutil.copytree(
-                library_actions_path, project_actions_path, dirs_exist_ok=True
-            )
 
     # Create subtree directory if it does not exist
     if not fal.exists(project_subtree_path):
@@ -233,7 +218,7 @@ def create_subtree(request):
     return JsonResponse({"success": True}, status=status.HTTP_201_CREATED)
 
 
-@error_wrapper("GET", ["project_id", "subtree_name"])
+@error_wrapper(fal, "GET", ["project_id", "subtree_name"])
 def get_subtree(request):
     project_id = request.GET.get("project_id")
     subtree_name = request.GET.get("subtree_name")
@@ -245,7 +230,7 @@ def get_subtree(request):
     return Response({"subtree": subtree}, status=status.HTTP_200_OK)
 
 
-@error_wrapper("GET", ["project_id", "subtree_name"])
+@error_wrapper(fal, "GET", ["project_id", "subtree_name"])
 def get_subtree_path(request):
     project_id = request.GET.get("project_id")
     subtree_name = request.GET.get("subtree_name")
@@ -258,7 +243,7 @@ def get_subtree_path(request):
     return Response({"subtree": rel_path}, status=status.HTTP_200_OK)
 
 
-@error_wrapper("GET", ["project_id"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_subtree_list(request):
     project_id = request.GET.get("project_id")
 
@@ -273,7 +258,7 @@ def get_subtree_list(request):
 # UNIVERSE MANAGEMENT
 
 
-@error_wrapper("POST", ["project_id", "universe"])
+@error_wrapper(fal, "POST", ["project_id", "universe"])
 def create_universe(request):
     project_id = request.data.get("project_id")
     universe_name = request.data.get("universe")
@@ -285,7 +270,7 @@ def create_universe(request):
     return Response({"success": True}, status=200)
 
 
-@error_wrapper("POST", ["project_id", "universe_name"])
+@error_wrapper(fal, "POST", ["project_id", "universe_name"])
 def delete_universe(request):
     project_id = request.data.get("project_id")
     universe_name = request.data.get("universe_name")
@@ -297,7 +282,7 @@ def delete_universe(request):
     return Response({"success": True}, status=200)
 
 
-@error_wrapper("GET", ["project_id"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_universes_list(request):
     project_id = request.GET.get("project_id")
 
@@ -307,7 +292,7 @@ def get_universes_list(request):
     return Response({"universes_list": universes_list})
 
 
-@error_wrapper("POST", ["project_id", "universe_name"])
+@error_wrapper(fal, "POST", ["project_id", "universe_name"])
 def create_universe_configuration(request):
     project_id = request.data.get("project_id")
     universe_name = request.data.get("universe_name")
@@ -335,7 +320,7 @@ def create_universe_configuration(request):
     )
 
 
-@error_wrapper("GET", ["project_id", "universe_name"])
+@error_wrapper(fal, "GET", ["project_id", "universe_name"])
 def get_universe_configuration(request):
     project_id = request.GET.get("project_id")
     universe_name = request.GET.get("universe_name")
@@ -352,7 +337,7 @@ def get_universe_configuration(request):
 # FILE MANAGEMENT
 
 
-@error_wrapper("GET", ["project_id"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_file_list(request):
     project_id = request.GET.get("project_id")
     universe = request.GET.get("universe")
@@ -373,7 +358,7 @@ def get_file_list(request):
     return Response({"file_list": EntryEncoder().encode(file_list)})
 
 
-@error_wrapper("GET", ["project_id"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_actions_list(request):
     project_id = request.GET.get("project_id")
 
@@ -383,7 +368,7 @@ def get_actions_list(request):
     return Response({"actions_list": actions_list})
 
 
-@error_wrapper("GET", ["project_id", "filename"])
+@error_wrapper(fal, "GET", ["project_id", "filename"])
 def get_file(request):
     project_id = request.GET.get("project_id", None)
     filename = request.GET.get("filename", None)
@@ -402,7 +387,7 @@ def get_file(request):
     return Response(serializer.data)
 
 
-@error_wrapper("POST", ["project_id", "filename", "template"])
+@error_wrapper(fal, "POST", ["project_id", "filename", "template"])
 def create_action(request):
     # Get the file info
     project_id = request.data.get("project_id")
@@ -424,7 +409,7 @@ def create_action(request):
     return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
 
-@error_wrapper("POST", ["project_id", ("location", -1), "file_name"])
+@error_wrapper(fal, "POST", ["project_id", ("location", -1), "file_name"])
 def create_file(request):
     project_id = request.data.get("project_id")
     location = request.data.get("location")
@@ -449,7 +434,7 @@ def create_file(request):
     return Response({"success": True})
 
 
-@error_wrapper("POST", ["project_id", ("location", -1), "folder_name"])
+@error_wrapper(fal, "POST", ["project_id", ("location", -1), "folder_name"])
 def create_folder(request):
     project_id = request.data.get("project_id")
     location = request.data.get("location")
@@ -474,7 +459,7 @@ def create_folder(request):
     return Response({"success": True})
 
 
-@error_wrapper("POST", ["project_id", "path", "rename_to"])
+@error_wrapper(fal, "POST", ["project_id", "path", "rename_to"])
 def rename_file(request):
     project_id = request.data.get("project_id")
     path = request.data.get("path")
@@ -499,7 +484,7 @@ def rename_file(request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_id", "path", "rename_to"])
+@error_wrapper(fal, "POST", ["project_id", "path", "rename_to"])
 def rename_folder(request):
     project_id = request.data.get("project_id")
     path = request.data.get("path")
@@ -524,7 +509,7 @@ def rename_folder(request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_id", "path"])
+@error_wrapper(fal, "POST", ["project_id", "path"])
 def delete_file(request):
     project_id = request.data.get("project_id")
     path = request.data.get("path")
@@ -547,7 +532,7 @@ def delete_file(request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_id", "path"])
+@error_wrapper(fal, "POST", ["project_id", "path"])
 def delete_folder(request):
     project_id = request.data.get("project_id")
     path = request.data.get("path")
@@ -570,7 +555,7 @@ def delete_folder(request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_id", "filename", ("content", -1)])
+@error_wrapper(fal, "POST", ["project_id", "filename", ("content", -1)])
 def save_file(request):
     project_id = request.data.get("project_id")
     filename = request.data.get("filename")
@@ -594,7 +579,7 @@ def save_file(request):
     return Response({"success": True})
 
 
-@error_wrapper("POST", ["app_name", "bt_order"])
+@error_wrapper(fal, "POST", ["app_name", "bt_order"])
 def generate_local_app(request):
     # Get the request parameters
     project_id = request.data.get("app_name")
@@ -611,7 +596,7 @@ def generate_local_app(request):
     )
 
 
-@error_wrapper("POST", ["app_name", "bt_order"])
+@error_wrapper(fal, "POST", ["app_name", "bt_order"])
 def generate_dockerized_app(request):
     # Get the request parameters
     project_id = request.data.get("app_name")
@@ -621,7 +606,7 @@ def generate_dockerized_app(request):
     return JsonResponse({"success": True, "tree": final_tree})
 
 
-@error_wrapper("POST", ["project_id", "universe_name"])
+@error_wrapper(fal, "POST", ["project_id", "universe_name"])
 def create_custom_universe(request):
     # Get the name and the zip file from the request
     project_id = request.data.get("project_id")
@@ -676,7 +661,7 @@ def create_custom_universe(request):
     )
 
 
-@error_wrapper("POST", ["app_name", "universe_name", "id"])
+@error_wrapper(fal, "POST", ["app_name", "universe_name", "id"])
 def add_docker_universe(request):
     # Get the name and the id file from the request
     universe_name = request.data.get("universe_name")
@@ -703,7 +688,7 @@ def add_docker_universe(request):
     )
 
 
-@error_wrapper("POST", ["project_id", "file_name", ("location", -1), "content"])
+@error_wrapper(fal, "POST", ["project_id", "file_name", ("location", -1), "content"])
 def upload_code(request):
     # Get the name and the zip file from the request
     project_id = request.data.get("project_id")
@@ -730,7 +715,7 @@ def upload_code(request):
     return Response({"success": True})
 
 
-@error_wrapper("GET")
+@error_wrapper(fal, "GET")
 def list_docker_universes(request):
     universes = Universe.objects.all()
     universes_docker_list = [x.name for x in universes]
@@ -738,7 +723,7 @@ def list_docker_universes(request):
     return Response({"universes": universes_docker_list})
 
 
-@error_wrapper("GET", ["name"])
+@error_wrapper(fal, "GET", ["name"])
 def get_docker_universe_data(request):
     name = request.GET.get("name")
 
@@ -785,7 +770,7 @@ def get_docker_universe_data(request):
 
 
 # Subtree Library
-@error_wrapper("GET", [])
+@error_wrapper(fal, "GET", [])
 def get_subtree_library_list(request):
     library_path = fal.library_path()
 
@@ -794,7 +779,7 @@ def get_subtree_library_list(request):
     return Response({"subtree_list": subtree_list})
 
 
-@error_wrapper("GET", ["project"])
+@error_wrapper(fal, "GET", ["project"])
 def get_user_subtree_library_list(request):
     curr_project = request.GET.get("project")
 
@@ -819,7 +804,7 @@ def get_user_subtree_library_list(request):
     return Response({"library": library})
 
 
-@error_wrapper("GET", ["entry"])
+@error_wrapper(fal, "GET", ["entry"])
 def get_library_tree(request):
     entry = request.GET.get("entry")
 
@@ -853,7 +838,7 @@ def get_library_tree(request):
     )
 
 
-@error_wrapper("GET", ["project", "entry"])
+@error_wrapper(fal, "GET", ["project", "entry"])
 def get_user_library_tree(request):
     project = request.GET.get("project")
     entry = request.GET.get("entry")
@@ -897,7 +882,7 @@ def get_user_library_tree(request):
     )
 
 
-@error_wrapper("POST", ["project_id", "entry", "name"])
+@error_wrapper(fal, "POST", ["project_id", "entry", "name"])
 def import_library_tree(request):
     project_id = request.data.get("project_id")
     entry = request.data.get("entry")
@@ -963,7 +948,7 @@ def import_library_tree(request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_id", "entry", "entry_project", "name"])
+@error_wrapper(fal, "POST", ["project_id", "entry", "entry_project", "name"])
 def import_user_library_tree(request):
     project_id = request.data.get("project_id")
     entry_project = request.data.get("entry_project")

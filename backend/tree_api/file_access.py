@@ -11,6 +11,10 @@ class FAL:
 
     def __init__(self, base):
         self.base = base
+        self.user = None
+
+    def set_user(self, user):
+        self.user = user
 
     def base_path(self) -> str:
         return self.path_join(self.base, "filesystem")
@@ -231,3 +235,4 @@ class FAL:
 
     def filename(self, path: str) -> str:
         return os.path.splitext(os.path.basename(path))[0]
+
