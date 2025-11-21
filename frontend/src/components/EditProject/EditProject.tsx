@@ -57,7 +57,7 @@ const Menu = ({ projId }: { projId: string }) => {
       console.log("Edit project", name);
       // await createProject(name);
       await sleep(10000);
-      navigate("/home");
+      navigate("/projects");
       console.log("Project edited successfully");
     } catch (e: unknown) {
       if (e instanceof Error) {

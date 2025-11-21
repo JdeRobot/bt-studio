@@ -28,7 +28,7 @@ const App = () => {
             bg={theme.palette.primary}
             color={theme.palette.text}
             roundness={theme.roundness}
-            to="/create_project"
+            to="/projects/create_project"
           >
             Another action
           </StyledAction>

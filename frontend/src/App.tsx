@@ -13,10 +13,12 @@ const App = () => {
         <ErrorProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/home" element={<Home />} />
-              <Route path="/create_project/*" element={<CreatePage />} />
-              <Route path="/edit/:proj_id" element={<EditPage />} />
-              <Route path="/studio/:proj_id" element={<BtStudio />} />
+              <Route path="/projects">
+                <Route index element={<Home />} />
+                <Route path="create_project/*" element={<CreatePage />} />
+                <Route path="edit/:proj_id" element={<EditPage />} />
+                <Route path="studio/:proj_id" element={<BtStudio />} />
+              </Route>
             </Routes>
           </BrowserRouter>
         </ErrorProvider>

@@ -152,7 +152,7 @@ const ProjectEntry = ({
       {display_proj.map((project, index) => (
         <>
           <StyledEntry {...entryStyle} key={project.id}>
-            <Link to={"/studio/" + project.id}>{project.name}</Link>
+            <Link to={"/projects/studio/" + project.id}>{project.name}</Link>
             <label>{project.creator}</label>
             <label>{parseTime(project.last_modified)}</label>
             <Actions project={project.id} />
@@ -314,7 +314,7 @@ const Actions = ({ project }: { project: string }) => {
 
   return (
     <StyledActionContainer>
-      <Link to={"/create_project/" + project}>
+      <Link to={"/projects/create_project/" + project}>
         <StyledActionButton
           {...style}
           onClick={() => console.log("Copy project")}
@@ -330,7 +330,7 @@ const Actions = ({ project }: { project: string }) => {
       >
         <DownloadIcon htmlColor={theme.palette.text} />
       </StyledActionButton>
-      <Link to={"/edit/" + project}>
+      <Link to={"/projects/edit/" + project}>
         <StyledActionButton
           {...style}
           onClick={() => console.log("edit project")}

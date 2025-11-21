@@ -36,7 +36,7 @@ const App = () => {
             bg={theme.palette.primary}
             color={theme.palette.text}
             roundness={theme.roundness}
-            to="/create_project"
+            to="create_project"
           >
             New project
           </StyledAction>
