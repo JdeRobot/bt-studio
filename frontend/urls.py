@@ -6,10 +6,10 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("create_project/", lambda request: redirect("/home", permanent=True)),
+    path("create_project/", lambda request: redirect("", permanent=True)),
     path(
         "create_project/<slug:proj_id>",
-        RedirectView.as_view(url="/home", permanent=True),
+        RedirectView.as_view(url="", permanent=True),
     ),
-    path("studio/<slug:proj_id>/", RedirectView.as_view(url="/home", permanent=True)),
+    path("studio/<slug:proj_id>/", RedirectView.as_view(url="", permanent=True)),
 ]
