@@ -246,7 +246,7 @@ const TreeMonitor = ({
       />
       {engine.current.getModel() && (
         <StyledBTCanvas
-          bgColor={theme.palette.background}
+          bgColor={theme.palette.bg}
           engine={engine.current}
         />
       )}

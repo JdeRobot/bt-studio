@@ -10,7 +10,7 @@ const Section = ({ title, children }: { title: string; children: any }) => {
 
   return (
     <StyledSettingsSection
-      bgColor={theme.palette.background}
+      bgColor={theme.palette.bg}
       color={theme.palette.text}
     >
       <StyledSettingsSectionTitle>{title}</StyledSettingsSectionTitle>
