@@ -10,6 +10,7 @@ import {
 } from "BtStyles/Pages/Home.styles";
 import { useParams } from "react-router-dom";
 import { EditProjectMenu } from "BtComponents/EditProject";
+import ProjSizeIndicator from "BtComponents/LimitIndicator";
 
 const App = () => {
   const theme = useBtTheme();
@@ -24,14 +25,7 @@ const App = () => {
       <HomeHeader section={`Edit ${proj_id} project`} />
       <StyledHomeContainer bg={theme.palette.bg}>
         <StyledActionsContainer>
-          <StyledAction
-            bg={theme.palette.primary}
-            color={theme.palette.text}
-            roundness={theme.roundness}
-            to="/projects/create_project"
-          >
-            Another action
-          </StyledAction>
+          <ProjSizeIndicator />
         </StyledActionsContainer>
         <StyledHomeContent bg={theme.palette.bgDark}>
           <EditProjectMenu projId={proj_id} />

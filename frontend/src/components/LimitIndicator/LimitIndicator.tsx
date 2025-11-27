@@ -19,7 +19,7 @@ function convertBytes(bytes: number): string[] {
 
   const i = Math.floor(Math.log(bytes) / Math.log(base));
 
-  return [`${(bytes / Math.pow(base, i)).toFixed(decimals)}`,`${units[i]}`];
+  return [`${(bytes / Math.pow(base, i)).toFixed(decimals)}`, `${units[i]}`];
 }
 
 const Indicator = ({
@@ -40,12 +40,29 @@ const Indicator = ({
   let display_max = `${max}`;
 
   if (unit_size === "size") {
-    const size_data = convertBytes(size)
-    unit_size = size_data[1]
-    display_size = size_data[0]
-    const max_data = convertBytes(max)
-    unit_max = max_data[1]
-    display_max = max_data[0]
+    const size_data = convertBytes(size);
+    unit_size = size_data[1];
+    display_size = size_data[0];
+    const max_data = convertBytes(max);
+    unit_max = max_data[1];
+    display_max = max_data[0];
+  }
+
+  if (max < 0) {
+    return (
+      <StyledIndicatorContainer>
+        <StyledLimitIndicatorContainer bg={theme.palette.bgLight}>
+          <StyledLimitIndicator bg={theme.palette.primary} width={10} />
+        </StyledLimitIndicatorContainer>
+        <StyledLimitIndicatorText
+          color={theme.palette.text}
+          full_bg={theme.palette.error}
+          width={0}
+        >
+          <label id="indic">{`No ${units} limit`}</label>
+        </StyledLimitIndicatorText>
+      </StyledIndicatorContainer>
+    );
   }
 
   return (
@@ -57,7 +74,11 @@ const Indicator = ({
           <StyledLimitIndicator bg={theme.palette.primary} width={perc} />
         )}
       </StyledLimitIndicatorContainer>
-      <StyledLimitIndicatorText color={theme.palette.text} full_bg={theme.palette.error} width={perc}>
+      <StyledLimitIndicatorText
+        color={theme.palette.text}
+        full_bg={theme.palette.error}
+        width={perc}
+      >
         <label id="indic">{`${display_size} ${unit_size}`}</label>
         <label id="base">{` / ${display_max} ${unit_max}`}</label>
       </StyledLimitIndicatorText>

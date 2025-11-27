@@ -10,6 +10,7 @@ import {
 } from "BtStyles/Pages/Home.styles";
 import { CreateProjectMenu } from "BtComponents/CreateProject";
 import { useParams } from "react-router-dom";
+import ProjSizeIndicator from "BtComponents/LimitIndicator";
 
 const App = () => {
   const theme = useBtTheme();
@@ -19,7 +20,9 @@ const App = () => {
     <StyledAppContainer bg={theme.palette.bg} hoverStyle={theme.hoverStyle}>
       <HomeHeader section="Create new project" />
       <StyledHomeContainer bg={theme.palette.bg}>
-        <StyledActionsContainer></StyledActionsContainer>
+        <StyledActionsContainer>
+          <ProjSizeIndicator />
+        </StyledActionsContainer>
         <StyledHomeContent bg={theme.palette.bgDark}>
           <CreateProjectMenu projId={projId === "" ? undefined : projId} />
         </StyledHomeContent>

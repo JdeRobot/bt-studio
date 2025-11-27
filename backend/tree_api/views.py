@@ -22,6 +22,17 @@ from backend.tree_api.models import get_user_projects_size
 fal = FAL_BT(settings.BASE_DIR)
 
 
+@error_wrapper(fal, "GET")
+def get_user_size(request):
+    user = fal.user
+    return Response(
+        {
+            "size": {"curr": user.size, "max": user.max_size},
+            "projects": {"curr": user.projects, "max": user.max_projects},
+        }
+    )
+
+
 @error_wrapper(fal, "POST", ["project_name"])
 def create_project(request):
     project_name = request.data.get("project_name")

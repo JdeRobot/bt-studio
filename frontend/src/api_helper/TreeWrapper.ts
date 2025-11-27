@@ -21,6 +21,21 @@ const axiosExtra = {
   },
 };
 
+////////////////////////////// User management /////////////////////////////////
+
+const getUserInfo = async () => {
+  const apiUrl = `/bt_studio/get_user_size`;
+
+  const response = await axios.get(apiUrl);
+
+  // Handle unsuccessful response status (e.g., non-2xx status)
+  if (!isSuccessful(response)) {
+    throw new Error(response.data.message || "Failed to get subtree."); // Response error
+  }
+
+  return response.data;
+};
+
 //////////////////////////// Project management ////////////////////////////////
 
 const createProject = async (projectName: string) => {
@@ -1154,5 +1169,6 @@ export {
   getUserLibraryTree,
   importLibrarySubtree,
   importUserLibrarySubtree,
-  getProjectConfigRaw
+  getProjectConfigRaw,
+  getUserInfo
 };

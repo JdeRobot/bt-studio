@@ -1,2 +1,3 @@
-import LimitIndicator from "./LimitIndicator";
-export default LimitIndicator;
+export {default as LimitIndicator} from "./LimitIndicator";
+import ProjSizeIndicator from "./ProjSize";
+export default ProjSizeIndicator;

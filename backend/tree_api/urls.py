@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # User: placeholder for real users
+    path("get_user_size/", views.get_user_size, name="get_user_size"),
     # Project Management
     path("create_project/", views.create_project, name="create_project"),
     path("delete_project/", views.delete_project, name="delete_project"),

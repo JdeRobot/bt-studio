@@ -30,6 +30,15 @@ export const StyledActionsSection = styled.div`
   align-items: center;
 `;
 
+export const StyledActionsSubSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  justify-content: center;
+  gap: 1vh;
+  align-items: start;
+`;
+
 export const StyledHomeContent = styled.div<StyledHomeContainerProps>`
   flex-grow: 1;
   border-radius: 25px 0 0 0;

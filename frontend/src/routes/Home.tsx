@@ -13,7 +13,7 @@ import { LoadingMenu } from "BtComponents/ProjectsMenu";
 import { StyledVertToggleGroup } from "BtStyles/Pages/HomeMui.styles";
 import { ToggleButton } from "@mui/material";
 import { StyledSpacer } from "BtStyles/ProjectMenu/ProjectEntry.styles";
-import LimitIndicator from "BtComponents/LimitIndicator";
+import ProjSizeIndicator from "BtComponents/LimitIndicator";
 
 const App = () => {
   const theme = useBtTheme();
@@ -23,7 +23,7 @@ const App = () => {
 
   const handleUserFilter = (
     event: React.MouseEvent<HTMLElement>,
-    newFilter: string,
+    newFilter: string
   ) => {
     setFilter(newFilter);
   };
@@ -59,22 +59,7 @@ const App = () => {
               <StyledSpacer bg={theme.palette.bgLight} />
             </StyledVertToggleGroup>
           </StyledActionsSection>
-          <StyledActionsSection style={{flexGrow: 1}}>
-            <StyledVertToggleGroup
-              value={filter}
-              onChange={handleUserFilter}
-              exclusive
-              bg={theme.palette.bg!}
-              selBg={theme.palette.secondary!}
-              text={theme.palette.text!}
-              roundness={theme.roundness ?? 1}
-              style={{marginTop: "auto"}}
-            >
-              <LimitIndicator size={18} max={20} units="projects"/>
-              <StyledSpacer bg={theme.palette.bgLight} />
-              <LimitIndicator size={163779} max={5000000} units="size"/>
-            </StyledVertToggleGroup>
-          </StyledActionsSection>
+          <ProjSizeIndicator />
         </StyledActionsContainer>
         <StyledHomeContent bg={theme.palette.bgDark}>
           <Suspense fallback={<LoadingMenu />}>
