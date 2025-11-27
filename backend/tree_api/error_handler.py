@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from django.contrib.auth.models import User
+from backend.tree_api.models import User
 import binascii
 from functools import wraps
 import json

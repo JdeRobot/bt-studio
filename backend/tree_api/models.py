@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
 StatusChoice = (
     ("ACTIVE", "ACTIVE"),
@@ -97,7 +97,7 @@ class Universe(models.Model):
         db_table = '"universes"'
 
 
-class MyUser(User):
+class User(AbstractUser):
     size = -1
     max_size = -1
 
@@ -108,6 +108,9 @@ class MyUser(User):
         if self.max_size < 0:
             return True
         return (self.size + new_size - old_size) < self.max_size
+    
+    class Meta:
+        db_table = '"auth_user"'
 
     def update_size(self, fal, new_size, old_size=0, project_callback=None):
         if self.size < 0:
@@ -125,7 +128,7 @@ class Project(models.Model):
 
     id = models.SlugField(max_length=100, blank=False, unique=True, primary_key=True)
     name = models.CharField(max_length=100, blank=False, unique=True)
-    creator = models.ForeignKey(MyUser, on_delete=models.CASCADE, db_column='"creator"')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, db_column='"creator"')
     last_modified = models.DateTimeField(blank=False)
     size = models.BigIntegerField(default=-1, blank=False)
 

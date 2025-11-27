@@ -283,10 +283,10 @@ class FAL_BT(FAL):
         FAL.__init__(self, base)
 
     def projects_path(self) -> str:
-        return self.path_join(self.base, "filesystem")
+        return self.path_join(self.projects, "filesystem")
 
     def library_path(self) -> str:
-        return self.path_join(self.base, "library")
+        return self.path_join(self.projects, "library")
 
     def path_join(self, a: str, b: str) -> str:
         return os.path.join(a, b)
@@ -352,15 +352,15 @@ class FAL_BT(FAL):
         return list_dir(path, path, base_group=base_group)
 
     def get_base_tree_template(self):
-        init_graph_path = self.path_join(self.base, "templates/graph.json")
+        init_graph_path = self.path_join(self.projects, "templates/graph.json")
         return self.read(init_graph_path)
 
     def get_base_subtree_template(self):
-        init_graph_path = self.path_join(self.base, "templates/graph.json")
+        init_graph_path = self.path_join(self.projects, "templates/graph.json")
         return self.read(init_graph_path)
 
     def get_action_template(self, filename, template):
-        templates_folder_path = self.path_join(self.base, "templates")
+        templates_folder_path = self.path_join(self.projects, "templates")
         template_path = self.path_join(templates_folder_path, template)
         file_data = self.read(template_path)
         new_data = file_data.replace("ACTION", filename)
@@ -368,7 +368,7 @@ class FAL_BT(FAL):
 
     def get_universe_template(self, universe):
         contents = []
-        templates_folder_path = self.path_join(self.base, "templates/universe")
+        templates_folder_path = self.path_join(self.projects, "templates/universe")
         launch_path = self.path_join(templates_folder_path, "launch/universe.launch.py")
         world_path = self.path_join(templates_folder_path, "worlds/universe.world")
         cmake_path = self.path_join(templates_folder_path, "CMakeLists.txt")

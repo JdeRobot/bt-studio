@@ -14,6 +14,7 @@ from . import json_translator
 from . import app_generator
 from slugify import slugify
 from django.utils import timezone
+from backend.tree_api.models import get_user_projects_size
 
 # PROJECT MANAGEMENT
 
@@ -26,46 +27,56 @@ def create_project(request):
     project_name = request.data.get("project_name")
     project_id = slugify(project_name)
 
-    Project.objects.create(
-        id=slugify(project_name),
-        name=project_name,
-        creator=fal.user,
-        last_modified=timezone.now(),
-    )
+    try:
+        Project.objects.create(
+            id=slugify(project_name),
+            name=project_name,
+            creator=fal.user,
+            last_modified=timezone.now(),
+        )
 
-    project_path = fal.project_path(project_id)
-    action_path = fal.actions_path(project_id)
-    universes_path = fal.universes_path(project_id)
-    tree_path = fal.trees_path(project_id)
-    subtree_path = fal.subtrees_path(project_id)
+        project_path = fal.project_path(project_id)
+        action_path = fal.actions_path(project_id)
+        universes_path = fal.universes_path(project_id)
+        tree_path = fal.trees_path(project_id)
+        subtree_path = fal.subtrees_path(project_id)
 
-    config_path = fal.path_join(project_path, "config.json")
-    base_tree_path = fal.path_join(tree_path, "main.json")
+        config_path = fal.path_join(project_path, "config.json")
+        base_tree_path = fal.path_join(tree_path, "main.json")
 
-    # Default cfg values
-    default_cfg = {
-        "name": project_name,
-        "config": {
-            "editorShowAccentColors": True,
-            "theme": "dark",
-            "btOrder": "bottom-to-top",
-        },
-    }
+        # Default cfg values
+        default_cfg = {
+            "name": project_name,
+            "config": {
+                "editorShowAccentColors": True,
+                "theme": "dark",
+                "btOrder": "bottom-to-top",
+            },
+        }
 
-    # Create folders
-    fal.mkdir(project_path)
-    fal.mkdir(action_path)
-    fal.mkdir(universes_path)
-    fal.mkdir(tree_path)
-    fal.mkdir(subtree_path)
+        # Create folders
+        fal.mkdir(project_path)
+        fal.mkdir(action_path)
+        fal.mkdir(universes_path)
+        fal.mkdir(tree_path)
+        fal.mkdir(subtree_path)
 
-    # Create default config
-    config_formated = json.dumps(default_cfg, indent=4)
-    fal.create(config_path, config_formated)
+        # Create default config
+        config_formated = json.dumps(default_cfg, indent=4)
+        fal.create(config_path, config_formated)
 
-    # Copy default graph from templates
-    graph_data = fal.get_base_tree_template()
-    fal.create(base_tree_path, graph_data)
+        # Copy default graph from templates
+        graph_data = fal.get_base_tree_template()
+        fal.create(base_tree_path, graph_data)
+    except Exception as e:
+        project_path = fal.project_path(project_id)
+        if fal.exists(project_path) >= 0:
+            fal.removedir(project_path)
+        Project.objects.get(id=project_id, creator=fal.user).delete()
+        raise e
+
+    fal.user.projects += 1
+    fal.user.save()
     return Response(
         {"success": True, "message": "Project created successfully"},
         status=status.HTTP_201_CREATED,
@@ -75,10 +86,15 @@ def create_project(request):
 @error_wrapper(fal, "POST", ["project_id"])
 def delete_project(request):
     project_id = request.data.get("project_id")
-    project = Project.objects.get(id=project_id)
+    user = fal.user
+
+    project = Project.objects.get(id=project_id, creator=user)
     project_path = fal.project_path(project.id)
     fal.removedir(project_path)
     project.delete()
+
+    user.projects -= 1
+    user.save()
     return Response({"success": True}, status=200)
 
 
@@ -99,10 +115,14 @@ def get_project_list(request):
     project_list = []
 
     user = fal.user
+    if user.projects < 0:
+        user.update_size(fal, 0, project_callback=get_user_projects_size)
+
     projects = Project.objects.filter(creator=user)
+
     for project in projects:
         data = ProjectSerializer(project).data
-        if data["creator"] == "user":
+        if project.creator == user:
             data["creator"] = "You"
         project_list.append(data)
     return Response({"project_list": project_list})
@@ -168,10 +188,6 @@ def save_project_configuration(request):
     project_id = request.data.get("project_id")
     content = request.data.get("settings")
 
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
-
     project_path = fal.project_path(project_id)
     config_path = fal.path_join(project_path, "config.json")
 
@@ -192,10 +208,6 @@ def save_project_configuration(request):
 def create_subtree(request):
     project_id = request.data.get("project_id")
     subtree_name = request.data.get("subtree_name")
-
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
 
     project_subtree_path = fal.subtrees_path(project_id)
     template_path = fal.path_join(settings.BASE_DIR, "templates")
@@ -394,10 +406,6 @@ def create_action(request):
     filename = request.data.get("filename")
     template = request.data.get("template")
 
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
-
     # Make folder path relative to Django app
     action_path = fal.actions_path(project_id)
     file_path = fal.path_join(action_path, filename + ".py")
@@ -415,10 +423,6 @@ def create_file(request):
     location = request.data.get("location")
     filename = request.data.get("file_name")
     universe = request.data.get("universe")
-
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
 
     if universe is not None:
         path = fal.universes_path(project_id)
@@ -441,10 +445,6 @@ def create_folder(request):
     folder_name = request.data.get("folder_name")
     universe = request.data.get("universe")
 
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
-
     if universe is not None:
         path = fal.universes_path(project_id)
         if universe != "":
@@ -465,10 +465,6 @@ def rename_file(request):
     path = request.data.get("path")
     rename_path = request.data.get("rename_to")
     universe = request.data.get("universe")
-
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
 
     if universe is not None:
         base_path = fal.universes_path(project_id)
@@ -491,10 +487,6 @@ def rename_folder(request):
     rename_path = request.data.get("rename_to")
     universe = request.data.get("universe")
 
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
-
     if universe is not None:
         base_path = fal.universes_path(project_id)
         if universe != "":
@@ -515,10 +507,6 @@ def delete_file(request):
     path = request.data.get("path")
     universe = request.data.get("universe")
 
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
-
     if universe is not None:
         base_path = fal.universes_path(project_id)
         if universe != "":
@@ -537,10 +525,6 @@ def delete_folder(request):
     project_id = request.data.get("project_id")
     path = request.data.get("path")
     universe = request.data.get("universe")
-
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
 
     if universe is not None:
         base_path = fal.universes_path(project_id)
@@ -562,10 +546,6 @@ def save_file(request):
     content = request.data.get("content")
     universe = request.data.get("universe")
 
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
-
     if universe is not None:
         path = fal.universes_path(project_id)
         if universe != "":
@@ -579,10 +559,10 @@ def save_file(request):
     return Response({"success": True})
 
 
-@error_wrapper(fal, "POST", ["app_name", "bt_order"])
+@error_wrapper(fal, "POST", ["project_id", "bt_order"])
 def generate_local_app(request):
     # Get the request parameters
-    project_id = request.data.get("app_name")
+    project_id = request.data.get("project_id")
     bt_order = request.data.get("bt_order")
 
     final_tree = app_generator.generate_app(fal, project_id, bt_order)
@@ -596,10 +576,10 @@ def generate_local_app(request):
     )
 
 
-@error_wrapper(fal, "POST", ["app_name", "bt_order"])
+@error_wrapper(fal, "POST", ["project_id", "bt_order"])
 def generate_dockerized_app(request):
     # Get the request parameters
-    project_id = request.data.get("app_name")
+    project_id = request.data.get("project_id")
     bt_order = request.data.get("bt_order")
 
     final_tree = app_generator.generate_app(fal, project_id, bt_order)
@@ -661,11 +641,11 @@ def create_custom_universe(request):
     )
 
 
-@error_wrapper(fal, "POST", ["app_name", "universe_name", "id"])
+@error_wrapper(fal, "POST", ["project_id", "universe_name", "id"])
 def add_docker_universe(request):
     # Get the name and the id file from the request
     universe_name = request.data.get("universe_name")
-    project_id = request.data.get("app_name")
+    project_id = request.data.get("project_id")
     id = request.data.get("id")
 
     # Make folder path relative to Django app
@@ -696,10 +676,6 @@ def upload_code(request):
     location = request.data.get("location")
     content = request.data.get("content")
     universe = request.data.get("universe")
-
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
 
     if universe is not None:
         path = fal.universes_path(project_id)
@@ -783,7 +759,7 @@ def get_subtree_library_list(request):
 def get_user_subtree_library_list(request):
     curr_project = request.GET.get("project")
 
-    folder_path = fal.base_path()
+    folder_path = fal.projects_path()
     project_list = fal.listdirs(folder_path)
 
     library = []
@@ -888,10 +864,6 @@ def import_library_tree(request):
     entry = request.data.get("entry")
     name = request.data.get("name")
 
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
-
     entry_path = fal.library_entry_path(entry)
     tree_path = fal.path_join(entry_path, "graph.json")
     graph_data = fal.read(tree_path)
@@ -954,10 +926,6 @@ def import_user_library_tree(request):
     entry_project = request.data.get("entry_project")
     entry = request.data.get("entry")
     name = request.data.get("name")
-
-    project = Project.objects.get(id=project_id)
-    project.last_modified = timezone.now()
-    project.save()
 
     if entry == "main":
         entry_path = fal.trees_path(entry_project)

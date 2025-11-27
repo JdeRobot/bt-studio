@@ -291,7 +291,7 @@ const createRoboticsBackendUniverse = async (
   const response = await axios.post(
     apiUrl,
     {
-      app_name: projectId,
+      project_id: projectId,
       universe_name: universeName,
       id: universeId,
     },
@@ -391,7 +391,7 @@ const generateLocalApp = async (
     const response = await axios.post(
       apiUrl,
       {
-        app_name: currentProjectname,
+        project_id: currentProjectname,
         bt_order: btOrder,
       },
       axiosExtra
@@ -415,7 +415,7 @@ const generateDockerizedApp = async (
   const response = await axios.post(
     apiUrl,
     {
-      app_name: currentProjectname,
+      project_id: currentProjectname,
       bt_order: btOrder,
     },
     axiosExtra
