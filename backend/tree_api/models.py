@@ -119,6 +119,7 @@ class User(AbstractUser):
 
         self.size += new_size - old_size
         self.save()
+        print("Inside", self.projects)
 
 
 class Project(models.Model):

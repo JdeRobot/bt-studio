@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from backend.tree_api.models import User
+from backend.tree_api.models import User, Project
 import binascii
 from functools import wraps
 import json
@@ -27,6 +27,13 @@ def error_wrapper(fal, type: str, param: list[str | tuple] = []):
             try:
                 check_parameters(request.data if type == "POST" else request.GET, param)
                 fal.set_user(User.objects.get(username="user"))
+                
+                # Set this to bypass user
+                projects = Project.objects.all()
+                if len(projects) > 0:
+                    fal.user.projects = 0
+                    for project in projects:
+                        fal.user.projects += 1
                 return func(request)
             except CUSTOM_EXCEPTIONS as e:
                 print(str(e))
