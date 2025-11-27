@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.utils import timezone
 from django.contrib.auth.models import User
 
 StatusChoice = (
@@ -96,6 +97,27 @@ class Universe(models.Model):
         db_table = '"universes"'
 
 
+class MyUser(User):
+    size = -1
+    max_size = -1
+
+    projects = -1
+    max_projects = -1
+
+    def check_max_size(self, new_size, old_size=0):
+        if self.max_size < 0:
+            return True
+        return (self.size + new_size - old_size) < self.max_size
+
+    def update_size(self, fal, new_size, old_size=0, project_callback=None):
+        if self.size < 0:
+            if project_callback is not None:
+                self.size += project_callback(self, fal)
+
+        self.size += new_size - old_size
+        self.save()
+
+
 class Project(models.Model):
     """
     Project Model
@@ -103,7 +125,7 @@ class Project(models.Model):
 
     id = models.SlugField(max_length=100, blank=False, unique=True, primary_key=True)
     name = models.CharField(max_length=100, blank=False, unique=True)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, db_column='"creator"')
+    creator = models.ForeignKey(MyUser, on_delete=models.CASCADE, db_column='"creator"')
     last_modified = models.DateTimeField(blank=False)
     size = models.BigIntegerField(default=-1, blank=False)
 
@@ -112,3 +134,38 @@ class Project(models.Model):
 
     class Meta:
         db_table = '"projects"'
+
+    def update_size(self, fal, new_size=0, old_size=0):
+        self.get_size(fal)
+        self.size += new_size - old_size
+        self.last_modified = timezone.now()
+        self.save()
+
+    def get_size(self, fal):
+        if self.size < 0:
+            self.size = fal.dir_size(fal.project_path(self.id, False))
+            self.save()
+        return self.size
+
+
+def get_user_projects_size(user, fal):
+
+    if user.projects < 0:
+        user.projects = 0
+        folder_path = fal.projects_path()
+        old_projects = fal.listdirs(folder_path)
+        for p in old_projects:
+            Project.objects.create(
+                id=p,
+                name=p,
+                creator=fal.user,
+                last_modified=timezone.now(),
+            )
+            user.projects += 1
+        user.save()
+
+    size = 0
+    for project in Project.objects.filter(creator=user):
+        size += project.get_size(fal)
+
+    return size

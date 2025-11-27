@@ -37,23 +37,6 @@ CREATE TABLE public.projects (
 ALTER TABLE public.projects OWNER TO "user-dev";
 
 --
--- Data for Name: projects; Type: TABLE DATA; Schema: public; Owner: user-dev
---
-
-COPY public.projects (id, name, creator, last_modified, size) FROM stdin;
-composition_demo	Composition Demo	1	2023-11-18 12:53:08+00	-1
-follow_line_demo	Follow Line Demo	1	2025-10-18 12:53:08+00	-1
-global_nav	Global Navigation with BT	1	2025-11-15 12:53:08+00	-1
-laser_bump_and_go	Laser Bump and Go	1	2025-11-18 12:53:08+00	-1
-library_demo	Library Demo	1	2025-11-18 12:53:08+00	-1
-obstacle_avoidance	Obstacle Avoidance	1	2025-11-18 15:53:08+00	-1
-receptionist_demo	Receptionist Demo	1	2025-11-18 16:00:08+00	-1
-visual_follow_person	Visual Follow Person	1	2025-11-18 16:03:08+00	-1
-warehouse_demo	Warehouse Demo	1	2025-11-18 12:53:08+00	-1
-\.
-
-
---
 -- Name: projects projects_pkey; Type: CONSTRAINT; Schema: public; Owner: user-dev
 --
 

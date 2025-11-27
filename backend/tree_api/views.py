@@ -8,7 +8,7 @@ from django.conf import settings
 from .serializers import FileContentSerializer, ProjectSerializer
 from .project_view import EntryEncoder
 from .models import Universe, Project
-from .file_access import FAL
+from .file_access import FAL_BT
 from .error_handler import error_wrapper
 from . import json_translator
 from . import app_generator
@@ -18,7 +18,7 @@ from django.utils import timezone
 # PROJECT MANAGEMENT
 
 
-fal = FAL(settings.BASE_DIR)
+fal = FAL_BT(settings.BASE_DIR)
 
 
 @error_wrapper(fal, "POST", ["project_name"])
