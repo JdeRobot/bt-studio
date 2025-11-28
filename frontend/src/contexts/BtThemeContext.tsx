@@ -18,6 +18,10 @@ const darkTheme: BtTheme = {
     failure: "#b11111",
     invalid: "#494949",
     roundness: 10,
+    lightText: "#ededf2",
+    darkText: "#000000",
+    blackboard: " #5ba498",
+    tag: "#a45b67",
   },
   hoverStyle: "lighten",
   palette: {
@@ -70,6 +74,10 @@ const lightTheme: BtTheme = {
     failure: "#b11111",
     invalid: "#494949",
     roundness: 10,
+    lightText: "#ededf2",
+    darkText: "#000000",
+    blackboard: " #5ba498",
+    tag: "#a45b67",
   },
   hoverStyle: "darken",
   palette: {

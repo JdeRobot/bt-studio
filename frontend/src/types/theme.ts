@@ -10,6 +10,10 @@ export interface BtTheme extends Theme {
     failure: string;
     invalid: string;
     roundness?: number;
+    lightText: string;
+    darkText: string;
+    blackboard: string;
+    tag: string;
   },
   hoverStyle: string;
 }

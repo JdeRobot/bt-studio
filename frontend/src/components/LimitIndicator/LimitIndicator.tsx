@@ -86,4 +86,24 @@ const Indicator = ({
   );
 };
 
+export const Skeleton = () => {
+  const theme = useBtTheme();
+
+  return (
+    <StyledIndicatorContainer>
+      <StyledLimitIndicatorContainer bg={theme.palette.bgLight}>
+        <StyledLimitIndicator bg={theme.palette.primary} width={0} />
+      </StyledLimitIndicatorContainer>
+      <StyledLimitIndicatorText
+        color={theme.palette.text}
+        full_bg={theme.palette.error}
+        width={0}
+      >
+        <label id="indic">{`...`}</label>
+        <label id="base">{` / ...`}</label>
+      </StyledLimitIndicatorText>
+    </StyledIndicatorContainer>
+  );
+};
+
 export default Indicator;

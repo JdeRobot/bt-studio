@@ -22,6 +22,7 @@ import { Modal, ModalTitlebar } from "jderobot-ide-interface";
 import { BasicNodeModel } from "../nodes/basic_node/BasicNodeModel";
 import { OutputPortModel } from "../nodes/basic_node/ports/output_port/OutputPortModel";
 import { InputPortModel } from "../nodes/basic_node/ports/input_port/InputPortModel";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 const initialEditActionModalData = {
   newInputName: "",
@@ -43,6 +44,8 @@ const EditActionModal = ({
   model: DiagramModel;
   engine: DiagramEngine;
 }) => {
+  const theme = useBtTheme();
+
   const focusInputRef = useRef(null);
   const [color, setColor] = useState<IColor | undefined>(undefined);
   const [inputName, setInputName] = React.useState(false);
@@ -273,8 +276,8 @@ const EditActionModal = ({
               className="bt-node-editor-name"
               style={{
                 color: isBackgroundDark()
-                  ? "var(--bt-light-text)"
-                  : "var(--bt-dark-text)",
+                  ? theme.btEditor.lightText
+                  : theme.btEditor.darkText,
               }}
             >
               {currentActionNode.getName()}

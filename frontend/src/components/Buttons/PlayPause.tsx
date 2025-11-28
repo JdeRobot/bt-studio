@@ -226,8 +226,8 @@ const PlayPauseButton = ({
 
   return (
     <StyledHeaderButton
-      bgColor={theme.palette.bg}
-      hoverColor={theme.palette.primary}
+      bgColor={state !== states.RUNNING ? theme.palette.bg : theme.palette.primary}
+      hoverColor={state !== states.RUNNING ? theme.palette.primary : theme.palette.secondary}
       roundness={theme.roundness}
       id="run-app"
       onClick={() => onAppStateChange(undefined)}

@@ -89,8 +89,8 @@ const HeaderMenu = ({
             project={projectId}
             connectManager={connectManager}
           />
-          <ResetButton/>
-          <TerminateUniverseButton/>
+          <ResetButton />
+          <TerminateUniverseButton />
           <DocumentationButton />
         </StyledHeaderButtonContainer>
       </Toolbar>

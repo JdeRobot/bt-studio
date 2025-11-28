@@ -2,6 +2,7 @@ import { PortWidget } from "@projectstorm/react-diagrams";
 import { strRGBToLuminance } from "BtComponents/helper/colorHelper";
 import styled from "styled-components";
 import { BTStatus } from "BtTypes/index";
+import { contrastSelector } from "jderobot-ide-interface";
 
 const primaryColor = "#666";
 
@@ -162,19 +163,15 @@ interface StyledTagContainerProps {
   borderColor?: string;
   shadowColor?: string;
   roundness?: number;
-  color: string;
+  lightText?: string;
+  darkText?: string;
+  bg?: string;
   selected: boolean;
   type: "input" | "output";
 }
 
 const handleTagContrast = (p: StyledTagContainerProps) => {
-  const showLightText = strRGBToLuminance(p.color) <= 0.5;
-
-  if (showLightText) {
-    return `color: #fff;`;
-  } else {
-    return `color: #000;`;
-  }
+  return `color: ${contrastSelector(p.lightText,p.darkText,p.bg)};`;
 };
 
 const handleTagSelected = (p: StyledTagContainerProps) => {
@@ -201,7 +198,7 @@ export const StyledTagContainer = styled.div<StyledTagContainerProps>`
   padding-bottom: 5px;
   flex-direction: column;
   cursor: pointer;
-  background-color: ${(p) => p.color};
+  background-color: ${(p) => p.bg};
   ${handleTagContrast}
   ${handleTagSelected}
   ${handleTagContainerType}
