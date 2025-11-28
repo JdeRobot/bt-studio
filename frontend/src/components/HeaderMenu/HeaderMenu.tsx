@@ -2,12 +2,9 @@ import React from "react";
 import { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import { CommsManager, states } from "jderobot-commsmanager";
-import { Link } from "react-router-dom";
 
 import { ReactComponent as LogoIcon } from "BtComponents/icons/logo_jderobot_monocolor.svg";
 import { ReactComponent as LogoUniboticsIcon } from "BtComponents/icons/logo_unibotics_monocolor.svg";
-import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 import {
   DocumentationButton,
   DownloadButton,
@@ -28,33 +25,20 @@ import { useBtTheme } from "BtContexts/BtThemeContext";
 import { getProjectInfo } from "BtApi/TreeWrapper";
 
 const HeaderMenu = ({
-  currentProjectname,
-  manager,
+  projectId,
+  connectManager,
   setLayout,
 }: {
-  currentProjectname: string;
-  setCurrentProjectname: Function;
-  manager: CommsManager | null;
+  projectId: string;
+  connectManager: (
+    desiredState?: string,
+    callback?: () => void
+  ) => Promise<void>;
   setLayout: Function;
 }) => {
   const theme = useBtTheme();
   const [name, setName] = useState<string | undefined>(undefined);
   const isUnibotics = window.location.href.includes("unibotics");
-
-  // App state
-  const [appRunning, setAppRunning] = useState(false);
-
-  const updateState = (e: any) => {
-    setAppRunning(e.detail.state === states.RUNNING);
-  };
-
-  useEffect(() => {
-    subscribe("CommsManagerStateChange", updateState);
-
-    return () => {
-      unsubscribe("CommsManagerStateChange", () => {});
-    };
-  }, []);
 
   const getInfo = async (id: string) => {
     const info = await getProjectInfo(id);
@@ -62,8 +46,8 @@ const HeaderMenu = ({
   };
 
   useEffect(() => {
-    if (currentProjectname) {
-      getInfo(currentProjectname);
+    if (projectId) {
+      getInfo(projectId);
     }
   }, []);
 
@@ -98,20 +82,15 @@ const HeaderMenu = ({
         <StyledHeaderButtonContainer>
           <HomeButton />
           <ThemeButton />
-          <DownloadButton project={currentProjectname} />
+          <DownloadButton project={projectId} />
           <LayoutButton setLayout={setLayout} />
-          <SettingsButton project={currentProjectname} />
+          <SettingsButton project={projectId} />
           <PlayPauseButton
-            project={currentProjectname}
-            manager={manager}
-            appRunning={appRunning}
-            setAppRunning={setAppRunning}
+            project={projectId}
+            connectManager={connectManager}
           />
-          <ResetButton manager={manager} setAppRunning={setAppRunning} />
-          <TerminateUniverseButton
-            manager={manager}
-            setAppRunning={setAppRunning}
-          />
+          <ResetButton/>
+          <TerminateUniverseButton/>
           <DocumentationButton />
         </StyledHeaderButtonContainer>
       </Toolbar>

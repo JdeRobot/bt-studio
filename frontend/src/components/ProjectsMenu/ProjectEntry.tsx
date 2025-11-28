@@ -85,7 +85,6 @@ const ProjectEntry = ({
       return `${min_diff > 1 ? min_diff : "a"} minute${min_diff > 1 ? "s" : ""} ago`;
     }
 
-    console.log(now, last_date);
     return "now";
   };
 

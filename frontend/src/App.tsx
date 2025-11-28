@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import { OptionsProvider } from "BtComponents/options/Options";
 import { ErrorProvider } from "jderobot-ide-interface";
 import { BtThemeProvider } from "BtContexts/BtThemeContext";
 import { BtStudio, CreatePage, EditPage, Home } from "BtRoutes";
@@ -9,20 +8,18 @@ import { BtStudio, CreatePage, EditPage, Home } from "BtRoutes";
 const App = () => {
   return (
     <BtThemeProvider>
-      <OptionsProvider>
-        <ErrorProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/projects">
-                <Route index element={<Home />} />
-                <Route path="create_project/*" element={<CreatePage />} />
-                <Route path="edit/:proj_id" element={<EditPage />} />
-                <Route path="studio/:proj_id" element={<BtStudio />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </ErrorProvider>
-      </OptionsProvider>
+      <ErrorProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/projects">
+              <Route index element={<Home />} />
+              <Route path="create_project/*" element={<CreatePage />} />
+              <Route path="edit/:proj_id" element={<EditPage />} />
+              <Route path="studio/:proj_id" element={<BtStudio />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </ErrorProvider>
     </BtThemeProvider>
   );
 };

@@ -8,12 +8,12 @@ import JSZip from "jszip";
 import TreeGardener from "BtTemplates/TreeGardener";
 import RosTemplates from "BtTemplates/RosTemplates";
 import { Entry, useError } from "jderobot-ide-interface";
-import { OptionsContext } from "../options/Options";
 import { DownloadIcon } from "BtIcons";
+import { useProjectSettings } from "BtContexts/ProjectSettingsContext";
 
 const DownloadButton = ({ project }: { project: string }) => {
   const theme = useBtTheme();
-  const settings = useContext(OptionsContext);
+  const settings = useProjectSettings();
   const { error } = useError();
   const isCodeUpdatedRef = useRef<boolean | undefined>(undefined);
   const [, _updateCode] = useState<boolean | undefined>(false);

@@ -23,3 +23,4 @@ export { default as SequentialIcon } from "@mui/icons-material/ClearAllRounded";
 export { default as EmptyAddIcon } from "@mui/icons-material/AddCircleOutlineRounded";
 export { default as WebGUIIcon } from "@mui/icons-material/ImportantDevicesRounded";
 export { default as RvizIcon } from "@mui/icons-material/PrecisionManufacturingRounded";
+export { default as LoadingIcon } from "@mui/icons-material/SyncRounded";

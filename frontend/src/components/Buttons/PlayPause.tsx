@@ -1,112 +1,141 @@
 import React from "react";
 import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import { Entry, useError } from "jderobot-ide-interface";
-import { CommsManager } from "jderobot-commsmanager";
+import { CommsManager, states } from "jderobot-commsmanager";
 import JSZip from "jszip";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 
 import { generateDockerizedApp, getFile, getFileList } from "BtApi/TreeWrapper";
 import TreeGardener from "BtTemplates/TreeGardener";
 import RosTemplates from "BtTemplates/RosTemplates";
-import { OptionsContext } from "../options/Options";
-import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
-import { PauseIcon, PlayIcon } from "BtIcons";
+import { publish, subscribe, unsubscribe } from "../helper/TreeEditorHelper";
+import { LoadingIcon, PauseIcon, PlayIcon } from "BtIcons";
+import { useProjectSettings } from "BtContexts/ProjectSettingsContext";
 
 const PlayPauseButton = ({
   project,
-  manager,
-  appRunning,
-  setAppRunning,
+  connectManager,
 }: {
   project: string;
-  manager: CommsManager | null;
-  appRunning: boolean;
-  setAppRunning: Function;
+  connectManager: (
+    desiredState?: string,
+    callback?: () => void
+  ) => Promise<void>;
 }) => {
-  const settings = useContext(OptionsContext);
+  const settings = useProjectSettings();
   const theme = useBtTheme();
-  const { warning, error } = useError();
+  const { warning, error, info, close } = useError();
+  const codeRef = useRef("");
+  const runningCodeRef = useRef("");
+  const [state, setState] = useState<string>(
+    CommsManager.getInstance().getState()
+  );
+  const [loading, setLoading] = useState<boolean>(false);
   const isCodeUpdatedRef = useRef<boolean | undefined>(undefined);
-  const [, _updateCode] = useState<boolean | undefined>(false);
+  const [isCodeUpdated, _updateCode] = useState<boolean | undefined>(false);
 
   const updateCode = (data?: boolean) => {
     isCodeUpdatedRef.current = data;
     _updateCode(data);
   };
 
+  const updateState = (e: any) => {
+    setState(e.detail.state);
+  };
+
   useEffect(() => {
     subscribe("autoSaveCompleted", () => {
       updateCode(true);
     });
+    subscribe("CommsManagerStateChange", updateState);
 
     return () => {
       unsubscribe("autoSaveCompleted", () => {});
+      unsubscribe("CommsManagerStateChange", () => {});
     };
   }, []);
+
+  useEffect(() => {
+    if (
+      state === states.RUNNING ||
+      state === states.PAUSED ||
+      state === states.TOOLS_READY
+    ) {
+      setLoading(false);
+    }
+  }, [state]);
 
   // App handling
 
   const onAppStateChange = async (save?: boolean): Promise<any> => {
-    if (!manager) {
-      console.error("Manager is not running");
-      warning(
-        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
-      );
+    const manager = CommsManager.getInstance();
+    const state = manager.getState();
+
+    setLoading(true);
+
+    if (state === states.IDLE) {
+      info("Connecting with the Robotics Backend ...");
+      connectManager(states.CONNECTED, () => {
+        setLoading(false);
+        close();
+        onAppStateChange();
+      });
       return;
     }
 
-    if (
-      manager.getState() !== "tools_ready" &&
-      manager.getState() !== "application_running" &&
-      manager.getState() !== "paused"
-    ) {
+    if (state === states.WORLD_READY || state === states.CONNECTED) {
       console.error("Simulation is not ready!");
       warning(
-        "Failed to found a running simulation. Please make sure an universe is selected.",
+        "Failed to found a running simulation. Please make sure an universe is selected."
       );
+      setLoading(false);
       return;
     }
 
-    if (appRunning) {
+
+    if (state === states.RUNNING) {
       try {
         await manager.pause();
-        setAppRunning(false);
         console.log("App paused correctly!");
-        return;
       } catch (e: unknown) {
-        if (e instanceof Error) {
-          console.error("Error pausing app: " + e.message);
-          error("Error pausing app: " + e.message);
-        }
+        console.error("Error pausing app: " + (e as Error).message);
+        error(
+          "Failed to stop the application. See the traces in the terminal."
+        );
       }
+      setLoading(false);
+      return;
     }
 
-    // TODO: add later
-    // if (save === undefined) {
-    //   publish("autoSave");
-    //   updateCode(false);
-    // }
+    if (save === undefined) {
+      publish("autoSave");
+      updateCode(false);
+    }
 
-    // if (!isCodeUpdatedRef.current) {
-    //   return setTimeout(onAppStateChange, 100, true);
-    // }
+    if (!isCodeUpdatedRef.current) {
+      return setTimeout(onAppStateChange, 100, true);
+    }
 
-    // if (
-    //   manager.getState() === "paused" &&
-    //   runningCodeRef.current === codeRef.current
-    // ) {
-    //   await manager.resume();
-    //   setAppRunning(true);
-    //   console.log("App resumed correctly!");
-    //   return;
-    // }
+    if (state === states.PAUSED && runningCodeRef.current === codeRef.current) {
+      try {
+        await manager.resume();
+        console.log("App resumed correctly!");
+      } catch (e: unknown) {
+        console.error("Error resuming app: " + (e as Error).message);
+        error(
+          "Failed to resume the application. See the traces in the terminal."
+        );
+      }
+      setLoading(false);
+      return;
+    }
 
     try {
       // Get the blob from the API wrapper
       const appFiles = await generateDockerizedApp(
         project,
-        settings.btOrder.value,
+        settings.btOrder.value
       );
 
       // Create the zip with the files
@@ -139,12 +168,19 @@ const PlayPauseButton = ({
         const base64data = reader.result; // Get the zip in base64
         // Send the base64 encoded blob
         if (base64data) {
-          await manager.run(
-            "/workspace/code/execute_docker.py",
-            ["actions/*.py"],
-            base64data as string,
-          );
-          console.log("Dockerized app started successfully");
+          try {
+            await manager.run(
+              "/workspace/code/execute_docker.py",
+              ["actions/*.py"],
+              base64data as string
+            );
+            console.log("Dockerized app started successfully");
+          } catch (e:unknown) {
+            error(
+              "Failed to run the application. See the traces in the terminal."
+            );
+            setLoading(false);
+          }
         }
       };
 
@@ -152,9 +188,9 @@ const PlayPauseButton = ({
         reader.readAsDataURL(content);
       });
 
-      setAppRunning(true);
       console.log("App started successfully");
     } catch (e: unknown) {
+      setLoading(false);
       if (e instanceof Error) {
         console.error("Error running app: " + e.message);
         error("Error running app: " + e.message);
@@ -165,7 +201,7 @@ const PlayPauseButton = ({
   const zipCodeFile = async (
     zip: JSZip,
     file_path: string,
-    file_name: string,
+    file_name: string
   ) => {
     const content = await getFile(project, file_path);
     zip.file(file_name, content);
@@ -191,16 +227,22 @@ const PlayPauseButton = ({
   return (
     <StyledHeaderButton
       bgColor={theme.palette.bg}
-      hoverColor={theme.palette.secondary}
+      hoverColor={theme.palette.primary}
       roundness={theme.roundness}
       id="run-app"
       onClick={() => onAppStateChange(undefined)}
       title="Run app"
     >
-      {appRunning ? (
-        <PauseIcon htmlColor={theme.palette.text} />
+      {loading ? (
+        <LoadingIcon htmlColor={theme.palette.text} id="loading-spin" />
       ) : (
-        <PlayIcon htmlColor={theme.palette.text} />
+        <>
+          {state === states.RUNNING ? (
+            <PauseIcon htmlColor={theme.palette.text} />
+          ) : (
+            <PlayIcon htmlColor={theme.palette.text} />
+          )}
+        </>
       )}
     </StyledHeaderButton>
   );

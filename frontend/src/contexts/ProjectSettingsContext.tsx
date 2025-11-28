@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { createContext, useState } from "react";
 
-const OptionsContext = createContext<SettingsData>({
+const ProjectSettingsContext = createContext<SettingsData>({
   editorShowAccentColors: {
     setter: () => {},
     value: false,
@@ -25,7 +25,9 @@ export interface SettingsData {
   btOrder: SettingData<string>;
 }
 
-const OptionsProvider = ({ children }: { children: any }) => {
+const useProjectSettings = () => useContext(ProjectSettingsContext);
+
+const ProjectSettingsProvider = ({ children }: { children: any }) => {
   // TODO: try to not repeat the default values
   const [editorShowAccentColors, setEditorShowAccentColors] = useState(false);
   const [btOrder, setBtOrder] = useState("bottom-to-top");
@@ -45,10 +47,11 @@ const OptionsProvider = ({ children }: { children: any }) => {
   };
 
   return (
-    <OptionsContext.Provider value={settings}>
+    <ProjectSettingsContext.Provider value={settings}>
       {children}
-    </OptionsContext.Provider>
+    </ProjectSettingsContext.Provider>
   );
 };
 
-export { OptionsContext, OptionsProvider };
+export { useProjectSettings, ProjectSettingsProvider };
+

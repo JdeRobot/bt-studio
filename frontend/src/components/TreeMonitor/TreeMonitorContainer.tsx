@@ -1,6 +1,5 @@
 import React from "react";
-import { useContext, useRef } from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   getBaseTree,
   getSubtree,
@@ -8,10 +7,10 @@ import {
   getTreeStructure,
 } from "BtApi/TreeWrapper";
 import { findSubtree } from "../helper/TreeEditorHelper";
-import { OptionsContext } from "../options/Options";
 import { useError } from "jderobot-ide-interface";
 import TreeMonitor from "./TreeMonitor";
 import { CommsManager } from "jderobot-commsmanager";
+import { useProjectSettings } from "BtContexts/ProjectSettingsContext";
 
 const TreeMonitorContainer = ({
   commsManager,
@@ -20,7 +19,7 @@ const TreeMonitorContainer = ({
   commsManager: CommsManager;
   project: string;
 }) => {
-  const settings = useContext(OptionsContext);
+  const settings = useProjectSettings();
   const { error } = useError();
 
   const [initialJson, setInitialJson] = useState("");

@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useUnload } from "BtHooks/useUnload";
 import HeaderMenu from "BtComponents/HeaderMenu";
 import { CommsManager } from "jderobot-commsmanager";
 import { getProjectConfig, saveProjectConfig } from "BtApi/TreeWrapper";
 
-import { OptionsContext } from "BtComponents/options/Options";
 import IdeInterface, { VncViewer, useError } from "jderobot-ide-interface";
 import TreeEditorContainer, {
   AddSubtreeButton,
@@ -20,87 +18,48 @@ import { useParams } from "react-router-dom";
 import { StyledAppContainer } from "BtStyles/App.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 import { GazeboIcon, TerminalIcon, TreeMonitorIcon } from "BtIcons";
+import {
+  ProjectSettingsProvider,
+  useProjectSettings,
+} from "BtContexts/ProjectSettingsContext";
 
-const App = () => {
-  const theme = useBtTheme();
-  const isUnibotics = window.location.href.includes("unibotics");
+const Wrapper = () => {
   const { proj_id } = useParams();
-  const projectId = proj_id;
+  const { error_critical } = useError();
+  const hasUserLimit = window.location.href.includes("unibotics");
+  const maxUsers = 15;
+  const currentUsers = useRef<number>(0);
+  const btAtMaxCapacity = useRef<boolean>(false);
 
-  if (projectId === undefined) {
+  if (proj_id === undefined) {
     return <></>;
   }
 
-  // const [projectToSave, setProjectToSave] = useState(currentProjectname);
-  const [manager, setManager] = useState<CommsManager | null>(null);
-  const [showSim, setSimVisible] = useState<boolean>(false);
-  const [showMonitor, setMonitorVisible] = useState<boolean>(false);
-  const [showTerminal, setTerminalVisible] = useState<boolean>(false);
-  const [layout, setLayout] = useState<"only-editor" | "only-viewers" | "both">(
-    "both",
-  );
-
   //Only needed in Unibotics
-  const maxUsers = 15;
-  const currentUsers = React.useRef<number>(0);
-  const btAtMaxCapacity = React.useRef<boolean>(false);
-  const projectToSave = React.useRef<string>(projectId);
-  const { error_critical } = useError();
-
-  const settings = React.useContext(OptionsContext);
-  const settingsToSave = React.useRef<object>(settings);
-
-  const saveSettings = async (project: string) => {
-    const json_settings: { name: string; config: { [id: string]: any } } = {
-      name: project,
-      config: {},
-    };
-
-    Object.entries(settingsToSave.current).map(([key, setting]) => {
-      json_settings.config[key] = setting.value;
-    });
-
-    console.log("Save: ", projectToSave.current);
-
-    try {
-      await saveProjectConfig(project, JSON.stringify(json_settings));
-    } catch (e) {
-      console.error("Error saving config:", e);
-    }
-  };
-  //////////////////////////s////////////////////////////
-
-  // RB manager setup
-  const connected = useRef<boolean>(false);
 
   useEffect(() => {
     console.log("Current number of users connected: " + currentUsers.current);
     addUser();
     console.log(
       "Now the updated value of users connected is: ",
-      currentUsers.current,
+      currentUsers.current
     );
     console.log(
       "Current value of UsersAtMaxCapacity: ",
-      btAtMaxCapacity.current,
+      btAtMaxCapacity.current
     );
     updateBtAtMaxCapacity(currentUsers.current);
     console.log(
       "Updated value of UsersAtMaxCapacity: ",
-      btAtMaxCapacity.current,
+      btAtMaxCapacity.current
     );
-
-    const manager = CommsManager.getInstance();
-    if (btAtMaxCapacity.current === false) {
-      setManager(manager);
-    }
 
     return () => {
       substractUser();
     };
   }, []);
 
-  /////////////////////////////Functions only used in Unibotics///////////////////////////////////////////////////
+  /////////////////////////////Functions only used in Unibotics/////////////////
 
   const addUser = () => {
     currentUsers.current += 1;
@@ -112,11 +71,12 @@ const App = () => {
 
   const updateBtAtMaxCapacity = (currentUserCount: number) => {
     console.log("Entering update of MaxCapacity");
-    if (currentUserCount > maxUsers && isUnibotics) {
+    if (currentUserCount > maxUsers && hasUserLimit) {
       console.log("Too much users!");
       btAtMaxCapacity.current = true;
       error_critical(
-        "There's not enough room for you to enter BT-studio. Please try again later.",
+        "There's not enough room for you to enter Studio. Please try again later.",
+        "../.."
       );
     } else {
       console.log("The user can go in");
@@ -124,13 +84,51 @@ const App = () => {
     }
   };
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  return (
+    <ProjectSettingsProvider>
+      <App projectId={proj_id} />
+    </ProjectSettingsProvider>
+  );
+};
+
+const App = ({ projectId }: { projectId: string }) => {
+  const theme = useBtTheme();
+  const settings = useProjectSettings();
+  const connected = useRef<boolean>(false);
+  const [manager, setManager] = useState<CommsManager | null>(null);
+  const [showSim, setSimVisible] = useState<boolean>(false);
+  const [showMonitor, setMonitorVisible] = useState<boolean>(false);
+  const [showTerminal, setTerminalVisible] = useState<boolean>(false);
+  const [layout, setLayout] = useState<"only-editor" | "only-viewers" | "both">(
+    "both"
+  );
+
+  const saveSettings = async (project: string) => {
+    const json_settings: { name: string; config: { [id: string]: any } } = {
+      name: project,
+      config: {},
+    };
+
+    Object.entries(settings).map(([key, setting]) => {
+      json_settings.config[key] = setting.value;
+    });
+
+    console.log("Save: ", project);
+
+    try {
+      await saveProjectConfig(project, JSON.stringify(json_settings));
+    } catch (e) {
+      console.error("Error saving config:", e);
+    }
+  };
+
+  // RB manager setup
 
   const connectWithRetry = async (
     desiredState?: string,
-    callback?: () => void,
+    callback?: () => void
   ) => {
-    if (!manager || connected.current) {
+    if (!manager || manager?.getState() != "idle") {
       return;
     }
     try {
@@ -157,37 +155,29 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (manager) {
-      console.log("The manager is up!");
-      connectWithRetry();
-    }
-  }, [manager]);
+    const manager = CommsManager.getInstance();
+    setManager(manager);
+    getProjectConfig(projectId, settings);
 
-  useUnload((event: any) => {
-    event.preventDefault();
-    if (manager) {
-      manager.disconnect();
-      connected.current = false;
-    }
-    // saveSettings(projectToSave.current);
-    return (event.returnValue = "");
-  });
-
-  useEffect(() => {
-    const func = async () => {
-      if (projectId !== "") {
-        getProjectConfig(projectId, settings);
+    return () => {
+      const currManager = CommsManager.getInstance();
+      if (currManager) {
+        currManager.disconnect();
+        console.log(currManager);
       }
-      await saveSettings(projectToSave.current);
-      projectToSave.current = projectId;
+      saveSettings(projectId);
     };
-    func();
-  }, [projectId]); // Reload project configuration
+  }, []);
 
-  useEffect(() => {
-    console.log("change settings");
-    settingsToSave.current = settings;
-  }, [settings]); // Reload project configuration
+  // useUnload((event: any) => {
+  //   event.preventDefault();
+  //   if (manager) {
+  //     manager.disconnect();
+  //     connected.current = false;
+  //   }
+  //   // saveSettings(projectToSave.current);
+  //   return (event.returnValue = "");
+  // });
 
   const treeMonitor = {
     component: (
@@ -200,7 +190,13 @@ const App = () => {
   };
 
   const gazeboViewer = {
-    component: <VncViewer commsManager={manager} port={6080} />,
+    component: (
+      <VncViewer
+        commsManager={manager}
+        port={6080}
+        message={"Click Play to connect to the Robotics Backend"}
+      />
+    ),
     icon: <GazeboIcon />,
     name: "Gazebo",
     active: showSim,
@@ -208,7 +204,13 @@ const App = () => {
   };
 
   const terminalViewer = {
-    component: <VncViewer commsManager={manager} port={6082} />,
+    component: (
+      <VncViewer
+        commsManager={manager}
+        port={6082}
+        message={"Click Play to connect to the Robotics Backend"}
+      />
+    ),
     icon: <TerminalIcon />,
     name: "Terminal",
     active: showTerminal,
@@ -220,7 +222,7 @@ const App = () => {
     buttons: [
       <BTSelectorButtons key="BTSelectorButtons" project={projectId} />,
       <AddSubtreeButton key="AddSubtreeButton" project={projectId} />,
-      <OtherButtons key="OtherButtons" project={projectId} />,
+      <OtherButtons key="OtherButtons" />,
     ],
     name: "Tree editor",
     language: "custom_tree_editor",
@@ -230,8 +232,8 @@ const App = () => {
   return (
     <StyledAppContainer bg={theme.palette.bg}>
       <HeaderMenu
-        currentProjectname={projectId}
-        manager={manager}
+        projectId={projectId}
+        connectManager={connectWithRetry}
         setLayout={setLayout}
       />
       <IdeInterface
@@ -250,4 +252,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Wrapper;

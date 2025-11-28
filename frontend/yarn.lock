@@ -8305,10 +8305,10 @@ jderobot-commsmanager@^1.0.10:
   dependencies:
     uuid "^11.1.0"
 
-jderobot-ide-interface@0.2.68:
-  version "0.2.68"
-  resolved "https://registry.yarnpkg.com/jderobot-ide-interface/-/jderobot-ide-interface-0.2.68.tgz#c7cd388dbcd434fb19b64c3d89eae0999e673ead"
-  integrity sha512-RnwFjCcovVMoPF8vb0m0TeMqrdsep6e8Zfj3+fot0wyDM5heTYy6EPpIEjLzjMPMI5qKiYLe1PTNHY0qFdpAiw==
+jderobot-ide-interface@0.2.69:
+  version "0.2.69"
+  resolved "https://registry.yarnpkg.com/jderobot-ide-interface/-/jderobot-ide-interface-0.2.69.tgz#fb50da8a932640f675ffde879590564b975cd5a3"
+  integrity sha512-/GZ28IGcOxIRhrWvTRz/EfTgXn4zfx/DBoCFoozFG756MHamZ8wtXnW/17vhl7n40VqiB2DphV1lm5N9Xo0XwA==
   dependencies:
     "@monaco-editor/react" "^4.7.0"
     jderobot-commsmanager "^1.0.10"

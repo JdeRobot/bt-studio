@@ -1,56 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import { useError } from "jderobot-ide-interface";
-import { CommsManager } from "jderobot-commsmanager";
+import { CommsManager, states } from "jderobot-commsmanager";
 import { useBtTheme } from "BtContexts/BtThemeContext";
-import { ResetIcon } from "BtIcons";
+import { LoadingIcon, ResetIcon } from "BtIcons";
 
-const ResetButton = ({
-  manager,
-  setAppRunning,
-}: {
-  manager: CommsManager | null;
-  setAppRunning: Function;
-}) => {
+const ResetButton = () => {
   const theme = useBtTheme();
-  const { warning } = useError();
+  const { warning, error } = useError();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onResetApp = async () => {
-    if (!manager) {
-      console.error("Manager is not running");
-      warning(
-        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
-      );
-      return;
-    }
+    const manager = CommsManager.getInstance();
+    const state = manager.getState();
 
     if (
-      manager.getState() !== "tools_ready" &&
-      manager.getState() !== "application_running" &&
-      manager.getState() !== "paused"
+      state === states.CONNECTED ||
+      state === states.IDLE ||
+      state === states.WORLD_READY
     ) {
       console.error("Simulation is not ready!");
       warning(
-        "Failed to found a running simulation. Please make sure an universe is selected.",
+        "Failed to found a running simulation. Please make sure an universe is selected."
       );
       return;
     }
 
-    await manager.terminateApplication();
+    if (state === states.TOOLS_READY) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await manager.terminateApplication();
+    } catch (e) {
+      error("Failed to reset the application. See the traces in the terminal.");
+    }
+    setLoading(false);
     console.log("App reseted!");
-    setAppRunning(false);
   };
 
   return (
     <StyledHeaderButton
       bgColor={theme.palette.bg}
-      hoverColor={theme.palette.secondary}
+      hoverColor={theme.palette.primary}
       roundness={theme.roundness}
       id="reset-app"
       onClick={onResetApp}
       title="Reset app"
+      disabled={loading}
     >
-      <ResetIcon htmlColor={theme.palette.text} />
+      {loading ? (
+        <LoadingIcon htmlColor={theme.palette.text} id="loading-spin" />
+      ) : (
+        <ResetIcon htmlColor={theme.palette.text} />
+      )}
     </StyledHeaderButton>
   );
 };

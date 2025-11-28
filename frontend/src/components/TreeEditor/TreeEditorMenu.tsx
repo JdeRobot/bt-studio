@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./NodeMenu.css";
 import { Menu, MenuItem, styled } from "@mui/material";
 import { ImportIcon } from "../icons";
@@ -11,7 +11,6 @@ import {
 import { publish, subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 import AddSubtreeModal from "./modals/AddSubtreeModal";
 import { useError } from "jderobot-ide-interface";
-import { OptionsContext } from "../options/Options";
 import {
   MenuButton,
   MenuButtonLabel,
@@ -27,6 +26,7 @@ import {
   UpArrowIcon,
   ZoomIcon,
 } from "BtIcons";
+import { useProjectSettings } from "BtContexts/ProjectSettingsContext";
 
 const StyledMenu = styled(Menu)(
   ({
@@ -346,8 +346,8 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
   );
 };
 
-export const OtherButtons = ({ project }: { project: string }) => {
-  const settings = useContext(OptionsContext);
+export const OtherButtons = () => {
+  const settings = useProjectSettings();
 
   const [btOrder, setBtOrder] = useState(settings.btOrder.default_value);
 
