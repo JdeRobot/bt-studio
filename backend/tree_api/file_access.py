@@ -292,7 +292,13 @@ class FAL_BT(FAL):
         return os.path.join(a, b)
 
     def exists(self, path: str) -> bool:
-        return os.path.exists(path)
+        if not os.path.exists(path):
+            return -1
+
+        if os.path.isdir(path):  # It is a dir
+            return 0
+
+        return os.path.getsize(path)
 
     def isdir(self, path: str) -> bool:
         return os.path.isdir(path)
