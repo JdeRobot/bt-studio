@@ -230,7 +230,7 @@ const App = ({ projectId }: { projectId: string }) => {
   };
 
   return (
-    <StyledAppContainer bg={theme.palette.bg}>
+    <StyledAppContainer bg={theme.palette.bg} hoverStyle="lighten">
       <HeaderMenu
         projectId={projectId}
         connectManager={connectWithRetry}
