@@ -54,4 +54,3 @@ const ProjectSettingsProvider = ({ children }: { children: any }) => {
 };
 
 export { useProjectSettings, ProjectSettingsProvider };
-

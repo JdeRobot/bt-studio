@@ -24,7 +24,7 @@ const TerminateUniverseButton = () => {
     if (state === states.IDLE || state === states.CONNECTED) {
       console.error("Simulation is not ready!");
       warning(
-        "Failed to found a running simulation. Please make sure an universe is selected."
+        "Failed to found a running simulation. Please make sure an universe is selected.",
       );
       return;
     }
@@ -65,4 +65,3 @@ const TerminateUniverseButton = () => {
 };
 
 export default TerminateUniverseButton;
-

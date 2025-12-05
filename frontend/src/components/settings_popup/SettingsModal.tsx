@@ -17,7 +17,10 @@ import { saveProjectConfig } from "BtApi/TreeWrapper";
 import Checkbox from "./options/Checkbox";
 import { StyledSettingsListConatiner } from "BtStyles/Modal/Settings/Settings.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
-import { SettingsData, useProjectSettings } from "BtContexts/ProjectSettingsContext";
+import {
+  SettingsData,
+  useProjectSettings,
+} from "BtContexts/ProjectSettingsContext";
 
 const SettingsModal = ({
   onSubmit,

@@ -23,7 +23,7 @@ const App = () => {
 
   const handleUserFilter = (
     event: React.MouseEvent<HTMLElement>,
-    newFilter: string
+    newFilter: string,
   ) => {
     setFilter(newFilter);
   };

@@ -51,7 +51,9 @@ export const TagNodeWidget = ({
     <StyledTagContainer
       borderColor={theme.btEditor.border}
       roundness={theme.btEditor.roundness}
-      bg={node.isFromBlackboard() ? theme.btEditor.blackboard : theme.btEditor.tag}
+      bg={
+        node.isFromBlackboard() ? theme.btEditor.blackboard : theme.btEditor.tag
+      }
       lightText={theme.btEditor.lightText}
       darkText={theme.btEditor.darkText}
       selected={node.isSelected()}

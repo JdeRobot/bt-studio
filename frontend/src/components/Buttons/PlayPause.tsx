@@ -20,7 +20,7 @@ const PlayPauseButton = ({
   project: string;
   connectManager: (
     desiredState?: string,
-    callback?: () => void
+    callback?: () => void,
   ) => Promise<void>;
 }) => {
   const settings = useProjectSettings();
@@ -29,7 +29,7 @@ const PlayPauseButton = ({
   const codeRef = useRef("");
   const runningCodeRef = useRef("");
   const [state, setState] = useState<string>(
-    CommsManager.getInstance().getState()
+    CommsManager.getInstance().getState(),
   );
   const [loading, setLoading] = useState<boolean>(false);
   const isCodeUpdatedRef = useRef<boolean | undefined>(undefined);
@@ -87,12 +87,11 @@ const PlayPauseButton = ({
     if (state === states.WORLD_READY || state === states.CONNECTED) {
       console.error("Simulation is not ready!");
       warning(
-        "Failed to found a running simulation. Please make sure an universe is selected."
+        "Failed to found a running simulation. Please make sure an universe is selected.",
       );
       setLoading(false);
       return;
     }
-
 
     if (state === states.RUNNING) {
       try {
@@ -101,7 +100,7 @@ const PlayPauseButton = ({
       } catch (e: unknown) {
         console.error("Error pausing app: " + (e as Error).message);
         error(
-          "Failed to stop the application. See the traces in the terminal."
+          "Failed to stop the application. See the traces in the terminal.",
         );
       }
       setLoading(false);
@@ -124,7 +123,7 @@ const PlayPauseButton = ({
       } catch (e: unknown) {
         console.error("Error resuming app: " + (e as Error).message);
         error(
-          "Failed to resume the application. See the traces in the terminal."
+          "Failed to resume the application. See the traces in the terminal.",
         );
       }
       setLoading(false);
@@ -135,7 +134,7 @@ const PlayPauseButton = ({
       // Get the blob from the API wrapper
       const appFiles = await generateDockerizedApp(
         project,
-        settings.btOrder.value
+        settings.btOrder.value,
       );
 
       // Create the zip with the files
@@ -172,12 +171,12 @@ const PlayPauseButton = ({
             await manager.run(
               "/workspace/code/execute_docker.py",
               ["actions/*.py"],
-              base64data as string
+              base64data as string,
             );
             console.log("Dockerized app started successfully");
-          } catch (e:unknown) {
+          } catch (e: unknown) {
             error(
-              "Failed to run the application. See the traces in the terminal."
+              "Failed to run the application. See the traces in the terminal.",
             );
             setLoading(false);
           }
@@ -201,7 +200,7 @@ const PlayPauseButton = ({
   const zipCodeFile = async (
     zip: JSZip,
     file_path: string,
-    file_name: string
+    file_name: string,
   ) => {
     const content = await getFile(project, file_path);
     zip.file(file_name, content);
@@ -226,8 +225,14 @@ const PlayPauseButton = ({
 
   return (
     <StyledHeaderButton
-      bgColor={state !== states.RUNNING ? theme.palette.bg : theme.palette.primary}
-      hoverColor={state !== states.RUNNING ? theme.palette.primary : theme.palette.secondary}
+      bgColor={
+        state !== states.RUNNING ? theme.palette.bg : theme.palette.primary
+      }
+      hoverColor={
+        state !== states.RUNNING
+          ? theme.palette.primary
+          : theme.palette.secondary
+      }
       roundness={theme.roundness}
       id="run-app"
       onClick={() => onAppStateChange(undefined)}

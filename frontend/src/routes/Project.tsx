@@ -42,16 +42,16 @@ const Wrapper = () => {
     addUser();
     console.log(
       "Now the updated value of users connected is: ",
-      currentUsers.current
+      currentUsers.current,
     );
     console.log(
       "Current value of UsersAtMaxCapacity: ",
-      btAtMaxCapacity.current
+      btAtMaxCapacity.current,
     );
     updateBtAtMaxCapacity(currentUsers.current);
     console.log(
       "Updated value of UsersAtMaxCapacity: ",
-      btAtMaxCapacity.current
+      btAtMaxCapacity.current,
     );
 
     return () => {
@@ -76,7 +76,7 @@ const Wrapper = () => {
       btAtMaxCapacity.current = true;
       error_critical(
         "There's not enough room for you to enter Studio. Please try again later.",
-        "../.."
+        "../..",
       );
     } else {
       console.log("The user can go in");
@@ -100,7 +100,7 @@ const App = ({ projectId }: { projectId: string }) => {
   const [showMonitor, setMonitorVisible] = useState<boolean>(false);
   const [showTerminal, setTerminalVisible] = useState<boolean>(false);
   const [layout, setLayout] = useState<"only-editor" | "only-viewers" | "both">(
-    "both"
+    "both",
   );
 
   const saveSettings = async (project: string) => {
@@ -126,7 +126,7 @@ const App = ({ projectId }: { projectId: string }) => {
 
   const connectWithRetry = async (
     desiredState?: string,
-    callback?: () => void
+    callback?: () => void,
   ) => {
     if (!manager || manager?.getState() != "idle") {
       return;

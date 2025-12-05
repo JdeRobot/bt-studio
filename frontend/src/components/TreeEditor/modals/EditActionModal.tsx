@@ -77,7 +77,7 @@ const EditActionModal = ({
     }));
     setAllowCreation(
       (name === "newInputName" && isInputNameValid(value)) ||
-        (name === "newOutputName" && isOutputNameValid(value))
+        (name === "newOutputName" && isOutputNameValid(value)),
     );
   };
 
@@ -88,7 +88,7 @@ const EditActionModal = ({
     document.getElementById("node-editor-modal")!.focus();
     if (currentActionNode) {
       const rgb: IColor["rgb"] = ColorService.toRgb(
-        currentActionNode.getColor()
+        currentActionNode.getColor(),
       );
 
       const newColor: IColor = {
@@ -124,7 +124,7 @@ const EditActionModal = ({
         engine,
         model,
         () => {},
-        setFileContent
+        setFileContent,
       );
     }
   }, [color]);
@@ -169,11 +169,11 @@ const EditActionModal = ({
 
   const isInputNameValid = (name: string) => {
     const inputPorts = Object.entries(currentActionNode.getPorts()).filter(
-      (item) => item[1] instanceof InputPortModel
+      (item) => item[1] instanceof InputPortModel,
     );
     const merged = [].concat.apply(
       inputPorts.map((x) => x[0]),
-      []
+      [],
     );
     return (
       name !== "" && !name.includes(" ") && !merged.includes(name as never)
@@ -182,11 +182,11 @@ const EditActionModal = ({
 
   const isOutputNameValid = (name: string) => {
     const outputPorts = Object.entries(currentActionNode.getPorts()).filter(
-      (item) => item[1] instanceof OutputPortModel
+      (item) => item[1] instanceof OutputPortModel,
     );
     const merged = [].concat.apply(
       outputPorts.map((x) => x[0]),
-      []
+      [],
     );
     return (
       name !== "" && !name.includes(" ") && !merged.includes(name as never)
@@ -206,7 +206,7 @@ const EditActionModal = ({
         engine,
         model,
         () => {},
-        setFileContent
+        setFileContent,
       );
     }
     setInputName(false);
@@ -226,7 +226,7 @@ const EditActionModal = ({
         engine,
         model,
         () => {},
-        setFileContent
+        setFileContent,
       );
     }
     setOutputName(false);
@@ -243,7 +243,7 @@ const EditActionModal = ({
       engine,
       model,
       () => {},
-      setFileContent
+      setFileContent,
     );
 
     setUpdate(true);
@@ -259,7 +259,7 @@ const EditActionModal = ({
       engine,
       model,
       () => {},
-      setFileContent
+      setFileContent,
     );
 
     setUpdate(true);
@@ -272,24 +272,24 @@ const EditActionModal = ({
   };
 
   const btTheme = theme.btEditor;
-  const bg = currentActionNode.getColor()
+  const bg = currentActionNode.getColor();
 
   const cancelColor = contrastSelector(
     btTheme.lightText,
     btTheme.darkText,
-    btTheme.failure
+    btTheme.failure,
   );
 
   const addColor = contrastSelector(
     btTheme.lightText,
     btTheme.darkText,
-    btTheme.success
+    btTheme.success,
   );
 
   const text = contrastSelector(
     btTheme.lightText,
     btTheme.darkText,
-    rgbToHex(currentActionNode.getColor())
+    rgbToHex(currentActionNode.getColor()),
   );
 
   return (
@@ -340,7 +340,7 @@ const EditActionModal = ({
                     );
                   }
                   return <></>;
-                }
+                },
               )}
               {inputName ? (
                 <StyledBTModelInputContainer roundness={btTheme.roundness}>
@@ -409,7 +409,7 @@ const EditActionModal = ({
                     );
                   }
                   return <></>;
-                }
+                },
               )}
               {outputName ? (
                 <StyledBTModelInputContainer roundness={btTheme.roundness}>
@@ -447,7 +447,7 @@ const EditActionModal = ({
                   )}
                 </StyledBTModelInputContainer>
               ) : (
-                <AddButton onClick={openOutputCreation} color={text} bg={bg}/>
+                <AddButton onClick={openOutputCreation} color={text} bg={bg} />
               )}
             </div>
           </StyledBTModelIO>
@@ -467,7 +467,7 @@ const EditActionModal = ({
 const AddButton = ({
   onClick,
   color,
-  bg
+  bg,
 }: {
   onClick: () => void;
   color?: string;
@@ -482,9 +482,7 @@ const AddButton = ({
       onClick={onClick}
       title="Add input"
     >
-      <AddIcon
-        fill={color ?? theme.btEditor.lightText}
-      />
+      <AddIcon fill={color ?? theme.btEditor.lightText} />
     </StyledBTModelAdd>
   );
 };

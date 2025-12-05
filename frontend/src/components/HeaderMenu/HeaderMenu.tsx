@@ -32,7 +32,7 @@ const HeaderMenu = ({
   projectId: string;
   connectManager: (
     desiredState?: string,
-    callback?: () => void
+    callback?: () => void,
   ) => Promise<void>;
   setLayout: Function;
 }) => {

@@ -402,10 +402,7 @@ const TreeEditor = ({
   return (
     <>
       {engine.current.getModel() && (
-        <StyledBTCanvas
-          bgColor={theme.palette.bg}
-          engine={engine.current}
-        />
+        <StyledBTCanvas bgColor={theme.palette.bg} engine={engine.current} />
       )}
     </>
   );
