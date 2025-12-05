@@ -108,7 +108,7 @@ class User(AbstractUser):
         if self.max_size < 0:
             return True
         return (self.size + new_size - old_size) < self.max_size
-    
+
     class Meta:
         db_table = '"auth_user"'
 

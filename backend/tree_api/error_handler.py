@@ -27,7 +27,7 @@ def error_wrapper(fal, type: str, param: list[str | tuple] = []):
             try:
                 check_parameters(request.data if type == "POST" else request.GET, param)
                 fal.set_user(User.objects.get(username="user"))
-                
+
                 # Set this to bypass user
                 projects = Project.objects.all()
                 if len(projects) > 0:
