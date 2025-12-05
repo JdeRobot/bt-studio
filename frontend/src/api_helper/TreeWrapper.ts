@@ -601,6 +601,8 @@ const createFile = async (
 
   const apiUrl = "/bt_studio/create_file/";
 
+  if (location.startsWith("trees")) throw new Error("Cannot create a tree this way");
+
   let params = {
     project_id: projectId,
     location: location,
@@ -873,13 +875,15 @@ const getActionsList = async (projectId: string) => {
 
 const createFolder = async (
   projectId: string,
-  folderName: string,
   location: string,
+  folderName: string,
   universeName: undefined | string = undefined
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!folderName) throw new Error("Folder name is not set");
   if (location === undefined) throw new Error("Location is not set");
+
+  if (location.startsWith("trees")) throw new Error("Cannot create a subtree this way");
 
   const apiUrl = "/bt_studio/create_folder/";
 
