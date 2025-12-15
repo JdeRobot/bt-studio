@@ -1,8 +1,9 @@
 import React from "react";
 import { MouseEventHandler, MutableRefObject } from "react";
 
-import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
 import { ReactComponent as ReturnIcon } from "./img/return.svg";
+import { UndoIcon, ZoomIcon } from "BtIcons";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 const TreeMonitorMenu = ({
   onZoomToFit,
@@ -13,6 +14,8 @@ const TreeMonitorMenu = ({
   setGoBack: (a: boolean) => void;
   subTreeName: MutableRefObject<string>;
 }) => {
+  const theme = useBtTheme();
+  
   return (
     <div className="bt-node-header-container">
       <div className="bt-action-buttons">
@@ -22,9 +25,9 @@ const TreeMonitorMenu = ({
           onClick={onZoomToFit}
           title="Zoom To Fit"
         >
-          <ZoomToFitIcon
+          <ZoomIcon
             className="bt-icon bt-action-icon"
-            fill={"var(--icon)"}
+            htmlColor={theme.palette.text}
           />
         </button>
         <button
@@ -33,7 +36,7 @@ const TreeMonitorMenu = ({
           onClick={() => setGoBack(true)}
           title="Go Back"
         >
-          <ReturnIcon className="bt-header-icon" fill={"var(--icon)"} />
+          <UndoIcon className="bt-header-icon" htmlColor={theme.palette.text} />
         </button>
       </div>
       <h2 className="bt-subtree-name">{subTreeName.current}</h2>
