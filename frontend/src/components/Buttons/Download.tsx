@@ -1,23 +1,19 @@
 import React from "react";
-import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
-import { useBtTheme } from "../../contexts/BtThemeContext";
-import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
+import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 import { useContext, useEffect, useRef, useState } from "react";
 import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
-import {
-  generateLocalApp,
-  getFile,
-  getFileList,
-} from "../../api_helper/TreeWrapper";
+import { generateLocalApp, getFile, getFileList } from "BtApi/TreeWrapper";
 import JSZip from "jszip";
-import TreeGardener from "../../templates/TreeGardener";
-import RosTemplates from "../../templates/RosTemplates";
+import TreeGardener from "BtTemplates/TreeGardener";
+import RosTemplates from "BtTemplates/RosTemplates";
 import { Entry, useError } from "jderobot-ide-interface";
-import { OptionsContext } from "../options/Options";
+import { DownloadIcon } from "BtIcons";
+import { useProjectSettings } from "BtContexts/ProjectSettingsContext";
 
 const DownloadButton = ({ project }: { project: string }) => {
   const theme = useBtTheme();
-  const settings = useContext(OptionsContext);
+  const settings = useProjectSettings();
   const { error } = useError();
   const isCodeUpdatedRef = useRef<boolean | undefined>(undefined);
   const [, _updateCode] = useState<boolean | undefined>(false);
@@ -136,14 +132,14 @@ const DownloadButton = ({ project }: { project: string }) => {
 
   return (
     <StyledHeaderButton
-      bgColor={theme.palette.primary}
+      bgColor={theme.palette.bg}
       hoverColor={theme.palette.secondary}
       roundness={theme.roundness}
       id="download-code"
       onClick={() => saveFile(undefined)}
-      title="Download code"
+      title="Download project"
     >
-      <FileDownloadRoundedIcon htmlColor={theme.palette.text} />
+      <DownloadIcon htmlColor={theme.palette.text} />
     </StyledHeaderButton>
   );
 };

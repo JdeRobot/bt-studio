@@ -18,6 +18,27 @@ interface StyledProjectProps {
 
 export const StyledProject = styled.span<StyledProjectProps>`
   display: flex;
+  font-size: 25px;
+  flex-direction: column;
+  background-color: none;
+  color: ${(p) => p.color ?? primaryColor};
+  padding: 10px;
+  justify-content: center;
+  margin-left: auto;
+  position: absolute;
+  right: 50%;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: fit-content;
+
+  & div {
+    font-weight: bold;
+  }
+`;
+
+export const StyledSection = styled.h3<StyledProjectProps>`
+  display: flex;
   flex-direction: column;
   background-color: none;
   color: ${(p) => p.color ?? primaryColor};
@@ -29,6 +50,7 @@ export const StyledProject = styled.span<StyledProjectProps>`
     font-weight: bold;
   }
 `;
+
 
 export const StyledHeaderButtonContainer = styled.div`
   display: flex;
@@ -68,6 +90,20 @@ export const StyledHeaderButton = styled.button<StyledHeaderButtonProps>`
   & svg {
     width: 24px;
     height: 24px;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(360deg);
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+
+  #loading-spin {
+    animation: spin 2s linear infinite;
+    opacity: 50%;
   }
 `;
 

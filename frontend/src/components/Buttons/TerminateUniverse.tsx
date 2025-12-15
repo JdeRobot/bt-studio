@@ -1,30 +1,21 @@
-import React from "react";
-import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
+import React, { useState } from "react";
 import { useError } from "jderobot-ide-interface";
 import { CommsManager, states } from "jderobot-commsmanager";
 import StopCircleRoundedIcon from "@mui/icons-material/StopCircleRounded";
-import { useBtTheme } from "../../contexts/BtThemeContext";
+import SyncRoundedIcon from "@mui/icons-material/SyncRounded";
+import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
+import { LoadingIcon, StopIcon } from "BtIcons";
 
-const TerminateUniverseButton = ({
-  manager,
-  setAppRunning,
-}: {
-  manager: CommsManager | null;
-  setAppRunning: Function;
-}) => {
+const TerminateUniverseButton = () => {
   const theme = useBtTheme();
   const { warning } = useError();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const terminateUniverse = async () => {
-    if (!manager) {
-      console.error("Manager is not running");
-      warning(
-        "Failed to connect with the Robotics Backend docker. Please make sure it is connected.",
-      );
-      return;
-    }
+    const manager = CommsManager.getInstance();
 
-    if (manager.getUniverse() === "") {
+    if (manager.getUniverse() === undefined || manager.getUniverse() === "") {
       return;
     }
 
@@ -38,30 +29,37 @@ const TerminateUniverseButton = ({
       return;
     }
 
+    setLoading(true);
+
     if (state === states.RUNNING || state === states.PAUSED) {
       await manager.terminateApplication();
-      setAppRunning(false);
-    }
-
-    if (manager.getState() === states.TOOLS_READY) {
       await manager.terminateTools();
-    }
-
-    if (manager.getState() === states.WORLD_READY) {
+      await manager.terminateUniverse();
+    } else if (state === states.TOOLS_READY) {
+      await manager.terminateTools();
+      await manager.terminateUniverse();
+    } else {
       await manager.terminateUniverse();
     }
+
+    setLoading(false);
   };
 
   return (
     <StyledHeaderButton
-      bgColor={theme.palette.primary}
-      hoverColor={theme.palette.secondary}
+      bgColor={theme.palette.bg}
+      hoverColor={theme.palette.primary}
       roundness={theme.roundness}
       id="stop-universe"
       onClick={terminateUniverse}
       title="Stop Universe"
+      disabled={loading}
     >
-      <StopCircleRoundedIcon htmlColor={theme.palette.text} />
+      {loading ? (
+        <LoadingIcon htmlColor={theme.palette.text} id="loading-spin" />
+      ) : (
+        <StopIcon htmlColor={theme.palette.text} />
+      )}
     </StyledHeaderButton>
   );
 };

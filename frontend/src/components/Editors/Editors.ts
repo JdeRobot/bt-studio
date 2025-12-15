@@ -5,7 +5,7 @@ import {
   listUniverses,
   getUniverseConfig,
   getRoboticsBackendUniverse,
-} from "../../api_helper/TreeWrapper";
+} from "BtApi/TreeWrapper";
 import { createCustomUniverseConfig } from "../helper/customUniverseHelper";
 
 export const editorApi: ExtraApi = {

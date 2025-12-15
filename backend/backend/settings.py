@@ -132,6 +132,8 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR.parent, "frontend/static"),  # React frontend statics
 )
 
+AUTH_USER_MODEL = "tree_api.User"
+
 # Settings for django webpack loader
 WEBPACK_LOADER = {
     "DEFAULT": {

@@ -1,9 +1,8 @@
 import React from "react";
-import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
-import { useBtTheme } from "../../contexts/BtThemeContext";
-import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
-import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
+import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 import { useState } from "react";
+import { DarkModeIcon, LightModeIcon } from "BtIcons";
 
 const ThemeButton = () => {
   const theme = useBtTheme();
@@ -22,7 +21,7 @@ const ThemeButton = () => {
 
   return (
     <StyledHeaderButton
-      bgColor={theme.palette.primary}
+      bgColor={theme.palette.bg}
       hoverColor={theme.palette.secondary}
       roundness={theme.roundness}
       id="theme-button"
@@ -30,9 +29,9 @@ const ThemeButton = () => {
       title="Switch Theme"
     >
       {isDarkTheme ? (
-        <LightModeRoundedIcon htmlColor={theme.palette.text} />
+        <LightModeIcon htmlColor={theme.palette.text} />
       ) : (
-        <DarkModeRoundedIcon htmlColor={theme.palette.text} />
+        <DarkModeIcon htmlColor={theme.palette.text} />
       )}
     </StyledHeaderButton>
   );

@@ -2,10 +2,10 @@ import React from "react";
 import {
   StyledDropdown,
   StyledHeaderButton,
-} from "../../styles/Header/HeaderMenu.styles";
-import { useBtTheme } from "../../contexts/BtThemeContext";
-import SpaceDashboardRoundedIcon from "@mui/icons-material/SpaceDashboardRounded";
+} from "BtStyles/Header/HeaderMenu.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 import { useRef, useState } from "react";
+import { LayoutIcon } from "BtIcons";
 
 const LayoutButton = ({ setLayout }: { setLayout: Function }) => {
   const theme = useBtTheme();
@@ -18,7 +18,7 @@ const LayoutButton = ({ setLayout }: { setLayout: Function }) => {
       setter={setLayout}
       possibleValues={["only-editor", "only-viewers", "both"]}
     >
-      <SpaceDashboardRoundedIcon htmlColor={theme.palette.text} />
+      <LayoutIcon htmlColor={theme.palette.text} />
     </Dropdown>
   );
 };
@@ -75,7 +75,7 @@ const Dropdown = ({
   return (
     <div ref={dropdown}>
       <StyledHeaderButton
-        bgColor={theme.palette.primary}
+        bgColor={theme.palette.bg}
         hoverColor={theme.palette.secondary}
         roundness={theme.roundness}
         id={id}
@@ -91,7 +91,7 @@ const Dropdown = ({
       {open && (
         <StyledDropdown
           color={theme.palette.text}
-          bgColor={theme.palette.primary}
+          bgColor={theme.palette.bg}
           hoverColor={theme.palette.secondary}
           roundness={theme.roundness}
           style={{ width: `${width}px`, left: `${right}px` }}

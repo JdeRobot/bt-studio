@@ -1,9 +1,9 @@
 import React from "react";
-import { useBtTheme } from "Contexts/BtThemeContext";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 import {
   StyledSetting,
   StyledSettingTitle,
-} from "Styles/Modal/Settings/Settings.styles";
+} from "BtStyles/Modal/Settings/Settings.styles";
 
 const Setting = ({ title, children }: { title: string; children: any }) => {
   const theme = useBtTheme();

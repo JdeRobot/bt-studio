@@ -10,5 +10,6 @@ interface StyledBTCanvasProps {
 export const StyledBTCanvas = styled(CanvasWidget)<StyledBTCanvasProps>`
   height: 100%;
   width: 100%;
+  border-radius: 20px;
   background-color: ${(p) => p.bgColor ?? primaryColor};
 `;

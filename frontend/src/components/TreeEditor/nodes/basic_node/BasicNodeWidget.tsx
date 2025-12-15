@@ -11,8 +11,8 @@ import {
   StyledNodeSection,
   StyledNodeTagPorts,
   StyledNodeTitle,
-} from "Styles/TreeEditor/BTNode.styles";
-import { useBtTheme } from "Contexts/BtThemeContext";
+} from "BtStyles/TreeEditor/BTNode.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 // The node widget controls the visualization of the custom node
 export const BasicNodeWidget = ({

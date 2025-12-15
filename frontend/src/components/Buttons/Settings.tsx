@@ -1,9 +1,9 @@
 import React from "react";
-import { StyledHeaderButton } from "../../styles/Header/HeaderMenu.styles";
-import { useBtTheme } from "../../contexts/BtThemeContext";
-import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 import { useState } from "react";
 import SettingsModal from "../settings_popup/SettingsModal";
+import { SettingsIcon } from "BtIcons";
 
 const SettingsButton = ({ project }: { project: string }) => {
   const theme = useBtTheme();
@@ -26,14 +26,14 @@ const SettingsButton = ({ project }: { project: string }) => {
         currentProjectname={project}
       />
       <StyledHeaderButton
-        bgColor={theme.palette.primary}
+        bgColor={theme.palette.bg}
         hoverColor={theme.palette.secondary}
         roundness={theme.roundness}
         id="open-settings-manager"
         onClick={onOpenSettingsModal}
         title="Settings"
       >
-        <SettingsRoundedIcon htmlColor={theme.palette.text} />
+        <SettingsIcon htmlColor={theme.palette.text} />
       </StyledHeaderButton>
     </>
   );

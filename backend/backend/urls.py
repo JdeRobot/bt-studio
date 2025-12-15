@@ -16,12 +16,12 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.shortcuts import redirect
 from django.urls import path, include
+from django.shortcuts import redirect
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("bt_studio/", include("backend.tree_api.urls")),
-    path("frontend/", include("frontend.urls")),
-    path("", lambda request: redirect("frontend/", permanent=True)),
+    path("projects/", include("frontend.urls")),
+    path("", lambda request: redirect("/projects", permanent=True)),
 ]

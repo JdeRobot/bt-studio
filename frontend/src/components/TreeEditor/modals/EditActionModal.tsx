@@ -17,11 +17,27 @@ import { ReactComponent as DeleteIcon } from "../img/delete.svg";
 import { ReactComponent as CancelIcon } from "../img/cancel.svg";
 import { ReactComponent as AcceptIcon } from "../img/accept.svg";
 
-import "./EditActionModal.css";
-import { Modal, ModalTitlebar } from "jderobot-ide-interface";
+import {
+  contrastSelector,
+  Modal,
+  ModalRow,
+  ModalTitlebar,
+} from "jderobot-ide-interface";
 import { BasicNodeModel } from "../nodes/basic_node/BasicNodeModel";
 import { OutputPortModel } from "../nodes/basic_node/ports/output_port/OutputPortModel";
 import { InputPortModel } from "../nodes/basic_node/ports/input_port/InputPortModel";
+import { useBtTheme } from "BtContexts/BtThemeContext";
+import {
+  StyledBTModelAdd,
+  StyledBTModelContainer,
+  StyledBTModelInput,
+  StyledBTModelInputContainer,
+  StyledBTModelIO,
+  StyledBTModelIODelete,
+  StyledBTModelIOEntry,
+  StyledBTModelName,
+} from "BtStyles/TreeEditor/BTModals.styles";
+import { rgbToHex } from "@mui/material";
 
 const initialEditActionModalData = {
   newInputName: "",
@@ -43,6 +59,8 @@ const EditActionModal = ({
   model: DiagramModel;
   engine: DiagramEngine;
 }) => {
+  const theme = useBtTheme();
+
   const focusInputRef = useRef(null);
   const [color, setColor] = useState<IColor | undefined>(undefined);
   const [inputName, setInputName] = React.useState(false);
@@ -253,6 +271,27 @@ const EditActionModal = ({
     reRender();
   };
 
+  const btTheme = theme.btEditor;
+  const bg = currentActionNode.getColor();
+
+  const cancelColor = contrastSelector(
+    btTheme.lightText,
+    btTheme.darkText,
+    btTheme.failure,
+  );
+
+  const addColor = contrastSelector(
+    btTheme.lightText,
+    btTheme.darkText,
+    btTheme.success,
+  );
+
+  const text = contrastSelector(
+    btTheme.lightText,
+    btTheme.darkText,
+    rgbToHex(currentActionNode.getColor()),
+  );
+
   return (
     <Modal id="node-editor-modal" isOpen={isOpen} onClose={onClose}>
       <ModalTitlebar
@@ -263,304 +302,188 @@ const EditActionModal = ({
           onClose();
         }}
       />
-      <div className="bt-node-editor-row">
-        {currentActionNode && (
-          <div
-            className="bt-node-editor"
-            style={{ backgroundColor: currentActionNode.getColor() }}
-          >
-            <label
-              className="bt-node-editor-name"
-              style={{
-                color: isBackgroundDark()
-                  ? "var(--bt-light-text)"
-                  : "var(--bt-dark-text)",
-              }}
-            >
-              {currentActionNode.getName()}
-            </label>
-            <div className="bt-node-editor-io">
-              <div className="bt-node-editor-inputs">
-                {Object.entries(currentActionNode.getPorts()).map(
-                  (port, index) => {
-                    if (port[1] instanceof InputPortModel) {
-                      return (
-                        <div
-                          key={index}
-                          className="bt-node-editor-input bt-node-editor-io-entry"
-                        >
-                          <label
-                            id={port[0]}
-                            className="bt-node-editor-io-name"
-                            onWheel={horizontalScrolling}
-                            style={{
-                              color: isBackgroundDark()
-                                ? "var(--bt-light-text)"
-                                : "var(--bt-dark-text)",
-                            }}
-                          >
-                            {port[0]}
-                          </label>
-                          <button
-                            className={
-                              "bt-node-editor-io-delete bt-node-editor-hidden"
-                            }
-                            style={{
-                              color: isBackgroundDark()
-                                ? "var(--bt-light-text)"
-                                : "var(--bt-dark-text)",
-                            }}
-                            title="Delete"
-                            onClick={() => {
-                              removeInput(port[1] as InputPortModel);
-                            }}
-                          >
-                            <DeleteIcon
-                              className="bt-icon"
-                              fill={"var(--icon)"}
-                              style={{
-                                filter: isBackgroundDark()
-                                  ? "invert(0)"
-                                  : "invert(1)",
-                              }}
-                            />
-                          </button>
-                        </div>
-                      );
-                    }
-                    return <></>;
-                  },
-                )}
-                {inputName ? (
-                  <div className="bt-node-editor-io-name-entry-container">
-                    <input
-                      ref={focusInputRef}
-                      type="text"
-                      id="node-editor-io-name-entry"
-                      name="newInputName"
-                      className="bt-node-editor-io-name-entry"
-                      autoComplete="off"
-                      onChange={handleInputChange}
-                      required
-                      style={{
-                        color: isBackgroundDark()
-                          ? "var(--bt-light-text)"
-                          : "var(--bt-dark-text)",
-                      }}
-                    />
-                    <button
-                      className={"bt-node-editor-io-delete"}
-                      style={{
-                        color: isBackgroundDark()
-                          ? "var(--bt-light-text)"
-                          : "var(--bt-dark-text)",
-                      }}
-                      title="Cancel"
-                      onClick={() => cancelCreation()}
-                    >
-                      <CancelIcon
-                        className="bt-icon"
-                        fill={"var(--icon)"}
-                        style={{
-                          filter: isBackgroundDark()
-                            ? "invert(0)"
-                            : "invert(1)",
-                        }}
-                      />
-                    </button>
-                    {allowCreation && (
-                      <button
-                        className={"bt-node-editor-io-accept"}
-                        style={{
-                          color: isBackgroundDark()
-                            ? "var(--bt-light-text)"
-                            : "var(--bt-dark-text)",
-                        }}
-                        title="Create"
-                        onClick={() => addInput()}
+      <ModalRow type="all">
+        <StyledBTModelContainer
+          bg={currentActionNode.getColor()}
+          borderColor={btTheme.border}
+          roundness={btTheme.roundness}
+          lightText={btTheme.lightText}
+          darkText={btTheme.darkText}
+        >
+          <StyledBTModelName>{currentActionNode.getName()}</StyledBTModelName>
+          <StyledBTModelIO>
+            <div>
+              {Object.entries(currentActionNode.getPorts()).map(
+                (port, index) => {
+                  if (port[1] instanceof InputPortModel) {
+                    return (
+                      <StyledBTModelIOEntry
+                        bg={bg}
+                        roundness={btTheme.roundness}
+                        type="input"
+                        key={index}
                       >
-                        <AcceptIcon
-                          className="bt-icon"
-                          fill={"var(--icon)"}
-                          style={{
-                            filter: isBackgroundDark()
-                              ? "invert(0)"
-                              : "invert(1)",
+                        <label id={port[0]} onWheel={horizontalScrolling}>
+                          {port[0]}
+                        </label>
+                        <StyledBTModelIODelete
+                          roundness={btTheme.roundness}
+                          bg={btTheme.failure}
+                          title="Delete"
+                          onClick={() => {
+                            removeInput(port[1] as InputPortModel);
                           }}
-                        />
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  <button
-                    className="bt-node-editor-button"
-                    style={{
-                      color: isBackgroundDark()
-                        ? "var(--bt-light-text)"
-                        : "var(--bt-dark-text)",
-                    }}
-                    onClick={() => {
-                      openInputCreation();
-                    }}
-                    title="Add input"
-                  >
-                    <AddIcon
-                      className="bt-icon bt-action-icon"
-                      fill={"var(--icon)"}
-                      style={{
-                        filter: isBackgroundDark() ? "invert(0)" : "invert(1)",
-                      }}
-                    />
-                  </button>
-                )}
-              </div>
-              <div className="bt-node-editor-outputs">
-                {Object.entries(currentActionNode.getPorts()).map(
-                  (port, index) => {
-                    if (port[1] instanceof OutputPortModel) {
-                      return (
-                        <div
-                          key={index}
-                          className="bt-node-editor-output bt-node-editor-io-entry"
                         >
-                          <button
-                            className={
-                              "bt-node-editor-io-delete bt-node-editor-hidden"
-                            }
-                            style={{
-                              color: isBackgroundDark()
-                                ? "var(--bt-light-text)"
-                                : "var(--bt-dark-text)",
-                            }}
-                            title="Delete"
-                            onClick={() => {
-                              removeOutput(port[1] as OutputPortModel);
-                            }}
-                          >
-                            <DeleteIcon
-                              className="bt-icon"
-                              fill={"var(--icon)"}
-                              style={{
-                                filter: isBackgroundDark()
-                                  ? "invert(0)"
-                                  : "invert(1)",
-                              }}
-                            />
-                          </button>
-                          <label
-                            className="bt-node-editor-io-name"
-                            onWheel={horizontalScrolling}
-                            style={{
-                              color: isBackgroundDark()
-                                ? "var(--bt-light-text)"
-                                : "var(--bt-dark-text)",
-                            }}
-                          >
-                            {port[0]}
-                          </label>
-                        </div>
-                      );
-                    }
-                    return <></>;
-                  },
-                )}
-                {outputName ? (
-                  <div className="bt-node-editor-io-name-entry-container">
-                    <input
-                      ref={focusInputRef}
-                      type="text"
-                      id="node-editor-io-name-entry"
-                      name="newOutputName"
-                      className="bt-node-editor-io-name-entry"
-                      autoComplete="off"
-                      onChange={handleInputChange}
-                      required
-                      style={{
-                        color: isBackgroundDark()
-                          ? "var(--bt-light-text)"
-                          : "var(--bt-dark-text)",
-                      }}
-                    />
-                    <button
-                      className={"bt-node-editor-io-delete"}
-                      style={{
-                        color: isBackgroundDark()
-                          ? "var(--bt-light-text)"
-                          : "var(--bt-dark-text)",
-                      }}
-                      title="Cancel"
-                      onClick={() => cancelCreation()}
-                    >
-                      <CancelIcon
-                        className="bt-icon"
-                        fill={"var(--icon)"}
-                        style={{
-                          filter: isBackgroundDark()
-                            ? "invert(0)"
-                            : "invert(1)",
-                        }}
-                      />
-                    </button>
-                    {allowCreation && (
-                      <button
-                        className={"bt-node-editor-io-accept"}
-                        style={{
-                          color: isBackgroundDark()
-                            ? "var(--bt-light-text)"
-                            : "var(--bt-dark-text)",
-                        }}
-                        title="Create"
-                        onClick={() => addOutput()}
-                      >
-                        <AcceptIcon
-                          className="bt-icon"
-                          fill={"var(--icon)"}
-                          style={{
-                            filter: isBackgroundDark()
-                              ? "invert(0)"
-                              : "invert(1)",
-                          }}
-                        />
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  <button
-                    className="bt-node-editor-button"
-                    style={{
-                      color: isBackgroundDark()
-                        ? "var(--bt-light-text)"
-                        : "var(--bt-dark-text)",
-                    }}
-                    onClick={() => {
-                      openOutputCreation();
-                    }}
-                    title="Add output"
+                          <DeleteIcon fill={cancelColor} />
+                        </StyledBTModelIODelete>
+                      </StyledBTModelIOEntry>
+                    );
+                  }
+                  return <></>;
+                },
+              )}
+              {inputName ? (
+                <StyledBTModelInputContainer roundness={btTheme.roundness}>
+                  <StyledBTModelInput
+                    ref={focusInputRef}
+                    type="text"
+                    id="node-editor-io-name-entry"
+                    name="newInputName"
+                    autoComplete="off"
+                    onChange={handleInputChange}
+                    required
+                    roundness={btTheme.roundness}
+                    bg={theme.palette.bg}
+                    color={theme.palette.text}
+                  />
+                  <StyledBTModelIODelete
+                    roundness={btTheme.roundness}
+                    bg={btTheme.failure}
+                    visible
+                    title="Cancel"
+                    onClick={() => cancelCreation()}
                   >
-                    <AddIcon
-                      className="bt-icon bt-action-icon"
-                      fill={"var(--icon)"}
-                      style={{
-                        filter: isBackgroundDark() ? "invert(0)" : "invert(1)",
-                      }}
-                    />
-                  </button>
-                )}
-              </div>
+                    <CancelIcon fill={cancelColor} />
+                  </StyledBTModelIODelete>
+                  {allowCreation && (
+                    <StyledBTModelIODelete
+                      roundness={btTheme.roundness}
+                      bg={btTheme.success}
+                      visible
+                      title="Create"
+                      onClick={() => addInput()}
+                    >
+                      <AcceptIcon fill={addColor} />
+                    </StyledBTModelIODelete>
+                  )}
+                </StyledBTModelInputContainer>
+              ) : (
+                <AddButton onClick={openInputCreation} color={text} bg={bg} />
+              )}
             </div>
-          </div>
-        )}
-      </div>
+            <div>
+              {Object.entries(currentActionNode.getPorts()).map(
+                (port, index) => {
+                  if (port[1] instanceof OutputPortModel) {
+                    return (
+                      <StyledBTModelIOEntry
+                        bg={bg}
+                        roundness={theme.btEditor.roundness}
+                        type="output"
+                        key={index}
+                      >
+                        <StyledBTModelIODelete
+                          roundness={btTheme.roundness}
+                          bg={btTheme.failure}
+                          title="Delete"
+                          onClick={() => {
+                            removeOutput(port[1] as OutputPortModel);
+                          }}
+                        >
+                          <DeleteIcon fill={cancelColor} />
+                        </StyledBTModelIODelete>
+                        <label id={port[0]} onWheel={horizontalScrolling}>
+                          {port[0]}
+                        </label>
+                      </StyledBTModelIOEntry>
+                    );
+                  }
+                  return <></>;
+                },
+              )}
+              {outputName ? (
+                <StyledBTModelInputContainer roundness={btTheme.roundness}>
+                  <StyledBTModelInput
+                    ref={focusInputRef}
+                    type="text"
+                    id="node-editor-io-name-entry"
+                    name="newOutputName"
+                    autoComplete="off"
+                    onChange={handleInputChange}
+                    required
+                    roundness={btTheme.roundness}
+                    bg={theme.palette.bg}
+                    color={theme.palette.text}
+                  />
+                  <StyledBTModelIODelete
+                    roundness={btTheme.roundness}
+                    bg={btTheme.failure}
+                    visible
+                    title="Cancel"
+                    onClick={() => cancelCreation()}
+                  >
+                    <CancelIcon fill={cancelColor} />
+                  </StyledBTModelIODelete>
+                  {allowCreation && (
+                    <StyledBTModelIODelete
+                      roundness={btTheme.roundness}
+                      bg={btTheme.success}
+                      visible
+                      title="Create"
+                      onClick={() => addOutput()}
+                    >
+                      <AcceptIcon fill={addColor} />
+                    </StyledBTModelIODelete>
+                  )}
+                </StyledBTModelInputContainer>
+              ) : (
+                <AddButton onClick={openOutputCreation} color={text} bg={bg} />
+              )}
+            </div>
+          </StyledBTModelIO>
+        </StyledBTModelContainer>
+      </ModalRow>
       {color && (
-        <div className="bt-node-editor-row">
-          <label className="bt-node-editor-title" htmlFor="favcolor">
-            Color:
-          </label>
+        <ModalRow type="all">
+          <StyledBTModelName>Color:</StyledBTModelName>
           <Saturation height={50} color={color} onChange={setColor} />
           <Hue color={color} onChange={setColor} />
-        </div>
+        </ModalRow>
       )}
     </Modal>
+  );
+};
+
+const AddButton = ({
+  onClick,
+  color,
+  bg,
+}: {
+  onClick: () => void;
+  color?: string;
+  bg: string;
+}) => {
+  const theme = useBtTheme();
+
+  return (
+    <StyledBTModelAdd
+      roundness={theme.btEditor.roundness}
+      bg={bg}
+      onClick={onClick}
+      title="Add input"
+    >
+      <AddIcon fill={color ?? theme.btEditor.lightText} />
+    </StyledBTModelAdd>
   );
 };
 

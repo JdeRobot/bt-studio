@@ -1,0 +1,50 @@
+import React, { useEffect, useState } from "react";
+import { listProjects } from "BtApi/TreeWrapper";
+import { useBtTheme } from "BtContexts/BtThemeContext";
+import { StyledSectionName } from "BtStyles/ProjectMenu/ProjectMenu.styles";
+import ProjectEntry from "./ProjectEntry";
+import { subscribe, unsubscribe } from "BtComponents/helper/TreeEditorHelper";
+
+const Menu = ({ userFilter }: { userFilter?: string }) => {
+  const theme = useBtTheme();
+
+  const [projects, setProjects] = useState([]);
+
+  const getProjects = async () => {
+    try {
+      const response = await listProjects();
+      setProjects(response);
+    } catch (e) {
+      setProjects([]);
+      if (e instanceof Error) {
+        console.error("Error while fetching project list: " + e.message);
+        // error("Error while fetching project list: " + e.message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getProjects();
+
+    subscribe("updateProjects", getProjects);
+
+    return () => {
+      unsubscribe("updateProjects", () => {});
+    };
+  }, []);
+
+  return (
+    <>
+      <StyledSectionName color={theme.palette.text}>
+        My projects
+      </StyledSectionName>
+      <ProjectEntry projects={projects} userFilter={userFilter} />
+    </>
+  );
+};
+
+export const LoadingMenu = () => {
+  return <h1>Loading ...</h1>;
+};
+
+export default Menu;

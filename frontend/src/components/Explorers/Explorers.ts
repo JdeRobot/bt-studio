@@ -9,7 +9,7 @@ import {
   renameFolder,
   deleteFolder,
   createAction,
-} from "../../api_helper/TreeWrapper";
+} from "BtApi/TreeWrapper";
 import { CreateAction, newFileData } from "../CreateAction";
 import { publish } from "../helper/TreeEditorHelper";
 

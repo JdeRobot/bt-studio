@@ -6,10 +6,6 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "beautiful-react-diagrams/styles.css";
 
-import { OptionsProvider } from "./components/options/Options";
-import { ErrorProvider } from "jderobot-ide-interface";
-import { BtThemeProvider } from "./contexts/BtThemeContext";
-
 // Load Google Font
 WebFont.load({
   google: {
@@ -25,13 +21,7 @@ WebFont.load({
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <BtThemeProvider>
-      <OptionsProvider>
-        <ErrorProvider>
-          <App />
-        </ErrorProvider>
-      </OptionsProvider>
-    </BtThemeProvider>
+    <App />
   </React.StrictMode>,
 );
 

@@ -14,14 +14,14 @@ import {
   getUserSubtreeLibrary,
   importLibrarySubtree,
   importUserLibrarySubtree,
-} from "../../../api_helper/TreeWrapper";
+} from "BtApi/TreeWrapper";
 import { configureEngine, publish } from "../../helper/TreeEditorHelper";
 import createEngine, { DiagramModel } from "@projectstorm/react-diagrams";
 import "./ImportSubtreeModal.css";
 import {
   StyledLibraryCanvas,
   StyledLibraryEntry,
-} from "Styles/Modal/SubtreeLibrary.styles";
+} from "BtStyles/Modal/SubtreeLibrary.styles";
 
 const initialData = {
   subtreeName: "",

@@ -1,7 +1,7 @@
 import React from "react";
 import { ThemeProvider } from "jderobot-ide-interface";
 import { createContext, ReactNode, useContext, useState } from "react";
-import { BtTheme } from "../types";
+import { BtTheme } from "BtTypes/index";
 
 interface BtThemeProviderProps {
   theme?: BtTheme;
@@ -18,15 +18,22 @@ const darkTheme: BtTheme = {
     failure: "#b11111",
     invalid: "#494949",
     roundness: 10,
+    lightText: "#ededf2",
+    darkText: "#000000",
+    blackboard: " #5ba498",
+    tag: "#a45b67",
   },
+  hoverStyle: "lighten",
   palette: {
     text: "#ededf2",
     darkText: "#000000",
     placeholderText: "#a6a6bf",
     success: "#29ac29",
     warning: "#f9e86d",
-    error: "#802626",
-    background: "#16161d",
+    error: "#ff2c2cff",
+    bgDark: "#0a0f0fff",
+    bg: "#141e1fff",
+    bgLight: "#1f2d2eff",
     primary: "#134f53",
     secondary: "#1d777c",
     scrollbar: "#6f6f90",
@@ -67,17 +74,24 @@ const lightTheme: BtTheme = {
     failure: "#b11111",
     invalid: "#494949",
     roundness: 10,
+    lightText: "#ededf2",
+    darkText: "#000000",
+    blackboard: " #5ba498",
+    tag: "#a45b67",
   },
+  hoverStyle: "darken",
   palette: {
     text: "#000000",
     darkText: "#ededf2",
     placeholderText: "#a6a6bf",
     success: "#29ac29",
     warning: "#f9e86d",
-    error: "#802626",
-    background: "#cacada",
-    primary: "#39a3aaff",
-    secondary: "#1d777c",
+    error: "#a81b1bff",
+    bgDark: "#c2d5d6ff",
+    bg: "#d1dfe0ff",
+    bgLight: "#e0eaebff",
+    primary: "#40b7bfff",
+    secondary: "#8cd5d9ff",
     scrollbar: "#6f6f90",
     border: {
       warning: "#ffe100",

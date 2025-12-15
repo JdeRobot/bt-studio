@@ -2,11 +2,9 @@ import React from "react";
 import { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import { CommsManager, states } from "jderobot-commsmanager";
 
-import { ReactComponent as LogoIcon } from "../icons/logo_jderobot_monocolor.svg";
-import { ReactComponent as LogoUniboticsIcon } from "../icons/logo_unibotics_monocolor.svg";
-import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
+import { ReactComponent as LogoIcon } from "BtComponents/icons/logo_jderobot_monocolor.svg";
+import { ReactComponent as LogoUniboticsIcon } from "BtComponents/icons/logo_unibotics_monocolor.svg";
 import {
   DocumentationButton,
   DownloadButton,
@@ -22,44 +20,42 @@ import {
   StyledHeaderButtonContainer,
   StyledHeaderText,
   StyledProject,
-} from "Styles/Header/HeaderMenu.styles";
-import { useBtTheme } from "Contexts/BtThemeContext";
+} from "BtStyles/Header/HeaderMenu.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
+import { getProjectInfo } from "BtApi/TreeWrapper";
 
 const HeaderMenu = ({
-  currentProjectname,
-  setCurrentProjectname,
-  manager,
-  isUnibotics,
+  projectId,
+  connectManager,
   setLayout,
 }: {
-  currentProjectname: string;
-  setCurrentProjectname: Function;
-  manager: CommsManager | null;
-  isUnibotics: boolean;
+  projectId: string;
+  connectManager: (
+    desiredState?: string,
+    callback?: () => void,
+  ) => Promise<void>;
   setLayout: Function;
 }) => {
   const theme = useBtTheme();
+  const [name, setName] = useState<string | undefined>(undefined);
+  const isUnibotics = window.location.href.includes("unibotics");
 
-  // App state
-  const [appRunning, setAppRunning] = useState(false);
-
-  const updateState = (e: any) => {
-    setAppRunning(e.detail.state === states.RUNNING);
+  const getInfo = async (id: string) => {
+    const info = await getProjectInfo(id);
+    setName(info.name);
   };
 
   useEffect(() => {
-    subscribe("CommsManagerStateChange", updateState);
-
-    return () => {
-      unsubscribe("CommsManagerStateChange", () => {});
-    };
+    if (projectId) {
+      getInfo(projectId);
+    }
   }, []);
 
   return (
     <AppBar position="static">
       <Toolbar
         style={{
-          backgroundColor: theme.palette.primary,
+          backgroundColor: theme.palette.bg,
           height: "50px",
           minHeight: "50px",
         }}
@@ -81,30 +77,20 @@ const HeaderMenu = ({
           {isUnibotics ? "Projects" : "BT Studio IDE"}
         </StyledHeaderText>
         <StyledProject color={theme.palette.text}>
-          <div>{currentProjectname}</div>
+          <div>{name}</div>
         </StyledProject>
         <StyledHeaderButtonContainer>
-          <HomeButton
-            project={currentProjectname}
-            manager={null}
-            setProject={setCurrentProjectname}
-            setAppRunning={setAppRunning}
-          />
+          <HomeButton />
           <ThemeButton />
-          <DownloadButton project={currentProjectname} />
+          <DownloadButton project={projectId} />
           <LayoutButton setLayout={setLayout} />
-          <SettingsButton project={currentProjectname} />
+          <SettingsButton project={projectId} />
           <PlayPauseButton
-            project={currentProjectname}
-            manager={manager}
-            appRunning={appRunning}
-            setAppRunning={setAppRunning}
+            project={projectId}
+            connectManager={connectManager}
           />
-          <ResetButton manager={manager} setAppRunning={setAppRunning} />
-          <TerminateUniverseButton
-            manager={manager}
-            setAppRunning={setAppRunning}
-          />
+          <ResetButton />
+          <TerminateUniverseButton />
           <DocumentationButton />
         </StyledHeaderButtonContainer>
       </Toolbar>

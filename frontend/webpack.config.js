@@ -4,13 +4,15 @@ const path = require("path");
 
 const aliases = () => {
   const aliasConfig = {
-    Api: path.resolve(__dirname, "src/api_helper"),
-    Components: path.resolve(__dirname, "src/components"),
-    Contexts: path.resolve(__dirname, "src/contexts"),
-    Hooks: path.resolve(__dirname, "src/hooks"),
-    Styles: path.resolve(__dirname, "src/styles"),
-    Types: path.resolve(__dirname, "src/types"),
-    Templates: path.resolve(__dirname, "src/templates"),
+    BtApi: path.resolve(__dirname, "src/api_helper"),
+    BtComponents: path.resolve(__dirname, "src/components"),
+    BtContexts: path.resolve(__dirname, "src/contexts"),
+    BtHooks: path.resolve(__dirname, "src/hooks"),
+    BtStyles: path.resolve(__dirname, "src/styles"),
+    BtTypes: path.resolve(__dirname, "src/types"),
+    BtTemplates: path.resolve(__dirname, "src/templates"),
+    BtRoutes: path.resolve(__dirname, "src/routes"),
+    BtIcons: path.resolve(__dirname, "src/icons"),
   };
 
   return aliasConfig;

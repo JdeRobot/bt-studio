@@ -42,8 +42,11 @@ class SetSpeed(py_trees.behaviour.Behaviour):
 
         # Publish the speed msg
         msg = geometry_msgs.msg.Twist()
-        msg.linear.x = float(tree_tools.get_port_content(self.ports["lin_speed"]))
-        msg.angular.z = float(tree_tools.get_port_content(self.ports["ang_speed"]))
+        try:
+            msg.linear.x = float(tree_tools.get_port_content(self.ports["lin_speed"]))
+            msg.angular.z = float(tree_tools.get_port_content(self.ports["ang_speed"]))
+        except:
+            return py_trees.common.Status.SUCCESS
 
         self.publisher.publish(msg)
 

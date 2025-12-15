@@ -1,112 +1,173 @@
 import os
-import shutil
 import json
 import base64
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
 from django.conf import settings
-from .serializers import FileContentSerializer
+from .serializers import FileContentSerializer, ProjectSerializer
 from .project_view import EntryEncoder
-from .models import Universe
-from .file_access import FAL
+from .models import Universe, Project
+from .file_access import FAL_BT
 from .error_handler import error_wrapper
 from . import json_translator
 from . import app_generator
+from slugify import slugify
+from django.utils import timezone
+from backend.tree_api.models import get_user_projects_size
 
 # PROJECT MANAGEMENT
 
 
-fal = FAL(settings.BASE_DIR)
+fal = FAL_BT(settings.BASE_DIR)
 
 
-@error_wrapper("POST", ["project_name"])
+@error_wrapper(fal, "GET")
+def get_user_size(request):
+    user = fal.user
+    return Response(
+        {
+            "size": {"curr": user.size, "max": user.max_size},
+            "projects": {"curr": user.projects, "max": user.max_projects},
+        }
+    )
+
+
+@error_wrapper(fal, "POST", ["project_name"])
 def create_project(request):
     project_name = request.data.get("project_name")
+    project_id = slugify(project_name)
 
-    project_path = fal.project_path(project_name)
-    action_path = fal.actions_path(project_name)
-    universes_path = fal.universes_path(project_name)
-    tree_path = fal.trees_path(project_name)
-    subtree_path = fal.subtrees_path(project_name)
+    try:
+        Project.objects.create(
+            id=slugify(project_name),
+            name=project_name,
+            creator=fal.user,
+            last_modified=timezone.now(),
+        )
 
-    config_path = fal.path_join(project_path, "config.json")
-    base_tree_path = fal.path_join(tree_path, "main.json")
+        project_path = fal.project_path(project_id)
+        action_path = fal.actions_path(project_id)
+        universes_path = fal.universes_path(project_id)
+        tree_path = fal.trees_path(project_id)
+        subtree_path = fal.subtrees_path(project_id)
 
-    # Default cfg values
-    default_cfg = {
-        "name": project_name,
-        "config": {
-            "editorShowAccentColors": True,
-            "theme": "dark",
-            "btOrder": "bottom-to-top",
-        },
-    }
+        config_path = fal.path_join(project_path, "config.json")
+        base_tree_path = fal.path_join(tree_path, "main.json")
 
-    # Create folders
-    fal.mkdir(project_path)
-    fal.mkdir(action_path)
-    fal.mkdir(universes_path)
-    fal.mkdir(tree_path)
-    fal.mkdir(subtree_path)
+        # Default cfg values
+        default_cfg = {
+            "name": project_name,
+            "config": {
+                "editorShowAccentColors": True,
+                "theme": "dark",
+                "btOrder": "bottom-to-top",
+            },
+        }
 
-    # Create default config
-    config_formated = json.dumps(default_cfg, indent=4)
-    fal.create(config_path, config_formated)
+        # Create folders
+        fal.mkdir(project_path)
+        fal.mkdir(action_path)
+        fal.mkdir(universes_path)
+        fal.mkdir(tree_path)
+        fal.mkdir(subtree_path)
 
-    # Copy default graph from templates
-    graph_data = fal.get_base_tree_template()
-    fal.create(base_tree_path, graph_data)
+        # Create default config
+        config_formated = json.dumps(default_cfg, indent=4)
+        fal.create(config_path, config_formated)
+
+        # Copy default graph from templates
+        graph_data = fal.get_base_tree_template()
+        fal.create(base_tree_path, graph_data)
+    except Exception as e:
+        project_path = fal.project_path(project_id)
+        if fal.exists(project_path) >= 0:
+            fal.removedir(project_path)
+        Project.objects.get(id=project_id, creator=fal.user).delete()
+        raise e
+
+    fal.user.projects += 1
+    fal.user.save()
     return Response(
         {"success": True, "message": "Project created successfully"},
         status=status.HTTP_201_CREATED,
     )
 
 
-@error_wrapper("POST", ["project_name"])
+@error_wrapper(fal, "POST", ["project_id"])
 def delete_project(request):
-    project_name = request.data.get("project_name")
-    project_path = fal.project_path(project_name)
+    project_id = request.data.get("project_id")
+    user = fal.user
+
+    project = Project.objects.get(id=project_id, creator=user)
+    project_path = fal.project_path(project.id)
     fal.removedir(project_path)
+    project.delete()
+
+    user.projects -= 1
+    user.save()
     return Response({"success": True}, status=200)
 
 
-@error_wrapper("GET")
+@error_wrapper(fal, "GET", ["project_id"])
+def get_project_info(request):
+    project_id = request.GET.get("project_id")
+
+    user = fal.user
+    project = Project.objects.get(id=project_id, creator=user)
+    data = ProjectSerializer(project).data
+    if project.creator == user:
+        data["creator"] = "You"
+    return Response(data, status=200)
+
+
+@error_wrapper(fal, "GET")
 def get_project_list(request):
-    folder_path = fal.base_path()
-    project_list = fal.listdirs(folder_path)
+    project_list = []
+
+    user = fal.user
+    if user.projects < 0:
+        user.update_size(fal, 0, project_callback=get_user_projects_size)
+
+    projects = Project.objects.filter(creator=user)
+
+    for project in projects:
+        data = ProjectSerializer(project).data
+        if project.creator == user:
+            data["creator"] = "You"
+        project_list.append(data)
     return Response({"project_list": project_list})
 
 
-@error_wrapper("GET", ["project_name"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_base_tree(request):
-    project_name = request.GET.get("project_name")
+    project_id = request.GET.get("project_id")
 
     # Generate the paths
-    trees_path = fal.trees_path(project_name)
+    trees_path = fal.trees_path(project_id)
     graph_path = fal.path_join(trees_path, "main.json")
 
     graph_data = json.loads(fal.read(graph_path))
     return JsonResponse({"success": True, "graph_json": graph_data})
 
 
-@error_wrapper("GET", ["project_name"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_project_configuration(request):
-    project_name = request.GET.get("project_name")
+    project_id = request.GET.get("project_id")
 
-    project_path = fal.project_path(project_name)
+    project_path = fal.project_path(project_id)
     config_path = fal.path_join(project_path, "config.json")
     content = fal.read(config_path)
     return Response(content)
 
 
-@error_wrapper("GET", ["project_name", "bt_order"])
+@error_wrapper(fal, "GET", ["project_id", "bt_order"])
 def get_tree_structure(request):
-    project_name = request.GET.get("project_name")
+    project_id = request.GET.get("project_id")
     bt_order = request.GET.get("bt_order")
 
     # Generate the paths
-    trees_path = fal.trees_path(project_name)
+    trees_path = fal.trees_path(project_id)
     graph_path = fal.path_join(trees_path, "main.json")
 
     # Check if the project exists
@@ -116,14 +177,14 @@ def get_tree_structure(request):
     return JsonResponse({"success": True, "tree_structure": tree_structure})
 
 
-@error_wrapper("GET", ["project_name", "subtree_name", "bt_order"])
+@error_wrapper(fal, "GET", ["project_id", "subtree_name", "bt_order"])
 def get_subtree_structure(request):
-    project_name = request.GET.get("project_name")
+    project_id = request.GET.get("project_id")
     subtree_name = request.GET.get("subtree_name")
     bt_order = request.GET.get("bt_order")
 
     # Generate the paths
-    subtrees_path = fal.subtrees_path(project_name)
+    subtrees_path = fal.subtrees_path(project_id)
     graph_path = fal.path_join(subtrees_path, subtree_name + ".json")
 
     # Check if the project exists
@@ -133,12 +194,12 @@ def get_subtree_structure(request):
     return JsonResponse({"success": True, "tree_structure": tree_structure})
 
 
-@error_wrapper("POST", ["project_name", "settings"])
+@error_wrapper(fal, "POST", ["project_id", "settings"])
 def save_project_configuration(request):
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     content = request.data.get("settings")
 
-    project_path = fal.project_path(project_name)
+    project_path = fal.project_path(project_id)
     config_path = fal.path_join(project_path, "config.json")
 
     if content is None or len(content) == 0:
@@ -154,28 +215,15 @@ def save_project_configuration(request):
 # SUBTREE MANAGEMENT
 
 
-@error_wrapper("POST", ["project_name", "subtree_name"])
+@error_wrapper(fal, "POST", ["project_id", "subtree_name"])
 def create_subtree(request):
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     subtree_name = request.data.get("subtree_name")
 
-    project_actions_path = fal.actions_path(project_name)
-    project_subtree_path = fal.subtrees_path(project_name)
-
-    library_base_path = fal.path_join(settings.BASE_DIR, "library")
-    library_path = fal.path_join(library_base_path, subtree_name)
-    library_actions_path = fal.path_join(library_path, "actions")
+    project_subtree_path = fal.subtrees_path(project_id)
     template_path = fal.path_join(settings.BASE_DIR, "templates")
     project_json_path = fal.path_join(project_subtree_path, f"{subtree_name}.json")
     src_path = template_path
-
-    # Check if the subtree is already implemented on the library
-    if fal.exists(library_path):
-        src_path = library_path
-        if fal.exists(library_actions_path):
-            shutil.copytree(
-                library_actions_path, project_actions_path, dirs_exist_ok=True
-            )
 
     # Create subtree directory if it does not exist
     if not fal.exists(project_subtree_path):
@@ -193,36 +241,36 @@ def create_subtree(request):
     return JsonResponse({"success": True}, status=status.HTTP_201_CREATED)
 
 
-@error_wrapper("GET", ["project_name", "subtree_name"])
+@error_wrapper(fal, "GET", ["project_id", "subtree_name"])
 def get_subtree(request):
-    project_name = request.GET.get("project_name")
+    project_id = request.GET.get("project_id")
     subtree_name = request.GET.get("subtree_name")
 
-    subtrees_path = fal.subtrees_path(project_name)
+    subtrees_path = fal.subtrees_path(project_id)
     subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
 
     subtree = json.loads(fal.read(subtree_path))
     return Response({"subtree": subtree}, status=status.HTTP_200_OK)
 
 
-@error_wrapper("GET", ["project_name", "subtree_name"])
+@error_wrapper(fal, "GET", ["project_id", "subtree_name"])
 def get_subtree_path(request):
-    project_name = request.GET.get("project_name")
+    project_id = request.GET.get("project_id")
     subtree_name = request.GET.get("subtree_name")
 
-    subtrees_path = fal.subtrees_path(project_name)
+    subtrees_path = fal.subtrees_path(project_id)
     subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
-    rel_path = os.path.relpath(subtree_path, fal.code_path(project_name))
+    rel_path = os.path.relpath(subtree_path, fal.code_path(project_id))
     print(rel_path)
 
     return Response({"subtree": rel_path}, status=status.HTTP_200_OK)
 
 
-@error_wrapper("GET", ["project_name"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_subtree_list(request):
-    project_name = request.GET.get("project_name")
+    project_id = request.GET.get("project_id")
 
-    subtrees_path = fal.subtrees_path(project_name)
+    subtrees_path = fal.subtrees_path(project_id)
 
     # List all files in the directory removing the .json extension
     subtree_list = fal.listfiles(subtrees_path)
@@ -233,46 +281,46 @@ def get_subtree_list(request):
 # UNIVERSE MANAGEMENT
 
 
-@error_wrapper("POST", ["project_name", "universe"])
+@error_wrapper(fal, "POST", ["project_id", "universe"])
 def create_universe(request):
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     universe_name = request.data.get("universe")
 
-    universes_path = fal.universes_path(project_name)
+    universes_path = fal.universes_path(project_id)
     universe_path = fal.path_join(universes_path, universe_name)
 
     fal.mkdir(universe_path)
     return Response({"success": True}, status=200)
 
 
-@error_wrapper("POST", ["project_name", "universe_name"])
+@error_wrapper(fal, "POST", ["project_id", "universe_name"])
 def delete_universe(request):
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     universe_name = request.data.get("universe_name")
 
-    universes_path = fal.universes_path(project_name)
+    universes_path = fal.universes_path(project_id)
     universe_path = fal.path_join(universes_path, universe_name)
 
     fal.removedir(universe_path)
     return Response({"success": True}, status=200)
 
 
-@error_wrapper("GET", ["project_name"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_universes_list(request):
-    project_name = request.GET.get("project_name")
+    project_id = request.GET.get("project_id")
 
-    universes_path = fal.universes_path(project_name)
+    universes_path = fal.universes_path(project_id)
 
     universes_list = fal.listdirs(universes_path)
     return Response({"universes_list": universes_list})
 
 
-@error_wrapper("POST", ["project_name", "universe_name"])
+@error_wrapper(fal, "POST", ["project_id", "universe_name"])
 def create_universe_configuration(request):
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     universe_name = request.data.get("universe_name")
 
-    universes_path = fal.universes_path(project_name)
+    universes_path = fal.universes_path(project_id)
     universe_path = fal.path_join(universes_path, universe_name)
     config_path = fal.path_join(universe_path, "config.json")
 
@@ -295,36 +343,37 @@ def create_universe_configuration(request):
     )
 
 
-@error_wrapper("GET", ["project_name", "universe_name"])
+@error_wrapper(fal, "GET", ["project_id", "universe_name"])
 def get_universe_configuration(request):
-    project_name = request.GET.get("project_name")
+    project_id = request.GET.get("project_id")
     universe_name = request.GET.get("universe_name")
 
-    universes_path = fal.universes_path(project_name)
+    universes_path = fal.universes_path(project_id)
     universe_path = fal.path_join(universes_path, universe_name)
     config_path = fal.path_join(universe_path, "config.json")
 
     content = json.loads(fal.read(config_path))
-    return Response({"success": True, "config": content}, status=200)  # Return as JSON
+    # Return as JSON
+    return Response({"success": True, "config": content}, status=200)
 
 
 # FILE MANAGEMENT
 
 
-@error_wrapper("GET", ["project_name"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_file_list(request):
-    project_name = request.GET.get("project_name")
+    project_id = request.GET.get("project_id")
     universe = request.GET.get("universe")
 
     base_group = "Code"
 
     if universe is not None:
-        path = fal.universes_path(project_name)
+        path = fal.universes_path(project_id)
         base_group = "Universes"
         if universe != "":
             path = fal.path_join(path, universe)
     else:
-        path = fal.code_path(project_name)
+        path = fal.code_path(project_id)
 
     file_list = fal.list_formatted(path, base_group)
 
@@ -332,28 +381,28 @@ def get_file_list(request):
     return Response({"file_list": EntryEncoder().encode(file_list)})
 
 
-@error_wrapper("GET", ["project_name"])
+@error_wrapper(fal, "GET", ["project_id"])
 def get_actions_list(request):
-    project_name = request.GET.get("project_name")
+    project_id = request.GET.get("project_id")
 
-    action_path = fal.actions_path(project_name)
+    action_path = fal.actions_path(project_id)
 
     actions_list = fal.listfiles(action_path)
     return Response({"actions_list": actions_list})
 
 
-@error_wrapper("GET", ["project_name", "filename"])
+@error_wrapper(fal, "GET", ["project_id", "filename"])
 def get_file(request):
-    project_name = request.GET.get("project_name", None)
+    project_id = request.GET.get("project_id", None)
     filename = request.GET.get("filename", None)
     universe = request.GET.get("universe", None)
 
     if universe is not None:
-        path = fal.universes_path(project_name)
+        path = fal.universes_path(project_id)
         if universe != "":
             path = fal.path_join(path, universe)
     else:
-        path = fal.code_path(project_name)
+        path = fal.code_path(project_id)
 
     file_path = fal.path_join(path, filename)
     content = fal.read(file_path)
@@ -361,15 +410,15 @@ def get_file(request):
     return Response(serializer.data)
 
 
-@error_wrapper("POST", ["project_name", "filename", "template"])
+@error_wrapper(fal, "POST", ["project_id", "filename", "template"])
 def create_action(request):
     # Get the file info
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     filename = request.data.get("filename")
     template = request.data.get("template")
 
     # Make folder path relative to Django app
-    action_path = fal.actions_path(project_name)
+    action_path = fal.actions_path(project_id)
     file_path = fal.path_join(action_path, filename + ".py")
 
     content = ""
@@ -379,19 +428,19 @@ def create_action(request):
     return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
 
-@error_wrapper("POST", ["project_name", ("location", -1), "file_name"])
+@error_wrapper(fal, "POST", ["project_id", ("location", -1), "file_name"])
 def create_file(request):
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     location = request.data.get("location")
     filename = request.data.get("file_name")
     universe = request.data.get("universe")
 
     if universe is not None:
-        path = fal.universes_path(project_name)
+        path = fal.universes_path(project_id)
         if universe != "":
             path = fal.path_join(path, universe)
     else:
-        path = fal.code_path(project_name)
+        path = fal.code_path(project_id)
 
     create_path = fal.path_join(path, location)
     file_path = fal.path_join(create_path, filename)
@@ -400,19 +449,19 @@ def create_file(request):
     return Response({"success": True})
 
 
-@error_wrapper("POST", ["project_name", ("location", -1), "folder_name"])
+@error_wrapper(fal, "POST", ["project_id", ("location", -1), "folder_name"])
 def create_folder(request):
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     location = request.data.get("location")
     folder_name = request.data.get("folder_name")
     universe = request.data.get("universe")
 
     if universe is not None:
-        path = fal.universes_path(project_name)
+        path = fal.universes_path(project_id)
         if universe != "":
             path = fal.path_join(path, universe)
     else:
-        path = fal.code_path(project_name)
+        path = fal.code_path(project_id)
 
     create_path = fal.path_join(path, location)
     folder_path = fal.path_join(create_path, folder_name)
@@ -421,19 +470,19 @@ def create_folder(request):
     return Response({"success": True})
 
 
-@error_wrapper("POST", ["project_name", "path", "rename_to"])
+@error_wrapper(fal, "POST", ["project_id", "path", "rename_to"])
 def rename_file(request):
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     path = request.data.get("path")
     rename_path = request.data.get("rename_to")
     universe = request.data.get("universe")
 
     if universe is not None:
-        base_path = fal.universes_path(project_name)
+        base_path = fal.universes_path(project_id)
         if universe != "":
             base_path = fal.path_join(base_path, universe)
     else:
-        base_path = fal.code_path(project_name)
+        base_path = fal.code_path(project_id)
 
     file_path = fal.path_join(base_path, path)
     new_path = fal.path_join(base_path, rename_path)
@@ -442,19 +491,19 @@ def rename_file(request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_name", "path", "rename_to"])
+@error_wrapper(fal, "POST", ["project_id", "path", "rename_to"])
 def rename_folder(request):
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     path = request.data.get("path")
     rename_path = request.data.get("rename_to")
     universe = request.data.get("universe")
 
     if universe is not None:
-        base_path = fal.universes_path(project_name)
+        base_path = fal.universes_path(project_id)
         if universe != "":
             base_path = fal.path_join(base_path, universe)
     else:
-        base_path = fal.code_path(project_name)
+        base_path = fal.code_path(project_id)
 
     file_path = fal.path_join(base_path, path)
     new_path = fal.path_join(base_path, rename_path)
@@ -463,18 +512,18 @@ def rename_folder(request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_name", "path"])
+@error_wrapper(fal, "POST", ["project_id", "path"])
 def delete_file(request):
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     path = request.data.get("path")
     universe = request.data.get("universe")
 
     if universe is not None:
-        base_path = fal.universes_path(project_name)
+        base_path = fal.universes_path(project_id)
         if universe != "":
             base_path = fal.path_join(base_path, universe)
     else:
-        base_path = fal.code_path(project_name)
+        base_path = fal.code_path(project_id)
 
     file_path = fal.path_join(base_path, path)
 
@@ -482,18 +531,18 @@ def delete_file(request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_name", "path"])
+@error_wrapper(fal, "POST", ["project_id", "path"])
 def delete_folder(request):
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     path = request.data.get("path")
     universe = request.data.get("universe")
 
     if universe is not None:
-        base_path = fal.universes_path(project_name)
+        base_path = fal.universes_path(project_id)
         if universe != "":
             base_path = fal.path_join(base_path, universe)
     else:
-        base_path = fal.code_path(project_name)
+        base_path = fal.code_path(project_id)
 
     file_path = fal.path_join(base_path, path)
 
@@ -501,19 +550,19 @@ def delete_folder(request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_name", "filename", ("content", -1)])
+@error_wrapper(fal, "POST", ["project_id", "filename", ("content", -1)])
 def save_file(request):
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     filename = request.data.get("filename")
     content = request.data.get("content")
     universe = request.data.get("universe")
 
     if universe is not None:
-        path = fal.universes_path(project_name)
+        path = fal.universes_path(project_id)
         if universe != "":
             path = fal.path_join(path, universe)
     else:
-        path = fal.code_path(project_name)
+        path = fal.code_path(project_id)
 
     file_path = fal.path_join(path, filename)
 
@@ -521,14 +570,14 @@ def save_file(request):
     return Response({"success": True})
 
 
-@error_wrapper("POST", ["app_name", "bt_order"])
+@error_wrapper(fal, "POST", ["project_id", "bt_order"])
 def generate_local_app(request):
     # Get the request parameters
-    project_name = request.data.get("app_name")
+    project_id = request.data.get("project_id")
     bt_order = request.data.get("bt_order")
 
-    final_tree = app_generator.generate_app(fal, project_name, bt_order)
-    unique_imports = app_generator.get_unique_imports(fal, project_name)
+    final_tree = app_generator.generate_app(fal, project_id, bt_order)
+    unique_imports = app_generator.get_unique_imports(fal, project_id)
     return JsonResponse(
         {
             "success": True,
@@ -538,24 +587,24 @@ def generate_local_app(request):
     )
 
 
-@error_wrapper("POST", ["app_name", "bt_order"])
+@error_wrapper(fal, "POST", ["project_id", "bt_order"])
 def generate_dockerized_app(request):
     # Get the request parameters
-    project_name = request.data.get("app_name")
+    project_id = request.data.get("project_id")
     bt_order = request.data.get("bt_order")
 
-    final_tree = app_generator.generate_app(fal, project_name, bt_order)
+    final_tree = app_generator.generate_app(fal, project_id, bt_order)
     return JsonResponse({"success": True, "tree": final_tree})
 
 
-@error_wrapper("POST", ["project_name", "universe_name"])
+@error_wrapper(fal, "POST", ["project_id", "universe_name"])
 def create_custom_universe(request):
     # Get the name and the zip file from the request
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     universe_name = request.data.get("universe_name")
 
     # Make folder path relative to Django app
-    universes_path = fal.universes_path(project_name)
+    universes_path = fal.universes_path(project_id)
     universe_path = fal.path_join(universes_path, universe_name)
     universe_launch_path = fal.path_join(universe_path, "launch")
     universe_world_path = fal.path_join(universe_path, "worlds")
@@ -603,15 +652,15 @@ def create_custom_universe(request):
     )
 
 
-@error_wrapper("POST", ["app_name", "universe_name", "id"])
+@error_wrapper(fal, "POST", ["project_id", "universe_name", "id"])
 def add_docker_universe(request):
     # Get the name and the id file from the request
     universe_name = request.data.get("universe_name")
-    project_name = request.data.get("app_name")
+    project_id = request.data.get("project_id")
     id = request.data.get("id")
 
     # Make folder path relative to Django app
-    universes_path = fal.universes_path(project_name)
+    universes_path = fal.universes_path(project_id)
     universe_path = fal.path_join(universes_path, universe_name)
 
     fal.mkdir(universe_path)
@@ -630,21 +679,21 @@ def add_docker_universe(request):
     )
 
 
-@error_wrapper("POST", ["project_name", "file_name", ("location", -1), "content"])
+@error_wrapper(fal, "POST", ["project_id", "file_name", ("location", -1), "content"])
 def upload_code(request):
     # Get the name and the zip file from the request
-    project_name = request.data.get("project_name")
+    project_id = request.data.get("project_id")
     file_name = request.data.get("file_name")
     location = request.data.get("location")
     content = request.data.get("content")
     universe = request.data.get("universe")
 
     if universe is not None:
-        path = fal.universes_path(project_name)
+        path = fal.universes_path(project_id)
         if universe != "":
             path = fal.path_join(path, universe)
     else:
-        path = fal.code_path(project_name)
+        path = fal.code_path(project_id)
 
     create_path = fal.path_join(path, location)
     file_path = fal.path_join(create_path, file_name)
@@ -653,7 +702,7 @@ def upload_code(request):
     return Response({"success": True})
 
 
-@error_wrapper("GET")
+@error_wrapper(fal, "GET")
 def list_docker_universes(request):
     universes = Universe.objects.all()
     universes_docker_list = [x.name for x in universes]
@@ -661,7 +710,7 @@ def list_docker_universes(request):
     return Response({"universes": universes_docker_list})
 
 
-@error_wrapper("GET", ["name"])
+@error_wrapper(fal, "GET", ["name"])
 def get_docker_universe_data(request):
     name = request.GET.get("name")
 
@@ -708,7 +757,7 @@ def get_docker_universe_data(request):
 
 
 # Subtree Library
-@error_wrapper("GET", [])
+@error_wrapper(fal, "GET", [])
 def get_subtree_library_list(request):
     library_path = fal.library_path()
 
@@ -717,11 +766,11 @@ def get_subtree_library_list(request):
     return Response({"subtree_list": subtree_list})
 
 
-@error_wrapper("GET", ["project"])
+@error_wrapper(fal, "GET", ["project"])
 def get_user_subtree_library_list(request):
     curr_project = request.GET.get("project")
 
-    folder_path = fal.base_path()
+    folder_path = fal.projects_path()
     project_list = fal.listdirs(folder_path)
 
     library = []
@@ -742,7 +791,7 @@ def get_user_subtree_library_list(request):
     return Response({"library": library})
 
 
-@error_wrapper("GET", ["entry"])
+@error_wrapper(fal, "GET", ["entry"])
 def get_library_tree(request):
     entry = request.GET.get("entry")
 
@@ -776,7 +825,7 @@ def get_library_tree(request):
     )
 
 
-@error_wrapper("GET", ["project", "entry"])
+@error_wrapper(fal, "GET", ["project", "entry"])
 def get_user_library_tree(request):
     project = request.GET.get("project")
     entry = request.GET.get("entry")
@@ -820,9 +869,9 @@ def get_user_library_tree(request):
     )
 
 
-@error_wrapper("POST", ["project", "entry", "name"])
+@error_wrapper(fal, "POST", ["project_id", "entry", "name"])
 def import_library_tree(request):
-    project = request.data.get("project")
+    project_id = request.data.get("project_id")
     entry = request.data.get("entry")
     name = request.data.get("name")
 
@@ -843,20 +892,20 @@ def import_library_tree(request):
         subtrees=set([entry]),
     )
 
-    if not fal.exists(fal.subtrees_path(project)):
-        fal.mkdir(fal.subtrees_path(project))
+    if not fal.exists(fal.subtrees_path(project_id)):
+        fal.mkdir(fal.subtrees_path(project_id))
 
     # Write main tree
     for replace_subtree in tree_data["subtrees"]:
         graph_data = graph_data.replace(replace_subtree, name + "_" + replace_subtree)
     for replace_action in tree_data["actions"]:
         graph_data = graph_data.replace(replace_action, name + "_" + replace_action)
-    fal.create(fal.path_join(fal.subtrees_path(project), name + ".json"), graph_data)
+    fal.create(fal.path_join(fal.subtrees_path(project_id), name + ".json"), graph_data)
 
     # Write subtrees
     for subtree in tree_data["subtrees"]:
         subtrees_entry_path = fal.library_subtrees_path(entry_path)
-        subtrees_path = fal.subtrees_path(project)
+        subtrees_path = fal.subtrees_path(project_id)
         subtree_path = fal.path_join(subtrees_entry_path, subtree + ".json")
         if subtree == entry:
             continue
@@ -872,7 +921,7 @@ def import_library_tree(request):
     # Write actions
     for action in tree_data["actions"]:
         actions_entry_path = fal.library_actions_path(entry)
-        actions_path = fal.actions_path(project)
+        actions_path = fal.actions_path(project_id)
         action_path = fal.path_join(actions_entry_path, action + ".py")
         new_action_path = fal.path_join(actions_path, name + "_" + action + ".py")
         action_data = fal.read(action_path)
@@ -882,9 +931,9 @@ def import_library_tree(request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project", "entry", "entry_project", "name"])
+@error_wrapper(fal, "POST", ["project_id", "entry", "entry_project", "name"])
 def import_user_library_tree(request):
-    project = request.data.get("project")
+    project_id = request.data.get("project_id")
     entry_project = request.data.get("entry_project")
     entry = request.data.get("entry")
     name = request.data.get("name")
@@ -914,20 +963,20 @@ def import_user_library_tree(request):
         subtrees=set([entry]),
     )
 
-    if not fal.exists(fal.subtrees_path(project)):
-        fal.mkdir(fal.subtrees_path(project))
+    if not fal.exists(fal.subtrees_path(project_id)):
+        fal.mkdir(fal.subtrees_path(project_id))
 
     # Write main tree
     for replace_subtree in tree_data["subtrees"]:
         graph_data = graph_data.replace(replace_subtree, name + "_" + replace_subtree)
     for replace_action in tree_data["actions"]:
         graph_data = graph_data.replace(replace_action, name + "_" + replace_action)
-    fal.create(fal.path_join(fal.subtrees_path(project), name + ".json"), graph_data)
+    fal.create(fal.path_join(fal.subtrees_path(project_id), name + ".json"), graph_data)
 
     # Write subtrees
     for subtree in tree_data["subtrees"]:
         subtrees_entry_path = fal.subtrees_path(entry_project)
-        subtrees_path = fal.subtrees_path(project)
+        subtrees_path = fal.subtrees_path(project_id)
         subtree_path = fal.path_join(subtrees_entry_path, subtree + ".json")
         if subtree == entry:
             continue
@@ -943,7 +992,7 @@ def import_user_library_tree(request):
     # Write actions
     for action in tree_data["actions"]:
         actions_entry_path = fal.actions_path(entry_project)
-        actions_path = fal.actions_path(project)
+        actions_path = fal.actions_path(project_id)
         action_path = fal.path_join(actions_entry_path, action + ".py")
         new_action_path = fal.path_join(actions_path, name + "_" + action + ".py")
         action_data = fal.read(action_path)

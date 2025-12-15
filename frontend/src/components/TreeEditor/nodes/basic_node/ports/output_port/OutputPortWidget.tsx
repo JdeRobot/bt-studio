@@ -4,8 +4,8 @@ import {
   StyledNodeTagPort,
   StyledNodeTagPortContainer,
   StyledNodeTagPortLabel,
-} from "Styles/TreeEditor/BTNode.styles";
-import { useBtTheme } from "Contexts/BtThemeContext";
+} from "BtStyles/TreeEditor/BTNode.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 export const OutputPortWidget = ({
   engine,

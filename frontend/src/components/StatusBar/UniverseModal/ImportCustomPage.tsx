@@ -5,7 +5,7 @@ import {
   createUniverseConfig,
   createUniverseFolder,
   uploadFileUniverse,
-} from "../../../api_helper/TreeWrapper";
+} from "BtApi/TreeWrapper";
 import JSZip from "jszip";
 import {
   ModalInputBox,

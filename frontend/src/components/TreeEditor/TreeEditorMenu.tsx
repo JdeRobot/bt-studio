@@ -1,30 +1,32 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./NodeMenu.css";
 import { Menu, MenuItem, styled } from "@mui/material";
 import { ImportIcon } from "../icons";
-import ParkRoundedIcon from "@mui/icons-material/ParkRounded";
 
 import {
   createSubtree,
   getSubtreeList,
   getActionsList,
-} from "../../api_helper/TreeWrapper";
+} from "BtApi/TreeWrapper";
 import { publish, subscribe, unsubscribe } from "../helper/TreeEditorHelper";
 import AddSubtreeModal from "./modals/AddSubtreeModal";
 import { useError } from "jderobot-ide-interface";
-import { OptionsContext } from "../options/Options";
 import {
   MenuButton,
   MenuButtonLabel,
   MenuButtonStroke,
 } from "jderobot-ide-interface";
 import ImportSubtreeModal from "./modals/ImportSubtreeModal";
-import ZoomOutMapRoundedIcon from "@mui/icons-material/ZoomOutMapRounded";
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
-import NorthRoundedIcon from "@mui/icons-material/NorthRounded";
-import { useBtTheme } from "Contexts/BtThemeContext";
+import { useBtTheme } from "BtContexts/BtThemeContext";
+import {
+  DeleteIcon,
+  DownArrowIcon,
+  EditIcon,
+  TreeIcon,
+  UpArrowIcon,
+  ZoomIcon,
+} from "BtIcons";
+import { useProjectSettings } from "BtContexts/ProjectSettingsContext";
 
 const StyledMenu = styled(Menu)(
   ({
@@ -315,7 +317,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
         }}
         title="Create Subtree"
       >
-        <ParkRoundedIcon className="bt-icon bt-action-icon" />
+        <TreeIcon className="bt-icon bt-action-icon" />
       </MenuButton>
       <MenuButtonStroke
         id="import-subtree-button"
@@ -344,8 +346,8 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
   );
 };
 
-export const OtherButtons = ({ project }: { project: string }) => {
-  const settings = useContext(OptionsContext);
+export const OtherButtons = () => {
+  const settings = useProjectSettings();
 
   const [btOrder, setBtOrder] = useState(settings.btOrder.default_value);
 
@@ -360,21 +362,21 @@ export const OtherButtons = ({ project }: { project: string }) => {
         onClick={() => publish("BTEditorDeleteCurrent")}
         title="Delete"
       >
-        <DeleteRoundedIcon className="bt-icon bt-action-icon" />
+        <DeleteIcon className="bt-icon bt-action-icon" />
       </MenuButton>
       <MenuButton
         id="node-action-edit-button"
         onClick={() => publish("BTEditorEditCurrent")}
         title="Edit"
       >
-        <EditRoundedIcon className="bt-icon bt-action-icon" />
+        <EditIcon className="bt-icon bt-action-icon" />
       </MenuButton>
       <MenuButton
         id="bt-node-action-zoom-button"
         onClick={() => publish("BTEditorHomeZoom")}
         title="Zoom To Fit"
       >
-        <ZoomOutMapRoundedIcon className="bt-icon bt-action-icon" />
+        <ZoomIcon className="bt-icon bt-action-icon" />
       </MenuButton>
       <MenuButton
         id="bt-node-action-help-button"
@@ -388,9 +390,9 @@ export const OtherButtons = ({ project }: { project: string }) => {
         }}
       >
         {btOrder === "bottom-to-top" ? (
-          <NorthRoundedIcon className="bt-icon bt-action-icon" />
+          <UpArrowIcon className="bt-icon bt-action-icon" />
         ) : (
-          <SouthRoundedIcon className="bt-icon bt-action-icon" />
+          <DownArrowIcon className="bt-icon bt-action-icon" />
         )}
       </MenuButton>
     </>

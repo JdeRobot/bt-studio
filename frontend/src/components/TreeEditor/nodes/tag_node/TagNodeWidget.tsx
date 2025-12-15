@@ -5,8 +5,8 @@ import { DiagramEngine } from "@projectstorm/react-diagrams";
 import {
   StyledNodeSection,
   StyledTagContainer,
-} from "Styles/TreeEditor/BTNode.styles";
-import { useBtTheme } from "Contexts/BtThemeContext";
+} from "BtStyles/TreeEditor/BTNode.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 // The node widget controls the visualization of the custom node
 export const TagNodeWidget = ({
@@ -51,7 +51,11 @@ export const TagNodeWidget = ({
     <StyledTagContainer
       borderColor={theme.btEditor.border}
       roundness={theme.btEditor.roundness}
-      color={node.getColor()}
+      bg={
+        node.isFromBlackboard() ? theme.btEditor.blackboard : theme.btEditor.tag
+      }
+      lightText={theme.btEditor.lightText}
+      darkText={theme.btEditor.darkText}
       selected={node.isSelected()}
       type={type}
       shadowColor={theme.btEditor.shadow}

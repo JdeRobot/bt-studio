@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from backend.tree_api.models import User, Project
 import binascii
 from functools import wraps
 import json
@@ -18,13 +19,21 @@ CUSTOM_EXCEPTIONS = (
 )
 
 
-def error_wrapper(type: str, param: list[str | tuple] = []):
+def error_wrapper(fal, type: str, param: list[str | tuple] = []):
     def decorated(func):
         @wraps(func)
         @api_view([type])
         def wrapper(request):
             try:
                 check_parameters(request.data if type == "POST" else request.GET, param)
+                fal.set_user(User.objects.get(username="user"))
+
+                # Set this to bypass user
+                projects = Project.objects.all()
+                if len(projects) > 0:
+                    fal.user.projects = 0
+                    for project in projects:
+                        fal.user.projects += 1
                 return func(request)
             except CUSTOM_EXCEPTIONS as e:
                 print(str(e))
@@ -53,5 +62,5 @@ def check_parameters(request, param: list[str | tuple]):
         if p not in request:
             raise ParameterInvalid(p)
         data = request.get(p)
-        if data == None or len(data) <= min_len:
+        if data is None or len(data) <= min_len:
             raise ParameterInvalid(p)

@@ -1,5 +1,4 @@
 import React from "react";
-import { useContext } from "react";
 import "react-color-palette/css";
 import "./SettingsModal.css";
 
@@ -7,7 +6,6 @@ import Section from "./sections/Section";
 import SubSection from "./sections/SubSection";
 import Setting from "./sections/Setting";
 
-import { OptionsContext, SettingsData } from "../options/Options";
 import {
   useError,
   Modal,
@@ -15,10 +13,14 @@ import {
   ModalRow,
 } from "jderobot-ide-interface";
 
-import { saveProjectConfig } from "../../api_helper/TreeWrapper";
+import { saveProjectConfig } from "BtApi/TreeWrapper";
 import Checkbox from "./options/Checkbox";
-import { StyledSettingsListConatiner } from "Styles/Modal/Settings/Settings.styles";
-import { useBtTheme } from "Contexts/BtThemeContext";
+import { StyledSettingsListConatiner } from "BtStyles/Modal/Settings/Settings.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
+import {
+  SettingsData,
+  useProjectSettings,
+} from "BtContexts/ProjectSettingsContext";
 
 const SettingsModal = ({
   onSubmit,
@@ -32,7 +34,7 @@ const SettingsModal = ({
   currentProjectname: string;
 }) => {
   const theme = useBtTheme();
-  const settings = useContext(OptionsContext);
+  const settings = useProjectSettings();
   const { error } = useError();
 
   // useEffect(() => {

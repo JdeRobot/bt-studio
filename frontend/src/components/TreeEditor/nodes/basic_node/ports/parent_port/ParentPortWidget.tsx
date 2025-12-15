@@ -1,7 +1,7 @@
 import React from "react";
 import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams";
-import { StyledNodePort } from "Styles/TreeEditor/BTNode.styles";
-import { useBtTheme } from "Contexts/BtThemeContext";
+import { StyledNodePort } from "BtStyles/TreeEditor/BTNode.styles";
+import { useBtTheme } from "BtContexts/BtThemeContext";
 
 export const ParentPortWidget = ({
   engine,
