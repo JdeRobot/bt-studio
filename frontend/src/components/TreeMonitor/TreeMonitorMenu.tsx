@@ -1,9 +1,13 @@
 import React from "react";
 import { MouseEventHandler, MutableRefObject } from "react";
 
-import { ReactComponent as ReturnIcon } from "./img/return.svg";
 import { UndoIcon, ZoomIcon } from "BtIcons";
 import { useBtTheme } from "BtContexts/BtThemeContext";
+import {
+  StyledMonitorMenu,
+  StyledMonitorMenuButton,
+  StyledMonitorText,
+} from "BtStyles/TreeMonitor/TreeMonitor.styles";
 
 const TreeMonitorMenu = ({
   onZoomToFit,
@@ -15,32 +19,34 @@ const TreeMonitorMenu = ({
   subTreeName: MutableRefObject<string>;
 }) => {
   const theme = useBtTheme();
-  
+
+  const style = {
+    bg: theme.palette.primary,
+    roundness: theme.roundness,
+  };
+
   return (
-    <div className="bt-node-header-container">
-      <div className="bt-action-buttons">
-        <button
-          id="bt-node-action-zoom-button"
-          className="bt-node-action-button"
+    <StyledMonitorMenu>
+      <div style={{ height: "100%", alignContent: "center" }}>
+        <StyledMonitorMenuButton
+          {...style}
           onClick={onZoomToFit}
           title="Zoom To Fit"
         >
-          <ZoomIcon
-            className="bt-icon bt-action-icon"
-            htmlColor={theme.palette.text}
-          />
-        </button>
-        <button
-          id="node-action-back-button"
-          className="bt-node-action-button"
+          <ZoomIcon htmlColor={theme.palette.text} />
+        </StyledMonitorMenuButton>
+        <StyledMonitorMenuButton
+          {...style}
           onClick={() => setGoBack(true)}
           title="Go Back"
         >
-          <UndoIcon className="bt-header-icon" htmlColor={theme.palette.text} />
-        </button>
+          <UndoIcon htmlColor={theme.palette.text} />
+        </StyledMonitorMenuButton>
       </div>
-      <h2 className="bt-subtree-name">{subTreeName.current}</h2>
-    </div>
+      <StyledMonitorText color={theme.palette.text}>
+        {subTreeName.current}
+      </StyledMonitorText>
+    </StyledMonitorMenu>
   );
 };
 
