@@ -1,8 +1,13 @@
 import React from "react";
 import { MouseEventHandler, MutableRefObject } from "react";
 
-import { ReactComponent as ZoomToFitIcon } from "./img/zoom_to_fit.svg";
-import { ReactComponent as ReturnIcon } from "./img/return.svg";
+import { UndoIcon, ZoomIcon } from "BtIcons";
+import { useBtTheme } from "BtContexts/BtThemeContext";
+import {
+  StyledMonitorMenu,
+  StyledMonitorMenuButton,
+  StyledMonitorText,
+} from "BtStyles/TreeMonitor/TreeMonitor.styles";
 
 const TreeMonitorMenu = ({
   onZoomToFit,
@@ -13,31 +18,35 @@ const TreeMonitorMenu = ({
   setGoBack: (a: boolean) => void;
   subTreeName: MutableRefObject<string>;
 }) => {
+  const theme = useBtTheme();
+
+  const style = {
+    bg: theme.palette.primary,
+    roundness: theme.roundness,
+  };
+
   return (
-    <div className="bt-node-header-container">
-      <div className="bt-action-buttons">
-        <button
-          id="bt-node-action-zoom-button"
-          className="bt-node-action-button"
+    <StyledMonitorMenu>
+      <div style={{ height: "100%", alignContent: "center" }}>
+        <StyledMonitorMenuButton
+          {...style}
           onClick={onZoomToFit}
           title="Zoom To Fit"
         >
-          <ZoomToFitIcon
-            className="bt-icon bt-action-icon"
-            fill={"var(--icon)"}
-          />
-        </button>
-        <button
-          id="node-action-back-button"
-          className="bt-node-action-button"
+          <ZoomIcon htmlColor={theme.palette.text} />
+        </StyledMonitorMenuButton>
+        <StyledMonitorMenuButton
+          {...style}
           onClick={() => setGoBack(true)}
           title="Go Back"
         >
-          <ReturnIcon className="bt-header-icon" fill={"var(--icon)"} />
-        </button>
+          <UndoIcon htmlColor={theme.palette.text} />
+        </StyledMonitorMenuButton>
       </div>
-      <h2 className="bt-subtree-name">{subTreeName.current}</h2>
-    </div>
+      <StyledMonitorText color={theme.palette.text}>
+        {subTreeName.current}
+      </StyledMonitorText>
+    </StyledMonitorMenu>
   );
 };
 
