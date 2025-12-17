@@ -126,6 +126,37 @@ export const resetActionFrames = () => {
   actionFrames = [];
 };
 
+export const addActionFrameRaw = (
+  name: string,
+  color: string,
+  input: string[],
+  output: string[],
+) => {
+  if (getActionFrame(name) !== undefined) {
+    return; // Already exists
+  }
+
+  if (!isActionNode(name)) {
+    return;
+  }
+
+  const inputs: string[] = [];
+  const outputs: string[] = [];
+
+  input.forEach((port) => {
+    inputs.push(port);
+  });
+
+  output.forEach((port) => {
+    outputs.push(port);
+  });
+
+  const newActionFrame = new ActionFrame(name, color, inputs, outputs);
+
+  publish("updateAccentColor", { name: name, color: color });
+  actionFrames.push(newActionFrame);
+};
+
 export const addActionFrame = (
   name: string,
   color: string,

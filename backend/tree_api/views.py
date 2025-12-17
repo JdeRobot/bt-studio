@@ -140,6 +140,49 @@ def get_project_list(request):
 
 
 @error_wrapper(fal, "GET", ["project_id"])
+def get_tree_data(request):
+    project_id = request.GET.get("project_id")
+    actions_data = []
+
+    # Generate the paths
+    trees_path = fal.trees_path(project_id)
+    subtrees_path = fal.subtrees_path(project_id)
+    graph_path = fal.path_join(trees_path, "main.json")
+    graph_data = fal.read(graph_path)
+
+    actions = json_translator.get_actions_data(graph_data)
+    for act in actions:
+        found = False
+        for data in actions_data:
+            if act["name"] == data["name"]:
+                found = True
+                break
+        if not found:
+            actions_data.append(act)
+
+    # List all files in the directory removing the .json extension
+    try:
+        subtree_list = fal.listfiles(subtrees_path)
+        subtree_list = [f.split(".")[0] for f in subtree_list]
+        for subtree in subtree_list:
+            subtree_path = fal.path_join(subtrees_path, f"{subtree}.json")
+            graph_data = fal.read(subtree_path)
+            actions = json_translator.get_actions_data(graph_data)
+            for act in actions:
+                found = False
+                for data in actions_data:
+                    if act["name"] == data["name"]:
+                        found = True
+                        break
+                if not found:
+                    actions_data.append(act)
+    except Exception:
+        pass
+
+    return JsonResponse({"success": True, "actions_data": actions_data})
+
+
+@error_wrapper(fal, "GET", ["project_id"])
 def get_base_tree(request):
     project_id = request.GET.get("project_id")
 
@@ -261,7 +304,6 @@ def get_subtree_path(request):
     subtrees_path = fal.subtrees_path(project_id)
     subtree_path = fal.path_join(subtrees_path, f"{subtree_name}.json")
     rel_path = os.path.relpath(subtree_path, fal.code_path(project_id))
-    print(rel_path)
 
     return Response({"subtree": rel_path}, status=status.HTTP_200_OK)
 

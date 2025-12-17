@@ -159,6 +159,41 @@ def get_start_node_id(node_models, link_models):
     return start_node_id
 
 
+def get_actions_data(content):
+    # Parse the JSON data
+    parsed_json = json.loads(content)
+    actions = []
+
+    try:
+        # Extract nodes and links information
+        node_models = parsed_json["layers"][1]["models"]
+
+        for node_id, node_info in node_models.items():
+            if node_info["type"] == "tag":
+                continue
+            in_port = []
+            out_port = []
+            for port in node_info["ports"]:
+                if port["name"] == "parent" or port["name"] == "children":
+                    continue
+                if port["in"]:
+                    in_port.append(port["name"])
+                else:
+                    out_port.append(port["name"])
+            actions.append(
+                {
+                    "name": node_info["name"],
+                    "color": node_info["color"],
+                    "in": in_port,
+                    "out": out_port,
+                }
+            )
+    except Exception as e:
+        raise RuntimeError(f"Failed to translate tree: {e}")
+
+    return actions
+
+
 def translate_raw(content, raw_order):
 
     # Parse the JSON data

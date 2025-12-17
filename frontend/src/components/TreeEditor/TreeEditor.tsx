@@ -362,7 +362,6 @@ const TreeEditor = ({
     attachLinkListener(model.current);
     attachNodesListener(model.current);
     engine.current.setModel(model.current);
-    console.log(engine.current.getModel(), "FGHJKLKJHG");
 
     // After deserialization, attach listeners to each node
     const nodes = model.current.getNodes();

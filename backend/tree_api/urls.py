@@ -52,6 +52,7 @@ urlpatterns = [
         name="create_custom_universe",
     ),
     # Tree Management
+    path("get_tree_data/", views.get_tree_data, name="get_tree_data"),
     path("get_base_tree/", views.get_base_tree, name="get_base_tree"),
     path("get_tree_structure/", views.get_tree_structure, name="get_tree_structure"),
     # Subtree Management

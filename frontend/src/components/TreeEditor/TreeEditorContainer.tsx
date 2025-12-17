@@ -1,6 +1,6 @@
 import React from "react";
 import { ExtraEditorProps } from "jderobot-ide-interface";
-import { getSubtreePath } from "BtApi/TreeWrapper";
+import { getSubtreePath, getTreeData } from "BtApi/TreeWrapper";
 import { useEffect, useRef, useState } from "react";
 import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
 import EditActionModal from "./modals/EditActionModal";
@@ -8,7 +8,11 @@ import EditTagModal from "./modals/EditTagModal";
 import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
 import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
 import TreeEditor from "./TreeEditor";
-import { subscribe, unsubscribe } from "../helper/TreeEditorHelper";
+import {
+  addActionFrameRaw,
+  subscribe,
+  unsubscribe,
+} from "../helper/TreeEditorHelper";
 
 const TreeEditorContainer = ({
   commsManager,
@@ -43,6 +47,17 @@ const TreeEditorContainer = ({
   const setResultJson = (data: string) => {
     contentRef.current = data;
   };
+
+  const loadData = async () => {
+    const data = await getTreeData(project);
+    data.forEach((element) => {
+      addActionFrameRaw(element.name, element.color, element.in, element.out);
+    });
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   useEffect(() => {
     showRef.current = true;

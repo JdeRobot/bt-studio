@@ -446,6 +446,22 @@ const generateDockerizedApp = async (
 
 ////////////////////////////// Tree management /////////////////////////////////
 
+const getTreeData = async (projectId: string) => {
+  if (!projectId) throw new Error("Current Project name is not set");
+
+  const apiUrl = `/bt_studio/get_tree_data?project_id=${projectId}`;
+  const response = await axios.get(apiUrl);
+
+  // Handle unsuccessful response status (e.g., non-2xx status)
+  if (!isSuccessful(response)) {
+    throw new Error(
+      response.data.message || "Failed to retrieve project graph"
+    ); // Response error
+  }
+
+  return response.data.actions_data;
+};
+
 const getBaseTree = async (currentProjectname: string) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
@@ -1174,5 +1190,6 @@ export {
   importLibrarySubtree,
   importUserLibrarySubtree,
   getProjectConfigRaw,
-  getUserInfo
+  getUserInfo,
+  getTreeData
 };
