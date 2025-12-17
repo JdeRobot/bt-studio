@@ -8,7 +8,11 @@ import EditTagModal from "./modals/EditTagModal";
 import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
 import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
 import TreeEditor from "./TreeEditor";
-import { addActionFrameRaw, subscribe, unsubscribe } from "../helper/TreeEditorHelper";
+import {
+  addActionFrameRaw,
+  subscribe,
+  unsubscribe,
+} from "../helper/TreeEditorHelper";
 
 const TreeEditorContainer = ({
   commsManager,
@@ -46,13 +50,13 @@ const TreeEditorContainer = ({
 
   const loadData = async () => {
     const data = await getTreeData(project);
-    data.forEach(element => {
-      addActionFrameRaw(element.name, element.color, element.in, element.out)
+    data.forEach((element) => {
+      addActionFrameRaw(element.name, element.color, element.in, element.out);
     });
-  }
+  };
 
   useEffect(() => {
-    loadData()
+    loadData();
   }, []);
 
   useEffect(() => {
