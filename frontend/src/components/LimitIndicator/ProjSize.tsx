@@ -46,7 +46,7 @@ const Indicator = () => {
         {data ? (
           <LimitIndicator
             size={data.size.curr}
-            max={data.projects.max}
+            max={data.size.max}
             units="size"
           />
         ) : (
