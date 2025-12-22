@@ -63,6 +63,7 @@ const HeaderMenu = ({
         {isUnibotics ? (
           <a href="/apps">
             <LogoUniboticsIcon
+              viewBox="0 0 400 400"
               style={{ width: "40px", height: "40px", marginRight: "10px" }}
               fill={theme.palette.text}
             />
