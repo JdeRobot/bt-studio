@@ -27,7 +27,7 @@ export const StyledLimitIndicatorContainer = styled.div<StyledLimitIndicatorCont
 `;
 
 export const StyledIndicatorContainer = styled.div`
-  height: 3vh;
+  height: 2rem;
   width: 100%;
   overflow: hidden;
 `;
