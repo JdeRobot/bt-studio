@@ -2,12 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import WebFont from "webfontloader";
 import "./index.css";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "beautiful-react-diagrams/styles.css";
-import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
-import { CreatePage, EditPage, Home } from "BtRoutes";
+import router from "./routes";
 
 // Load Google Font
 WebFont.load({
@@ -20,19 +18,6 @@ WebFont.load({
     ],
   },
 });
-
-export const router = createBrowserRouter([
-  {
-    path: "/projects",
-    Component: App,
-    children: [
-      { index: true, Component: Home },
-      { path: "create_project/*", Component: CreatePage },
-      { path: "edit/:proj_id", Component: EditPage },
-      { path: "studio/:proj_id", Component: EditPage },
-    ],
-  },
-]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
