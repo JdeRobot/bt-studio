@@ -1,7 +1,7 @@
 {
   "name": "jderobot-bt-studio",
   "version": "0.10.0",
-  "main": "index.js",
+  "main": "src/index.tsx",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
