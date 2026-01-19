@@ -11,7 +11,7 @@ const aliases = () => {
     BtStyles: path.resolve(__dirname, "src/styles"),
     BtTypes: path.resolve(__dirname, "src/types"),
     BtTemplates: path.resolve(__dirname, "src/templates"),
-    BtRoutes: path.resolve(__dirname, "src/routes"),
+    BtRoutes: path.resolve(__dirname, "src/routes/index.ts"),
     BtIcons: path.resolve(__dirname, "src/icons"),
   };
 

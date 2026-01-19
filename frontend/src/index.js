@@ -5,7 +5,8 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import "beautiful-react-diagrams/styles.css";
 import { RouterProvider } from "react-router/dom";
-import router from "./routes";
+import routes from "./routes";
+import { createBrowserRouter } from "react-router";
 
 // Load Google Font
 WebFont.load({
@@ -22,7 +23,7 @@ WebFont.load({
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <RouterProvider router={createBrowserRouter([routes])} />
   </React.StrictMode>,
 );
 
