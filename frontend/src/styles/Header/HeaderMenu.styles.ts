@@ -7,8 +7,8 @@ interface StyledHeaderTextProps {
 }
 
 export const StyledHeaderText = styled.h1<StyledHeaderTextProps>`
-  font-size: 25px;
-  margin: 0;
+  font-size: 25px !important;
+  margin: 0 !important;
   color: ${(p) => p.color ?? primaryColor};
 `;
 
