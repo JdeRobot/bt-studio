@@ -2,6 +2,8 @@ import React from "react";
 import { ThemeProvider } from "jderobot-ide-interface";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { BtTheme } from "BtTypes/index";
+import { flushSync } from "react-dom";
+
 
 interface BtThemeProviderProps {
   theme?: BtTheme;
@@ -136,16 +138,20 @@ export const BtThemeProvider = ({ theme, children }: BtThemeProviderProps) => {
 
   const themeSwitchHandler = (themeType: string) => {
     window.localStorage.setItem("themeType", themeType);
-    switch (themeType) {
-      case "light":
-        setCurrentTheme(lightTheme);
-        break;
-      case "dark":
-        setCurrentTheme(darkTheme);
-        break;
-      default:
-        break;
-    }
+    document.startViewTransition(() => {
+      flushSync(() => {
+        switch (themeType) {
+          case "light":
+            setCurrentTheme(lightTheme);
+            break;
+          case "dark":
+            setCurrentTheme(darkTheme);
+            break;
+          default:
+            break;
+        }
+      });
+    });
   };
 
   if (theme) {
