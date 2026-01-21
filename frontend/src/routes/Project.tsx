@@ -163,21 +163,11 @@ const App = ({ projectId }: { projectId: string }) => {
       const currManager = CommsManager.getInstance();
       if (currManager) {
         currManager.disconnect();
-        console.log(currManager);
       }
       saveSettings(projectId);
     };
   }, []);
 
-  // useUnload((event: any) => {
-  //   event.preventDefault();
-  //   if (manager) {
-  //     manager.disconnect();
-  //     connected.current = false;
-  //   }
-  //   // saveSettings(projectToSave.current);
-  //   return (event.returnValue = "");
-  // });
 
   const treeMonitor = {
     component: (

@@ -26,15 +26,21 @@ export const StyledAppContainer = styled.div<StyledAppContainerProps>`
 
   --shadow: inset 0 1px 2px #ffffff30, 0 1px 2px #00000030, 0 2px 4px #00000015;
 
-  &h1 {
-    font-size: 25px;
+  &.h1, h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 1.5rem 0;
   }
 
   &h2 {
     font-size: 18px;
   }
 
-  &h3 {
-    font-size: 12px;
+  &.h3, h3 {
+    font-size: 1.17em;
+    font-weight: bold;
+    line-height: 1.5;
+    margin-bottom: 0;
   }
 `;

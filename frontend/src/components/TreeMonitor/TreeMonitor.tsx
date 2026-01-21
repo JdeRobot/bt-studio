@@ -183,8 +183,10 @@ const TreeMonitor = ({
     }
   };
 
-  manager.unsubscribe("update", updateExecState);
-  manager.subscribe("update", updateExecState);
+  if (manager) {
+    manager.unsubscribe("update", updateExecState);
+    manager.subscribe("update", updateExecState);
+  }
 
   // MODAL MANAGEMENT
   const openSubtree = () => {

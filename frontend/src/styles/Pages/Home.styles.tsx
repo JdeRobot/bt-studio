@@ -67,7 +67,7 @@ export const StyledAction = styled(Link)<StyledActionProps>`
   color: ${(p) => p.color ?? primaryColor};
   margin: 40px 0;
 
-  &:link {
+  & a {
     text-decoration: none;
   }
 `;
