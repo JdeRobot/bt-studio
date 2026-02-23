@@ -211,7 +211,10 @@ def get_tree_structure(fal, request):
     # Check if the project exists
     graph_data = json.loads(fal.read(graph_path))
     # Get the tree structure
-    tree_structure = json_translator.translate_tree_structure(graph_data, bt_order)
+    try:
+        tree_structure = json_translator.translate_tree_structure(graph_data, bt_order)
+    except:
+        tree_structure = []
     return JsonResponse({"success": True, "tree_structure": tree_structure})
 
 
@@ -228,7 +231,10 @@ def get_subtree_structure(fal, request):
     # Check if the project exists
     graph_data = json.loads(fal.read(graph_path))
     # Get the tree structure
-    tree_structure = json_translator.translate_tree_structure(graph_data, bt_order)
+    try:
+        tree_structure = json_translator.translate_tree_structure(graph_data, bt_order)
+    except:
+        tree_structure = []
     return JsonResponse({"success": True, "tree_structure": tree_structure})
 
 
