@@ -150,7 +150,7 @@ const TreeMonitor = ({
 }: {
   modelJson: any;
   setResultJson: (data: string) => void;
-  manager: CommsManager;
+  manager: CommsManager | null;
   treeStructure: any;
   setGoBack: (a: boolean) => void;
   subTreeName: MutableRefObject<string>;

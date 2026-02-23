@@ -16,7 +16,7 @@ const TreeMonitorContainer = ({
   commsManager,
   project,
 }: {
-  commsManager: CommsManager;
+  commsManager: CommsManager | null;
   project: string;
 }) => {
   const settings = useProjectSettings();

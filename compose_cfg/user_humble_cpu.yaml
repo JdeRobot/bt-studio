@@ -11,6 +11,7 @@ services:
     volumes:
       - ./RoboticsInfrastructure/database/universes.sql:/docker-entrypoint-initdb.d/1.sql
       - ./backend/django_auth.sql:/docker-entrypoint-initdb.d/2.sql
+      - ./backend/database/db.sql:/docker-entrypoint-initdb.d/3.sql
     healthcheck:
       test: pg_isready -U user-dev -d universe_db
       interval: 3s
