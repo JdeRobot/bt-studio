@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, MutableRefObject } from "react";
 import HeaderMenu from "BtComponents/HeaderMenu";
 import { CommsManager } from "jderobot-commsmanager";
 import { getProjectConfig, saveProjectConfig } from "BtApi/TreeWrapper";
 
-import IdeInterface, { VncViewer, useError } from "jderobot-ide-interface";
+import IdeInterface, { useError } from "jderobot-ide-interface";
 import TreeEditorContainer, {
   AddSubtreeButton,
   BTSelectorButtons,
   OtherButtons,
 } from "BtComponents/TreeEditor";
-import TreeMonitorContainer from "BtComponents/TreeMonitor";
 import { explorers } from "BtComponents/Explorers";
 import { statusBar } from "BtComponents/StatusBar";
 import { editorApi } from "BtComponents/Editors";
@@ -17,11 +16,21 @@ import { editorApi } from "BtComponents/Editors";
 import { useParams } from "react-router-dom";
 import { StyledAppContainer } from "BtStyles/App.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
-import { GazeboIcon, TerminalIcon, TreeMonitorIcon } from "BtIcons";
 import {
   ProjectSettingsProvider,
   useProjectSettings,
 } from "BtContexts/ProjectSettingsContext";
+import getTools from "BtComponents/helper/tools";
+
+export const clearTimeouts = (
+  timeoutsRef: MutableRefObject<number | null>[],
+) => {
+  for (const element of timeoutsRef) {
+    if (element.current) {
+      window.clearTimeout(element.current);
+    }
+  }
+};
 
 const Wrapper = () => {
   const { proj_id } = useParams();
@@ -94,11 +103,11 @@ const Wrapper = () => {
 const App = ({ projectId }: { projectId: string }) => {
   const theme = useBtTheme();
   const settings = useProjectSettings();
-  const connected = useRef<boolean>(false);
+  const hasTriedToConnect = useRef<boolean>(false);
+  const timeoutRef = useRef<number | null>(null);
+  const connectTimeoutRef = useRef<number | null>(null);
   const [manager, setManager] = useState<CommsManager | null>(null);
-  const [showSim, setSimVisible] = useState<boolean>(false);
-  const [showMonitor, setMonitorVisible] = useState<boolean>(false);
-  const [showTerminal, setTerminalVisible] = useState<boolean>(false);
+  const toolsList = getTools(manager, projectId);
   const [layout, setLayout] = useState<"only-editor" | "only-viewers" | "both">(
     "both",
   );
@@ -124,87 +133,61 @@ const App = ({ projectId }: { projectId: string }) => {
 
   // RB manager setup
 
-  const connectWithRetry = async (
-    desiredState?: string,
-    callback?: () => void,
-  ) => {
-    if (!manager || manager?.getState() != "idle") {
-      return;
-    }
-    try {
-      const currManager = CommsManager.getInstance();
-      await currManager.connect();
-      console.log("Connected!", currManager.getState());
-      connected.current = true;
-      setManager(currManager);
-      if (callback) {
-        waitManagerState(desiredState ? desiredState : "connected", callback);
-      }
-    } catch (e: unknown) {
-      console.log("Connection failed, trying again!");
-      setTimeout(connectWithRetry, 2000, desiredState, callback);
-    }
-  };
-
-  const waitManagerState = async (state: string, callback: any) => {
-    if (manager?.getState() === state) {
-      callback();
-    } else {
-      return setTimeout(waitManagerState, 100, state, callback);
-    }
-  };
-
   useEffect(() => {
     const manager = CommsManager.getInstance();
     setManager(manager);
     getProjectConfig(projectId, settings);
 
     return () => {
-      const currManager = CommsManager.getInstance();
-      if (currManager) {
-        currManager.disconnect();
+      if (hasTriedToConnect.current) {
+        const currManager = CommsManager.getInstance();
+        if (currManager) {
+          currManager.disconnect();
+          CommsManager.deleteInstance();
+          setManager(null);
+        }
       }
+      clearTimeouts([timeoutRef, connectTimeoutRef]);
       saveSettings(projectId);
     };
   }, []);
 
-
-  const treeMonitor = {
-    component: (
-      <TreeMonitorContainer commsManager={manager} project={projectId} />
-    ),
-    icon: <TreeMonitorIcon />,
-    name: "Tree Monitor",
-    active: showMonitor,
-    activate: setMonitorVisible,
+  const connectWithRetry = async (
+    desiredState?: string,
+    callback?: () => void,
+  ) => {
+    try {
+      const currManager = CommsManager.getInstance();
+      hasTriedToConnect.current = true;
+      await currManager.connect();
+      console.log("Connected!", currManager.getState());
+      setManager(currManager);
+      if (callback) {
+        waitManagerState(desiredState ? desiredState : "connected", callback);
+      }
+    } catch {
+      console.log("Connection failed, trying again!");
+      timeoutRef.current = window.setTimeout(
+        connectWithRetry,
+        2000,
+        desiredState,
+        callback,
+      );
+    }
   };
 
-  const gazeboViewer = {
-    component: (
-      <VncViewer
-        commsManager={manager}
-        port={6080}
-        message={"Click Play to connect to the Robotics Backend"}
-      />
-    ),
-    icon: <GazeboIcon />,
-    name: "Gazebo",
-    active: showSim,
-    activate: setSimVisible,
-  };
-
-  const terminalViewer = {
-    component: (
-      <VncViewer
-        commsManager={manager}
-        port={6082}
-        message={"Click Play to connect to the Robotics Backend"}
-      />
-    ),
-    icon: <TerminalIcon />,
-    name: "Terminal",
-    active: showTerminal,
-    activate: setTerminalVisible,
+  const waitManagerState = async (state: string, callback: () => void) => {
+    const currManager = CommsManager.getInstance();
+    if (currManager?.getState() === state) {
+      callback();
+    } else {
+      connectTimeoutRef.current = window.setTimeout(
+        waitManagerState,
+        100,
+        state,
+        callback,
+      );
+    }
   };
 
   const treeEditor = {
@@ -233,7 +216,7 @@ const App = ({ projectId }: { projectId: string }) => {
         explorers={explorers}
         api={editorApi}
         extraEditors={[treeEditor]}
-        viewers={[treeMonitor, gazeboViewer, terminalViewer]}
+        viewers={toolsList}
         options={[]}
         layout={layout}
         statusBarComponents={statusBar}

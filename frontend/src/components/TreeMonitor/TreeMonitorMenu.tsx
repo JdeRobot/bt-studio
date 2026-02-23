@@ -8,6 +8,7 @@ import {
   StyledMonitorMenuButton,
   StyledMonitorText,
 } from "BtStyles/TreeMonitor/TreeMonitor.styles";
+import { contrastSelector } from "jderobot-ide-interface";
 
 const TreeMonitorMenu = ({
   onZoomToFit,
@@ -19,6 +20,12 @@ const TreeMonitorMenu = ({
   subTreeName: MutableRefObject<string>;
 }) => {
   const theme = useBtTheme();
+
+  const iconColor = contrastSelector(
+    theme.palette.text,
+    theme.palette.darkText,
+    theme.palette.primary,
+  );
 
   const style = {
     bg: theme.palette.primary,
@@ -33,17 +40,17 @@ const TreeMonitorMenu = ({
           onClick={onZoomToFit}
           title="Zoom To Fit"
         >
-          <ZoomIcon htmlColor={theme.palette.text} />
+          <ZoomIcon htmlColor={iconColor} />
         </StyledMonitorMenuButton>
         <StyledMonitorMenuButton
           {...style}
           onClick={() => setGoBack(true)}
           title="Go Back"
         >
-          <UndoIcon htmlColor={theme.palette.text} />
+          <UndoIcon htmlColor={iconColor} />
         </StyledMonitorMenuButton>
       </div>
-      <StyledMonitorText color={theme.palette.text}>
+      <StyledMonitorText color={iconColor}>
         {subTreeName.current}
       </StyledMonitorText>
     </StyledMonitorMenu>
