@@ -89,6 +89,7 @@ const Menu = ({ projId }: { projId: string }) => {
       </StyledSectionName>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <StyledTextField
+          id="project-name-input"
           onChange={handleName}
           bg={theme.palette.bg}
           errBg={theme.palette.error!}
@@ -153,6 +154,7 @@ const Menu = ({ projId }: { projId: string }) => {
           onClick={onCreateProject}
           loading={loading}
           loadingPosition="end"
+          id="submit-edited-project"
         >
           Edit
         </StyledButton>

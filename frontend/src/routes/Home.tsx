@@ -38,6 +38,7 @@ const App = () => {
             color={theme.palette.text}
             roundness={theme.roundness}
             to="create_project"
+            id="create-project-button"
           >
             New project
           </StyledAction>

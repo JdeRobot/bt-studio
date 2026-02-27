@@ -318,6 +318,7 @@ const Actions = ({ project }: { project: string }) => {
           {...style}
           onClick={() => console.log("Copy project")}
           title="Copy project"
+          id="copy-project-button"
         >
           <CopyIcon htmlColor={theme.palette.text} />
         </StyledActionButton>
@@ -326,22 +327,25 @@ const Actions = ({ project }: { project: string }) => {
         {...style}
         onClick={onDownload}
         title="Download project"
+        id="download-project-button"
       >
         <DownloadIcon htmlColor={theme.palette.text} />
       </StyledActionButton>
-      <Link to={"edit/" + project}>
+      {/* <Link to={"edit/" + project}>
         <StyledActionButton
           {...style}
           onClick={() => console.log("edit project")}
           title="Edit project"
+          id="edit-project-button"
         >
           <EditIcon htmlColor={theme.palette.text} />
         </StyledActionButton>
-      </Link>
+      </Link> */}
       <StyledActionButton
         {...style}
         onClick={onDeleteProject}
         title="Delete project"
+        id="delete-project-button"
       >
         <DeleteIcon htmlColor={theme.palette.text} />
       </StyledActionButton>

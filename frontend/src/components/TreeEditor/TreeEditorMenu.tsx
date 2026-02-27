@@ -15,6 +15,7 @@ import {
   MenuButton,
   MenuButtonLabel,
   MenuButtonStroke,
+  contrastSelector,
 } from "jderobot-ide-interface";
 import ImportSubtreeModal from "./modals/ImportSubtreeModal";
 import { useBtTheme } from "BtContexts/BtThemeContext";
@@ -78,6 +79,12 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
     "Port values": ["Input port value", "Output port value"],
   };
   const theme = useBtTheme();
+
+  const textColor = contrastSelector(
+    theme.palette.text,
+    theme.palette.darkText,
+    theme.palette.primary,
+  );
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>();
@@ -189,6 +196,12 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
 export const AddSubtreeButton = ({ project }: { project: string }) => {
   const theme = useBtTheme();
   const { error } = useError();
+
+  const textColor = contrastSelector(
+    theme.palette.text,
+    theme.palette.darkText,
+    theme.palette.primary,
+  );
 
   const [subtreesList, updateSubtreesList] = useState<string[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -317,7 +330,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
         }}
         title="Create Subtree"
       >
-        <TreeIcon className="bt-icon bt-action-icon" />
+        <TreeIcon className="bt-icon bt-action-icon" htmlColor={textColor} />
       </MenuButton>
       <MenuButtonStroke
         id="import-subtree-button"
@@ -326,7 +339,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
         }}
         title="Import Subtree"
       >
-        <ImportIcon className="bt-icon bt-action-icon" />
+        <ImportIcon className="bt-icon bt-action-icon" htmlColor={textColor} />
       </MenuButtonStroke>
       <ImportSubtreeModal
         project={project}
