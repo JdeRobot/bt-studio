@@ -1,6 +1,7 @@
 export { default as UpArrowIcon } from "@mui/icons-material/NorthRounded";
 export { default as DownArrowIcon } from "@mui/icons-material/SouthRounded";
 export { default as DownloadIcon } from "@mui/icons-material/FileDownloadRounded";
+export { default as ImportIcon } from "@mui/icons-material/UploadRounded";
 export { default as DeleteIcon } from "@mui/icons-material/DeleteForeverRounded";
 export { default as CopyIcon } from "@mui/icons-material/ContentCopyRounded";
 export { default as EditIcon } from "@mui/icons-material/EditRounded";

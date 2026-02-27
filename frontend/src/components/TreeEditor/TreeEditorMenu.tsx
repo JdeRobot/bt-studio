@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./NodeMenu.css";
 import { Menu, MenuItem, styled } from "@mui/material";
-import { ImportIcon } from "../icons";
 
 import {
   createSubtree,
@@ -15,6 +14,7 @@ import {
   MenuButton,
   MenuButtonLabel,
   MenuButtonStroke,
+  contrastSelector,
 } from "jderobot-ide-interface";
 import ImportSubtreeModal from "./modals/ImportSubtreeModal";
 import { useBtTheme } from "BtContexts/BtThemeContext";
@@ -25,6 +25,7 @@ import {
   TreeIcon,
   UpArrowIcon,
   ZoomIcon,
+  ImportIcon,
 } from "BtIcons";
 import { useProjectSettings } from "BtContexts/ProjectSettingsContext";
 
@@ -78,6 +79,12 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
     "Port values": ["Input port value", "Output port value"],
   };
   const theme = useBtTheme();
+
+  const textColor = contrastSelector(
+    theme.palette.text,
+    theme.palette.darkText,
+    theme.palette.primary,
+  );
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuLabel, setMenuLabel] = useState<string>();
@@ -161,7 +168,7 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
             title={label}
             onClick={(e: any) => handleClick(e, label)}
           >
-            {label}
+            <label style={{ color: textColor }}>{label}</label>
           </MenuButtonLabel>
         );
       })}
@@ -189,6 +196,12 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
 export const AddSubtreeButton = ({ project }: { project: string }) => {
   const theme = useBtTheme();
   const { error } = useError();
+
+  const textColor = contrastSelector(
+    theme.palette.text,
+    theme.palette.darkText,
+    theme.palette.primary,
+  );
 
   const [subtreesList, updateSubtreesList] = useState<string[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -291,7 +304,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
           handleClick(e)
         }
       >
-        {"Subtrees"}
+        <label style={{ color: textColor }}>Subtrees</label>
       </MenuButtonLabel>
 
       <StyledMenu
@@ -317,7 +330,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
         }}
         title="Create Subtree"
       >
-        <TreeIcon className="bt-icon bt-action-icon" />
+        <TreeIcon className="bt-icon bt-action-icon" htmlColor={textColor} />
       </MenuButton>
       <MenuButtonStroke
         id="import-subtree-button"
@@ -326,7 +339,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
         }}
         title="Import Subtree"
       >
-        <ImportIcon className="bt-icon bt-action-icon" />
+        <ImportIcon className="bt-icon bt-action-icon" htmlColor={textColor} />
       </MenuButtonStroke>
       <ImportSubtreeModal
         project={project}
@@ -347,6 +360,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
 };
 
 export const OtherButtons = () => {
+  const theme = useBtTheme();
   const settings = useProjectSettings();
 
   const [btOrder, setBtOrder] = useState(settings.btOrder.default_value);
@@ -355,6 +369,12 @@ export const OtherButtons = () => {
     setBtOrder(settings.btOrder.value);
   }, [settings.btOrder.value]);
 
+  const textColor = contrastSelector(
+    theme.palette.text,
+    theme.palette.darkText,
+    theme.palette.primary,
+  );
+
   return (
     <>
       <MenuButton
@@ -362,21 +382,21 @@ export const OtherButtons = () => {
         onClick={() => publish("BTEditorDeleteCurrent")}
         title="Delete"
       >
-        <DeleteIcon className="bt-icon bt-action-icon" />
+        <DeleteIcon className="bt-icon bt-action-icon" htmlColor={textColor} />
       </MenuButton>
       <MenuButton
         id="node-action-edit-button"
         onClick={() => publish("BTEditorEditCurrent")}
         title="Edit"
       >
-        <EditIcon className="bt-icon bt-action-icon" />
+        <EditIcon className="bt-icon bt-action-icon" htmlColor={textColor} />
       </MenuButton>
       <MenuButton
         id="bt-node-action-zoom-button"
         onClick={() => publish("BTEditorHomeZoom")}
         title="Zoom To Fit"
       >
-        <ZoomIcon className="bt-icon bt-action-icon" />
+        <ZoomIcon className="bt-icon bt-action-icon" htmlColor={textColor} />
       </MenuButton>
       <MenuButton
         id="bt-node-action-help-button"
@@ -390,9 +410,15 @@ export const OtherButtons = () => {
         }}
       >
         {btOrder === "bottom-to-top" ? (
-          <UpArrowIcon className="bt-icon bt-action-icon" />
+          <UpArrowIcon
+            className="bt-icon bt-action-icon"
+            htmlColor={textColor}
+          />
         ) : (
-          <DownArrowIcon className="bt-icon bt-action-icon" />
+          <DownArrowIcon
+            className="bt-icon bt-action-icon"
+            htmlColor={textColor}
+          />
         )}
       </MenuButton>
     </>
