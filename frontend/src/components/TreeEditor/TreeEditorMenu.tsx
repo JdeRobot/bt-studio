@@ -168,7 +168,7 @@ export const BTSelectorButtons = ({ project }: { project: string }) => {
             title={label}
             onClick={(e: any) => handleClick(e, label)}
           >
-            <label style={{ color: textColor }}>{label}</label>
+            <label style={{ color: textColor, margin: 0 }}>{label}</label>
           </MenuButtonLabel>
         );
       })}
@@ -304,7 +304,7 @@ export const AddSubtreeButton = ({ project }: { project: string }) => {
           handleClick(e)
         }
       >
-        <label style={{ color: textColor }}>Subtrees</label>
+        <label style={{ color: textColor, margin: 0 }}>Subtrees</label>
       </MenuButtonLabel>
 
       <StyledMenu
