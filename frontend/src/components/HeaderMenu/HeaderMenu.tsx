@@ -15,6 +15,7 @@ import {
   SettingsButton,
   TerminateUniverseButton,
   ThemeButton,
+  ExportButton,
 } from "../Buttons";
 import {
   StyledHeaderButtonContainer,
@@ -83,6 +84,7 @@ const HeaderMenu = ({
         <StyledHeaderButtonContainer>
           <HomeButton />
           <ThemeButton />
+          <ExportButton project={projectId} />
           <DownloadButton project={projectId} />
           <LayoutButton setLayout={setLayout} />
           <SettingsButton project={projectId} />

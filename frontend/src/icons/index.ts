@@ -26,3 +26,4 @@ export { default as WebGUIIcon } from "@mui/icons-material/ImportantDevicesRound
 export { default as RvizIcon } from "@mui/icons-material/PrecisionManufacturingRounded";
 export { default as LoadingIcon } from "@mui/icons-material/SyncRounded";
 export { default as UndoIcon } from "@mui/icons-material/UndoRounded";
+export { default as ExportIcon } from "@mui/icons-material/IosShareRounded";
