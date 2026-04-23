@@ -40,14 +40,14 @@ interface StyledLimitIndicatorTextProps {
 
 const handleFull = (p: StyledLimitIndicatorTextProps) => {
   if (p.width > 80) {
-    return `color: ${p.full_bg ?? primaryColor};`
+    return `color: ${p.full_bg ?? primaryColor};`;
   }
 };
-
 
 export const StyledLimitIndicatorText = styled.div<StyledLimitIndicatorTextProps>`
   color: ${(p) => p.color ?? primaryColor};
   font-size: 0.85rem;
+  height: 1rem;
   margin-top: 0.5rem;
 
   &:hover {
