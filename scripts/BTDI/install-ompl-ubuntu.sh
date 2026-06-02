@@ -71,17 +71,18 @@ install_ompl()
         OMPL="omplapp"
     fi
     if [ -z $GITHUB ]; then
-        if [ -z $APP]; then
-            wget -O - https://github.com/ompl/${OMPL}/archive/1.6.0.tar.gz | tar zxf -
-            cd ${OMPL}-1.6.0
+        if [ -z $APP ]; then
+            wget -O - https://github.com/ompl/${OMPL}/archive/1.7.0.tar.gz | tar zxf -
+            cd ${OMPL}-1.7.0
         else
-            wget -O - https://github.com/ompl/${OMPL}/releases/download/1.6.0/${OMPL}-1.6.0-Source.tar.gz | tar zxf -
-            cd $OMPL-1.6.0-Source
+            wget -O - https://github.com/ompl/${OMPL}/releases/download/1.7.0/${OMPL}-1.7.0-Source.tar.gz | tar zxf -
+            cd $OMPL-1.7.0-Source
         fi
     else
         ${SUDO} apt-get -y install git
         git clone --recurse-submodules https://github.com/ompl/${OMPL}.git
         cd $OMPL
+        git checkout 0f990886e9e40014e32ddee177c8d798adbc8fb7 # Temporary: with this commit works
     fi
     mkdir -p build/Release
     cd build/Release

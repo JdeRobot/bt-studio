@@ -759,6 +759,12 @@ def get_docker_universe_data(fal, request):
 
     universe = Universe.objects.get(name=name)
 
+    tools_configuration = None
+    if universe.world.tools_config != "None":
+        tools_configuration = json.loads(universe.world.tools_config)
+
+    print(universe.robot)
+
     if universe.robot.name != "None":
         robot_config = {
             "name": universe.robot.name,
@@ -766,6 +772,8 @@ def get_docker_universe_data(fal, request):
             "ros_version": universe.world.ros_version,
             "type": universe.world.type,
             "start_pose": universe.world.start_pose,
+            "entity": universe.robot.entity,
+            "extra_config": universe.robot.extra_config,
         }
     else:
         robot_config = {
@@ -774,6 +782,8 @@ def get_docker_universe_data(fal, request):
             "ros_version": None,
             "type": None,
             "start_pose": None,
+            "entity": None,
+            "extra_config": None,
         }
 
     config = {
@@ -783,11 +793,11 @@ def get_docker_universe_data(fal, request):
             "launch_file_path": universe.world.launch_file_path,
             "ros_version": universe.world.ros_version,
             "type": universe.world.type,
-            "tools_config": {},
+            "tools_config": tools_configuration,
         },
         "robot": robot_config,
         "tools": ["console", "simulator", "state_monitor"],
-        "tools_config": {},
+        "tools_config": tools_configuration,
     }
 
     # Return the list of projects
