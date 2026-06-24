@@ -12,9 +12,9 @@ export const editorApi: ExtraApi = {
   file: {
     get: (project: string, file: Entry) => {
       if (file.group === "Universes") {
-        return getFile(project, file.path, "");
+        return getFile(project, file.path, "", file.binary);
       }
-      return getFile(project, file.path);
+      return getFile(project, file.path, undefined, file.binary);
     },
     save: (project: string, file: Entry, content: string) => {
       if (file.group === "Universes") {

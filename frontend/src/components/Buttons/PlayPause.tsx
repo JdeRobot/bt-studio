@@ -199,11 +199,10 @@ const PlayPauseButton = ({
 
   const zipCodeFile = async (
     zip: JSZip,
-    file_path: string,
-    file_name: string,
+    file: Entry,
   ) => {
-    const content = await getFile(project, file_path);
-    zip.file(file_name, content);
+    const content = await getFile(project, file.path, undefined, file.binary);
+    zip.file(file.name, content, { binary: file.binary });
   };
 
   const zipCodeFolder = async (zip: JSZip, file: Entry) => {
@@ -218,7 +217,7 @@ const PlayPauseButton = ({
       if (element.is_dir) {
         await zipCodeFolder(folder, element);
       } else {
-        await zipCodeFile(folder, element.path, element.name);
+        await zipCodeFile(folder, element);
       }
     }
   };
