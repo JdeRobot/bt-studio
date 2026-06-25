@@ -197,10 +197,7 @@ const PlayPauseButton = ({
     }
   };
 
-  const zipCodeFile = async (
-    zip: JSZip,
-    file: Entry,
-  ) => {
+  const zipCodeFile = async (zip: JSZip, file: Entry) => {
     const content = await getFile(project, file.path, undefined, file.binary);
     zip.file(file.name, content, { binary: file.binary });
   };
