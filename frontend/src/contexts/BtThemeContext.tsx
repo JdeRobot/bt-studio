@@ -4,7 +4,6 @@ import { createContext, ReactNode, useContext, useState } from "react";
 import { BtTheme } from "BtTypes/index";
 import { flushSync } from "react-dom";
 
-
 interface BtThemeProviderProps {
   theme?: BtTheme;
   children?: ReactNode;

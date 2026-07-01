@@ -676,21 +676,28 @@ const createAction = async (
 const getFile = async (
   projectId: string,
   fileName: string,
-  universeName: string | undefined = undefined
+  universeName: string | undefined = undefined,
+  binary?: boolean
 ) => {
   if (!projectId) throw new Error("Project name is not set");
   if (!fileName) throw new Error("File name is not set");
 
   let apiUrl = `/bt_studio/get_file?project_id=${encodeURIComponent(projectId)}&filename=${encodeURIComponent(fileName)}`;
 
-  if (universeName !== undefined)
+  if (universeName !== undefined && universeName !== "")
     apiUrl += `&universe=${encodeURIComponent(universeName)}`;
+
+  if (binary) apiUrl += `&binary=true`;
 
   const response = await axios.get(apiUrl);
 
   // Handle unsuccessful response status (e.g., non-2xx status)
   if (!isSuccessful(response)) {
     throw new Error(response.data.message || "Failed to get file list."); // Response error
+  }
+
+  if (binary) {
+    return atob(response.data.content);
   }
 
   return response.data.content;
