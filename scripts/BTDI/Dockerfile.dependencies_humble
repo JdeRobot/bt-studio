@@ -28,6 +28,12 @@ ENV PYTHONPATH=/opt/ros/${ROS_DISTRO}/lib/python3.10/site-packages
 ENV ROS_PYTHON_VERSION=3
 ENV ROS_VERSION=2
 
+# gz.msgs10 Python bindings (installed by gz-harmonic apt package) are compiled
+# with protoc 3.x and cannot create descriptors under protobuf 4.x / 5.x C++
+# extension. Force pure-Python protobuf parser (backward-compatible with all
+# .pb2 files) so gz.msgs10 and onnxruntime-gpu coexist without version pinning.
+ENV PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+
 # Install common tools
 RUN apt-get update && apt-get install -y \
   software-properties-common \
@@ -57,22 +63,6 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o 
   python3-argcomplete \
   && rosdep init \
   && rm -rf /var/lib/apt/lists/*
-
-# Install Gazebo 11
-RUN add-apt-repository ppa:openrobotics/gazebo11-gz-cli
-RUN apt-get update && apt-get install -y \
-  gazebo11 \
-  ros-humble-gazebo-ros-pkgs \
-  gstreamer1.0-plugins-bad \
-  gstreamer1.0-plugins-good \
-  gstreamer1.0-plugins-ugly \
-  gstreamer1.0-libav \
-  libgstreamer-plugins-base1.0-dev \
-  libimage-exiftool-perl \
-  && apt-get -y autoremove \
-  && apt-get clean autoclean \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN mkdir ~/.gazebo && touch ~/.gazebo/gui.ini
 
 # Install Gazebo Harmonic
 RUN apt-get update \
@@ -104,8 +94,8 @@ RUN curl -L -o xorg.conf https://xpra.org/xorg.conf || echo "Download failed" \
   && rm -rf /tmp/*
 
 # Install noVNC and websockify
-RUN git clone -b v1.4.0 https://github.com/novnc/noVNC.git
-RUN cd /noVNC/utils && git clone -b v0.11.0 https://github.com/novnc/websockify.git
+RUN git clone --depth=1 --single-branch -b v1.4.0 https://github.com/novnc/noVNC.git
+RUN cd /noVNC/utils && git clone --depth=1 --single-branch -b v0.11.0 https://github.com/novnc/websockify.git
 
 # VirtualGL and TurboVNC
 COPY ./gpu/virtualgl_${VIRTUALGL_VERSION}_amd64.deb ./gpu/virtualgl32_${VIRTUALGL_VERSION}_amd64.deb ./gpu/turbovnc_${TURBOVNC_VERSION}_amd64.deb /
@@ -145,12 +135,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && apt-get update && apt-get install -y --no-install-recommends postgresql-18 \
   && rm -rf /var/lib/apt/lists/*
 
-# Node
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - \
-  && apt-get install -y nodejs \
-  && npm install -g yarn \
-  && rm -rf /var/lib/apt/lists/*
-
 # Install Python 3 pip build dependencies first
 RUN python3.10 -m pip install --no-cache-dir --upgrade pip==23.3.1 wheel==0.41.3 setuptools==69.0.2 selenium
 
@@ -160,21 +144,52 @@ RUN python3.10 -m pip install --no-cache-dir \
   argparse==1.4.0 coverage==6.2 cerberus==1.3.4 empy==3.3.4 jinja2==3.0.3 kconfiglib==14.1.0 \
   matplotlib==3.0.* numpy==1.24.3 nunavut==1.1.0 packaging==21.3 pkgconfig==1.5.5 pyros-genmsg==0.5.8 \
   pyulog==1.0.1 pyyaml==5.4.1 requests==2.31.0 serial==0.0.97 six==1.16.0 toml==0.10.2 psutil==5.9.0 \
-  onnxruntime-gpu==1.22.0 Pillow==9.0.1 opencv-python==4.5.5.64 watchdog==2.1.5 utm==0.7.0 psycopg2 jedi pyapriltags python-slugify
+  onnxruntime-gpu==1.22.0 Pillow==9.0.1 opencv-python==4.5.5.64 watchdog==2.1.5 utm==0.7.0 psycopg2 jedi pyapriltags
 
-# install pytorch with CUDA 12.8 support 
-RUN python3.10 -m pip install --no-cache-dir --ignore-installed sympy==1.13.3
-RUN python3.10 -m pip install --no-cache-dir torch --extra-index-url https://download.pytorch.org/whl/cu128
+# CUDA runtime wheels for onnxruntime-gpu==1.22.0 CUDA Execution Provider.
+#
+# All seven packages below must be upgraded together whenever onnxruntime-gpu
+# is bumped. Compatibility ranges declared by the wheel (via ~= operator):
+#   nvidia-cuda-runtime-cu12  ~= 12.0   nvidia-cuda-nvrtc-cu12 ~= 12.0
+#   nvidia-cublas-cu12        (runtime dep of cudnn)
+#   nvidia-cudnn-cu12         ~=  9.0
+#   nvidia-curand-cu12        ~= 10.0   nvidia-cufft-cu12      ~= 11.0
+#
+# Upgrade checklist:
+#   1. Check the new ORT release notes for CUDA / cuDNN major version changes.
+#   2. Run: pip show onnxruntime-gpu | grep Requires  — to see declared ~= ranges.
+#   3. Pick PyPI versions whose MAJOR matches those ranges (stay on CUDA 12.x,
+#      cuDNN 9.x, curand 10.x, cufft 11.x until ORT itself changes the range).
+#   4. After build, verify inside the container:
+#        python3 -c "import onnxruntime as ort; print(ort.get_available_providers())"
+#      CUDAExecutionProvider must appear first.
+#   5. Run: ldd $(python3 -c "import onnxruntime, os; print(os.path.dirname(onnxruntime.__file__))")/capi/libonnxruntime_providers_cuda.so
+#      Every .so must resolve (no "not found" lines).
+RUN python3.10 -m pip install --no-cache-dir \
+  nvidia-cuda-runtime-cu12==12.8.90 \
+  nvidia-cublas-cu12==12.8.4.1 \
+  nvidia-cudnn-cu12==9.10.2.21 \
+  nvidia-nvjitlink-cu12==12.8.93 \
+  nvidia-cuda-nvrtc-cu12==12.8.93 \
+  nvidia-curand-cu12==10.3.10.19 \
+  nvidia-cufft-cu12==11.4.1.4
+
+# Register all pip-installed nvidia .so files with ldconfig so onnxruntime-gpu
+# finds them regardless of whether pip used site-packages or dist-packages
+COPY config-nvidia-libs.py /
+WORKDIR /
+RUN chmod u+x config-nvidia-libs.py
+RUN python3.10 config-nvidia-libs.py && ldconfig
 
 # monaco editor
 RUN python3.10 -m pip install --no-cache-dir black==24.10.0
 
 # Install ONNX Runtime C++ API
 RUN apt-get update && apt-get install -y wget && \
-  wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.17.1/onnxruntime-linux-x64-1.17.1.tgz -O /tmp/onnxruntime.tgz && \
+  wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.22.0/onnxruntime-linux-x64-1.22.0.tgz -O /tmp/onnxruntime.tgz && \
   tar -zxvf /tmp/onnxruntime.tgz -C /tmp && \
-  cp -r /tmp/onnxruntime-linux-x64-1.17.1/include/* /usr/local/include/ && \
-  cp -r /tmp/onnxruntime-linux-x64-1.17.1/lib/* /usr/local/lib/ && \
+  cp -r /tmp/onnxruntime-linux-x64-1.22.0/include/* /usr/local/include/ && \
+  cp -r /tmp/onnxruntime-linux-x64-1.22.0/lib/* /usr/local/lib/ && \
   ldconfig && \
   rm -rf /tmp/onnxruntime* && \
   rm -rf /var/lib/apt/lists/*
@@ -236,7 +251,7 @@ RUN rm -rf log
 # remove log folder
 RUN mkdir -p /home/drones_ws/src/
 WORKDIR /home/drones_ws/src/
-RUN git clone https://github.com/aerostack2/aerostack2.git -b robotics-academy-fix
+RUN git clone --depth=1 https://github.com/aerostack2/aerostack2.git -b robotics-academy-fix
 RUN touch aerostack2/as2_hardware_drivers/COLCON_IGNORE
 RUN touch aerostack2/as2_behavior_tree/COLCON_IGNORE
 RUN touch aerostack2/as2_map_server/COLCON_IGNORE
@@ -306,7 +321,12 @@ RUN apt-get update && \
   ros-humble-rmw-cyclonedds-cpp \
   ros-humble-ur \
   ros-humble-ros-testing \
+  ros-humble-pcl-ros \
+  ros-humble-tf-transformations \
+  ros-humble-pcl-conversions \
+  ros-humble-pcl-msgs \
   libpoco-dev \
+  libpcl-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # On arm64 (e.g. Apple Silicon), disable parallel colcon builds and LTO
@@ -331,41 +351,7 @@ RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
 # Install CycloneDDS RMW for ROS 2 Humble to fix cycle time issues in humble-moveit (temporary fix)    
 RUN echo 'export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp' >> ~/.bashrc
 
-# Create workspace and add IndustrialRobots repo 
-RUN mkdir -p /home/dev_ws/src/
-WORKDIR /home/dev_ws/src/
-RUN git clone https://github.com/JdeRobot/IndustrialRobots.git -b humble-devel
-RUN sudo cp /home/dev_ws/src/IndustrialRobots/ros2_SimRealRobotControl/include/move_group_interface_improved.h /opt/ros/humble/include/moveit/move_group_interface/move_group_interface_improved.h
-WORKDIR /home/dev_ws
-
-# --- PCL & ROS PCL deps (before colcon) ---
-RUN apt-get update && apt-get install -y \
-  libpcl-dev \
-  ros-humble-pcl-ros \
-  ros-humble-gazebo-ros-pkgs \
-  ros-humble-gazebo-plugins \
-  ros-humble-tf-transformations \
-  ros-humble-pcl-conversions && \
-  rm -rf /var/lib/apt/lists/*
-
-# (Optional but recommended) install missing deps via rosdep
-RUN . /opt/ros/humble/setup.sh && \
-  rosdep update && \
-  rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
-
-# Build (drop the duplicate)
-WORKDIR /home/dev_ws
-ARG TARGETARCH
-RUN . /opt/ros/humble/setup.sh && \
-  if [ "$TARGETARCH" = "arm64" ]; then \
-  export MAKEFLAGS="-j1" && colcon build --executor sequential --parallel-workers 1 && colcon build --executor sequential --parallel-workers 1; \
-  else \
-  colcon build && colcon build; \
-  fi
-RUN echo "source /home/dev_ws/install/local_setup.bash" >> ~/.bashrc
-
 # Create workspace and add drone packages
-RUN echo "source /usr/share/gazebo/setup.bash" >> ~/.bashrc
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 RUN echo 'export AEROSTACK2_PATH=/home/drones_ws/src/aerostack2' >> ~/.bashrc
 RUN echo 'source $AEROSTACK2_PATH/as2_cli/setup_env.bash' >> ~/.bashrc
@@ -375,7 +361,7 @@ RUN echo "source /home/drones_ws/install/setup.bash" >> ~/.bashrc
 COPY install-ompl-ubuntu.sh /
 WORKDIR /
 RUN chmod u+x install-ompl-ubuntu.sh
-RUN ./install-ompl-ubuntu.sh --github --python
+RUN ./install-ompl-ubuntu.sh --github --python && rm -rf /ompl
 
 # Clone and build gz_ros2_control for Gazebo Harmonic (gz-sim8)
 # This is required for Pick Place Harmonic exercise controller loading
