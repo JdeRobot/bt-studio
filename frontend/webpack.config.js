@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const BundleTrackerPlugin = require("webpack-bundle-tracker");
 const path = require("path");
@@ -20,7 +21,7 @@ const aliases = () => {
 
 module.exports = {
   entry: {
-    main: "./src/index.js",
+    main: "./src/index.tsx",
   },
   output: {
     filename: "js/[name].[contenthash:8].js",
@@ -78,6 +79,13 @@ module.exports = {
       path: "./",
       filename: "webpack-stats.json",
     }),
+    new MiniCssExtractPlugin({
+      filename: "css/[name].css",
+    }),
   ],
-  devtool: "source-map",
+  mode: process.argv.includes("production") ? "production" : "development",
+  devtool: process.argv.includes("production") ? false : "inline-source-map",
+  optimization: {
+    minimize: process.argv.includes("production"),
+  },
 };

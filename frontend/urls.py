@@ -11,5 +11,9 @@ urlpatterns = [
         "create_project/<slug:proj_id>",
         RedirectView.as_view(url="/projects/", permanent=True),
     ),
+    path(
+        "edit/<slug:proj_id>",
+        RedirectView.as_view(url="/projects", permanent=True),
+    ),
     path("studio/<slug:proj_id>/", views.index, name="studio"),
 ]
