@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./ImportCustomPage.css";
 import {
-  createEmptyUniverse,
+  createEmptyWorld,
   createUniverseConfig,
   createUniverseFolder,
   uploadFileUniverse,
@@ -67,7 +67,7 @@ const ImportCustomPage = ({
       return;
     }
 
-    await createEmptyUniverse(currentProject, formState.universeName);
+    await createEmptyWorld(currentProject, formState.universeName);
     await handleAcceptedFiles(uploadInputRef.current.files);
     try {
       await createUniverseConfig(currentProject, formState.universeName);

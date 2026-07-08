@@ -50,7 +50,7 @@ const createProject = async (projectName: string) => {
     {
       project_name: projectName,
     },
-    axiosExtra
+    axiosExtra,
   );
 
   // Handle unsuccessful response status (e.g., non-2xx status)
@@ -71,7 +71,7 @@ const deleteProject = async (projectId: string) => {
     {
       project_id: projectId,
     },
-    axiosExtra
+    axiosExtra,
   );
 
   // Handle unsuccessful response status (e.g., non-2xx status)
@@ -112,7 +112,7 @@ const listProjects = async () => {
 
 const getProjectConfig = async (
   currentProjectname: string,
-  settings: SettingsData
+  settings: SettingsData,
 ) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
@@ -123,7 +123,7 @@ const getProjectConfig = async (
 
     if (!isSuccessful(response)) {
       throw new Error(
-        response.data.message || "Failed to retrieve project config"
+        response.data.message || "Failed to retrieve project config",
       );
     }
 
@@ -132,7 +132,7 @@ const getProjectConfig = async (
 
     Object.entries(settings).forEach(([key, value]) => {
       value.setter(
-        project_settings[key] ? project_settings[key] : value.default_value
+        project_settings[key] ? project_settings[key] : value.default_value,
       );
     });
   } catch (error) {
@@ -155,7 +155,7 @@ const getProjectConfigRaw = async (projectId: string) => {
 
     if (!isSuccessful(response)) {
       throw new Error(
-        response.data.message || "Failed to retrieve project config"
+        response.data.message || "Failed to retrieve project config",
       );
     }
 
@@ -170,7 +170,7 @@ const getProjectConfigRaw = async (projectId: string) => {
 
 const saveProjectConfig = async (
   currentProjectname: string,
-  settings: string
+  settings: string,
 ) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
   if (!settings) throw new Error("Settings content is null");
@@ -183,7 +183,7 @@ const saveProjectConfig = async (
         project_id: currentProjectname,
         settings: settings,
       },
-      axiosExtra
+      axiosExtra,
     );
 
     // Handle unsuccessful response status (e.g., non-2xx status)
@@ -198,21 +198,21 @@ const saveProjectConfig = async (
 
 //////////////////////////// Universe management ///////////////////////////////
 
-const createEmptyUniverse = async (projectId: string, universeName: string) => {
-  if (!projectId) throw new Error("The universe name is not set");
-  if (!universeName) throw new Error("The universe name is not set");
+const createEmptyWorld = async (projectId: string, worldName: string) => {
+  if (!projectId) throw new Error("The project name is not set");
+  if (!worldName) throw new Error("The world name is not set");
   if (!projectId.trim()) throw new Error("Project name cannot be empty.");
-  if (!universeName.trim()) throw new Error("Project name cannot be empty.");
+  if (!worldName.trim()) throw new Error("Project name cannot be empty.");
 
-  const apiUrl = `/bt_studio/create_universe/`;
+  const apiUrl = `/bt_studio/create_world/`;
 
   const response = await axios.post(
     apiUrl,
     {
       project_id: projectId,
-      universe: universeName,
+      world: worldName,
     },
-    axiosExtra
+    axiosExtra,
   );
 
   // Handle unsuccessful response status (e.g., non-2xx status)
@@ -223,13 +223,13 @@ const createEmptyUniverse = async (projectId: string, universeName: string) => {
 
 const getUniverseConfig = async (
   universeName: string,
-  currentProjectname: string
+  currentProjectname: string,
 ) => {
   if (!universeName) throw new Error("The universe name is not set");
   if (!currentProjectname) throw new Error("Current Project name is not set");
 
   const apiUrl = `/bt_studio/get_universe_configuration?project_id=${encodeURIComponent(
-    currentProjectname
+    currentProjectname,
   )}&universe_name=${encodeURIComponent(universeName)}`;
 
   const response = await axios.get(apiUrl);
@@ -237,7 +237,7 @@ const getUniverseConfig = async (
   // Handle unsuccessful response status (e.g., non-2xx status)
   if (!isSuccessful(response)) {
     throw new Error(
-      response.data.message || "Failed to retrieve universe config"
+      response.data.message || "Failed to retrieve universe config",
     ); // Response error
   }
 
@@ -246,7 +246,7 @@ const getUniverseConfig = async (
 
 const createUniverseConfig = async (
   currentProjectname: string,
-  universeName: string
+  universeName: string,
 ) => {
   if (!universeName) throw new Error("The universe name is not set");
   if (!currentProjectname) throw new Error("Current Project name is not set");
@@ -259,13 +259,13 @@ const createUniverseConfig = async (
       project_id: currentProjectname,
       universe_name: universeName,
     },
-    axiosExtra
+    axiosExtra,
   );
 
   // Handle unsuccessful response status (e.g., non-2xx status)
   if (!isSuccessful(response)) {
     throw new Error(
-      response.data.message || "Failed to create universe config"
+      response.data.message || "Failed to create universe config",
     ); // Response error
   }
 };
@@ -280,7 +280,7 @@ const getRoboticsBackendUniverse = async (universeName: string) => {
   // Handle unsuccessful response status (e.g., non-2xx status)
   if (!isSuccessful(response)) {
     throw new Error(
-      response.data.message || "Failed to retrieve universe config"
+      response.data.message || "Failed to retrieve universe config",
     ); // Response error
   }
 
@@ -295,7 +295,7 @@ const getRoboticsBackendUniverse = async (universeName: string) => {
 const createRoboticsBackendUniverse = async (
   projectId: string,
   universeName: string,
-  universeId: string
+  universeId: string,
 ) => {
   if (!projectId) throw new Error("The project name is not set");
   if (!universeName) throw new Error("The universe name is not set");
@@ -310,7 +310,7 @@ const createRoboticsBackendUniverse = async (
       universe_name: universeName,
       id: universeId,
     },
-    axiosExtra
+    axiosExtra,
   );
 
   // Handle unsuccessful response status (e.g., non-2xx status)
@@ -319,19 +319,19 @@ const createRoboticsBackendUniverse = async (
   }
 };
 
-const deleteUniverse = async (projectId: string, universeName: string) => {
+const deleteWorld = async (projectId: string, world: string) => {
   if (!projectId) throw new Error("The project name is not set");
-  if (!universeName) throw new Error("The universe name is not set");
+  if (!world) throw new Error("The world name is not set");
 
-  const apiUrl = "/bt_studio/delete_universe/";
+  const apiUrl = "/bt_studio/delete_world/";
 
   const response = await axios.post(
     apiUrl,
     {
       project_id: projectId,
-      universe_name: universeName,
+      world: world,
     },
-    axiosExtra
+    axiosExtra,
   );
 
   // Handle unsuccessful response status (e.g., non-2xx status)
@@ -357,7 +357,7 @@ const listUniverses = async (projectId: string) => {
 
 const createCustomUniverse = async (
   projectId: string,
-  universeName: string
+  universeName: string,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!universeName) throw new Error("Universe name is not set");
@@ -370,7 +370,7 @@ const createCustomUniverse = async (
       project_id: projectId,
       universe_name: universeName,
     },
-    axiosExtra
+    axiosExtra,
   );
 
   // Handle unsuccessful response status (e.g., non-2xx status)
@@ -396,7 +396,7 @@ const listDockerUniverses = async () => {
 
 const generateLocalApp = async (
   currentProjectname: string,
-  btOrder: string
+  btOrder: string,
 ) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
@@ -409,7 +409,7 @@ const generateLocalApp = async (
         project_id: currentProjectname,
         bt_order: btOrder,
       },
-      axiosExtra
+      axiosExtra,
     );
     return response.data;
   } catch (e: unknown) {
@@ -420,7 +420,7 @@ const generateLocalApp = async (
 
 const generateDockerizedApp = async (
   currentProjectname: string,
-  btOrder: string
+  btOrder: string,
 ) => {
   if (!currentProjectname) throw new Error("Current Project name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
@@ -433,7 +433,7 @@ const generateDockerizedApp = async (
       project_id: currentProjectname,
       bt_order: btOrder,
     },
-    axiosExtra
+    axiosExtra,
   );
 
   // Handle unsuccessful response status (e.g., non-2xx status)
@@ -455,7 +455,7 @@ const getTreeData = async (projectId: string) => {
   // Handle unsuccessful response status (e.g., non-2xx status)
   if (!isSuccessful(response)) {
     throw new Error(
-      response.data.message || "Failed to retrieve project graph"
+      response.data.message || "Failed to retrieve project graph",
     ); // Response error
   }
 
@@ -471,7 +471,7 @@ const getBaseTree = async (currentProjectname: string) => {
   // Handle unsuccessful response status (e.g., non-2xx status)
   if (!isSuccessful(response)) {
     throw new Error(
-      response.data.message || "Failed to retrieve project graph"
+      response.data.message || "Failed to retrieve project graph",
     ); // Response error
   }
 
@@ -490,7 +490,7 @@ const getTreeStructure = async (projectId: string, btOrder: string) => {
   } catch (e: unknown) {
     const error = e as AxiosError<any, Record<string, unknown>>;
     throw Error(
-      error.response?.data.error || "Failed to get subtree structure."
+      error.response?.data.error || "Failed to get subtree structure.",
     );
   }
 };
@@ -499,7 +499,7 @@ const getTreeStructure = async (projectId: string, btOrder: string) => {
 
 const createSubtree = async (
   subtreeName: string,
-  currentProjectname: string
+  currentProjectname: string,
 ) => {
   if (!subtreeName.trim()) {
     throw new Error("Subtree name cannot be empty.");
@@ -517,7 +517,7 @@ const createSubtree = async (
         project_id: currentProjectname,
         subtree_name: subtreeName,
       },
-      axiosExtra
+      axiosExtra,
     );
 
     // Handle unsuccessful response status (e.g., non-2xx status)
@@ -585,7 +585,7 @@ const getSubtreeList = async (projectId: string) => {
 const getSubtreeStructure = async (
   projectId: string,
   subtreeName: string,
-  btOrder: string
+  btOrder: string,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!subtreeName) throw new Error("Subtree name is not set");
@@ -609,7 +609,7 @@ const createFile = async (
   projectId: string,
   fileName: string,
   location: string,
-  universeName: string | undefined = undefined
+  universeName: string | undefined = undefined,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
@@ -617,7 +617,8 @@ const createFile = async (
 
   const apiUrl = "/bt_studio/create_file/";
 
-  if (location.startsWith("trees")) throw new Error("Cannot create a tree this way");
+  if (location.startsWith("trees"))
+    throw new Error("Cannot create a tree this way");
 
   let params = {
     project_id: projectId,
@@ -644,7 +645,7 @@ const createFile = async (
 const createAction = async (
   projectId: string,
   fileName: string,
-  template: string
+  template: string,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
@@ -660,7 +661,7 @@ const createAction = async (
         filename: fileName,
         template: template,
       },
-      axiosExtra
+      axiosExtra,
     );
 
     // Handle unsuccessful response status (e.g., non-2xx status)
@@ -677,7 +678,7 @@ const getFile = async (
   projectId: string,
   fileName: string,
   universeName: string | undefined = undefined,
-  binary?: boolean
+  binary?: boolean,
 ) => {
   if (!projectId) throw new Error("Project name is not set");
   if (!fileName) throw new Error("File name is not set");
@@ -706,7 +707,7 @@ const getFile = async (
 const getUniverseFile = async (
   projectId: string,
   universeName: string,
-  fileName: string
+  fileName: string,
 ) => {
   if (!projectId) throw new Error("Project name is not set");
   if (!universeName) throw new Error("Universe name is not set");
@@ -719,7 +720,7 @@ const saveFile = async (
   projectId: string,
   fileName: string,
   content: string,
-  universeName: string | undefined = undefined
+  universeName: string | undefined = undefined,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("Current File name is not set");
@@ -752,7 +753,7 @@ const renameFile = async (
   projectId: string,
   path: string,
   new_path: string,
-  universeName: string | undefined = undefined
+  universeName: string | undefined = undefined,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!path) throw new Error("Path is not set");
@@ -782,7 +783,7 @@ const renameFile = async (
 const deleteFile = async (
   projectId: string,
   path: string,
-  universeName: string | undefined = undefined
+  universeName: string | undefined = undefined,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!path) throw new Error("Path is not set");
@@ -812,7 +813,7 @@ const uploadFile = async (
   fileName: string,
   location: string,
   content: string,
-  universeName: undefined | string = undefined
+  universeName: undefined | string = undefined,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
@@ -843,7 +844,7 @@ const uploadFileUniverse = async (
   fileName: string,
   location: string,
   content: string,
-  universeName: string
+  universeName: string,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
@@ -856,7 +857,7 @@ const uploadFileUniverse = async (
 
 const getFileList = async (
   projectId: string,
-  universeName: string | undefined = undefined
+  universeName: string | undefined = undefined,
 ): Promise<string> => {
   if (!projectId) throw new Error("Project name is not set");
 
@@ -900,13 +901,14 @@ const createFolder = async (
   projectId: string,
   location: string,
   folderName: string,
-  universeName: undefined | string = undefined
+  universeName: undefined | string = undefined,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!folderName) throw new Error("Folder name is not set");
   if (location === undefined) throw new Error("Location is not set");
 
-  if (location.startsWith("trees")) throw new Error("Cannot create a subtree this way");
+  if (location.startsWith("trees"))
+    throw new Error("Cannot create a subtree this way");
 
   const apiUrl = "/bt_studio/create_folder/";
 
@@ -936,7 +938,7 @@ const createUniverseFolder = async (
   projectId: string,
   folderName: string,
   location: string,
-  universeName: string
+  universeName: string,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!folderName) throw new Error("Folder name is not set");
@@ -950,7 +952,7 @@ const renameFolder = async (
   projectId: string,
   path: string,
   new_path: string,
-  universeName: undefined | string = undefined
+  universeName: undefined | string = undefined,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!path) throw new Error("Path is not set");
@@ -978,7 +980,7 @@ const renameFolder = async (
 const deleteFolder = async (
   projectId: string,
   path: string,
-  universeName: undefined | string = undefined
+  universeName: undefined | string = undefined,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!path) throw new Error("Path is not set");
@@ -1011,7 +1013,7 @@ const getLibraryTree = async (entry: string) => {
   // Handle unsuccessful response status (e.g., non-2xx status)
   if (!isSuccessful(response)) {
     throw new Error(
-      response.data.message || "Failed to retrieve project graph"
+      response.data.message || "Failed to retrieve project graph",
     ); // Response error
   }
 
@@ -1070,7 +1072,7 @@ const getUserLibraryTree = async (project: string, entry: string) => {
   // Handle unsuccessful response status (e.g., non-2xx status)
   if (!isSuccessful(response)) {
     throw new Error(
-      response.data.message || "Failed to retrieve project graph"
+      response.data.message || "Failed to retrieve project graph",
     ); // Response error
   }
 
@@ -1085,7 +1087,7 @@ const getUserLibraryTree = async (project: string, entry: string) => {
 const importLibrarySubtree = async (
   projectId: string,
   entry: string,
-  subtreeName: string
+  subtreeName: string,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!entry) throw new Error("Current Library Tree name is not set");
@@ -1101,7 +1103,7 @@ const importLibrarySubtree = async (
         entry: entry,
         name: subtreeName,
       },
-      axiosExtra
+      axiosExtra,
     );
 
     // Handle unsuccessful response status (e.g., non-2xx status)
@@ -1118,7 +1120,7 @@ const importUserLibrarySubtree = async (
   projectId: string,
   entry: string,
   entryProject: string,
-  subtreeName: string
+  subtreeName: string,
 ) => {
   if (!projectId) throw new Error("Current Project name is not set");
   if (!entry) throw new Error("Current Library Tree name is not set");
@@ -1136,7 +1138,7 @@ const importUserLibrarySubtree = async (
         entry_project: entryProject,
         name: subtreeName,
       },
-      axiosExtra
+      axiosExtra,
     );
 
     // Handle unsuccessful response status (e.g., non-2xx status)
@@ -1153,7 +1155,7 @@ const importUserLibrarySubtree = async (
 export {
   createAction,
   createCustomUniverse,
-  createEmptyUniverse,
+  createEmptyWorld,
   createFile,
   createFolder,
   createProject,
@@ -1164,7 +1166,7 @@ export {
   deleteFile,
   deleteFolder,
   deleteProject,
-  deleteUniverse,
+  deleteWorld,
   generateDockerizedApp,
   generateLocalApp,
   getActionsList,
@@ -1198,5 +1200,5 @@ export {
   importUserLibrarySubtree,
   getProjectConfigRaw,
   getUserInfo,
-  getTreeData
+  getTreeData,
 };

@@ -6,7 +6,7 @@ import {
   ModalTitlebar,
 } from "jderobot-ide-interface";
 import CreatePage from "./CreatePage";
-import { deleteUniverse, listUniverses } from "BtApi/TreeWrapper";
+import { deleteWorld, listUniverses } from "BtApi/TreeWrapper";
 import { useError } from "jderobot-ide-interface";
 import CreateCustomPage from "./CreateCustomPage";
 import ImportCustomPage from "./ImportCustomPage";
@@ -76,7 +76,7 @@ const UniverseModal = ({
 
   const deleteUniverseFunc = async (universe_name: string) => {
     try {
-      await deleteUniverse(project, universe_name);
+      await deleteWorld(project, universe_name);
       loadUniverseList();
       console.log("Universe deleted successfully");
     } catch (e: any) {

@@ -1,30 +1,44 @@
+"""
+Utilities for request validation and API error handling.
+"""
+
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from backend.tree_api.models import User, Project
 import binascii
 from functools import wraps
 import json
-from django.conf import settings
-from .file_access import FAL_BT
-from copy import copy
+import logging
 from .exceptions import (
+    BinaryNotSupported,
+    ResourceAlreadyExistsHelpers,
     ResourceNotExists,
     ResourceAlreadyExists,
     ParameterInvalid,
     InvalidPath,
 )
+from .file_access import FAL_BT
+import os
+from django.conf import settings
+from copy import copy
 
 CUSTOM_EXCEPTIONS = (
     ResourceNotExists,
     ResourceAlreadyExists,
     ParameterInvalid,
     InvalidPath,
+    BinaryNotSupported,
+    ResourceAlreadyExistsHelpers,
 )
 
 local_fal = FAL_BT(settings.BASE_DIR)
 
+logger = logging.getLogger(__name__)
+
 
 def error_wrapper(type: str, param: list[str | tuple] = []):
+    """Decorator for API views with parameter validation and error handling."""
+
     def decorated(func):
         @wraps(func)
         @api_view([type])
@@ -42,16 +56,16 @@ def error_wrapper(type: str, param: list[str | tuple] = []):
                         fal.user.projects += 1
                 return func(fal, request)
             except CUSTOM_EXCEPTIONS as e:
-                print(str(e))
-                return Response({"error": f"{str(e)}"}, status=e.error_code)
+                logger.warning("API error: %s", e)
+                return Response({"message": str(e)}, status=e.error_code)
             except json.JSONDecodeError as e:
-                print(str(e))
+                logger.warning("Invalid JSON format: %s", e)
                 return Response({"error": f"Invalid JSON format: {str(e)}"}, status=422)
             except (binascii.Error, ValueError) as e:
-                print(str(e))
+                logger.warning("Invalid B64 format: %s", e)
                 return Response({"error": f"Invalid B64 format: {str(e)}"}, status=422)
             except Exception as e:
-                print(str(e))
+                logger.exception("Unhandled error in %s", func.__name__)
                 return Response({"error": f"An error occurred: {str(e)}"}, status=500)
 
         return wrapper
@@ -60,6 +74,8 @@ def error_wrapper(type: str, param: list[str | tuple] = []):
 
 
 def check_parameters(request, param: list[str | tuple]):
+    """Validate required request parameters."""
+
     for p in param:
         min_len = 0
         if type(p) is tuple:

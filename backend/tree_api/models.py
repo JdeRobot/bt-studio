@@ -21,7 +21,11 @@ RosVersion = (("ROS", "ROS"), ("ROS2", "ROS2"))
 
 class Tool(models.Model):
     """
-    Modelo Tool para Robotics Academy
+    Represents a tool available in the Robotics Academy platform.
+
+    Attributes:
+        name: Unique identifier and primary key for the tool.
+        base_config: Default configuration string for the tool.
     """
 
     name = models.CharField(max_length=50, blank=False, unique=True, primary_key=True)
@@ -36,7 +40,11 @@ class Tool(models.Model):
 
 class Robot(models.Model):
     """
-    Modelo Robot para RoboticsAcademy
+    Represents a robot available in the Robotics Academy platform.
+
+    Attributes:
+        name: Unique name identifying the robot.
+        launch_file_path: Path to the ROS launch file for this robot.
     """
 
     name = models.CharField(max_length=100, blank=False, unique=True)
@@ -51,9 +59,17 @@ class Robot(models.Model):
         db_table = '"robots"'
 
 
-class World(models.Model):
+class Scene(models.Model):
     """
-    Modelo World para RoboticsCademy
+    Represents a simulation scene in the Robotics Academy platform.
+
+    Attributes:
+        name: Unique name identifying the scene.
+        launch_file_path: Path to the ROS launch file for this scene.
+        tools_config: JSON string with tool configuration overrides.
+        ros_version: ROS version used (ROS or ROS2).
+        type: Simulator type (none, gz, physical).
+        start_pose: List of starting poses for robots in this scene.
     """
 
     name = models.CharField(max_length=100, blank=False, unique=True)
@@ -76,27 +92,32 @@ class World(models.Model):
         return str(self.name)
 
     class Meta:
-        db_table = '"worlds"'
+        db_table = '"scenes"'
 
 
-class Universe(models.Model):
+class World(models.Model):
     """
-    Modelo Universe para Robotics Academy
+    Represents a world combining a scene and one or more robots.
+
+    Attributes:
+        name: Unique name identifying the world.
+        scene: Associated Scene instance.
+        robot: Associated Robot instance.
     """
 
     name = models.CharField(max_length=100, blank=False, unique=True)
-    world = models.OneToOneField(
-        World, default=None, on_delete=models.CASCADE, db_column='"world_id"'
+    scene = models.OneToOneField(
+        Scene, default=None, on_delete=models.CASCADE, db_column="scene_id"
     )
     robot = models.OneToOneField(
-        Robot, default=None, on_delete=models.CASCADE, db_column='"robot_id"'
+        Robot, default=None, on_delete=models.CASCADE, db_column="robot_id"
     )
 
     def __str__(self):
         return str(self.name)
 
     class Meta:
-        db_table = '"universes"'
+        db_table = '"worlds"'
 
 
 class User(AbstractUser):
@@ -121,7 +142,6 @@ class User(AbstractUser):
 
         self.size += new_size - old_size
         self.save()
-        print("Inside", self.projects)
 
 
 class Project(models.Model):
@@ -159,15 +179,24 @@ def get_user_projects_size(user, fal):
     if user.projects < 0:
         user.projects = 0
         folder_path = fal.projects_path()
-        old_projects = fal.listdirs(folder_path)
-        for p in old_projects:
-            Project.objects.create(
-                id=p,
-                name=p,
-                creator=fal.user,
-                last_modified=timezone.now(),
-            )
-            user.projects += 1
+        try:
+            old_projects = fal.listdirs(folder_path)
+        except Exception:
+            fal.mkdir(folder_path)
+            old_projects = []
+
+        try:
+            for p in old_projects:
+                Project.objects.create(
+                    id=p,
+                    name=p,
+                    creator=fal.user,
+                    last_modified=timezone.now(),
+                )
+                user.projects += 1
+        except Exception:
+            user.projects = 0
+
         user.save()
 
     size = 0

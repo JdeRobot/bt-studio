@@ -43,7 +43,7 @@ ARG IMAGE_TAG
 ENV IMAGE_TAG=${IMAGE_TAG}
 
 # Clone the RoboticsApplicationManager repository into the src folder inside RoboticsAcademy
-RUN python3 -m pip install --no-cache-dir robotics_application_manager
+RUN python3 -m pip install --no-cache-dir robotics_application_manager slugify
 
 # Bt-Studio
 ARG BT_STUDIO=$BT_STUDIO

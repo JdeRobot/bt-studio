@@ -20,8 +20,8 @@ urlpatterns = [
         name="get_project_configuration",
     ),
     # Universe Management
-    path("create_universe/", views.create_universe, name="create_universe"),
-    path("delete_universe/", views.delete_universe, name="delete_universe"),
+    path("create_world/", views.create_world, name="create_world"),
+    path("delete_world/", views.delete_world, name="delete_world"),
     path(
         "create_universe_configuration/",
         views.create_universe_configuration,

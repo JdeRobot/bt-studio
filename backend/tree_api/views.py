@@ -321,30 +321,30 @@ def get_subtree_list(fal, request):
     return Response({"subtree_list": subtree_list})
 
 
-# UNIVERSE MANAGEMENT
+# WORLD MANAGEMENT
 
 
-@error_wrapper("POST", ["project_id", "universe"])
-def create_universe(fal, request):
+@error_wrapper("POST", ["project_id", "world"])
+def create_world(fal, request):
     project_id = request.data.get("project_id")
-    universe_name = request.data.get("universe")
+    world_name = request.data.get("world")
 
-    universes_path = fal.universes_path(project_id)
-    universe_path = fal.path_join(universes_path, universe_name)
+    worlds_path = fal.worlds_path(project_id)
+    world_path = fal.path_join(worlds_path, world_name)
 
-    fal.mkdir(universe_path)
+    fal.mkdir(world_path)
     return Response({"success": True}, status=200)
 
 
-@error_wrapper("POST", ["project_id", "universe_name"])
-def delete_universe(fal, request):
+@error_wrapper("POST", ["project_id", "world"])
+def delete_world(fal, request):
     project_id = request.data.get("project_id")
-    universe_name = request.data.get("universe_name")
+    world_name = request.data.get("world")
 
-    universes_path = fal.universes_path(project_id)
-    universe_path = fal.path_join(universes_path, universe_name)
+    worlds_path = fal.worlds_path(project_id)
+    world_path = fal.path_join(worlds_path, world_name)
 
-    fal.removedir(universe_path)
+    fal.removedir(world_path)
     return Response({"success": True}, status=200)
 
 

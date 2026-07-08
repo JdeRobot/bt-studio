@@ -8796,29 +8796,38 @@ jake@^10.8.5:
     filelist "^1.0.4"
     minimatch "^3.1.2"
 
-jderobot-commsmanager@^1.0.25:
-  version "1.0.25"
-  resolved "https://registry.yarnpkg.com/jderobot-commsmanager/-/jderobot-commsmanager-1.0.25.tgz#d32ba22aea6e4eaa5005af11170551ae4b571a92"
-  integrity sha512-g6eQRNZdcNRa9c8Rxd9QbFKs0ZKgz9nAMCSVdXSzApQe4H8CIW45C0aqjKTzWcQwnoxe6vu7m63QQtKcnF9Zeg==
+jderobot-commsmanager@1.0.27:
+  version "1.0.27"
+  resolved "https://registry.yarnpkg.com/jderobot-commsmanager/-/jderobot-commsmanager-1.0.27.tgz#1e3359e845cc1c5393ff3e67cac2973c074f64ae"
+  integrity sha512-gyl7ayKVABUGPXVFourKqoUeylK2WTT4MpuQWYn6QKhcVqv+XnnHGqvuwEy5yPoeWoYxlIJVA8DAwjtBqKtiVg==
   dependencies:
     uuid "^11.1.0"
 
-jderobot-ide-interface@^0.2.138:
-  version "0.2.138"
-  resolved "https://registry.yarnpkg.com/jderobot-ide-interface/-/jderobot-ide-interface-0.2.138.tgz#311430a0ac5855bba7b6c90078c1601152e39b42"
-  integrity sha512-GgdjblbM5V17vvR5eg7Tr/bvYXRBjuBWa/59xVSjTaYHkGX0VgomW+rzCK7Swy7zREgOdFKCAzuamEi5KqTYUQ==
+jderobot-commsmanager@1.0.28:
+  version "1.0.28"
+  resolved "https://registry.yarnpkg.com/jderobot-commsmanager/-/jderobot-commsmanager-1.0.28.tgz#1cca34b48a8c34e48ac907b602fac026190d40af"
+  integrity sha512-Jmr3cfoiuLklvLQ3fGEbhMfiDZEAb4kytj3wrFRAO54EEx/MbeTBVLE4F+bfJUkoR8zbghpLyVVRBAyLU8kYpg==
+  dependencies:
+    uuid "^11.1.0"
+
+jderobot-ide-interface@0.2.155:
+  version "0.2.155"
+  resolved "https://registry.yarnpkg.com/jderobot-ide-interface/-/jderobot-ide-interface-0.2.155.tgz#f8da1cb9e803f11e0a3cac19e1c61ceee87608a5"
+  integrity sha512-MpFZHtsvBFArZPforivO6iGCxnwdmeG/dhy8Jy1t+TWbkJ1WBE49uHs5XKfPmNg/LA01aU3ClWdrUtI06J8edw==
   dependencies:
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
     "@monaco-editor/react" "^4.7.0"
     "@mui/icons-material" "^7.3.6"
     "@mui/material" "^7.3.6"
+    jderobot-commsmanager "1.0.27"
     jszip "^3.10.1"
     lodash "^4.17.21"
     monaco-editor "^0.52.2"
     re-resizable "^6.11.2"
     react-spinners "^0.17.0"
     react-youtube "^10.1.0"
+    typescript "5.9.2"
 
 jest-changed-files@^27.5.1:
   version "27.5.1"
@@ -13289,6 +13298,11 @@ typescript-eslint@^8.46.1:
     "@typescript-eslint/parser" "8.46.1"
     "@typescript-eslint/typescript-estree" "8.46.1"
     "@typescript-eslint/utils" "8.46.1"
+
+typescript@5.9.2:
+  version "5.9.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.9.2.tgz#d93450cddec5154a2d5cabe3b8102b83316fb2a6"
+  integrity sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==
 
 typescript@^5.2.2:
   version "5.2.2"

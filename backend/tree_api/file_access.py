@@ -6,18 +6,32 @@ import shutil
 
 from backend.tree_api.models import Project, get_user_projects_size
 from .project_view import list_dir
-from .exceptions import InvalidPath, ResourceNotExists, ResourceAlreadyExists
+from .exceptions import (
+    BinaryNotSupported,
+    InvalidPath,
+    ResourceNotExists,
+    ResourceAlreadyExists,
+)
 
 
 class FAL(ABC):
-    """File Abstraction Layer"""
+    """
+    Abstract base class defining the File Abstraction Layer (FAL) interface.
+    Provides a unified API for file and directory operations used by
+    RoboticsAcademy exercises. Concrete implementations handle different
+    storage backends (local filesystem, S3).
+    """
 
     def __init__(self, projects=""):
         self.projects = projects
         self.user = None
         self.project = None
 
+    def __copy__(self):
+        return type(self)(self.projects)
+
     def set_user(self, user):
+        """Set the current user context for file operations."""
         self.user = user
 
     def set_project(self, project):
@@ -45,8 +59,8 @@ class FAL(ABC):
     def library_subtrees_path(self, entry) -> str:
         return self.path_join(self.library_entry_path(entry), "subtrees")
 
-    def universes_path(self, project_id) -> str:
-        return self.path_join(self.project_path(project_id), "universes/")
+    def world_path(self, project_id) -> str:
+        return self.path_join(self.project_path(project_id), "worlds/")
 
     def code_path(self, project_id) -> str:
         return self.path_join(self.project_path(project_id), "code/")
@@ -62,26 +76,31 @@ class FAL(ABC):
 
     @abstractmethod
     def path_join(self, a: str, b: str) -> str:
+        """Join two paths and return the result."""
         pass
 
     @abstractmethod
     def exists(self, path: str) -> bool:
+        """Return file size if exists, 0 if directory, -1 if not found."""
         pass
 
     @abstractmethod
     def isdir(self, path: str) -> bool:
+        """Return True if path is an existing directory."""
         pass
 
     @abstractmethod
     def isfile(self, path: str) -> bool:
+        """Return True if path is an existing file."""
         pass
 
     @abstractmethod
     def create(self, path: str, content):
+        """Create a new text file at path with given content. Raises InvalidPath or ResourceAlreadyExists."""
         if ".." in path:
             raise InvalidPath(path)
 
-        if self.exists(path) > 0:
+        if self.exists(path) != -1:
             raise ResourceAlreadyExists(path)
 
         size = len(content.encode("utf-8"))
@@ -92,10 +111,11 @@ class FAL(ABC):
 
     @abstractmethod
     def create_binary(self, path: str, content):
+        """Create a new binary file at path with given content. Raises InvalidPath or ResourceAlreadyExists."""
         if ".." in path:
             raise InvalidPath(path)
 
-        if self.exists(path) > 0:
+        if self.exists(path) != -1:
             raise ResourceAlreadyExists(path)
 
         size = len(content)
@@ -106,6 +126,7 @@ class FAL(ABC):
 
     @abstractmethod
     def write(self, path: str, content):
+        """Write content to an existing file. Raises ResourceNotExists if missing."""
         size = self.exists(path)
         if size < 0:
             raise ResourceNotExists(path)
@@ -123,6 +144,7 @@ class FAL(ABC):
 
     @abstractmethod
     def write_binary(self, path: str, content):
+        """Write binary content to an existing file. Raises ResourceNotExists if missing."""
         size = self.exists(path)
         if size < 0:
             raise ResourceNotExists(path)
@@ -139,7 +161,8 @@ class FAL(ABC):
         )
 
     @abstractmethod
-    def read(self, path: str) -> str:
+    def read(self, path: str):
+        """Read and return text content of file. Raises InvalidPath or ResourceNotExists."""
         if ".." in path:
             raise InvalidPath(path)
 
@@ -147,7 +170,8 @@ class FAL(ABC):
             raise ResourceNotExists(path)
 
     @abstractmethod
-    def read_binary(self, path: str) -> str:
+    def read_binary(self, path: str):
+        """Read and return binary content of file. Raises InvalidPath or ResourceNotExists."""
         if ".." in path:
             raise InvalidPath(path)
 
@@ -156,6 +180,7 @@ class FAL(ABC):
 
     @abstractmethod
     def listdirs(self, path: str):
+        """Return list of subdirectory names at path. Raises InvalidPath or ResourceNotExists."""
         if ".." in path:
             raise InvalidPath(path)
 
@@ -167,6 +192,7 @@ class FAL(ABC):
 
     @abstractmethod
     def listfiles(self, path: str):
+        """Return list of file names at path. Raises InvalidPath or ResourceNotExists."""
         if ".." in path:
             raise InvalidPath(path)
 
@@ -178,6 +204,7 @@ class FAL(ABC):
 
     @abstractmethod
     def list_formatted(self, path: str, base_group: str):
+        """Return formatted directory listing for the file explorer UI."""
         if ".." in path:
             raise InvalidPath(path)
 
@@ -200,11 +227,12 @@ class FAL(ABC):
         pass
 
     @abstractmethod
-    def get_universe_template(self, universe):
+    def get_world_template(self, world):
         pass
 
     @abstractmethod
     def mkdir(self, path: str):
+        """Create a new directory at path. Raises InvalidPath or ResourceAlreadyExists."""
         if ".." in path:
             raise InvalidPath(path)
 
@@ -213,6 +241,7 @@ class FAL(ABC):
 
     @abstractmethod
     def renamefile(self, old_path: str, new_path: str):
+        """Rename a file from old path to new path. Raises InvalidPath, ResourceNotExists, or ResourceAlreadyExists."""
         if ".." in new_path:
             raise InvalidPath(new_path)
 
@@ -224,6 +253,7 @@ class FAL(ABC):
 
     @abstractmethod
     def renamedir(self, old_path: str, new_path: str):
+        """Rename a directory from old path to new path. Raises InvalidPath, ResourceNotExists, or ResourceAlreadyExists."""
         if ".." in new_path:
             raise InvalidPath(new_path)
 
@@ -235,6 +265,8 @@ class FAL(ABC):
 
     @abstractmethod
     def removefile(self, path: str):
+        """Delete a file. Raises InvalidPath or ResourceNotExists."""
+
         if ".." in path:
             raise InvalidPath(path)
 
@@ -250,6 +282,8 @@ class FAL(ABC):
 
     @abstractmethod
     def removedir(self, path: str):
+        """Delete a directory and all its contents. Raises InvalidPath or ResourceNotExists."""
+
         if ".." in path:
             raise InvalidPath(path)
 
@@ -261,6 +295,8 @@ class FAL(ABC):
 
     @abstractmethod
     def dir_size(self, path):
+        """Return total size in bytes of all files under path. Raises InvalidPath or ResourceNotExists."""
+
         if ".." in path:
             raise InvalidPath(path)
 
@@ -279,8 +315,8 @@ class FAL(ABC):
 class FAL_BT(FAL):
     """File Abstraction Layer"""
 
-    def __init__(self, base):
-        FAL.__init__(self, base)
+    def __init__(self, projects=""):
+        super().__init__(projects)
 
     def projects_path(self) -> str:
         return self.path_join(self.projects, "filesystem")
@@ -291,7 +327,8 @@ class FAL_BT(FAL):
     def path_join(self, a: str, b: str) -> str:
         return os.path.join(a, b)
 
-    def exists(self, path: str) -> bool:
+    def exists(self, path: str) -> int:
+        """Returns -1 if path does not exist, 0 if it is a directory, file's size if it is an existing file."""
         if not os.path.exists(path):
             return -1
 
@@ -311,33 +348,40 @@ class FAL_BT(FAL):
 
         with open(path, "w") as f:
             f.write(content)
+        os.chmod(path, 0o777)
 
     def create_binary(self, path: str, content):
         super().create_binary(path, content)
 
         with open(path, "wb") as f:
             f.write(content)
+        os.chmod(path, 0o777)
 
     def write(self, path: str, content):
         super().write(path, content)
 
         with open(path, "w") as f:
             f.write(content)
+        os.chmod(path, 0o777)
 
     def write_binary(self, path: str, content):
         super().write_binary(path, content)
 
         with open(path, "wb") as f:
             f.write(content)
+        os.chmod(path, 0o777)
 
     def read(self, path: str) -> str:
         super().read(path)
 
-        with open(path, "r") as f:
-            return f.read()
+        try:
+            with open(path, "r") as f:
+                return f.read()
+        except Exception:
+            raise BinaryNotSupported(path)
 
-    def read_binary(self, path: str) -> str:
-        super().read(path)
+    def read_binary(self, path: str) -> bytes:
+        super().read_binary(path)
 
         with open(path, "rb") as f:
             return f.read()
@@ -372,31 +416,31 @@ class FAL_BT(FAL):
         new_data = file_data.replace("ACTION", filename)
         return new_data
 
-    def get_universe_template(self, universe):
+    def get_world_template(self, world):
         contents = []
-        templates_folder_path = self.path_join(self.projects, "templates/universe")
-        launch_path = self.path_join(templates_folder_path, "launch/universe.launch.py")
-        world_path = self.path_join(templates_folder_path, "worlds/universe.world")
+        templates_folder_path = self.path_join(self.projects, "templates/world")
+        launch_path = self.path_join(templates_folder_path, "launch/scene.launch.py")
+        world_path = self.path_join(templates_folder_path, "scene/scene.world")
         cmake_path = self.path_join(templates_folder_path, "CMakeLists.txt")
         vis_config_path = self.path_join(templates_folder_path, "gz.config")
         package_path = self.path_join(templates_folder_path, "package.xml")
 
         file_data = self.read(launch_path)
-        new_data = file_data.replace("REPLACE", universe)
-        contents.append({"path": "launch/universe.launch.py", "content": new_data})
+        new_data = file_data.replace("REPLACE", world)
+        contents.append({"path": "launch/scene.launch.py", "content": new_data})
 
         file_data = self.read(world_path)
-        contents.append({"path": "worlds/universe.world", "content": file_data})
+        contents.append({"path": "scene/scene.world", "content": file_data})
 
         file_data = self.read(vis_config_path)
         contents.append({"path": "gz.config", "content": file_data})
 
         file_data = self.read(cmake_path)
-        new_data = file_data.replace("REPLACE", universe)
+        new_data = file_data.replace("REPLACE", world)
         contents.append({"path": "CMakeLists.txt", "content": new_data})
 
         file_data = self.read(package_path)
-        new_data = file_data.replace("REPLACE", universe)
+        new_data = file_data.replace("REPLACE", world)
         contents.append({"path": "package.xml", "content": new_data})
         return contents
 
@@ -404,26 +448,29 @@ class FAL_BT(FAL):
         super().mkdir(path)
 
         os.makedirs(path)
+        os.chmod(path, mode=0o777)
 
     def renamefile(self, old_path: str, new_path: str):
-        super().renamefile(old_path.new_path)
+        super().renamefile(old_path, new_path)
 
         os.rename(old_path, new_path)
 
     def renamedir(self, old_path: str, new_path: str):
-        super().renamedir(old_path.new_path)
+        super().renamedir(old_path, new_path)
 
         os.rename(old_path, new_path)
 
     def removefile(self, path: str):
         super().removefile(path)
-
         os.remove(path)
 
     def removedir(self, path: str):
         super().removedir(path)
-
+        size = self.dir_size(path)
         shutil.rmtree(path)
+
+        self.project.update_size(self, 0, size)
+        self.user.update_size(self, 0, size, project_callback=get_user_projects_size)
 
     def dir_size(self, path):
         super().dir_size(path)
