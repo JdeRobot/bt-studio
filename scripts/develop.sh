@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Initialize variables with default values
+ram_version="https://github.com/JdeRobot/RoboticsApplicationManager.git"
+branch="humble-devel"
 gpu_mode="false"
 nvidia="false"
 compose_file="dev_humble_cpu"
@@ -42,6 +44,12 @@ trap 'cleanup' INT
 # Install docker-compose if not installed
 if ! docker compose version &> /dev/null; then
   echo "Docker Compose V2 is not installed. Please install it."
+fi
+
+# Clone the desired RAM fork and branch
+if ! [ -d src ]; then
+  git clone "$ram_version" -b "$branch" src;
+  chown -R $(id -u):$(id -g) src/
 fi
 
 # Prepare nvm
@@ -122,6 +130,7 @@ else
     yarn dev &
     sleep 10
 fi
+
 cd ..
 
 # Prepare the compose file
