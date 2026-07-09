@@ -21,16 +21,7 @@ import {
   useProjectSettings,
 } from "BtContexts/ProjectSettingsContext";
 import getTools from "BtHelpers/tools";
-
-export const clearTimeouts = (
-  timeoutsRef: MutableRefObject<number | null>[],
-) => {
-  for (const element of timeoutsRef) {
-    if (element.current) {
-      window.clearTimeout(element.current);
-    }
-  }
-};
+import { clearTimeouts } from "BtHelpers/utils";
 
 const Wrapper = () => {
   const { proj_id } = useParams();
@@ -100,20 +91,22 @@ const Wrapper = () => {
   );
 };
 
-const App = ({ projectId }: { projectId: string }) => {
+const App = ({ project }: { project: string }) => {
   const theme = useBtTheme();
   const settings = useProjectSettings();
+
   const hasTriedToConnect = useRef<boolean>(false);
   const timeoutRef = useRef<number | null>(null);
   const connectTimeoutRef = useRef<number | null>(null);
   const [manager, setManager] = useState<CommsManager | null>(null);
-  const toolsList = getTools(manager, projectId);
+  const toolsList = getTools(manager, project);
   const [layout, setLayout] = useState<"only-editor" | "only-viewers" | "both">(
     "both",
   );
+  const addressRef = useRef<string>(`ws://127.0.0.1:7163`);
 
   const saveSettings = async (project: string) => {
-    const json_settings: { name: string; config: { [id: string]: any } } = {
+    const json_settings: { name: string; config: { [id: string]: string } } = {
       name: project,
       config: {},
     };
@@ -132,12 +125,8 @@ const App = ({ projectId }: { projectId: string }) => {
   };
 
   // RB manager setup
-
   useEffect(() => {
-    const manager = CommsManager.getInstance();
-    setManager(manager);
-    getProjectConfig(projectId, settings);
-
+    getProjectConfig(project, settings);
     return () => {
       if (hasTriedToConnect.current) {
         const currManager = CommsManager.getInstance();
@@ -147,8 +136,9 @@ const App = ({ projectId }: { projectId: string }) => {
           setManager(null);
         }
       }
+
       clearTimeouts([timeoutRef, connectTimeoutRef]);
-      saveSettings(projectId);
+      saveSettings(project);
     };
   }, []);
 
@@ -157,7 +147,7 @@ const App = ({ projectId }: { projectId: string }) => {
     callback?: () => void,
   ) => {
     try {
-      const currManager = CommsManager.getInstance();
+      const currManager = CommsManager.getInstance(addressRef.current);
       hasTriedToConnect.current = true;
       await currManager.connect();
       console.log("Connected!", currManager.getState());
@@ -177,7 +167,7 @@ const App = ({ projectId }: { projectId: string }) => {
   };
 
   const waitManagerState = async (state: string, callback: () => void) => {
-    const currManager = CommsManager.getInstance();
+    const currManager = CommsManager.getInstance(addressRef.current);
     if (currManager?.getState() === state) {
       callback();
     } else {
@@ -193,8 +183,8 @@ const App = ({ projectId }: { projectId: string }) => {
   const treeEditor = {
     component: TreeEditorContainer,
     buttons: [
-      <BTSelectorButtons key="BTSelectorButtons" project={projectId} />,
-      <AddSubtreeButton key="AddSubtreeButton" project={projectId} />,
+      <BTSelectorButtons key="BTSelectorButtons" project={project} />,
+      <AddSubtreeButton key="AddSubtreeButton" project={project} />,
       <OtherButtons key="OtherButtons" />,
     ],
     name: "Tree editor",
@@ -205,20 +195,21 @@ const App = ({ projectId }: { projectId: string }) => {
   return (
     <StyledAppContainer bg={theme.palette.bg} hoverStyle="lighten">
       <HeaderMenu
-        projectId={projectId}
+        project={project}
         connectManager={connectWithRetry}
         setLayout={setLayout}
+        commsManager={manager}
       />
       <IdeInterface
         commsManager={manager}
-        project={projectId}
-        explorers={explorers}
+        project={project}
         api={editorApi}
-        extraEditors={[treeEditor]}
         viewers={toolsList}
         options={[]}
         layout={layout}
         statusBarComponents={statusBar}
+        explorers={explorers}
+        extraEditors={[treeEditor]}
       />
     </StyledAppContainer>
   );
