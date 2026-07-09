@@ -3,7 +3,7 @@ import { listProjects } from "BtApi/TreeWrapper";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 import { StyledSectionName } from "BtStyles/ProjectMenu/ProjectMenu.styles";
 import ProjectEntry from "./ProjectEntry";
-import { subscribe, unsubscribe } from "BtComponents/helper/TreeEditorHelper";
+import { subscribe, unsubscribe } from "BtHelpers/utils";
 
 const Menu = ({ userFilter }: { userFilter?: string }) => {
   const theme = useBtTheme();

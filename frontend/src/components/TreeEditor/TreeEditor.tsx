@@ -18,7 +18,7 @@ import {
   isActionNode,
   addActionFrame,
   getActionFrame,
-} from "../helper/TreeEditorHelper";
+} from "BtHelpers/TreeEditorHelper";
 import { StyledBTCanvas } from "BtStyles/TreeEditor/BTCanvas.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 
@@ -268,11 +268,7 @@ const TreeEditor = ({
     };
 
     type NodeType =
-      | "default"
-      | "sequences"
-      | "fallbacks"
-      | "decorators"
-      | "subtrees";
+      "default" | "sequences" | "fallbacks" | "decorators" | "subtrees";
 
     console.log("The node type is:", nodeType.toLowerCase());
     const {

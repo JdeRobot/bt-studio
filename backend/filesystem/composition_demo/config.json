@@ -1,8 +1,7 @@
 {
-    "name": "TestComp",
+    "name": "composition_demo",
     "config": {
-        "editorShowAccentColors": true,
-        "theme": "dark",
-        "btOrder": "top-to-bottom"
+        "editorShowAccentColors": false,
+        "btOrder": "bottom-to-top"
     }
 }

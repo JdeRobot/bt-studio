@@ -11,7 +11,7 @@ import {
   createAction,
 } from "BtApi/TreeWrapper";
 import { CreateAction, newFileData } from "../CreateAction";
-import { publish } from "../helper/TreeEditorHelper";
+import { publish } from "BtHelpers/utils";
 
 const fileExplorer = {
   name: "Code",
@@ -61,8 +61,8 @@ const fileExplorer = {
   },
 };
 
-const universeExplorer = {
-  name: "Universes",
+const worldExplorer = {
+  name: "Worlds",
   list: (project: string) => {
     return getFileList(project, "");
   },
@@ -77,7 +77,6 @@ const universeExplorer = {
       return renameFile(project, oldPath, newPath, "");
     },
     delete: (project: string, path: string) => {
-      console.log(project, path);
       return deleteFile(project, path, "");
     },
     upload: (project: string, path: string, name: string, content: string) => {
@@ -97,6 +96,6 @@ const universeExplorer = {
   },
 };
 
-const explorers=[fileExplorer, universeExplorer]
+const explorers = [fileExplorer, worldExplorer];
 
 export default explorers;

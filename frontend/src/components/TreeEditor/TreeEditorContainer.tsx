@@ -8,11 +8,8 @@ import EditTagModal from "./modals/EditTagModal";
 import { BasicNodeModel } from "./nodes/basic_node/BasicNodeModel";
 import { TagNodeModel } from "./nodes/tag_node/TagNodeModel";
 import TreeEditor from "./TreeEditor";
-import {
-  addActionFrameRaw,
-  subscribe,
-  unsubscribe,
-} from "../helper/TreeEditorHelper";
+import { addActionFrameRaw } from "BtHelpers/TreeEditorHelper";
+import { subscribe, unsubscribe } from "BtHelpers/utils";
 
 const TreeEditorContainer = ({
   commsManager,

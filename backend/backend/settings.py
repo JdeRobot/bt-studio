@@ -82,7 +82,7 @@ TEST_RUNNER = "backend.backend.test_runner.NoDbTestRunner"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "universe_db",
+        "NAME": "world_db",
         "USER": "user-dev",
         "PASSWORD": "bt-studio-dev",
         "HOST": "my-postgres",
@@ -141,7 +141,7 @@ WEBPACK_LOADER = {
         "CACHE": not DEBUG,
         "STATS_FILE": os.path.join(BASE_DIR.parent, "frontend/webpack-stats.json"),
         "POLL_INTERVAL": 0.1,
-        "IGNORE": [r".+\.hot-update.js", r".+\.map"],
+        "IGNORE": [r".+\.hot-update.js", r".+\.map", "backend/filesystem/"],
     }
 }
 

@@ -1,12 +1,9 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { SettingsData } from "BtComponents/options/Options";
-import { publish } from "BtComponents/helper/TreeEditorHelper";
+import axios, { AxiosError } from "axios";
+import { SettingsData } from "BtContexts/ProjectSettingsContext";
+import { publish } from "BtHelpers/utils";
+import { BTWorldData } from "BtTypes/index";
 
 // Helpers
-
-const isSuccessful = (response: AxiosResponse) => {
-  return response.status >= 200 && response.status < 300;
-};
 const getCookie = (name: string) => {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`); //to get CSRF token among all the cookies in 'value'
@@ -14,26 +11,26 @@ const getCookie = (name: string) => {
   return undefined;
 };
 
-const csrfToken = getCookie("csrftoken");
-const axiosExtra = {
+const axiosExtra = () => ({
   headers: {
-    "X-CSRFToken": csrfToken,
+    "X-CSRFToken": getCookie("csrftoken"),
   },
-};
+});
+
+type ApiError = AxiosError<Record<string, string>, Record<string, unknown>>;
 
 ////////////////////////////// User management /////////////////////////////////
 
 const getUserInfo = async () => {
-  const apiUrl = `/bt_studio/get_user_size`;
+  const apiUrl = `/bt_studio/get_user_size/`;
 
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get subtree."); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  return response.data;
 };
 
 //////////////////////////// Project management ////////////////////////////////
@@ -43,19 +40,17 @@ const createProject = async (projectName: string) => {
     throw new Error("Project name cannot be empty.");
   }
 
-  const apiUrl = `/bt_studio/create_project/`;
+  const apiUrl = "/bt_studio/create_project/";
 
-  const response = await axios.post(
-    apiUrl,
-    {
-      project_name: projectName,
-    },
-    axiosExtra
-  );
+  const params: { [key: string]: string } = {
+    project_name: projectName,
+  };
 
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to create project."); // Response error
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
@@ -64,19 +59,17 @@ const deleteProject = async (projectId: string) => {
     throw new Error("Project name cannot be empty.");
   }
 
-  const apiUrl = `/bt_studio/delete_project/`;
+  const apiUrl = "/bt_studio/delete_project/";
 
-  const response = await axios.post(
-    apiUrl,
-    {
-      project_id: projectId,
-    },
-    axiosExtra
-  );
+  const params: { [key: string]: string } = {
+    project_id: projectId,
+  };
 
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to delete project."); // Response error
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
@@ -85,1086 +78,910 @@ const getProjectInfo = async (projectId: string) => {
     throw new Error("Project name cannot be empty.");
   }
 
-  const apiUrl = `/bt_studio/get_project_info/?project_id=${projectId}`;
-
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get subtree."); // Response error
-  }
-
-  return response.data;
-};
-
-const listProjects = async () => {
-  const apiUrl = `/bt_studio/get_project_list`;
-
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get subtree."); // Response error
-  }
-
-  return response.data.project_list;
-};
-
-const getProjectConfig = async (
-  currentProjectname: string,
-  settings: SettingsData
-) => {
-  if (!currentProjectname) throw new Error("Current Project name is not set");
-
-  const apiUrl = `/bt_studio/get_project_configuration?project_id=${currentProjectname}`;
+  const apiUrl = `/bt_studio/get_project_info/?project_id=${encodeURIComponent(projectId)}`;
 
   try {
     const response = await axios.get(apiUrl);
+    return response.data;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
+  }
+};
 
-    if (!isSuccessful(response)) {
-      throw new Error(
-        response.data.message || "Failed to retrieve project config"
-      );
-    }
+const listProjects = async () => {
+  const apiUrl = `/bt_studio/get_project_list/`;
+
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.project_list;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
+  }
+};
+
+const getProjectConfig = async (project: string, settings: SettingsData) => {
+  if (!project) throw new Error("Current Project name is not set");
+
+  const apiUrl = `/bt_studio/get_project_configuration?project_id=${encodeURIComponent(project)}`;
+
+  try {
+    const response = await axios.get(apiUrl);
 
     const raw_config = JSON.parse(response.data);
     const project_settings = raw_config.config;
 
     Object.entries(settings).forEach(([key, value]) => {
       value.setter(
-        project_settings[key] ? project_settings[key] : value.default_value
+        project_settings[key] ? project_settings[key] : value.default_value,
       );
     });
-  } catch (error) {
-    console.log("Loading default settings");
-    Object.entries(settings).forEach(([key, value]) => {
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    Object.entries(settings).forEach(([, value]) => {
       value.setter(value.default_value);
     });
-
-    throw error;
+    throw Error(error.response?.data.message);
   }
 };
 
-const getProjectConfigRaw = async (projectId: string) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+const getProjectConfigRaw = async (project: string) => {
+  if (!project) throw new Error("Current Project name is not set");
 
-  const apiUrl = `/bt_studio/get_project_configuration?project_id=${projectId}`;
+  const apiUrl = `/bt_studio/get_project_configuration?project_id=${encodeURIComponent(project)}`;
 
   try {
     const response = await axios.get(apiUrl);
-
-    if (!isSuccessful(response)) {
-      throw new Error(
-        response.data.message || "Failed to retrieve project config"
-      );
-    }
-
-    const raw_config = JSON.parse(response.data);
-
-    return raw_config.config;
-  } catch (error) {
-    console.log("Loading default settings");
-    throw error;
+    return JSON.parse(response.data);
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
-const saveProjectConfig = async (
-  currentProjectname: string,
-  settings: string
-) => {
-  if (!currentProjectname) throw new Error("Current Project name is not set");
+const saveProjectConfig = async (project: string, settings: string) => {
+  if (!project) throw new Error("Current Project name is not set");
   if (!settings) throw new Error("Settings content is null");
 
   const apiUrl = "/bt_studio/save_project_configuration/";
-  try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        project_id: currentProjectname,
-        settings: settings,
-      },
-      axiosExtra
-    );
 
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
-    }
-  } catch (error: unknown) {
-    console.log(error);
-    throw error; // Rethrow
-  }
-};
-
-//////////////////////////// Universe management ///////////////////////////////
-
-const createEmptyUniverse = async (projectId: string, universeName: string) => {
-  if (!projectId) throw new Error("The universe name is not set");
-  if (!universeName) throw new Error("The universe name is not set");
-  if (!projectId.trim()) throw new Error("Project name cannot be empty.");
-  if (!universeName.trim()) throw new Error("Project name cannot be empty.");
-
-  const apiUrl = `/bt_studio/create_universe/`;
-
-  const response = await axios.post(
-    apiUrl,
-    {
-      project_id: projectId,
-      universe: universeName,
-    },
-    axiosExtra
-  );
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to create project."); // Response error
-  }
-};
-
-const getUniverseConfig = async (
-  universeName: string,
-  currentProjectname: string
-) => {
-  if (!universeName) throw new Error("The universe name is not set");
-  if (!currentProjectname) throw new Error("Current Project name is not set");
-
-  const apiUrl = `/bt_studio/get_universe_configuration?project_id=${encodeURIComponent(
-    currentProjectname
-  )}&universe_name=${encodeURIComponent(universeName)}`;
-
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(
-      response.data.message || "Failed to retrieve universe config"
-    ); // Response error
-  }
-
-  return JSON.stringify(response.data.config);
-};
-
-const createUniverseConfig = async (
-  currentProjectname: string,
-  universeName: string
-) => {
-  if (!universeName) throw new Error("The universe name is not set");
-  if (!currentProjectname) throw new Error("Current Project name is not set");
-
-  const apiUrl = "/bt_studio/create_universe_configuration/";
-
-  const response = await axios.post(
-    apiUrl,
-    {
-      project_id: currentProjectname,
-      universe_name: universeName,
-    },
-    axiosExtra
-  );
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(
-      response.data.message || "Failed to create universe config"
-    ); // Response error
-  }
-};
-
-const getRoboticsBackendUniverse = async (universeName: string) => {
-  if (!universeName) throw new Error("The universe name is not set");
-
-  const apiUrl = `/bt_studio/get_docker_universe_data?name=${encodeURIComponent(universeName)}`;
-
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(
-      response.data.message || "Failed to retrieve universe config"
-    ); // Response error
-  }
-
-  return {
-    world: response.data.universe.world,
-    robot: response.data.universe.robot,
-    tools: response.data.universe.tools,
-    tools_config: response.data.universe.tools_config,
+  const params: { [key: string]: string } = {
+    project_id: project,
+    settings: settings,
   };
+
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
+  }
 };
 
-const createRoboticsBackendUniverse = async (
-  projectId: string,
-  universeName: string,
-  universeId: string
+//////////////////////////// World management ///////////////////////////////
+
+const createEmptyWorld = async (project: string, worldName: string) => {
+  if (!project) throw new Error("The project name is not set");
+  if (!worldName) throw new Error("The world name is not set");
+  if (!project.trim()) throw new Error("Project name cannot be empty.");
+  if (!worldName.trim()) throw new Error("Project name cannot be empty.");
+
+  const apiUrl = "/bt_studio/create_world/";
+
+  const params: { [key: string]: string } = {
+    project_id: project,
+    world: worldName,
+  };
+
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
+  }
+};
+
+const getWorldConfig = async (
+  project: string,
+  world: string,
+): Promise<BTWorldData> => {
+  if (!project) throw new Error("Current Project name is not set");
+  if (!world) throw new Error("The world name is not set");
+
+  const apiUrl = `/bt_studio/get_world_configuration?project=${encodeURIComponent(
+    project,
+  )}&world=${encodeURIComponent(world)}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+    return {
+      name: response.data.world.name,
+      isCustom: response.data.world.custom,
+      config: {
+        scene: response.data.world.scene,
+        robot: response.data.world.robot,
+        tools: response.data.world.tools,
+        tools_config: response.data.world.tools_config,
+      },
+    };
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
+  }
+};
+
+const createWorldConfig = async (project: string, world: string) => {
+  if (!world) throw new Error("The world name is not set");
+  if (!project) throw new Error("Current Project name is not set");
+
+  const apiUrl = "/bt_studio/create_world_configuration/";
+
+  const params: { [key: string]: string } = {
+    project: project,
+    world: world,
+  };
+
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
+  }
+};
+
+const createRoboticsBackendWorld = async (
+  project: string,
+  world: string,
+  worldId: string,
 ) => {
-  if (!projectId) throw new Error("The project name is not set");
-  if (!universeName) throw new Error("The universe name is not set");
-  if (!universeId) throw new Error("The universe id is not set");
+  if (!project) throw new Error("The project name is not set");
+  if (!world) throw new Error("The world name is not set");
+  if (!worldId) throw new Error("The world id is not set");
 
-  const apiUrl = "/bt_studio/add_docker_universe/";
+  const apiUrl = "/bt_studio/add_docker_world/";
 
-  const response = await axios.post(
-    apiUrl,
-    {
-      project_id: projectId,
-      universe_name: universeName,
-      id: universeId,
-    },
-    axiosExtra
-  );
+  const params: { [key: string]: string } = {
+    project: project,
+    world: world,
+    worldId: worldId,
+  };
 
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to save subtree."); // Response error
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
-const deleteUniverse = async (projectId: string, universeName: string) => {
-  if (!projectId) throw new Error("The project name is not set");
-  if (!universeName) throw new Error("The universe name is not set");
+const deleteWorld = async (project: string, world: string) => {
+  if (!project) throw new Error("The project name is not set");
+  if (!world) throw new Error("The world name is not set");
 
-  const apiUrl = "/bt_studio/delete_universe/";
+  const apiUrl = "/bt_studio/delete_world/";
 
-  const response = await axios.post(
-    apiUrl,
-    {
-      project_id: projectId,
-      universe_name: universeName,
-    },
-    axiosExtra
-  );
+  const params: { [key: string]: string } = {
+    project_id: project,
+    world: world,
+  };
 
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to save subtree."); // Response error
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
-const listUniverses = async (projectId: string) => {
+const listWorlds = async (projectId: string) => {
   if (!projectId) throw new Error("Current Project name is not set");
 
-  const apiUrl = `/bt_studio/get_universes_list?project_id=${encodeURIComponent(projectId)}`;
+  const apiUrl = `/bt_studio/get_world_list?project_id=${encodeURIComponent(projectId)}`;
 
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get subtree."); // Response error
-  }
-
-  return response.data.universes_list;
-};
-
-const createCustomUniverse = async (
-  projectId: string,
-  universeName: string
-) => {
-  if (!projectId) throw new Error("Current Project name is not set");
-  if (!universeName) throw new Error("Universe name is not set");
-
-  const apiUrl = "/bt_studio/create_custom_universe/";
-
-  const response = await axios.post(
-    apiUrl,
-    {
-      project_id: projectId,
-      universe_name: universeName,
-    },
-    axiosExtra
-  );
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to upload file."); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.worlds_list;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
-const listDockerUniverses = async () => {
-  const apiUrl = `/bt_studio/list_docker_universes`;
+const createCustomWorld = async (project: string, world: string) => {
+  if (!project) throw new Error("Current Project name is not set");
+  if (!world) throw new Error("World name is not set");
 
-  const response = await axios.get(apiUrl);
+  const apiUrl = "/bt_studio/create_custom_world/";
 
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get subtree."); // Response error
+  const params: { [key: string]: string } = {
+    project: project,
+    world: world,
+  };
+
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
+};
 
-  return response.data.universes;
+const listDockerWorlds = async () => {
+  const apiUrl = `/bt_studio/list_docker_worlds`;
+
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.worlds;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
+  }
 };
 
 ////////////////////////////// App management //////////////////////////////////
 
-const generateLocalApp = async (
-  currentProjectname: string,
-  btOrder: string
-) => {
-  if (!currentProjectname) throw new Error("Current Project name is not set");
+const generateLocalApp = async (project: string, btOrder: string) => {
+  if (!project) throw new Error("Current Project name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
 
-  const apiUrl = `/bt_studio/generate_local_app/`;
+  const apiUrl = "/bt_studio/generate_local_app/";
+
+  const params: { [key: string]: string } = {
+    project_id: project,
+    bt_order: btOrder,
+  };
+
   try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        project_id: currentProjectname,
-        bt_order: btOrder,
-      },
-      axiosExtra
-    );
+    const response = await axios.post(apiUrl, params, axiosExtra());
     return response.data;
   } catch (e: unknown) {
-    const error = e as AxiosError<any, Record<string, unknown>>;
-    throw Error(error.response?.data.error || "Failed to create app.");
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
-const generateDockerizedApp = async (
-  currentProjectname: string,
-  btOrder: string
-) => {
-  if (!currentProjectname) throw new Error("Current Project name is not set");
+const generateDockerizedApp = async (project: string, btOrder: string) => {
+  if (!project) throw new Error("Current Project name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
 
-  const apiUrl = `/bt_studio/generate_dockerized_app/`;
+  const apiUrl = "/bt_studio/generate_dockerized_app/";
 
-  const response = await axios.post(
-    apiUrl,
-    {
-      project_id: currentProjectname,
-      bt_order: btOrder,
-    },
-    axiosExtra
-  );
+  const params: { [key: string]: string } = {
+    project_id: project,
+    bt_order: btOrder,
+  };
 
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to create app."); // Response error
+  try {
+    const response = await axios.post(apiUrl, params, axiosExtra());
+    return response.data;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  return response.data;
 };
 
 ////////////////////////////// Tree management /////////////////////////////////
 
-const getTreeData = async (projectId: string) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+const getTreeData = async (project: string) => {
+  if (!project) throw new Error("Current Project name is not set");
 
-  const apiUrl = `/bt_studio/get_tree_data?project_id=${projectId}`;
-  const response = await axios.get(apiUrl);
+  const apiUrl = `/bt_studio/get_tree_data?project_id=${encodeURIComponent(project)}`;
 
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(
-      response.data.message || "Failed to retrieve project graph"
-    ); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.actions_data;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  return response.data.actions_data;
 };
 
-const getBaseTree = async (currentProjectname: string) => {
-  if (!currentProjectname) throw new Error("Current Project name is not set");
+const getBaseTree = async (project: string) => {
+  if (!project) throw new Error("Current Project name is not set");
 
-  const apiUrl = `/bt_studio/get_base_tree?project_id=${currentProjectname}`;
-  const response = await axios.get(apiUrl);
+  const apiUrl = `/bt_studio/get_base_tree?project_id=${encodeURIComponent(project)}`;
 
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(
-      response.data.message || "Failed to retrieve project graph"
-    ); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.graph_json;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  return response.data.graph_json;
 };
 
-const getTreeStructure = async (projectId: string, btOrder: string) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+const getTreeStructure = async (project: string, btOrder: string) => {
+  if (!project) throw new Error("Current Project name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
 
-  const apiUrl = `/bt_studio/get_tree_structure?project_id=${encodeURIComponent(projectId)}&bt_order=${encodeURIComponent(btOrder)}`;
+  const apiUrl = `/bt_studio/get_tree_structure?project_id=${encodeURIComponent(project)}&bt_order=${encodeURIComponent(btOrder)}`;
 
   try {
     const response = await axios.get(apiUrl);
     return response.data.tree_structure;
   } catch (e: unknown) {
-    const error = e as AxiosError<any, Record<string, unknown>>;
-    throw Error(
-      error.response?.data.error || "Failed to get subtree structure."
-    );
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
 ///////////////////////////// Subtree management ///////////////////////////////
 
-const createSubtree = async (
-  subtreeName: string,
-  currentProjectname: string
-) => {
-  if (!subtreeName.trim()) {
-    throw new Error("Subtree name cannot be empty.");
-  }
-  if (!currentProjectname) {
-    throw new Error("Current Project name is not set");
-  }
+const createSubtree = async (subtreeName: string, project: string) => {
+  if (!subtreeName.trim()) throw new Error("Subtree name cannot be empty.");
+  if (!project) throw new Error("Current Project name is not set");
 
-  const apiUrl = `/bt_studio/create_subtree/`;
+  const apiUrl = "/bt_studio/save_file/";
+
+  const params: { [key: string]: string } = {
+    project_id: project,
+    subtree_name: subtreeName,
+  };
 
   try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        project_id: currentProjectname,
-        subtree_name: subtreeName,
-      },
-      axiosExtra
-    );
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
-    }
-  } catch (error: unknown) {
-    console.log(error);
-    throw error; // Rethrow
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
-const getSubtree = async (subtreeName: string, projectId: string) => {
+const getSubtree = async (subtreeName: string, project: string) => {
   if (!subtreeName) throw new Error("Subtree name is not set");
-  if (!projectId) throw new Error("Project name is not set");
+  if (!project) throw new Error("Project name is not set");
 
-  const apiUrl = `/bt_studio/get_subtree?project_id=${encodeURIComponent(projectId)}&subtree_name=${encodeURIComponent(subtreeName)}`;
+  const apiUrl = `/bt_studio/get_subtree?project_id=${encodeURIComponent(project)}&subtree_name=${encodeURIComponent(subtreeName)}`;
 
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get subtree."); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.subtree;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  return response.data.subtree;
 };
 
-const getSubtreePath = async (projectId: string, subtreeName: string) => {
+const getSubtreePath = async (project: string, subtreeName: string) => {
   if (!subtreeName) throw new Error("Subtree name is not set");
-  if (!projectId) throw new Error("Project name is not set");
+  if (!project) throw new Error("Project name is not set");
 
-  const apiUrl = `/bt_studio/get_subtree_path?project_id=${encodeURIComponent(projectId)}&subtree_name=${encodeURIComponent(subtreeName)}`;
+  const apiUrl = `/bt_studio/get_subtree_path?project_id=${encodeURIComponent(project)}&subtree_name=${encodeURIComponent(subtreeName)}`;
 
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get subtree."); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.subtree;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  return response.data.subtree;
 };
 
-const getSubtreeList = async (projectId: string) => {
-  if (!projectId) throw new Error("Project name is not set");
+const getSubtreeList = async (project: string) => {
+  if (!project) throw new Error("Project name is not set");
 
-  const apiUrl = `/bt_studio/get_subtree_list?project_id=${encodeURIComponent(projectId)}`;
+  const apiUrl = `/bt_studio/get_subtree_path?project_id=${encodeURIComponent(project)}`;
 
-  const response = await axios.get(apiUrl);
-  console.log(response);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get subtree list."); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.subtree_list;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  if (!Array.isArray(response.data.subtree_list)) {
-    throw new Error("API response is not an array");
-  }
-
-  return response.data.subtree_list;
 };
 
 const getSubtreeStructure = async (
-  projectId: string,
-  subtreeName: string,
-  btOrder: string
+  project: string,
+  subtree: string,
+  btOrder: string,
 ) => {
-  if (!projectId) throw new Error("Current Project name is not set");
-  if (!subtreeName) throw new Error("Subtree name is not set");
+  if (!project) throw new Error("Current Project name is not set");
+  if (!subtree) throw new Error("Subtree name is not set");
   if (!btOrder) throw new Error("Behavior Tree order is not set");
 
-  const apiUrl = `/bt_studio/get_subtree_structure?project_id=${encodeURIComponent(projectId)}&subtree_name=${encodeURIComponent(subtreeName)}&bt_order=${encodeURIComponent(btOrder)}`;
+  const apiUrl = `/bt_studio/get_subtree_structure?project_id=${encodeURIComponent(
+    project,
+  )}&subtree_name=${encodeURIComponent(
+    subtree,
+  )}&bt_order=${encodeURIComponent(btOrder)}`;
 
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get subtree."); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.tree_structure;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  return response.data.tree_structure;
 };
 
 ////////////////////////////// File management /////////////////////////////////
 
 const createFile = async (
-  projectId: string,
+  project: string,
   fileName: string,
   location: string,
-  universeName: string | undefined = undefined
+  world?: string,
 ) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+  if (!project) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
   if (location === undefined) throw new Error("Location is not set");
 
   const apiUrl = "/bt_studio/create_file/";
 
-  if (location.startsWith("trees")) throw new Error("Cannot create a tree this way");
+  if (location.startsWith("trees"))
+    throw new Error("Cannot create a tree this way");
 
-  let params = {
-    project_id: projectId,
+  const params: { [key: string]: string } = {
+    project: project,
     location: location,
-    file_name: fileName,
+    filename: fileName,
   };
 
-  if (universeName !== undefined)
-    params = Object.assign({}, params, { universe: universeName });
+  if (world !== undefined) params["world"] = world;
 
   try {
-    const response = await axios.post(apiUrl, params, axiosExtra);
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
-    }
-  } catch (error: unknown) {
-    console.log(error);
-    throw error; // Rethrow
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
 const createAction = async (
-  projectId: string,
+  project: string,
   fileName: string,
-  template: string
+  template: string,
 ) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+  if (!project) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
   if (!template) throw new Error("Template is not set");
 
   const apiUrl = "/bt_studio/create_action/";
 
-  try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        project_id: projectId,
-        filename: fileName,
-        template: template,
-      },
-      axiosExtra
-    );
+  const params: { [key: string]: string } = {
+    project_id: project,
+    filename: fileName,
+    template: template,
+  };
 
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
-    }
-  } catch (error: unknown) {
-    console.log(error);
-    throw error; // Rethrow
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
 const getFile = async (
-  projectId: string,
+  project: string,
   fileName: string,
-  universeName: string | undefined = undefined,
-  binary?: boolean
+  world?: string,
+  binary?: boolean,
 ) => {
-  if (!projectId) throw new Error("Project name is not set");
+  if (!project) throw new Error("Project name is not set");
   if (!fileName) throw new Error("File name is not set");
 
-  let apiUrl = `/bt_studio/get_file?project_id=${encodeURIComponent(projectId)}&filename=${encodeURIComponent(fileName)}`;
+  let apiUrl = `/bt_studio/get_file?project=${encodeURIComponent(
+    project,
+  )}&filename=${encodeURIComponent(fileName)}`;
 
-  if (universeName !== undefined && universeName !== "")
-    apiUrl += `&universe=${encodeURIComponent(universeName)}`;
-
+  if (world !== undefined) apiUrl += `&world=${encodeURIComponent(world)}`;
   if (binary) apiUrl += `&binary=true`;
 
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get file list."); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    if (binary) {
+      return atob(response.data.content);
+    }
+    return response.data.content;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  if (binary) {
-    return atob(response.data.content);
-  }
-
-  return response.data.content;
 };
 
-const getUniverseFile = async (
-  projectId: string,
-  universeName: string,
-  fileName: string
+const getWorldFile = async (
+  project: string,
+  world: string,
+  fileName: string,
 ) => {
-  if (!projectId) throw new Error("Project name is not set");
-  if (!universeName) throw new Error("Universe name is not set");
+  if (!project) throw new Error("Project name is not set");
+  if (!world) throw new Error("World name is not set");
   if (!fileName) throw new Error("File name is not set");
 
-  return await getFile(projectId, fileName, universeName);
+  return await getFile(project, fileName, world);
 };
 
 const saveFile = async (
-  projectId: string,
+  project: string,
   fileName: string,
   content: string,
-  universeName: string | undefined = undefined
+  world?: string,
 ) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+  if (!project) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("Current File name is not set");
 
   const apiUrl = "/bt_studio/save_file/";
 
-  let params = {
-    project_id: projectId,
+  const params: { [key: string]: string } = {
+    project: project,
     content: content,
     filename: fileName,
   };
 
-  if (universeName !== undefined)
-    params = Object.assign({}, params, { universe: universeName });
+  if (world !== undefined) params["world"] = world;
 
   try {
-    const response = await axios.post(apiUrl, params, axiosExtra);
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
-    }
-  } catch (error) {
-    console.log(error);
-    throw error; // Rethrow
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
 const renameFile = async (
-  projectId: string,
+  project: string,
   path: string,
   new_path: string,
-  universeName: string | undefined = undefined
+  world?: string,
 ) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+  if (!project) throw new Error("Current Project name is not set");
   if (!path) throw new Error("Path is not set");
   if (!new_path) throw new Error("New path is not set");
 
   const apiUrl = "/bt_studio/rename_file/";
 
-  let params = {
-    project_id: projectId,
+  const params: { [key: string]: string } = {
+    project: project,
     path: path,
     rename_to: new_path,
   };
 
-  if (universeName !== undefined)
-    params = Object.assign({}, params, { universe: universeName });
+  if (world !== undefined) params["world"] = world;
 
-  const response = await axios.post(apiUrl, params, axiosExtra);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to upload file."); // Response error
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+    publish("updateActionList");
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  publish("updateActionList");
 };
 
-const deleteFile = async (
-  projectId: string,
-  path: string,
-  universeName: string | undefined = undefined
-) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+const deleteFile = async (project: string, path: string, world?: string) => {
+  if (!project) throw new Error("Current Project name is not set");
   if (!path) throw new Error("Path is not set");
 
   const apiUrl = "/bt_studio/delete_file/";
 
-  let params = {
-    project_id: projectId,
+  const params: { [key: string]: string } = {
+    project: project,
     path: path,
   };
 
-  if (universeName !== undefined)
-    params = Object.assign({}, params, { universe: universeName });
+  if (world !== undefined) params["world"] = world;
 
-  const response = await axios.post(apiUrl, params, axiosExtra);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to upload file."); // Response error
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+    publish("updateActionList");
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  publish("updateActionList");
 };
 
 const uploadFile = async (
-  projectId: string,
+  project: string,
   fileName: string,
   location: string,
   content: string,
-  universeName: undefined | string = undefined
+  world?: string,
 ) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+  if (!project) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
   if (location === undefined) throw new Error("Location is not set");
   if (!content) throw new Error("Content is not defined");
 
-  const apiUrl = "/bt_studio/upload_code/";
-  let params = {
-    project_id: projectId,
-    file_name: fileName,
+  const apiUrl = "/bt_studio/upload/";
+  const params: { [key: string]: string } = {
+    project: project,
+    filename: fileName,
     location: location,
     content: content,
   };
 
-  if (universeName !== undefined)
-    params = Object.assign({}, params, { universe: universeName });
+  if (world !== undefined) params["world"] = world;
 
-  const response = await axios.post(apiUrl, params, axiosExtra);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to upload file."); // Response error
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
-const uploadFileUniverse = async (
-  projectId: string,
+const uploadFileWorld = async (
+  project: string,
   fileName: string,
   location: string,
   content: string,
-  universeName: string
+  world: string,
 ) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+  if (!project) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");
   if (location !== undefined) throw new Error("Location is not set");
   if (!content) throw new Error("Content is not defined");
-  if (!universeName) throw new Error("Universe name is not set");
+  if (!world) throw new Error("World name is not set");
 
-  return await uploadFile(projectId, fileName, location, content, universeName);
+  return await uploadFile(project, fileName, location, content, world);
 };
 
 const getFileList = async (
-  projectId: string,
-  universeName: string | undefined = undefined
+  project: string,
+  world?: string,
 ): Promise<string> => {
-  if (!projectId) throw new Error("Project name is not set");
+  if (!project) throw new Error("Project name is not set");
 
-  let apiUrl = `/bt_studio/get_file_list?project_id=${encodeURIComponent(projectId)}`;
+  let apiUrl = `/bt_studio/get_file_list?project=${encodeURIComponent(project)}`;
 
-  if (universeName !== undefined)
-    apiUrl += `&universe=${encodeURIComponent(universeName)}`;
+  if (world !== undefined) apiUrl += `&world=${encodeURIComponent(world)}`;
 
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get file list."); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.file_list;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.file_list);
   }
-
-  return response.data.file_list;
 };
 
-const getActionsList = async (projectId: string) => {
-  if (!projectId) throw new Error("Project name is not set");
+const getActionsList = async (project: string) => {
+  if (!project) throw new Error("Project name is not set");
 
-  const apiUrl = `/bt_studio/get_actions_list?project_id=${encodeURIComponent(projectId)}`;
+  const apiUrl = `/bt_studio/get_actions_list?project=${encodeURIComponent(project)}`;
 
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get actions list."); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.actions_list;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.file_list);
   }
-
-  if (!Array.isArray(response.data.actions_list)) {
-    throw new Error("API response is not an array");
-  }
-
-  return response.data.actions_list;
 };
 
 ///////////////////////////// Folder management ////////////////////////////////
 
 const createFolder = async (
-  projectId: string,
+  project: string,
   location: string,
   folderName: string,
-  universeName: undefined | string = undefined
+  world?: string,
 ) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+  if (!project) throw new Error("Current Project name is not set");
   if (!folderName) throw new Error("Folder name is not set");
   if (location === undefined) throw new Error("Location is not set");
 
-  if (location.startsWith("trees")) throw new Error("Cannot create a subtree this way");
+  if (location.startsWith("trees"))
+    throw new Error("Cannot create a subtree this way");
 
   const apiUrl = "/bt_studio/create_folder/";
 
-  let params = {
-    project_id: projectId,
+  const params: { [key: string]: string } = {
+    project: project,
     location: location,
     folder_name: folderName,
   };
 
-  if (universeName !== undefined)
-    params = Object.assign({}, params, { universe: universeName });
+  if (world !== undefined) params["world"] = world;
 
   try {
-    const response = await axios.post(apiUrl, params, axiosExtra);
-
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to create project."); // Response error
-    }
-  } catch (error: unknown) {
-    console.log(error);
-    throw error; // Rethrow
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
-const createUniverseFolder = async (
-  projectId: string,
+const createWorldFolder = async (
+  project: string,
   folderName: string,
   location: string,
-  universeName: string
+  world: string,
 ) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+  if (!project) throw new Error("Current Project name is not set");
   if (!folderName) throw new Error("Folder name is not set");
   if (location === undefined) throw new Error("Location is not set");
-  if (!universeName) throw new Error("Universe name is not set");
+  if (!world) throw new Error("World name is not set");
 
-  return await createFolder(projectId, folderName, location, universeName);
+  return await createFolder(project, folderName, location, world);
 };
 
 const renameFolder = async (
-  projectId: string,
+  project: string,
   path: string,
   new_path: string,
-  universeName: undefined | string = undefined
+  world?: string,
 ) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+  if (!project) throw new Error("Current Project name is not set");
   if (!path) throw new Error("Path is not set");
   if (!new_path) throw new Error("New path is not set");
 
   const apiUrl = "/bt_studio/rename_folder/";
 
-  let params = {
-    project_id: projectId,
+  const params: { [key: string]: string } = {
+    project: project,
     path: path,
     rename_to: new_path,
   };
 
-  if (universeName !== undefined)
-    params = Object.assign({}, params, { universe: universeName });
+  if (world !== undefined) params["world"] = world;
 
-  const response = await axios.post(apiUrl, params, axiosExtra);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to upload file."); // Response error
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
-const deleteFolder = async (
-  projectId: string,
-  path: string,
-  universeName: undefined | string = undefined
-) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+const deleteFolder = async (project: string, path: string, world?: string) => {
+  if (!project) throw new Error("Current Project name is not set");
   if (!path) throw new Error("Path is not set");
 
   const apiUrl = "/bt_studio/delete_folder/";
 
-  let params = {
-    project_id: projectId,
+  const params: { [key: string]: string } = {
+    project: project,
     path: path,
   };
 
-  if (universeName !== undefined)
-    params = Object.assign({}, params, { universe: universeName });
+  if (world !== undefined) params["world"] = world;
 
-  const response = await axios.post(apiUrl, params, axiosExtra);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to upload file."); // Response error
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
 const getLibraryTree = async (entry: string) => {
   if (!entry) throw new Error("Current Library Tree name is not set");
 
-  const apiUrl = `/bt_studio/get_library_tree?entry=${entry}`;
+  const apiUrl = `/bt_studio/get_library_tree?entry=${encodeURIComponent(entry)}`;
 
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(
-      response.data.message || "Failed to retrieve project graph"
-    ); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return {
+      graph_json: response.data.graph_json,
+      btOrder: response.data.bt_order,
+      actions: response.data.actions,
+      subtrees: response.data.subtrees,
+    };
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  return {
-    graph_json: response.data.graph_json,
-    btOrder: response.data.bt_order,
-    actions: response.data.actions,
-    subtrees: response.data.subtrees,
-  };
 };
 
 const getSubtreeLibrary = async () => {
   const apiUrl = `/bt_studio/get_subtree_library_list`;
 
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get subtree list."); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.subtree_list;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  if (!Array.isArray(response.data.subtree_list)) {
-    throw new Error("API response is not an array");
-  }
-
-  return response.data.subtree_list;
 };
 
 const getUserSubtreeLibrary = async (project: string) => {
   if (!project) throw new Error("Current Project name is not set");
 
-  const apiUrl = `/bt_studio/get_user_subtree_library_list?project=${project}`;
+  const apiUrl = `/bt_studio/get_user_subtree_library_list?project=${encodeURIComponent(project)}`;
 
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(response.data.message || "Failed to get subtree list."); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.library;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  if (!Array.isArray(response.data.library)) {
-    throw new Error("API response is not an array");
-  }
-
-  return response.data.library;
 };
 
 const getUserLibraryTree = async (project: string, entry: string) => {
   if (!project) throw new Error("Current Project name is not set");
   if (!entry) throw new Error("Current Library Tree name is not set");
 
-  const apiUrl = `/bt_studio/get_user_library_tree?project=${project}&entry=${entry}`;
+  const apiUrl = `/bt_studio/get_user_library_tree?project=${encodeURIComponent(
+    project,
+  )}&entry=${encodeURIComponent(entry)}`;
 
-  const response = await axios.get(apiUrl);
-
-  // Handle unsuccessful response status (e.g., non-2xx status)
-  if (!isSuccessful(response)) {
-    throw new Error(
-      response.data.message || "Failed to retrieve project graph"
-    ); // Response error
+  try {
+    const response = await axios.get(apiUrl);
+    return {
+      graph_json: response.data.graph_json,
+      btOrder: response.data.bt_order,
+      actions: response.data.actions,
+      subtrees: response.data.subtrees,
+    };
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
-
-  return {
-    graph_json: response.data.graph_json,
-    btOrder: response.data.bt_order,
-    actions: response.data.actions,
-    subtrees: response.data.subtrees,
-  };
 };
 
 const importLibrarySubtree = async (
-  projectId: string,
+  project: string,
   entry: string,
-  subtreeName: string
+  subtree: string,
 ) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+  if (!project) throw new Error("Current Project name is not set");
   if (!entry) throw new Error("Current Library Tree name is not set");
-  if (!subtreeName) throw new Error("Subtree name is not set");
+  if (!subtree) throw new Error("Subtree name is not set");
 
   const apiUrl = `/bt_studio/import_library_tree/`;
 
-  try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        project_id: projectId,
-        entry: entry,
-        name: subtreeName,
-      },
-      axiosExtra
-    );
+  const params: { [key: string]: string } = {
+    project_id: project,
+    entry: entry,
+    name: subtree,
+  };
 
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to import subtree."); // Response error
-    }
-  } catch (error: unknown) {
-    console.log(error);
-    throw error; // Rethrow
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
 const importUserLibrarySubtree = async (
-  projectId: string,
+  project: string,
   entry: string,
   entryProject: string,
-  subtreeName: string
+  subtree: string,
 ) => {
-  if (!projectId) throw new Error("Current Project name is not set");
+  if (!project) throw new Error("Current Project name is not set");
   if (!entry) throw new Error("Current Library Tree name is not set");
   if (!entryProject) throw new Error("Entry Project name is not set");
-  if (!subtreeName) throw new Error("Subtree name is not set");
+  if (!subtree) throw new Error("Subtree name is not set");
 
   const apiUrl = `/bt_studio/import_user_library_tree/`;
 
-  try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        project_id: projectId,
-        entry: entry,
-        entry_project: entryProject,
-        name: subtreeName,
-      },
-      axiosExtra
-    );
+  const params: { [key: string]: string } = {
+    project_id: project,
+    entry: entry,
+    entry_project: entryProject,
+    name: subtree,
+  };
 
-    // Handle unsuccessful response status (e.g., non-2xx status)
-    if (!isSuccessful(response)) {
-      throw new Error(response.data.message || "Failed to import subtree."); // Response error
-    }
-  } catch (error: unknown) {
-    console.log(error);
-    throw error; // Rethrow
+  try {
+    await axios.post(apiUrl, params, axiosExtra());
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
   }
 };
 
 ////////////////////////////////// Exports /////////////////////////////////////
 export {
   createAction,
-  createCustomUniverse,
-  createEmptyUniverse,
+  createCustomWorld,
+  createEmptyWorld,
   createFile,
   createFolder,
   createProject,
-  createRoboticsBackendUniverse,
+  createRoboticsBackendWorld,
   createSubtree,
-  createUniverseConfig,
-  createUniverseFolder,
+  createWorldConfig,
+  createWorldFolder,
   deleteFile,
   deleteFolder,
   deleteProject,
-  deleteUniverse,
+  deleteWorld,
   generateDockerizedApp,
   generateLocalApp,
   getActionsList,
@@ -1173,23 +990,22 @@ export {
   getFileList,
   getProjectConfig,
   getProjectInfo,
-  getRoboticsBackendUniverse,
   getSubtree,
   getSubtreeLibrary,
   getSubtreeList,
   getSubtreeStructure,
   getTreeStructure,
-  getUniverseConfig,
-  getUniverseFile,
-  listDockerUniverses,
+  getWorldConfig,
+  getWorldFile,
+  listDockerWorlds,
   listProjects,
-  listUniverses,
+  listWorlds,
   renameFile,
   renameFolder,
   saveFile,
   saveProjectConfig,
   uploadFile,
-  uploadFileUniverse,
+  uploadFileWorld,
   getSubtreePath,
   getLibraryTree,
   getUserSubtreeLibrary,
@@ -1198,5 +1014,5 @@ export {
   importUserLibrarySubtree,
   getProjectConfigRaw,
   getUserInfo,
-  getTreeData
+  getTreeData,
 };

@@ -6,7 +6,7 @@ import {
   getSubtreeStructure,
   getTreeStructure,
 } from "BtApi/TreeWrapper";
-import { findSubtree } from "../helper/TreeEditorHelper";
+import { findSubtree } from "BtHelpers/TreeEditorHelper";
 import { useError } from "jderobot-ide-interface";
 import TreeMonitor from "./TreeMonitor";
 import { CommsManager } from "jderobot-commsmanager";

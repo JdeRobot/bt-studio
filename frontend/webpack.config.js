@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const BundleTrackerPlugin = require("webpack-bundle-tracker");
 const path = require("path");
@@ -8,6 +9,7 @@ const aliases = () => {
     BtComponents: path.resolve(__dirname, "src/components"),
     BtContexts: path.resolve(__dirname, "src/contexts"),
     BtHooks: path.resolve(__dirname, "src/hooks"),
+    BtHelpers: path.resolve(__dirname, "src/helpers"),
     BtStyles: path.resolve(__dirname, "src/styles"),
     BtTypes: path.resolve(__dirname, "src/types"),
     BtTemplates: path.resolve(__dirname, "src/templates"),
@@ -20,7 +22,7 @@ const aliases = () => {
 
 module.exports = {
   entry: {
-    main: "./src/index.js",
+    main: "./src/index.tsx",
   },
   output: {
     filename: "js/[name].[contenthash:8].js",
@@ -78,6 +80,16 @@ module.exports = {
       path: "./",
       filename: "webpack-stats.json",
     }),
+    new MiniCssExtractPlugin({
+      filename: "css/[name].css",
+    }),
   ],
-  devtool: "source-map",
+  mode: process.argv.includes("production") ? "production" : "development",
+  devtool: process.argv.includes("production") ? false : "inline-source-map",
+  optimization: {
+    minimize: process.argv.includes("production"),
+  },
+  watchOptions: {
+    ignored: /node_modules/,
+  },
 };

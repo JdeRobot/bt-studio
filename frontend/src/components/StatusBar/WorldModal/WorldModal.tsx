@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   ModalEditableList,
@@ -6,49 +6,46 @@ import {
   ModalTitlebar,
 } from "jderobot-ide-interface";
 import CreatePage from "./CreatePage";
-import { deleteUniverse, listUniverses } from "BtApi/TreeWrapper";
+import { deleteWorld, listWorlds } from "BtApi/TreeWrapper";
 import { useError } from "jderobot-ide-interface";
 import CreateCustomPage from "./CreateCustomPage";
 import ImportCustomPage from "./ImportCustomPage";
-import "./UniverseModal.css";
+import "./WorldModal.css";
 
-enum UniverseTypes {
+enum WorldTypes {
   ROBOTICSBACKEND,
   CUSTOM,
   ZIP,
 }
 
-const UniverseModal = ({
+const WorldModal = ({
   isOpen,
   onSelect,
   onClose,
   project,
 }: {
   isOpen: boolean;
-  onSelect: (universe: string) => void;
+  onSelect: (world: string) => void;
   onClose: Function;
   project: string;
 }) => {
   const { error } = useError();
 
-  const focusInputRef = useRef<any>(null);
-  const [existingUniverses, setUniversesProjects] = useState([]);
-  // const [uploadModalOpen, setUploadModalOpen] = useState(false);
-  const [universeAdded, setUniverseAdded] = useState(false);
+  const [existingWorlds, setWorldsProjects] = useState([]);
+  const [worldAdded, setWorldAdded] = useState(false);
   const [creationMenu, showCreationMenu] = useState<boolean>(false);
-  const [creationType, changeCreationType] = useState<UniverseTypes>(
-    UniverseTypes.CUSTOM,
+  const [creationType, changeCreationType] = useState<WorldTypes>(
+    WorldTypes.CUSTOM,
   );
 
-  const loadUniverseList = async () => {
+  const loadWorldsList = async () => {
     try {
-      const response = await listUniverses(project);
-      setUniversesProjects(response);
-      setUniverseAdded(false);
-    } catch (e) {
+      const response = await listWorlds(project);
+      setWorldsProjects(response);
+      setWorldAdded(false);
+    } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error("Error while fetching universes list: " + e.message);
-        error("Error while fetching universes list: " + e.message);
+        error(e.message);
       }
     }
   };
@@ -58,15 +55,9 @@ const UniverseModal = ({
       return;
     }
 
-    if (focusInputRef.current) {
-      setTimeout(() => {
-        focusInputRef.current.focus();
-      }, 0);
-    }
-
-    loadUniverseList();
+    loadWorldsList();
     showCreationMenu(false);
-  }, [isOpen, universeAdded, creationMenu]);
+  }, [isOpen, worldAdded, creationMenu]);
 
   const handleCancel = () => {
     if (project !== "") {
@@ -74,58 +65,44 @@ const UniverseModal = ({
     }
   };
 
-  const deleteUniverseFunc = async (universe_name: string) => {
+  const deleteWorldFunc = async (world: string) => {
     try {
-      await deleteUniverse(project, universe_name);
-      loadUniverseList();
-      console.log("Universe deleted successfully");
-    } catch (e: any) {
-      if (e.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        if (e.response.status === 409) {
-          error(`The universe ${universe_name} does not exist`);
-        } else {
-          // Handle other statuses or general API errors
-          error(
-            "Unable to connect with the backend server. Please check the backend status.",
-          );
-        }
+      await deleteWorld(project, world);
+      loadWorldsList();
+      console.log("World deleted successfully");
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        error(e.message);
       }
     }
   };
 
   const importFromRoboticsBackend = () => {
     showCreationMenu(true);
-    changeCreationType(UniverseTypes.ROBOTICSBACKEND);
+    changeCreationType(WorldTypes.ROBOTICSBACKEND);
   };
 
-  const createCustomUniverse = () => {
+  const createCustomWorld = () => {
     showCreationMenu(true);
-    changeCreationType(UniverseTypes.CUSTOM);
+    changeCreationType(WorldTypes.CUSTOM);
   };
 
   const importFromZip = () => {
     showCreationMenu(true);
-    changeCreationType(UniverseTypes.ZIP);
+    changeCreationType(WorldTypes.ZIP);
   };
-
-  // const handleCloseUploadUniverseModal = (universe_name: string) => {
-  //   setUploadModalOpen(false);
-  // };
 
   return (
     <Modal
-      id="universes-modal"
+      id="worlds-modal"
       isOpen={isOpen}
       onClose={onClose}
-      onSubmit={(data: unknown) => {}}
       onReset={handleCancel}
     >
       {!creationMenu ? (
         <>
           <ModalTitlebar
-            title="Manage your Universes"
+            title="Manage your Worlds"
             htmlFor="actionName"
             hasClose
             handleClose={() => {
@@ -134,23 +111,23 @@ const UniverseModal = ({
           />
           <ModalRow type="all">
             <ModalEditableList
-              list={Object.values(existingUniverses)}
+              list={Object.values(existingWorlds)}
               onSelect={(e: any, entry: string) => {
                 onSelect(entry);
               }}
               onDelete={(e: any, entry: string) => {
-                deleteUniverseFunc(entry);
+                deleteWorldFunc(entry);
                 e.stopPropagation();
               }}
             />
           </ModalRow>
-          <ModalRow type="buttons" id="universe-buttons">
+          <ModalRow type="buttons" id="worlds-buttons">
             <button
               type="button"
-              onClick={createCustomUniverse}
+              onClick={createCustomWorld}
               style={{ width: "180px", height: "3em" }}
             >
-              New custom universe
+              New custom world
             </button>
             <button
               type="button"
@@ -170,7 +147,7 @@ const UniverseModal = ({
         </>
       ) : (
         <>
-          {creationType === UniverseTypes.ROBOTICSBACKEND && (
+          {creationType === WorldTypes.ROBOTICSBACKEND && (
             <CreatePage
               setVisible={showCreationMenu}
               visible={creationMenu}
@@ -178,7 +155,7 @@ const UniverseModal = ({
               currentProject={project}
             />
           )}
-          {creationType === UniverseTypes.CUSTOM && (
+          {creationType === WorldTypes.CUSTOM && (
             <CreateCustomPage
               setVisible={showCreationMenu}
               visible={creationMenu}
@@ -186,7 +163,7 @@ const UniverseModal = ({
               currentProject={project}
             />
           )}
-          {creationType === UniverseTypes.ZIP && (
+          {creationType === WorldTypes.ZIP && (
             <ImportCustomPage
               setVisible={showCreationMenu}
               visible={creationMenu}
@@ -200,4 +177,4 @@ const UniverseModal = ({
   );
 };
 
-export default UniverseModal;
+export default WorldModal;

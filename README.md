@@ -32,6 +32,7 @@ curl -s https://raw.githubusercontent.com/JdeRobot/bt-studio/main/scripts/run.sh
 Here the code will be saved in 'backend/filesystem' and the current database and bt-studio will be used inside the docker.
 
 1. Clone the repo and enter it
+
 ```bash
 git clone --recurse-submodules https://github.com/JdeRobot/bt-studio.git -b <src-branch>
 cd bt-studio
@@ -39,28 +40,30 @@ cd bt-studio
 
 2. Launch the docker: it can be done in the following ways.
 
-* **Recomended** Using the developer script (docker compose):
+- **Recomended** Using the developer script (docker compose):
+
 ```bash
 sh scripts/develop.sh
 ```
 
-* Using docker run **(does not use the current database and bt-studio)**:
+- Using docker run **(does not use the current database and bt-studio)**:
+
 ```bash
-docker run --hostname my-postgres --name universe_db -d\
-    -e POSTGRES_DB=universe_db \
+docker run --hostname my-postgres --name world_db -d\
+    -e POSTGRES_DB=world_db \
     -e POSTGRES_USER=user-dev \
     -e POSTGRES_PASSWORD=bt-studio-dev \
     -e POSTGRES_PORT=5432 \
     -d -p 5432:5432 \
     jderobot/bt-studio-database:latest
-docker run --rm -it $(nvidia-smi >/dev/null 2>&1 && echo "--gpus all" || echo "") --device /dev/dri -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link universe_db jderobot/bt-studio:latest
+docker run --rm -it $(nvidia-smi >/dev/null 2>&1 && echo "--gpus all" || echo "") --device /dev/dri -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link world_db jderobot/bt-studio:latest
 ```
 
 ### Generating apps
 
 1. Create new app
 
-You may create a new app clicking the **+** button in the upper right corner, or swap to the the demo project clicking the change button next to it and typing *demo*. In the demo project, you may find a reference implementation of a bump and go app for a differential robot using a LIDAR. Feel free to explore and use whatever you need!
+You may create a new app clicking the **+** button in the upper right corner, or swap to the the demo project clicking the change button next to it and typing _demo_. In the demo project, you may find a reference implementation of a bump and go app for a differential robot using a LIDAR. Feel free to explore and use whatever you need!
 
 2. Write actions
 
@@ -108,7 +111,7 @@ class TemplateAction(py_trees.behaviour.Behaviour):
         """ Executed when the action is ticked. Do not block! """
 
         ....
-    
+
         return new_status
 
     def terminate(self, new_status: py_trees.common.Status) -> None:
@@ -124,22 +127,22 @@ For examples of how to use ports in your actions, please refer to the [example a
 
 Using the existing blocks, you may define the logic of your app. Here you have available all the defined actions. This can be done previously to step 2 if you prefer to define the logic of the tree before its implementation!
 
-BT Studio supports subtree composition, meaning you can easily split your application logic, allowing for greating flexibility and reusability. To create a new subtree, simply press the tree icon in the editor and navigate to it clicking the new created block. 
+BT Studio supports subtree composition, meaning you can easily split your application logic, allowing for greating flexibility and reusability. To create a new subtree, simply press the tree icon in the editor and navigate to it clicking the new created block.
 
 BT Studio comes with four basic robotic behaviors that you can import in your application:
 
-* AlignPerson -> Allows a robot with a person using images. 
-* DistanceWatcher -> Checks if the robot is at a given instance to an obstacle.
-* FollowPerson -> Reactively follows a person using images.
-* MoveAvoidingObstacles -> The robot goes straight until it finds an obstacle, then it tries to find the nearest clear space. 
+- AlignPerson -> Allows a robot with a person using images.
+- DistanceWatcher -> Checks if the robot is at a given instance to an obstacle.
+- FollowPerson -> Reactively follows a person using images.
+- MoveAvoidingObstacles -> The robot goes straight until it finds an obstacle, then it tries to find the nearest clear space.
 
 4. Downloading the app
 
-Clicking the green download button, a ROS 2 app is generated. This can be unziped in a ROS 2 workspace and installed as any other package. 
+Clicking the green download button, a ROS 2 app is generated. This can be unziped in a ROS 2 workspace and installed as any other package.
 
 ### Using the generated app
 
-1. You need to ROS 2 humble installed in your system. Please follow this [guide](https://docs.ros.org/en/humble/Installation.html) if you haven't. After that, source the ros underlay. It is highly recommended to add this line at the end of your `.basrhc` file. 
+1. You need to ROS 2 humble installed in your system. Please follow this [guide](https://docs.ros.org/en/humble/Installation.html) if you haven't. After that, source the ros underlay. It is highly recommended to add this line at the end of your `.basrhc` file.
 
 ```bash
 source /opt/ros/humble/setup.bash
@@ -155,7 +158,7 @@ unzip your_ws/src/your_app.zip
 
 3. Init rosdep
 
-You may have to init the ROS dependency manager if you haven't done it before. 
+You may have to init the ROS dependency manager if you haven't done it before.
 
 ```bash
 sudo rosdep init
@@ -164,7 +167,7 @@ rosdep update
 
 4. Downloading auxiliary tools and dependencies
 
-These are a testing environment in the Webots simulator and a tree execution visualizer. 
+These are a testing environment in the Webots simulator and a tree execution visualizer.
 
 ```bash
 cd src/your_app/
@@ -191,7 +194,7 @@ py-trees-tree-viewer
 
 7. Launching the app
 
-Now, using the app executor, you may launch the app itself. 
+Now, using the app executor, you may launch the app itself.
 
 ```bash
 ros2 run your_app_name executor
@@ -201,15 +204,16 @@ ros2 run your_app_name executor
 
 You can see some demos running application as reference here:
 
-* [Receptionist Demo video](https://www.youtube.com/watch?v=2AuwqGPP8WQ)
-* [Bump & Go Demo video](https://www.youtube.com/watch?v=luxoZLU-Y8g)
-* [Follow Person Demo video](https://www.youtube.com/watch?v=q_K0pl-IoFA)
+- [Receptionist Demo video](https://www.youtube.com/watch?v=2AuwqGPP8WQ)
+- [Bump & Go Demo video](https://www.youtube.com/watch?v=luxoZLU-Y8g)
+- [Follow Person Demo video](https://www.youtube.com/watch?v=q_K0pl-IoFA)
 
 ## Roadmap
 
-In the future, this project will have total support for Gazebo Harmonic universes, for now they can be used if custom BTDI is created with the branch of Robotics Application Manager being prajyot/migration_to_gz_harmonic.
+In the future, this project will have total support for Gazebo Harmonic worlds, for now they can be used if custom BTDI is created with the branch of Robotics Application Manager being prajyot/migration_to_gz_harmonic.
 
 <!-- MARKDOWN LINKS & IMAGES -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/JdeRobot/bt-studio
 [contributors-url]: https://github.com/JdeRobot/bt-studio/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/JdeRobot/bt-studio

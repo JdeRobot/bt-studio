@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
 from .serializers import FileContentSerializer, ProjectSerializer
-from .project_view import EntryEncoder
-from .models import Universe, Project
+from .project_view import EntryEncoder, is_binary_mimetype
+from .models import World, Project
 from .error_handler import error_wrapper
 from . import json_translator
 from . import app_generator
@@ -43,7 +43,7 @@ def create_project(fal, request):
 
         project_path = fal.project_path(project_id)
         action_path = fal.actions_path(project_id)
-        universes_path = fal.universes_path(project_id)
+        worlds_path = fal.worlds_path(project_id)
         tree_path = fal.trees_path(project_id)
         subtree_path = fal.subtrees_path(project_id)
 
@@ -63,7 +63,7 @@ def create_project(fal, request):
         # Create folders
         fal.mkdir(project_path)
         fal.mkdir(action_path)
-        fal.mkdir(universes_path)
+        fal.mkdir(worlds_path)
         fal.mkdir(tree_path)
         fal.mkdir(subtree_path)
 
@@ -321,106 +321,175 @@ def get_subtree_list(fal, request):
     return Response({"subtree_list": subtree_list})
 
 
-# UNIVERSE MANAGEMENT
+# WORLD MANAGEMENT
 
 
-@error_wrapper("POST", ["project_id", "universe"])
-def create_universe(fal, request):
+@error_wrapper("POST", ["project_id", "world"])
+def create_world(fal, request):
     project_id = request.data.get("project_id")
-    universe_name = request.data.get("universe")
+    world_name = request.data.get("world")
 
-    universes_path = fal.universes_path(project_id)
-    universe_path = fal.path_join(universes_path, universe_name)
+    worlds_path = fal.worlds_path(project_id)
+    world_path = fal.path_join(worlds_path, world_name)
 
-    fal.mkdir(universe_path)
+    fal.mkdir(world_path)
     return Response({"success": True}, status=200)
 
 
-@error_wrapper("POST", ["project_id", "universe_name"])
-def delete_universe(fal, request):
+@error_wrapper("POST", ["project_id", "world"])
+def delete_world(fal, request):
     project_id = request.data.get("project_id")
-    universe_name = request.data.get("universe_name")
+    world_name = request.data.get("world")
 
-    universes_path = fal.universes_path(project_id)
-    universe_path = fal.path_join(universes_path, universe_name)
+    worlds_path = fal.worlds_path(project_id)
+    world_path = fal.path_join(worlds_path, world_name)
 
-    fal.removedir(universe_path)
+    fal.removedir(world_path)
     return Response({"success": True}, status=200)
 
 
 @error_wrapper("GET", ["project_id"])
-def get_universes_list(fal, request):
+def get_world_list(fal, request):
     project_id = request.GET.get("project_id")
 
-    universes_path = fal.universes_path(project_id)
+    worlds_path = fal.worlds_path(project_id)
+    worlds_list = fal.listdirs(worlds_path)
 
-    universes_list = fal.listdirs(universes_path)
-    return Response({"universes_list": universes_list})
+    return Response({"worlds_list": worlds_list})
 
 
-@error_wrapper("POST", ["project_id", "universe_name"])
-def create_universe_configuration(fal, request):
-    project_id = request.data.get("project_id")
-    universe_name = request.data.get("universe_name")
+@error_wrapper("POST", ["project", "world"])
+def create_world_configuration(fal, request):
+    project_id = request.data.get("project")
+    world_name = request.data.get("world")
 
-    universes_path = fal.universes_path(project_id)
-    universe_path = fal.path_join(universes_path, universe_name)
-    config_path = fal.path_join(universe_path, "config.json")
+    worlds_path = fal.worlds_path(project_id)
+    world_path = fal.path_join(worlds_path, world_name)
+    config_path = fal.path_join(world_path, "config.json")
 
-    universe_config = {
-        "name": universe_name,
-        "type": "custom",
+    world_config = {
+        "name": world_name,
         "ram_config": {
             "ros_version": "ROS2",
-            "world": "gazebo",
+            "world": "gz",
             "launch_file_path": "",
             "visualization_config_path": "",
         },
     }
 
-    universe_data = json.dumps(universe_config, ensure_ascii=False, indent=4)
-    fal.create(config_path, universe_data)
+    world_data = json.dumps(world_config, ensure_ascii=False, indent=4)
+    fal.create(config_path, world_data)
 
     return Response(
-        {"success": True, "message": "Universe config created successfully"}, status=200
+        {"success": True, "message": "World config created successfully"}, status=200
     )
 
 
-@error_wrapper("GET", ["project_id", "universe_name"])
-def get_universe_configuration(fal, request):
-    project_id = request.GET.get("project_id")
-    universe_name = request.GET.get("universe_name")
+@error_wrapper("GET", ["project", "world"])
+def get_world_configuration(fal, request):
+    project_id = request.GET.get("project")
+    world_name = request.GET.get("world")
 
-    universes_path = fal.universes_path(project_id)
-    universe_path = fal.path_join(universes_path, universe_name)
-    config_path = fal.path_join(universe_path, "config.json")
+    worlds_path = fal.worlds_path(project_id)
+    world_path = fal.path_join(worlds_path, world_name)
+    config_path = fal.path_join(world_path, "config.json")
 
     content = json.loads(fal.read(config_path))
-    # Return as JSON
-    return Response({"success": True, "config": content}, status=200)
+
+    custom = "id" not in content and "ram_config" in content
+    tools = ["console", "simulator", "state_monitor"]
+    tools_config = {}
+    world_type = "gz"
+    ros_version = "ROS2"
+    scene_entrypoint = ""
+    robot_config = [
+        {
+            "name": None,
+            "launch_file_path": None,
+            "ros_version": None,
+            "type": None,
+            "start_pose": None,
+            "entity": None,
+            "extra_config": None,
+        }
+    ]
+
+    if not custom:  # Load config from db
+        world = World.objects.get(name=content["id"])
+
+        if world.scene.tools_config != "None":
+            tools_configuration = json.loads(world.scene.tools_config)
+
+        if world.robot.name != "None":
+            robot_config = [
+                {
+                    "name": world.robot.name,
+                    "launch_file_path": world.robot.launch_file_path,
+                    "ros_version": world.scene.ros_version,
+                    "type": world.scene.type,
+                    "start_pose": world.scene.start_pose,
+                    "entity": world.robot.entity,
+                    "extra_config": world.robot.extra_config,
+                }
+            ]
+        name = world.name
+        world_type = world.scene.type
+        ros_version = world.scene.ros_version
+        scene_entrypoint = world.scene.launch_file_path
+    else:
+        config = content["ram_config"]
+        name = content["name"]
+        if "type" in config:
+            world_type = config["type"]
+        if "tools" in config:
+            tools = config["tools"]
+        if "tools_config" in config:
+            tools_config = config["tools_config"]
+        if "robot" in config:
+            robot_config = config["robot"]
+        if "ros_version" in config:
+            ros_version = config["ros_version"]
+        if "scene_entrypoint" in config:
+            ros_version = config["scene_entrypoint"]
+
+    config = {
+        "name": world_name,
+        "custom": custom,
+        "scene": {
+            "name": name,
+            "launch_file_path": scene_entrypoint,
+            "ros_version": ros_version,
+            "type": world_type,
+            "tools_config": tools_configuration,
+        },
+        "robot": robot_config,
+        "tools": tools,
+        "tools_config": tools_configuration,
+    }
+
+    return Response({"success": True, "world": config}, status=200)
 
 
 # FILE MANAGEMENT
 
 
-@error_wrapper("GET", ["project_id"])
+@error_wrapper("GET", ["project"])
 def get_file_list(fal, request):
-    project_id = request.GET.get("project_id")
-    universe = request.GET.get("universe")
+    project_id = request.GET.get("project")
+    world = request.GET.get("world")
 
     base_group = "Code"
 
-    if universe is not None:
-        path = fal.universes_path(project_id)
-        base_group = "Universes"
-        if universe != "":
-            path = fal.path_join(path, universe)
+    if world is not None:
+        path = fal.worlds_path(project_id)
+        base_group = "Worlds"
+        if world != "":
+            path = fal.path_join(path, world)
     else:
         path = fal.code_path(project_id)
 
     file_list = fal.list_formatted(path, base_group)
 
-    # Return the list of files
     return Response({"file_list": EntryEncoder().encode(file_list)})
 
 
@@ -434,21 +503,29 @@ def get_actions_list(fal, request):
     return Response({"actions_list": actions_list})
 
 
-@error_wrapper("GET", ["project_id", "filename"])
+@error_wrapper("GET", ["project", "filename"])
 def get_file(fal, request):
-    project_id = request.GET.get("project_id", None)
+    project_id = request.GET.get("project", None)
     filename = request.GET.get("filename", None)
-    universe = request.GET.get("universe", None)
+    world = request.GET.get("world", None)
+    binary = request.GET.get("binary", None)
 
-    if universe is not None:
-        path = fal.universes_path(project_id)
-        if universe != "":
-            path = fal.path_join(path, universe)
+    if world is not None:
+        path = fal.worlds_path(project_id)
+        if world != "":
+            path = fal.path_join(path, world)
     else:
         path = fal.code_path(project_id)
 
     file_path = fal.path_join(path, filename)
-    content = fal.read(file_path)
+
+    if binary is None or binary is False:
+        content = fal.read(file_path)
+    else:
+        content = fal.read_binary(file_path)
+        b64 = base64.b64encode(content)
+        content = b64.decode("utf-8")
+
     serializer = FileContentSerializer({"content": content})
     return Response(serializer.data)
 
@@ -471,17 +548,17 @@ def create_action(fal, request):
     return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
 
-@error_wrapper("POST", ["project_id", ("location", -1), "file_name"])
+@error_wrapper("POST", ["project", ("location", -1), "filename"])
 def create_file(fal, request):
-    project_id = request.data.get("project_id")
+    project_id = request.data.get("project")
     location = request.data.get("location")
-    filename = request.data.get("file_name")
-    universe = request.data.get("universe")
+    filename = request.data.get("filename")
+    world = request.data.get("world")
 
-    if universe is not None:
-        path = fal.universes_path(project_id)
-        if universe != "":
-            path = fal.path_join(path, universe)
+    if world is not None:
+        path = fal.worlds_path(project_id)
+        if world != "":
+            path = fal.path_join(path, world)
     else:
         path = fal.code_path(project_id)
 
@@ -492,17 +569,17 @@ def create_file(fal, request):
     return Response({"success": True})
 
 
-@error_wrapper("POST", ["project_id", ("location", -1), "folder_name"])
+@error_wrapper("POST", ["project", ("location", -1), "folder_name"])
 def create_folder(fal, request):
-    project_id = request.data.get("project_id")
+    project_id = request.data.get("project")
     location = request.data.get("location")
     folder_name = request.data.get("folder_name")
-    universe = request.data.get("universe")
+    world = request.data.get("world")
 
-    if universe is not None:
-        path = fal.universes_path(project_id)
-        if universe != "":
-            path = fal.path_join(path, universe)
+    if world is not None:
+        path = fal.worlds_path(project_id)
+        if world != "":
+            path = fal.path_join(path, world)
     else:
         path = fal.code_path(project_id)
 
@@ -513,17 +590,17 @@ def create_folder(fal, request):
     return Response({"success": True})
 
 
-@error_wrapper("POST", ["project_id", "path", "rename_to"])
+@error_wrapper("POST", ["project", "path", "rename_to"])
 def rename_file(fal, request):
-    project_id = request.data.get("project_id")
+    project_id = request.data.get("project")
     path = request.data.get("path")
     rename_path = request.data.get("rename_to")
-    universe = request.data.get("universe")
+    world = request.data.get("world")
 
-    if universe is not None:
-        base_path = fal.universes_path(project_id)
-        if universe != "":
-            base_path = fal.path_join(base_path, universe)
+    if world is not None:
+        base_path = fal.worlds_path(project_id)
+        if world != "":
+            base_path = fal.path_join(base_path, world)
     else:
         base_path = fal.code_path(project_id)
 
@@ -534,17 +611,17 @@ def rename_file(fal, request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_id", "path", "rename_to"])
+@error_wrapper("POST", ["project", "path", "rename_to"])
 def rename_folder(fal, request):
-    project_id = request.data.get("project_id")
+    project_id = request.data.get("project")
     path = request.data.get("path")
     rename_path = request.data.get("rename_to")
-    universe = request.data.get("universe")
+    world = request.data.get("world")
 
-    if universe is not None:
-        base_path = fal.universes_path(project_id)
-        if universe != "":
-            base_path = fal.path_join(base_path, universe)
+    if world is not None:
+        base_path = fal.worlds_path(project_id)
+        if world != "":
+            base_path = fal.path_join(base_path, world)
     else:
         base_path = fal.code_path(project_id)
 
@@ -555,16 +632,16 @@ def rename_folder(fal, request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_id", "path"])
+@error_wrapper("POST", ["project", "path"])
 def delete_file(fal, request):
-    project_id = request.data.get("project_id")
+    project_id = request.data.get("project")
     path = request.data.get("path")
-    universe = request.data.get("universe")
+    world = request.data.get("world")
 
-    if universe is not None:
-        base_path = fal.universes_path(project_id)
-        if universe != "":
-            base_path = fal.path_join(base_path, universe)
+    if world is not None:
+        base_path = fal.worlds_path(project_id)
+        if world != "":
+            base_path = fal.path_join(base_path, world)
     else:
         base_path = fal.code_path(project_id)
 
@@ -574,16 +651,16 @@ def delete_file(fal, request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_id", "path"])
+@error_wrapper("POST", ["project", "path"])
 def delete_folder(fal, request):
-    project_id = request.data.get("project_id")
+    project_id = request.data.get("project")
     path = request.data.get("path")
-    universe = request.data.get("universe")
+    world = request.data.get("world")
 
-    if universe is not None:
-        base_path = fal.universes_path(project_id)
-        if universe != "":
-            base_path = fal.path_join(base_path, universe)
+    if world is not None:
+        base_path = fal.worlds_path(project_id)
+        if world != "":
+            base_path = fal.path_join(base_path, world)
     else:
         base_path = fal.code_path(project_id)
 
@@ -593,17 +670,17 @@ def delete_folder(fal, request):
     return JsonResponse({"success": True})
 
 
-@error_wrapper("POST", ["project_id", "filename", ("content", -1)])
+@error_wrapper("POST", ["project", "filename", ("content", -1)])
 def save_file(fal, request):
-    project_id = request.data.get("project_id")
+    project_id = request.data.get("project")
     filename = request.data.get("filename")
     content = request.data.get("content")
-    universe = request.data.get("universe")
+    world = request.data.get("world")
 
-    if universe is not None:
-        path = fal.universes_path(project_id)
-        if universe != "":
-            path = fal.path_join(path, universe)
+    if world is not None:
+        path = fal.worlds_path(project_id)
+        if world != "":
+            path = fal.path_join(path, world)
     else:
         path = fal.code_path(project_id)
 
@@ -640,35 +717,30 @@ def generate_dockerized_app(fal, request):
     return JsonResponse({"success": True, "tree": final_tree})
 
 
-@error_wrapper("POST", ["project_id", "universe_name"])
-def create_custom_universe(fal, request):
+@error_wrapper("POST", ["project", "world"])
+def create_custom_world(fal, request):
     # Get the name and the zip file from the request
-    project_id = request.data.get("project_id")
-    universe_name = request.data.get("universe_name")
+    project_id = request.data.get("project")
+    world_name = request.data.get("world")
 
     # Make folder path relative to Django app
-    universes_path = fal.universes_path(project_id)
-    universe_path = fal.path_join(universes_path, universe_name)
-    universe_launch_path = fal.path_join(universe_path, "launch")
-    universe_world_path = fal.path_join(universe_path, "worlds")
-    universe_models_path = fal.path_join(universe_path, "models")
+    worlds_path = fal.worlds_path(project_id)
+    world_path = fal.path_join(worlds_path, world_name)
+    world_launch_path = fal.path_join(world_path, "launch")
+    world_scene_path = fal.path_join(world_path, "scene")
+    world_models_path = fal.path_join(world_path, "models")
 
-    fal.mkdir(universe_path)
-    fal.mkdir(universe_launch_path)
-    fal.mkdir(universe_world_path)
-    fal.mkdir(universe_models_path)
+    fal.mkdir(world_path)
+    fal.mkdir(world_launch_path)
+    fal.mkdir(world_scene_path)
+    fal.mkdir(world_models_path)
 
-    # Fill the config dictionary of the universe
-    ram_launch_path = (
-        "/workspace/worlds/src/" + universe_name + "/launch/universe.launch.py"
-    )
-    ram_visualization_config_path = (
-        "/workspace/worlds/src/" + universe_name + "/gz.config"
-    )
+    # Fill the config dictionary of the world
+    ram_launch_path = "/workspace/worlds/src/" + world_name + "/launch/scene.launch.py"
+    ram_visualization_config_path = "/workspace/worlds/src/" + world_name + "/gz.config"
 
-    universe_config = {
-        "name": universe_name,
-        "type": "custom",
+    world_config = {
+        "name": world_name,
         "ram_config": {
             "ros_version": "ROS2",
             "type": "gz",
@@ -679,134 +751,81 @@ def create_custom_universe(fal, request):
     }
 
     # Generate the json config
-    config_path = fal.path_join(universe_path, "config.json")
+    config_path = fal.path_join(world_path, "config.json")
+    world_data = json.dumps(world_config, ensure_ascii=False, indent=4)
+    fal.create(config_path, world_data)
 
-    universe_data = json.dumps(universe_config, ensure_ascii=False, indent=4)
-    fal.create(config_path, universe_data)
-
-    templates = fal.get_universe_template(universe_name)
+    templates = fal.get_world_template(world_name)
 
     for t in templates:
-        fal.create(fal.path_join(universe_path, t["path"]), t["content"])
+        fal.create(fal.path_join(world_path, t["path"]), t["content"])
 
     return Response(
-        {"success": True, "message": "Universe uploaded successfully"},
+        {"success": True, "message": "Custom world created successfully"},
         status=status.HTTP_200_OK,
     )
 
 
-@error_wrapper("POST", ["project_id", "universe_name", "id"])
-def add_docker_universe(fal, request):
-    # Get the name and the id file from the request
-    universe_name = request.data.get("universe_name")
-    project_id = request.data.get("project_id")
-    id = request.data.get("id")
+@error_wrapper("POST", ["project", "world", "id"])
+def add_docker_world(fal, request):
+    project_id = request.data.get("project")
+    world_name = request.data.get("world")
+    world_id = request.data.get("id")
 
     # Make folder path relative to Django app
-    universes_path = fal.universes_path(project_id)
-    universe_path = fal.path_join(universes_path, universe_name)
+    worlds_path = fal.worlds_path(project_id)
+    world_path = fal.path_join(worlds_path, world_name)
 
-    fal.mkdir(universe_path)
+    fal.mkdir(world_path)
 
-    # Fill the config dictionary of the universe
-    universe_config = {"name": universe_name, "id": id, "type": "robotics_backend"}
+    # Fill the config dictionary of the world
+    world_config = {"name": world_name, "id": world_id}
 
     # Generate the json config
-    config_path = fal.path_join(universe_path, "config.json")
+    config_path = fal.path_join(world_path, "config.json")
 
-    universe_data = json.dumps(universe_config, ensure_ascii=False, indent=4)
-    fal.create(config_path, universe_data)
+    world_data = json.dumps(world_config, ensure_ascii=False, indent=4)
+    fal.create(config_path, world_data)
     return Response(
-        {"success": True, "message": "Universe uploaded successfully"},
+        {"success": True, "message": "World created successfully"},
         status=status.HTTP_200_OK,
     )
 
 
-@error_wrapper("POST", ["project_id", "file_name", ("location", -1), "content"])
-def upload_code(fal, request):
+@error_wrapper("POST", ["project", "filename", ("location", -1), "content"])
+def upload(fal, request):
+    """
+    Upload a binary file (e.g. ONNX model) to the exercise project directory.
+
+    POST params: project_id (str), filename (str), location (str), content (base64 str).
+    """
     # Get the name and the zip file from the request
-    project_id = request.data.get("project_id")
-    file_name = request.data.get("file_name")
+    project_id = request.data.get("project")
+    filename = request.data.get("filename")
     location = request.data.get("location")
     content = request.data.get("content")
-    universe = request.data.get("universe")
+    world = request.data.get("world")
 
-    if universe is not None:
-        path = fal.universes_path(project_id)
-        if universe != "":
-            path = fal.path_join(path, universe)
+    if world is not None:
+        path = fal.worlds_path(project_id)
+        if world != "":
+            path = fal.path_join(path, world)
     else:
         path = fal.code_path(project_id)
 
-    create_path = fal.path_join(path, location)
-    file_path = fal.path_join(create_path, file_name)
+    create_path = fal.path_join(location, filename)
+    file_path = fal.path_join(path, create_path)
 
     fal.create_binary(file_path, base64.b64decode(content))
     return Response({"success": True})
 
 
 @error_wrapper("GET")
-def list_docker_universes(fal, request):
-    universes = Universe.objects.all()
-    universes_docker_list = [x.name for x in universes]
-    # Return the list of projects
-    return Response({"universes": universes_docker_list})
+def list_docker_worlds(fal, request):
+    worlds = World.objects.all()
+    worlds_docker_list = [x.name for x in worlds]
 
-
-@error_wrapper("GET", ["name"])
-def get_docker_universe_data(fal, request):
-    name = request.GET.get("name")
-
-    universe = Universe.objects.get(name=name)
-
-    tools_configuration = None
-    if universe.world.tools_config != "None":
-        tools_configuration = json.loads(universe.world.tools_config)
-
-    print(universe.robot)
-
-    if universe.robot.name != "None":
-        robot_config = {
-            "name": universe.robot.name,
-            "launch_file_path": universe.robot.launch_file_path,
-            "ros_version": universe.world.ros_version,
-            "type": universe.world.type,
-            "start_pose": universe.world.start_pose,
-            "entity": universe.robot.entity,
-            "extra_config": universe.robot.extra_config,
-        }
-    else:
-        robot_config = {
-            "name": None,
-            "launch_file_path": None,
-            "ros_version": None,
-            "type": None,
-            "start_pose": None,
-            "entity": None,
-            "extra_config": None,
-        }
-
-    config = {
-        "name": universe.name,
-        "world": {
-            "name": universe.world.name,
-            "launch_file_path": universe.world.launch_file_path,
-            "ros_version": universe.world.ros_version,
-            "type": universe.world.type,
-            "tools_config": tools_configuration,
-        },
-        "robot": robot_config,
-        "tools": ["console", "simulator", "state_monitor"],
-        "tools_config": tools_configuration,
-    }
-
-    # Return the list of projects
-    return Response(
-        {
-            "success": True,
-            "universe": config,
-        }
-    )
+    return Response({"worlds": worlds_docker_list})
 
 
 # Subtree Library

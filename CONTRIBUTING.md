@@ -16,23 +16,23 @@ Once found or created an issue, let us know that you want to work on it by comme
 
 To launch Bt Studio you must choose between this 2 ways. We recommend to just use the first one, because it will automatically update Bt Studio and the databases to the ones found locally on your machine.
 
-* **Recomended** Using the developer script (docker compose):
+- **Recomended** Using the developer script (docker compose):
 
 ```bash
 sh scripts/develop.sh
 ```
 
-* Using docker run **(does not use the current database and bt-studio)**:
+- Using docker run **(does not use the current database and bt-studio)**:
 
 ```bash
-docker run --hostname my-postgres --name universe_db -d\
-    -e POSTGRES_DB=universe_db \
+docker run --hostname my-postgres --name world_db -d\
+    -e POSTGRES_DB=world_db \
     -e POSTGRES_USER=user-dev \
     -e POSTGRES_PASSWORD=bt-studio-dev \
     -e POSTGRES_PORT=5432 \
     -d -p 5432:5432 \
     jderobot/bt-studio-database:latest
-docker run --rm -it $(nvidia-smi >/dev/null 2>&1 && echo "--gpus all" || echo "") --device /dev/dri -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link universe_db jderobot/bt-studio:latest
+docker run --rm -it $(nvidia-smi >/dev/null 2>&1 && echo "--gpus all" || echo "") --device /dev/dri -p 6080:6080 -p 1108:1108 -p 7163:7163 -p 7164:7164 --link world_db jderobot/bt-studio:latest
 ```
 
 ## Creating a custom BTDI (Bt Studio Docker Image)
@@ -45,20 +45,20 @@ You may need to use this if you have to use a specific Robotics Infrastructure o
 
 1. **Navigate to the scripts directory**
 
-    ```bash
-    cd /scripts/RADI
-    ```
+   ```bash
+   cd /scripts/RADI
+   ```
 
 2. **Build the Docker image**
 
-    Run the script using the following command:
+   Run the script using the following command:
 
-    ```bash
-    ./build.sh -bt [BT_STUDIO] -i [ROBOTICS_INFRASTRUCTURE] -m [RAM] -r [ROS_DISTRO] -t [IMAGE_TAG]
+   ```bash
+   ./build.sh -bt [BT_STUDIO] -i [ROBOTICS_INFRASTRUCTURE] -m [RAM] -r [ROS_DISTRO] -t [IMAGE_TAG]
 
-    ```
+   ```
 
-    Each of the parameters is explained below:
+   Each of the parameters is explained below:
 
 `BT_STUDIO`: This is the branch name of the Bt Studio repository to use. Default value is main.
 
@@ -80,29 +80,28 @@ Feel free to [create a new issue](https://github.com/JdeRobot/bt-studio/issues/n
 
 Be sure to explain in details the context and the outcome that you are lookign for. If reporting bugs, provide basic information like you OS version, Bt Studio docker version and Bt Studio version.
 
-
 ## Submitting changes
 
-* Please open a Pull Request with a clear description of what it contains.
-* If there is no Issue related to what the Pull Request solves make sure to create ones and link them with the PR.
-* Always write a clear log message for your commits.
-* Make sure that the code is formated properly so that the actions executed when uploading a commit end succesfully. If the code is not formatted properly it will not be merged. See more in the **Formatting** section.
+- Please open a Pull Request with a clear description of what it contains.
+- If there is no Issue related to what the Pull Request solves make sure to create ones and link them with the PR.
+- Always write a clear log message for your commits.
+- Make sure that the code is formated properly so that the actions executed when uploading a commit end succesfully. If the code is not formatted properly it will not be merged. See more in the **Formatting** section.
 
 ## Coding conventions
 
 Try to make the code as readable as possible. Also follow the next things:
 
 ### Frontend
-  
-* All code must be in TypeScript and typed as much as possible.
-* Formated using prettier. To format execute `yarn format` inside the frontend directory.
-* All calls to the backend must be found inside the `frontend/src/api_helper/TreeWrapper.ts` file and following the schema found inside.
-* Follow as much as possible the [React Guidelines](https://react.dev/reference/rules).
+
+- All code must be in TypeScript and typed as much as possible.
+- Formated using prettier. To format execute `yarn format` inside the frontend directory.
+- All calls to the backend must be found inside the `frontend/src/api_helper/TreeWrapper.ts` file and following the schema found inside.
+- Follow as much as possible the [React Guidelines](https://react.dev/reference/rules).
 
 ### Backend
 
-* Uses Django and it is found inside the `backend/tree_api/` folder.
-* Formatted using Black.
+- Uses Django and it is found inside the `backend/tree_api/` folder.
+- Formatted using Black.
 
 Thanks! :heart: :heart:
 Bt Studio Team

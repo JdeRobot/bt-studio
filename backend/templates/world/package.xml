@@ -3,7 +3,7 @@
 <package format="3">
   <name>REPLACE</name>
   <version>0.0.0</version>
-  <description>Package contains custom universe for BT Studio</description>
+  <description>Package contains custom world for BT Studio</description>
   <maintainer email="mail@mail.com">root</maintainer>
   <license>TODO: License declaration</license>
 

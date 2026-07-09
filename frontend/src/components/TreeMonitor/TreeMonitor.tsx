@@ -8,12 +8,13 @@ import createEngine, {
 } from "@projectstorm/react-diagrams";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 
-import { changeColorNode, configureEngine } from "../helper/TreeEditorHelper";
+import { changeColorNode, configureEngine } from "BtHelpers/TreeEditorHelper";
 import { BasicNodeModel } from "../TreeEditor/nodes/basic_node/BasicNodeModel";
 import { TagNodeModel } from "../TreeEditor/nodes/tag_node/TagNodeModel";
 import TreeMonitorMenu from "./TreeMonitorMenu";
 import { CommsManager } from "jderobot-commsmanager";
 import { StyledBTCanvas } from "BtStyles/TreeEditor/BTCanvas.styles";
+import { StyledContainer } from "BtStyles/TreeMonitor/TreeMonitor.styles";
 
 const setTreeStatus = (
   model: DiagramModel,
@@ -240,7 +241,7 @@ const TreeMonitor = ({
   }
 
   return (
-    <>
+    <StyledContainer>
       <TreeMonitorMenu
         onZoomToFit={zoomToFit}
         setGoBack={setGoBack}
@@ -249,7 +250,7 @@ const TreeMonitor = ({
       {engine.current.getModel() && (
         <StyledBTCanvas bgColor={theme.palette.bg} engine={engine.current} />
       )}
-    </>
+    </StyledContainer>
   );
 };
 

@@ -19,37 +19,32 @@ urlpatterns = [
         views.get_project_configuration,
         name="get_project_configuration",
     ),
-    # Universe Management
-    path("create_universe/", views.create_universe, name="create_universe"),
-    path("delete_universe/", views.delete_universe, name="delete_universe"),
+    # World Management
+    path("create_world/", views.create_world, name="create_world"),
+    path("delete_world/", views.delete_world, name="delete_world"),
     path(
-        "create_universe_configuration/",
-        views.create_universe_configuration,
-        name="create_universe_configuration",
+        "create_world_configuration/",
+        views.create_world_configuration,
+        name="create_world_configuration",
     ),
     path(
-        "get_universe_configuration/",
-        views.get_universe_configuration,
-        name="get_universe_configuration",
+        "get_world_configuration/",
+        views.get_world_configuration,
+        name="get_world_configuration",
     ),
-    path("get_universes_list/", views.get_universes_list, name="get_universes_list"),
-    ## Robotics Backend Universes
-    path("add_docker_universe/", views.add_docker_universe, name="add_docker_universe"),
+    path("get_world_list/", views.get_world_list, name="get_world_list"),
+    ## Robotics Backend Worlds
+    path("add_docker_world/", views.add_docker_world, name="add_docker_world"),
     path(
-        "get_docker_universe_data/",
-        views.get_docker_universe_data,
-        name="get_docker_universe_data",
+        "list_docker_worlds/",
+        views.list_docker_worlds,
+        name="list_docker_worlds",
     ),
+    ## Custom Worlds
     path(
-        "list_docker_universes/",
-        views.list_docker_universes,
-        name="list_docker_universes",
-    ),
-    ## Custom Universes
-    path(
-        "create_custom_universe/",
-        views.create_custom_universe,
-        name="create_custom_universe",
+        "create_custom_world/",
+        views.create_custom_world,
+        name="create_custom_world",
     ),
     # Tree Management
     path("get_tree_data/", views.get_tree_data, name="get_tree_data"),
@@ -87,7 +82,7 @@ urlpatterns = [
         name="generate_dockerized_app",
     ),
     # Other
-    path("upload_code/", views.upload_code, name="upload_code"),
+    path("upload/", views.upload, name="upload"),
     # Subtree Library
     path(
         "get_subtree_library_list/",

@@ -13,7 +13,7 @@ import {
   PlayPauseButton,
   ResetButton,
   SettingsButton,
-  TerminateUniverseButton,
+  TerminateWorldButton,
   ThemeButton,
   ExportButton,
 } from "../Buttons";
@@ -24,18 +24,24 @@ import {
 } from "BtStyles/Header/HeaderMenu.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 import { getProjectInfo } from "BtApi/TreeWrapper";
+import { Layout } from "jderobot-ide-interface";
+import { CommsManager } from "jderobot-commsmanager";
+import { subscribe, unsubscribe } from "BtHelpers/utils";
+import ConnectButton from "BtComponents/Buttons/Connect";
 
 const HeaderMenu = ({
-  projectId,
-  connectManager,
+  project,
   setLayout,
+  connectManager,
+  commsManager,
 }: {
-  projectId: string;
+  project: string;
+  setLayout: (layout: Layout) => void;
   connectManager: (
     desiredState?: string,
     callback?: () => void,
   ) => Promise<void>;
-  setLayout: Function;
+  commsManager: CommsManager | null;
 }) => {
   const theme = useBtTheme();
   const [name, setName] = useState<string | undefined>(undefined);
@@ -47,8 +53,8 @@ const HeaderMenu = ({
   };
 
   useEffect(() => {
-    if (projectId) {
-      getInfo(projectId);
+    if (project) {
+      getInfo(project);
     }
   }, []);
 
@@ -84,20 +90,67 @@ const HeaderMenu = ({
         <StyledHeaderButtonContainer>
           <HomeButton />
           <ThemeButton />
-          <ExportButton project={projectId} />
-          <DownloadButton project={projectId} />
+          <ExportButton project={project} />
+          <DownloadButton project={project} />
           <LayoutButton setLayout={setLayout} />
-          <SettingsButton project={projectId} />
-          <PlayPauseButton
-            project={projectId}
+          {/* <SettingsButton project={project} /> */}
+          <ExecutionControl
+            project={project}
+            commsManager={commsManager}
             connectManager={connectManager}
           />
-          <ResetButton />
-          <TerminateUniverseButton />
           <DocumentationButton />
         </StyledHeaderButtonContainer>
       </Toolbar>
     </AppBar>
+  );
+};
+
+const ExecutionControl = ({
+  project,
+  commsManager,
+  connectManager,
+}: {
+  project: string;
+  commsManager: CommsManager | null;
+  connectManager: (
+    desiredState?: string,
+    callback?: () => void,
+  ) => Promise<void>;
+}) => {
+  const [state, setState] = useState<string | undefined>(
+    commsManager?.getState(),
+  );
+
+  const updateState = (e: unknown) => {
+    const T = CustomEvent<{ detail: unknown }>;
+    if (e instanceof T) {
+      setState(e.detail.state);
+    }
+  };
+
+  useEffect(() => {
+    subscribe("CommsManagerStateChange", updateState);
+
+    return () => {
+      unsubscribe("CommsManagerStateChange", () => {});
+    };
+  }, []);
+
+  const viewConnect = state === undefined || state === "idle";
+
+  return (
+    <>
+      {viewConnect ? (
+        <ConnectButton connectManager={connectManager} />
+      ) : (
+        <>
+          <PlayPauseButton project={project} />
+          <ResetButton />
+          <TerminateWorldButton />
+        </>
+      )}
+    </>
   );
 };
 

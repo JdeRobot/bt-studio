@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Initialize variables with default values
+ram_version="https://github.com/JdeRobot/RoboticsApplicationManager.git"
+branch="humble-devel"
 gpu_mode="false"
 nvidia="false"
 compose_file="dev_humble_cpu"
@@ -44,6 +46,12 @@ if ! docker compose version &> /dev/null; then
   echo "Docker Compose V2 is not installed. Please install it."
 fi
 
+# Clone the desired RAM fork and branch
+if ! [ -d src ]; then
+  git clone "$ram_version" -b "$branch" src;
+  chown -R $(id -u):$(id -g) src/
+fi
+
 # Prepare nvm
 export NVM_DIR=$HOME/.nvm;
 source $NVM_DIR/nvm.sh;
@@ -65,7 +73,7 @@ if ! command -v yarn &> /dev/null; then
     
     # Detect OS and install npm and node.js accordingly
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-      curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+      curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
       sudo apt-get install -y nodejs
     elif [[ "$OSTYPE" == "darwin"* ]]; then
       if command -v brew &> /dev/null; then
@@ -88,8 +96,8 @@ fi
 
 
 # Prepare the frontend
-nvm install 20
-nvm use 20
+nvm install 24
+nvm use 24
 
 cd frontend/
 DIRECTORY_TO_MONITOR="."
@@ -122,6 +130,7 @@ else
     yarn dev &
     sleep 10
 fi
+
 cd ..
 
 # Prepare the compose file

@@ -9,15 +9,17 @@ export default defineConfig([
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     plugins: { js },
     extends: ["js/recommended"],
-    languageOptions: { globals: globals.browser },
+    languageOptions: {
+      globals: globals.browser,
+    },
   },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
-    rules: {
-      "@typescript-eslint/no-namespace": "off",
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unsafe-function-type": "off"
+    settings: {
+      react: {
+        version: "detect",
+      },
     },
-  }
+  },
 ]);
