@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { createCustomUniverse } from "BtApi/TreeWrapper";
+import { createCustomWorld } from "BtApi/TreeWrapper";
 import {
   ModalInputBox,
   ModalRow,
@@ -54,7 +54,7 @@ const CreateCustomPage = ({
       return;
     }
 
-    createCustomUniverse(currentProject, formState.universeName);
+    createCustomWorld(currentProject, formState.universeName);
 
     setVisible(false);
   };

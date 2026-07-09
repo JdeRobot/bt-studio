@@ -2,48 +2,45 @@ import { Entry, ExtraApi } from "jderobot-ide-interface";
 import {
   getFile,
   saveFile,
-  listUniverses,
-  getUniverseConfig,
-  getRoboticsBackendUniverse,
+  listWorlds,
+  getWorldConfig,
 } from "BtApi/TreeWrapper";
-import { createCustomUniverseConfig } from "../helper/customUniverseHelper";
+import { zipCustomWorld } from "../helper/customUniverseHelper";
 
 export const editorApi: ExtraApi = {
   file: {
     get: (project: string, file: Entry) => {
-      if (file.group === "Universes") {
+      if (file.group === "Worlds") {
         return getFile(project, file.path, "", file.binary);
       }
       return getFile(project, file.path, undefined, file.binary);
     },
     save: (project: string, file: Entry, content: string) => {
-      if (file.group === "Universes") {
+      if (file.group === "Worlds") {
         return saveFile(project, file.path, content, "");
       }
       return saveFile(project, file.path, content);
     },
   },
-  universes: {
+  worlds: {
     list: (project: string) => {
-      return listUniverses(project);
+      return listWorlds(project);
     },
-    get_config: async (project: string, universe: string) => {
-      const config = await getUniverseConfig(universe, project);
-      const configJson = JSON.parse(config);
-      let universeConfig;
+    get_config: async (project: string, world: string) => {
+      const worldConfig = await getWorldConfig(project, world);
 
-      if (configJson.type === "robotics_backend") {
-        universeConfig = await getRoboticsBackendUniverse(configJson.id);
-      } else {
-        // Get custom universe config
-        universeConfig = await createCustomUniverseConfig(project, configJson);
+      if (worldConfig.isCustom) {
+        worldConfig.config.scene["zip"] = await zipCustomWorld(
+          project,
+          worldConfig.name,
+        );
       }
 
-      if (!universeConfig.tools.includes("state_monitor")) {
-        universeConfig.tools.push("state_monitor");
+      if (!worldConfig.config.tools.includes("state_monitor")) {
+        worldConfig.config.tools.push("state_monitor");
       }
-      
-      return universeConfig;
+
+      return worldConfig.config;
     },
   },
 };

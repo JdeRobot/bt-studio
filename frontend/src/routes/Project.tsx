@@ -211,7 +211,6 @@ const App = ({ projectId }: { projectId: string }) => {
       />
       <IdeInterface
         commsManager={manager}
-        connectManager={connectWithRetry}
         project={projectId}
         explorers={explorers}
         api={editorApi}

@@ -6,7 +6,7 @@ import {
   ModalTitlebar,
 } from "jderobot-ide-interface";
 import CreatePage from "./CreatePage";
-import { deleteWorld, listUniverses } from "BtApi/TreeWrapper";
+import { deleteWorld, listWorlds } from "BtApi/TreeWrapper";
 import { useError } from "jderobot-ide-interface";
 import CreateCustomPage from "./CreateCustomPage";
 import ImportCustomPage from "./ImportCustomPage";
@@ -42,7 +42,7 @@ const UniverseModal = ({
 
   const loadUniverseList = async () => {
     try {
-      const response = await listUniverses(project);
+      const response = await listWorlds(project);
       setUniversesProjects(response);
       setUniverseAdded(false);
     } catch (e) {
@@ -100,7 +100,7 @@ const UniverseModal = ({
     changeCreationType(UniverseTypes.ROBOTICSBACKEND);
   };
 
-  const createCustomUniverse = () => {
+  const createCustomWorld = () => {
     showCreationMenu(true);
     changeCreationType(UniverseTypes.CUSTOM);
   };
@@ -147,10 +147,10 @@ const UniverseModal = ({
           <ModalRow type="buttons" id="universe-buttons">
             <button
               type="button"
-              onClick={createCustomUniverse}
+              onClick={createCustomWorld}
               style={{ width: "180px", height: "3em" }}
             >
-              New custom universe
+              New custom world
             </button>
             <button
               type="button"

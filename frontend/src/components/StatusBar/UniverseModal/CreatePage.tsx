@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  createRoboticsBackendUniverse,
-  listDockerUniverses,
+  createRoboticsBackendWorld,
+  listDockerWorlds,
 } from "BtApi/TreeWrapper";
 import {
   ModalInputBox,
@@ -37,7 +37,7 @@ const CreatePage = ({
 
   const loadUniverseList = async () => {
     try {
-      const response = await listDockerUniverses();
+      const response = await listDockerWorlds();
       setUniversesDocker(response);
     } catch (e) {
       if (e instanceof Error) {
@@ -81,7 +81,7 @@ const CreatePage = ({
       return;
     }
 
-    createRoboticsBackendUniverse(
+    createRoboticsBackendWorld(
       currentProject,
       formState.universeName,
       formState.dockerUniverseName,

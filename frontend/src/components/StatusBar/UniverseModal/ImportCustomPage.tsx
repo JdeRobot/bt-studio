@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import "./ImportCustomPage.css";
 import {
   createEmptyWorld,
-  createUniverseConfig,
-  createUniverseFolder,
-  uploadFileUniverse,
+  createWorldConfig,
+  createWorldFolder,
+  uploadFileWorld,
 } from "BtApi/TreeWrapper";
 import JSZip from "jszip";
 import {
@@ -70,7 +70,7 @@ const ImportCustomPage = ({
     await createEmptyWorld(currentProject, formState.universeName);
     await handleAcceptedFiles(uploadInputRef.current.files);
     try {
-      await createUniverseConfig(currentProject, formState.universeName);
+      await createWorldConfig(currentProject, formState.universeName);
     } catch {
       console.log("Already had configuration");
     }
@@ -95,7 +95,7 @@ const ImportCustomPage = ({
         const file = zip.files[filename];
         try {
           if (file.dir) {
-            await createUniverseFolder(
+            await createWorldFolder(
               currentProject,
               filename,
               "",
@@ -103,7 +103,7 @@ const ImportCustomPage = ({
             );
           } else {
             await file.async("base64").then(async function (fileData) {
-              await uploadFileUniverse(
+              await uploadFileWorld(
                 currentProject,
                 filename,
                 "",
