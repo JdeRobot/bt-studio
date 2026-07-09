@@ -19,7 +19,7 @@ urlpatterns = [
         views.get_project_configuration,
         name="get_project_configuration",
     ),
-    # Universe Management
+    # World Management
     path("create_world/", views.create_world, name="create_world"),
     path("delete_world/", views.delete_world, name="delete_world"),
     path(
@@ -40,7 +40,7 @@ urlpatterns = [
         views.list_docker_worlds,
         name="list_docker_worlds",
     ),
-    ## Custom Universes
+    ## Custom Worlds
     path(
         "create_custom_world/",
         views.create_custom_world,

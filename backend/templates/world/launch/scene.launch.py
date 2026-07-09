@@ -31,7 +31,7 @@ def generate_launch_description():
     gazebo_custom_models_path = os.path.join(custom_dir, "models")
 
     # robot_launch_dir = os.path.join(custom_dir, "launch/universe.launch.py")
-    world_path = os.path.join(custom_dir, "worlds/universe.world")
+    world_path = os.path.join(custom_dir, "scene/scene.world")
 
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
     x_pose = LaunchConfiguration("x_pose", default="1.0")
