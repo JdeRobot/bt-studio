@@ -89,4 +89,7 @@ module.exports = {
   optimization: {
     minimize: process.argv.includes("production"),
   },
+  watchOptions: {
+    ignored: /node_modules/,
+  },
 };
