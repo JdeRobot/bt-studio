@@ -21,7 +21,7 @@ const ResetButton = () => {
     ) {
       console.error("Simulation is not ready!");
       warning(
-        "Failed to found a running simulation. Please make sure an universe is selected.",
+        "Failed to found a running simulation. Please make sure a world is selected.",
       );
       return;
     }
@@ -33,7 +33,7 @@ const ResetButton = () => {
     setLoading(true);
     try {
       await manager.terminateApplication();
-    } catch (e) {
+    } catch {
       error("Failed to reset the application. See the traces in the terminal.");
     }
     setLoading(false);
@@ -42,8 +42,8 @@ const ResetButton = () => {
 
   return (
     <StyledHeaderButton
-      bgColor={theme.palette.bg}
-      hoverColor={theme.palette.primary}
+      bgColor={theme.palette.primary}
+      hoverColor={theme.palette.secondary}
       roundness={theme.roundness}
       id="reset-app"
       onClick={onResetApp}
