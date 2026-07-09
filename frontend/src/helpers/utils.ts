@@ -1,4 +1,4 @@
-import { getFile } from "BtApi/TreeWrapper";
+import { getFile, getFileList } from "BtApi/TreeWrapper";
 import { Entry } from "jderobot-ide-interface";
 import JSZip from "jszip";
 import { MutableRefObject } from "react";
@@ -24,14 +24,14 @@ export const zipCodeFiles = async (
 ) => {
   for (const file of files) {
     if (file.is_dir) {
-      await zipCodeFolder(zip, file, project, world);
+      await zipFolder(zip, file, project, world);
     } else {
-      await zipCodeFile(zip, file, project, world);
+      await zipFile(zip, file, project, world);
     }
   }
 };
 
-const zipCodeFile = async (
+const zipFile = async (
   zip: JSZip,
   file: Entry,
   project: string,
@@ -41,7 +41,7 @@ const zipCodeFile = async (
   zip.file(file.name, content, { binary: file.binary });
 };
 
-const zipCodeFolder = async (
+const zipFolder = async (
   zip: JSZip,
   file: Entry,
   project: string,
@@ -56,11 +56,39 @@ const zipCodeFolder = async (
   for (let index = 0; index < file.files.length; index++) {
     const element = file.files[index];
     if (element.is_dir) {
-      await zipCodeFolder(folder, element, project, world);
+      await zipFolder(folder, element, project, world);
     } else {
-      await zipCodeFile(folder, element, project, world);
+      await zipFile(folder, element, project, world);
     }
   }
+};
+
+const zipToData = (zip: JSZip) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    zip.generateAsync({ type: "blob" }).then(function (content) {
+      reader.readAsDataURL(content);
+    });
+  });
+};
+
+export const zipCustomWorld = async (project: string, world: string) => {
+  const file_list = await getFileList(project, world);
+  const files: Entry[] = JSON.parse(file_list);
+
+  const zip = new JSZip();
+
+  for (const file of files) {
+    if (file.is_dir) {
+      await zipFolder(zip, file, project, world);
+    } else {
+      await zipFile(zip, file, project, world);
+    }
+  }
+
+  const base64data = await zipToData(zip);
+  return base64data;
 };
 
 export const clearTimeouts = (

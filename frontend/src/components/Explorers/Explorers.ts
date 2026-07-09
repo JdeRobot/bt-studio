@@ -61,8 +61,8 @@ const fileExplorer = {
   },
 };
 
-const universeExplorer = {
-  name: "Universes",
+const worldExplorer = {
+  name: "Worlds",
   list: (project: string) => {
     return getFileList(project, "");
   },
@@ -97,6 +97,6 @@ const universeExplorer = {
   },
 };
 
-const explorers = [fileExplorer, universeExplorer];
+const explorers = [fileExplorer, worldExplorer];
 
 export default explorers;

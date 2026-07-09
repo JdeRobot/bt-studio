@@ -16,8 +16,8 @@ import {
   useError,
 } from "jderobot-ide-interface";
 
-const initialUniverseData = {
-  universeName: "",
+const initialWorldData = {
+  worldName: "",
 };
 
 const ImportCustomPage = ({
@@ -26,7 +26,7 @@ const ImportCustomPage = ({
   onClose,
   currentProject,
 }: {
-  setVisible: Function;
+  setVisible: (visible: boolean) => void;
   visible: boolean;
   onClose: Function;
   currentProject: string;
@@ -34,7 +34,7 @@ const ImportCustomPage = ({
   const { error } = useError();
 
   const focusInputRef = useRef<any>(null);
-  const [formState, setFormState] = useState(initialUniverseData);
+  const [formState, setFormState] = useState(initialWorldData);
   const [uploadPercentage, setUploadPercentage] = useState(0);
 
   const uploadInputRef = useRef<any>(null);
@@ -63,14 +63,14 @@ const ImportCustomPage = ({
   };
 
   const handleCreate = async () => {
-    if (formState.universeName === "") {
+    if (formState.worldName === "") {
       return;
     }
 
-    await createEmptyWorld(currentProject, formState.universeName);
+    await createEmptyWorld(currentProject, formState.worldName);
     await handleAcceptedFiles(uploadInputRef.current.files);
     try {
-      await createWorldConfig(currentProject, formState.universeName);
+      await createWorldConfig(currentProject, formState.worldName);
     } catch {
       console.log("Already had configuration");
     }
@@ -99,7 +99,7 @@ const ImportCustomPage = ({
               currentProject,
               filename,
               "",
-              formState.universeName,
+              formState.worldName,
             );
           } else {
             await file.async("base64").then(async function (fileData) {
@@ -108,15 +108,14 @@ const ImportCustomPage = ({
                 filename,
                 "",
                 fileData,
-                formState.universeName,
+                formState.worldName,
               );
               console.log("Uploading file Completed");
             });
           }
-        } catch (e) {
+        } catch (e: unknown) {
           if (e instanceof Error) {
-            console.error("Error creating folder" + e.message);
-            error("Error creating folder" + e.message);
+            error(e.message);
           }
         }
         n_files_uploaded++;
@@ -140,7 +139,7 @@ const ImportCustomPage = ({
   return (
     <>
       <ModalTitlebar
-        title="Create a Universe"
+        title="Create a World"
         htmlFor="actionName"
         hasClose
         hasBack
@@ -155,10 +154,10 @@ const ImportCustomPage = ({
         <ModalInputBox
           isInputValid={true}
           ref={focusInputRef}
-          id="universeName"
-          placeholder="Universe Name"
+          id="worldName"
+          placeholder="World Name"
           onChange={handleInputChange}
-          description="A unique name that is used for the universe folder and other
+          description="A unique name that is used for the world folder and other
             resources. The name should be in lower case without spaces and
             should not start with a number. The maximum length is 20 characters."
           type="text"
@@ -173,7 +172,7 @@ const ImportCustomPage = ({
           inputRef={uploadInputRef}
           id="uploadDropInput"
           dropTitle={"Drop zip here"}
-          onChange={(e: any) => {}}
+          onChange={() => {}}
           onDrop={handleDrop}
           type="file"
           accept="application/zip"
@@ -185,10 +184,10 @@ const ImportCustomPage = ({
       <ModalRow type="buttons">
         <button
           type="button"
-          id="create-new-universe"
+          id="create-new-world"
           onClick={() => handleCreate()}
         >
-          Create Universe
+          Create World
         </button>
       </ModalRow>
     </>

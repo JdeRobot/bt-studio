@@ -1,7 +1,7 @@
 import { StatusBarComponents } from "jderobot-ide-interface";
-import { UniverseModal } from "./UniverseModal";
+import { WorldModal } from "./WorldModal";
 
 export const statusBar: StatusBarComponents = {
-  worldSelector: UniverseModal,
+  worldSelector: WorldModal,
   extras: [],
 };

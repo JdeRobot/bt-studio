@@ -59,7 +59,7 @@ class FAL(ABC):
     def library_subtrees_path(self, entry) -> str:
         return self.path_join(self.library_entry_path(entry), "subtrees")
 
-    def world_path(self, project_id) -> str:
+    def worlds_path(self, project_id) -> str:
         return self.path_join(self.project_path(project_id), "worlds/")
 
     def code_path(self, project_id) -> str:

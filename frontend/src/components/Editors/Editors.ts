@@ -5,7 +5,7 @@ import {
   listWorlds,
   getWorldConfig,
 } from "BtApi/TreeWrapper";
-import { zipCustomWorld } from "BtHelpers/customUniverseHelper";
+import { zipCustomWorld } from "BtHelpers/utils";
 
 export const editorApi: ExtraApi = {
   file: {

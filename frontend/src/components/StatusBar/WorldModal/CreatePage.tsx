@@ -1,31 +1,50 @@
 import React, { useState, useEffect, useRef } from "react";
-import { createCustomWorld } from "BtApi/TreeWrapper";
+import {
+  createRoboticsBackendWorld,
+  listDockerWorlds,
+} from "BtApi/TreeWrapper";
 import {
   ModalInputBox,
+  ModalInputDropdown,
   ModalRow,
   ModalTitlebar,
   useError,
 } from "jderobot-ide-interface";
 
-const initialUniverseData = {
-  universeName: "",
+const initialWorldData = {
+  worldName: "",
+  dockerWorldName: "",
 };
 
-const CreateCustomPage = ({
+const CreatePage = ({
   setVisible,
   visible,
   onClose,
   currentProject,
 }: {
-  setVisible: Function;
+  setVisible: (visible: boolean) => void;
   visible: boolean;
   onClose: Function;
   currentProject: string;
 }) => {
+  const { error } = useError();
+
   const focusInputRef = useRef<any>(null);
   const dropdown = useRef<any>(null);
-  const [formState, setFormState] = useState(initialUniverseData);
+  const [formState, setFormState] = useState(initialWorldData);
+  const [availableWorlds, setWorldsDocker] = useState<string[]>([]);
   const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+
+  const loadWorldList = async () => {
+    try {
+      const response = await listDockerWorlds();
+      setWorldsDocker(response);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        error(e.message);
+      }
+    }
+  };
 
   useEffect(() => {
     if (visible && focusInputRef.current) {
@@ -33,6 +52,8 @@ const CreateCustomPage = ({
         focusInputRef.current.focus();
       }, 0);
     }
+
+    loadWorldList();
   }, [visible]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,12 +71,20 @@ const CreateCustomPage = ({
   };
 
   const handleCreate = () => {
-    if (formState.universeName === "") {
+    if (formState.worldName === "" && formState.dockerWorldName === "") {
       return;
     }
 
-    createCustomWorld(currentProject, formState.universeName);
+    if (!availableWorlds.includes(formState.dockerWorldName)) {
+      //TODO: invalid docker world
+      return;
+    }
 
+    createRoboticsBackendWorld(
+      currentProject,
+      formState.worldName,
+      formState.dockerWorldName,
+    );
     setVisible(false);
   };
 
@@ -70,7 +99,7 @@ const CreateCustomPage = ({
   return (
     <>
       <ModalTitlebar
-        title="Create a Universe"
+        title="Create a World"
         htmlFor="actionName"
         hasClose
         hasBack
@@ -85,10 +114,10 @@ const CreateCustomPage = ({
         <ModalInputBox
           isInputValid={true}
           ref={focusInputRef}
-          id="universeName"
-          placeholder="Universe Name"
+          id="worldName"
+          placeholder="World Name"
           onChange={handleInputChange}
-          description="A unique name that is used for the universe folder and other
+          description="A unique name that is used for the world folder and other
             resources. The name should be in lower case without spaces and
             should not start with a number. The maximum length is 20 characters."
           type="text"
@@ -97,17 +126,29 @@ const CreateCustomPage = ({
           maxLength={20}
         />
       </ModalRow>
+      <ModalRow type="input">
+        <ModalInputDropdown
+          isInputValid={true}
+          ref={dropdown}
+          entries={availableWorlds}
+          id="dockerWorldName"
+          placeholder="Select Robotics Backend World"
+          onChange={handleInputChange}
+          type="text"
+          required
+        ></ModalInputDropdown>
+      </ModalRow>
       <ModalRow type="buttons">
         <button
           type="button"
-          id="create-new-universe"
+          id="create-new-world"
           onClick={() => handleCreate()}
         >
-          Create Universe
+          Create World
         </button>
       </ModalRow>
     </>
   );
 };
 
-export default CreateCustomPage;
+export default CreatePage;

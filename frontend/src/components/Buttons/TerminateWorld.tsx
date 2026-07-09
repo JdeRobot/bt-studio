@@ -5,12 +5,12 @@ import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 import { LoadingIcon, StopIcon } from "BtIcons";
 
-const TerminateUniverseButton = () => {
+const TerminateWorldButton = () => {
   const theme = useBtTheme();
   const { warning } = useError();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const terminateUniverse = async () => {
+  const terminateWorld = async () => {
     const manager = CommsManager.getInstance();
 
     if (manager.getWorld() === undefined || manager.getWorld() === "") {
@@ -49,7 +49,7 @@ const TerminateUniverseButton = () => {
       hoverColor={theme.palette.secondary}
       roundness={theme.roundness}
       id="stop-world"
-      onClick={terminateUniverse}
+      onClick={terminateWorld}
       title="Stop World"
       disabled={loading}
     >
@@ -62,4 +62,4 @@ const TerminateUniverseButton = () => {
   );
 };
 
-export default TerminateUniverseButton;
+export default TerminateWorldButton;

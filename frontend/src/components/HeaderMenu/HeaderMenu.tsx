@@ -13,7 +13,7 @@ import {
   PlayPauseButton,
   ResetButton,
   SettingsButton,
-  TerminateUniverseButton,
+  TerminateWorldButton,
   ThemeButton,
   ExportButton,
 } from "../Buttons";
@@ -147,7 +147,7 @@ const ExecutionControl = ({
         <>
           <PlayPauseButton project={project} />
           <ResetButton />
-          <TerminateUniverseButton />
+          <TerminateWorldButton />
         </>
       )}
     </>
