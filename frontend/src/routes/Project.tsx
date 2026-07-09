@@ -86,7 +86,7 @@ const Wrapper = () => {
 
   return (
     <ProjectSettingsProvider>
-      <App projectId={proj_id} />
+      <App project={proj_id} />
     </ProjectSettingsProvider>
   );
 };

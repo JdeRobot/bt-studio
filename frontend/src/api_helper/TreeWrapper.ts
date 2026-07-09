@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
-import { publish } from "BtHooks/helper/TreeEditorHelper";
 import { SettingsData } from "BtContexts/ProjectSettingsContext";
+import { publish } from "BtHelpers/utils";
 import { BTWorldData } from "BtTypes/index";
 
 // Helpers

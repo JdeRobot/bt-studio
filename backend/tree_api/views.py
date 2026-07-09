@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
 from .serializers import FileContentSerializer, ProjectSerializer
-from .project_view import EntryEncoder
+from .project_view import EntryEncoder, is_binary_mimetype
 from .models import World, Project
 from .error_handler import error_wrapper
 from . import json_translator
@@ -415,7 +415,7 @@ def get_world_configuration(fal, request):
     ]
 
     if not custom:  # Load config from db
-        world = World.objects.get(name=id)
+        world = World.objects.get(name=content["id"])
 
         if world.scene.tools_config != "None":
             tools_configuration = json.loads(world.scene.tools_config)
@@ -490,7 +490,6 @@ def get_file_list(fal, request):
 
     file_list = fal.list_formatted(path, base_group)
 
-    # Return the list of files
     return Response({"file_list": EntryEncoder().encode(file_list)})
 
 
@@ -509,6 +508,7 @@ def get_file(fal, request):
     project_id = request.GET.get("project", None)
     filename = request.GET.get("filename", None)
     world = request.GET.get("world", None)
+    binary = request.GET.get("binary", None)
 
     if world is not None:
         path = fal.worlds_path(project_id)
@@ -518,7 +518,14 @@ def get_file(fal, request):
         path = fal.code_path(project_id)
 
     file_path = fal.path_join(path, filename)
-    content = fal.read(file_path)
+
+    if binary is None or binary is False:
+        content = fal.read(file_path)
+    else:
+        content = fal.read_binary(file_path)
+        b64 = base64.b64encode(content)
+        content = b64.decode("utf-8")
+
     serializer = FileContentSerializer({"content": content})
     return Response(serializer.data)
 

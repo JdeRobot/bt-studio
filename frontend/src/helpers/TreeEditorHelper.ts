@@ -17,8 +17,7 @@ import { OutputPortModel } from "../components/TreeEditor/nodes/basic_node/ports
 import { InputPortModel } from "../components/TreeEditor/nodes/basic_node/ports/input_port/InputPortModel";
 import { TagOutputPortModel } from "../components/TreeEditor/nodes/tag_node/ports/output_port/TagOutputPortModel";
 import { TagInputPortModel } from "../components/TreeEditor/nodes/tag_node/ports/input_port/TagInputPortModel";
-import { getFile } from "BtApi/TreeWrapper";
-import { MutableRefObject } from "react";
+import { publish } from "./utils";
 
 export enum ActionNodePortType {
   Input = 0,
@@ -184,19 +183,6 @@ export const addActionFrame = (
   publish("updateAccentColor", { name: name, color: color });
   actionFrames.push(newActionFrame);
 };
-
-export function subscribe(eventName: string, listener: (e: any) => void) {
-  document.addEventListener(eventName, listener);
-}
-
-export function unsubscribe(eventName: string, listener: () => void) {
-  document.removeEventListener(eventName, listener);
-}
-
-export function publish(eventName: string, extra: any = undefined) {
-  const event = new CustomEvent(eventName, { detail: extra });
-  document.dispatchEvent(event);
-}
 
 export const addPort = (
   portName: string,

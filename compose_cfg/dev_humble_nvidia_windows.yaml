@@ -42,6 +42,9 @@ services:
       - type: bind
         source: ./
         target: /BtStudio
+      - type: bind
+        source: ./src
+        target: /RoboticsApplicationManager
     tty: true
     stdin_open: true
     depends_on:
