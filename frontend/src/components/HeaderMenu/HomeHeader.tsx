@@ -12,7 +12,7 @@ import {
 import {
   StyledHeaderButtonContainer,
   StyledHeaderText,
-  StyledSection,
+  StyledProject,
 } from "BtStyles/Header/HeaderMenu.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 
@@ -50,19 +50,12 @@ const Header = ({ section }: { section?: string }) => {
           {isUnibotics ? "Projects" : "BT Studio IDE"}
         </StyledHeaderText>
         {section && (
-          <StyledSection color={theme.palette.text}>
+          <StyledProject color={theme.palette.text}>
             <div>{section}</div>
-          </StyledSection>
+          </StyledProject>
         )}
         <StyledHeaderButtonContainer>
-          {!isHome && (
-            <HomeButton
-              project={""}
-              manager={null}
-              setProject={() => {}}
-              setAppRunning={() => {}}
-            />
-          )}
+          {!isHome && <HomeButton />}
           <ThemeButton />
           <DocumentationButton />
         </StyledHeaderButtonContainer>

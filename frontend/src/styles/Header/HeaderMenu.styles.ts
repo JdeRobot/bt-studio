@@ -7,8 +7,8 @@ interface StyledHeaderTextProps {
 }
 
 export const StyledHeaderText = styled.h1<StyledHeaderTextProps>`
-  font-size: 25px !important;
-  margin: 0 !important;
+  font-size: 25px;
+  margin: 0;
   color: ${(p) => p.color ?? primaryColor};
 `;
 
@@ -18,27 +18,6 @@ interface StyledProjectProps {
 
 export const StyledProject = styled.span<StyledProjectProps>`
   display: flex;
-  font-size: 25px;
-  flex-direction: column;
-  background-color: none;
-  color: ${(p) => p.color ?? primaryColor};
-  padding: 10px;
-  justify-content: center;
-  margin-left: auto;
-  position: absolute;
-  right: 50%;
-  left: 0;
-  right: 0;
-  margin-inline: auto;
-  width: fit-content;
-
-  & div {
-    font-weight: bold;
-  }
-`;
-
-export const StyledSection = styled.h3<StyledProjectProps>`
-  display: flex;
   flex-direction: column;
   background-color: none;
   color: ${(p) => p.color ?? primaryColor};
@@ -50,7 +29,6 @@ export const StyledSection = styled.h3<StyledProjectProps>`
     font-weight: bold;
   }
 `;
-
 
 export const StyledHeaderButtonContainer = styled.div`
   display: flex;
@@ -63,6 +41,7 @@ interface StyledHeaderButtonProps {
   bgColor?: string;
   hoverColor?: string;
   roundness?: number;
+  color?: string;
 }
 
 export const StyledHeaderButton = styled.button<StyledHeaderButtonProps>`
@@ -104,6 +83,50 @@ export const StyledHeaderButton = styled.button<StyledHeaderButtonProps>`
   #loading-spin {
     animation: spin 2s linear infinite;
     opacity: 50%;
+  }
+`;
+
+export const StyledHeaderConnectButton = styled.button<StyledHeaderButtonProps>`
+  display: flex;
+  justify-content: center;
+  width: fit-content;
+  padding: 0 8px;
+  height: 32px;
+  background-color: ${(p) => p.bgColor ?? primaryColor};
+  font-weight: 500;
+  font-size: 18px;
+  color: ${(p) => p.color ?? primaryColor};
+
+  border: 0;
+  margin-left: 6px;
+  margin-right: 6px;
+  align-content: center;
+  flex-wrap: wrap;
+  border-radius: ${(p) => p.roundness ?? 1}px;
+
+  // &:hover {
+  //   animation: unset;
+  // }
+
+  &:focus {
+    outline: none;
+  }
+
+  animation: pulse2 3s infinite;
+  z-index: 100000;
+
+  @keyframes pulse2 {
+    0% {
+      box-shadow: unset;
+    }
+
+    50% {
+      box-shadow: 0px 0px 6px 6px ${(p) => p.bgColor ?? primaryColor};
+    }
+
+    100% {
+      box-shadow: unset;
+    }
   }
 `;
 
