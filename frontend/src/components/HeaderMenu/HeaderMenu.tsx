@@ -93,7 +93,7 @@ const HeaderMenu = ({
           <ExportButton project={project} />
           <DownloadButton project={project} />
           <LayoutButton setLayout={setLayout} />
-          <SettingsButton project={project} />
+          {/* <SettingsButton project={project} /> */}
           <ExecutionControl
             project={project}
             commsManager={commsManager}

@@ -186,6 +186,7 @@ const ImportCustomPage = ({
           type="button"
           id="create-new-world"
           onClick={() => handleCreate()}
+          style={{ minWidth: "fit-content", padding: "0 1rem" }}
         >
           Create World
         </button>

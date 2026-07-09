@@ -34,14 +34,10 @@ const TreeMonitorMenu = ({
 
   return (
     <StyledMonitorMenu>
-      <div style={{ height: "100%", alignContent: "center" }}>
-        <StyledMonitorMenuButton
-          {...style}
-          onClick={onZoomToFit}
-          title="Zoom To Fit"
-        >
-          <ZoomIcon htmlColor={iconColor} />
-        </StyledMonitorMenuButton>
+      <StyledMonitorText color={iconColor}>
+        {subTreeName.current}
+      </StyledMonitorText>
+      {subTreeName.current ? (
         <StyledMonitorMenuButton
           {...style}
           onClick={() => setGoBack(true)}
@@ -49,10 +45,16 @@ const TreeMonitorMenu = ({
         >
           <UndoIcon htmlColor={iconColor} />
         </StyledMonitorMenuButton>
-      </div>
-      <StyledMonitorText color={iconColor}>
-        {subTreeName.current}
-      </StyledMonitorText>
+      ) : (
+        <div />
+      )}
+      <StyledMonitorMenuButton
+        {...style}
+        onClick={onZoomToFit}
+        title="Zoom To Fit"
+      >
+        <ZoomIcon htmlColor={iconColor} />
+      </StyledMonitorMenuButton>
     </StyledMonitorMenu>
   );
 };

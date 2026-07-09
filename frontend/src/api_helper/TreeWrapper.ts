@@ -676,7 +676,7 @@ const uploadFile = async (
   fileName: string,
   location: string,
   content: string,
-  world: string,
+  world?: string,
 ) => {
   if (!project) throw new Error("Current Project name is not set");
   if (!fileName) throw new Error("File name is not set");

@@ -77,7 +77,6 @@ const worldExplorer = {
       return renameFile(project, oldPath, newPath, "");
     },
     delete: (project: string, path: string) => {
-      console.log(project, path);
       return deleteFile(project, path, "");
     },
     upload: (project: string, path: string, name: string, content: string) => {

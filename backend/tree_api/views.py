@@ -822,7 +822,7 @@ def upload(fal, request):
 
 @error_wrapper("GET")
 def list_docker_worlds(fal, request):
-    worlds = Worlds.objects.all()
+    worlds = World.objects.all()
     worlds_docker_list = [x.name for x in worlds]
 
     return Response({"worlds": worlds_docker_list})

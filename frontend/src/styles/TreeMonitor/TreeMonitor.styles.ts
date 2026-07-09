@@ -25,7 +25,11 @@ export const StyledMonitorMenuButton = styled.button<StyledMonitorMenuButtonProp
 export const StyledMonitorMenu = styled.div`
   display: flex;
   flex-direction: row;
-  height: 3em;  
+  height: 2em;
+  display: grid;
+  grid-template-columns: auto 2em 2em;
+  gap: 0.5rem;
+  margin: 0.25rem 1rem;
 `;
 
 interface StyledMonitorTextProps {
@@ -37,4 +41,13 @@ export const StyledMonitorText = styled.h2<StyledMonitorTextProps>`
   margin: 0;
   align-content: center;
   color: ${(p) => p.color ?? primaryColor};
+`;
+
+export const StyledContainer = styled.div`
+  height: 100%;
+  width: 100%;
+  position: relative;
+  // grid-template-rows: auto 2.5em;
+  grid-template-rows: 2.5em auto;
+  display: grid;
 `;
