@@ -11,7 +11,7 @@ import {
   createAction,
 } from "BtApi/TreeWrapper";
 import { CreateAction, newFileData } from "../CreateAction";
-import { publish } from "../helper/TreeEditorHelper";
+import { publish } from "BtHelpers/utils";
 
 const fileExplorer = {
   name: "Code",
@@ -97,6 +97,6 @@ const universeExplorer = {
   },
 };
 
-const explorers=[fileExplorer, universeExplorer]
+const explorers = [fileExplorer, universeExplorer];
 
 export default explorers;

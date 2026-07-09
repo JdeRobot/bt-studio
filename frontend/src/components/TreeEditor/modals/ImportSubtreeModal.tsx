@@ -15,7 +15,8 @@ import {
   importLibrarySubtree,
   importUserLibrarySubtree,
 } from "BtApi/TreeWrapper";
-import { configureEngine, publish } from "../../helper/TreeEditorHelper";
+import { configureEngine } from "BtHelpers/TreeEditorHelper";
+import { publish } from "BtHelpers/utils";
 import createEngine, { DiagramModel } from "@projectstorm/react-diagrams";
 import "./ImportSubtreeModal.css";
 import {

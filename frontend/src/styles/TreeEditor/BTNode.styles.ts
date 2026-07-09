@@ -1,5 +1,5 @@
 import { PortWidget } from "@projectstorm/react-diagrams";
-import { strRGBToLuminance } from "BtComponents/helper/colorHelper";
+import { strRGBToLuminance } from "BtHelpers/colorHelper";
 import styled from "styled-components";
 import { BTStatus } from "BtTypes/index";
 import { contrastSelector } from "jderobot-ide-interface";
@@ -153,7 +153,7 @@ const handleTagLabelType = (p: StyledNodeTagPortsProps) => {
   }
 };
 
-export const StyledNodeTagPortLabel= styled.div<StyledNodeTagPortsProps>`
+export const StyledNodeTagPortLabel = styled.div<StyledNodeTagPortsProps>`
   display: inline-block;
   vertical-align: middle;
   ${handleTagLabelType}
@@ -171,7 +171,7 @@ interface StyledTagContainerProps {
 }
 
 const handleTagContrast = (p: StyledTagContainerProps) => {
-  return `color: ${contrastSelector(p.lightText,p.darkText,p.bg)};`;
+  return `color: ${contrastSelector(p.lightText, p.darkText, p.bg)};`;
 };
 
 const handleTagSelected = (p: StyledTagContainerProps) => {

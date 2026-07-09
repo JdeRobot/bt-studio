@@ -9,6 +9,7 @@ const aliases = () => {
     BtComponents: path.resolve(__dirname, "src/components"),
     BtContexts: path.resolve(__dirname, "src/contexts"),
     BtHooks: path.resolve(__dirname, "src/hooks"),
+    BtHelpers: path.resolve(__dirname, "src/helpers"),
     BtStyles: path.resolve(__dirname, "src/styles"),
     BtTypes: path.resolve(__dirname, "src/types"),
     BtTemplates: path.resolve(__dirname, "src/templates"),

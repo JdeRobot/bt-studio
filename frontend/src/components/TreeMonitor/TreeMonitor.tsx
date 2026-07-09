@@ -8,7 +8,7 @@ import createEngine, {
 } from "@projectstorm/react-diagrams";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 
-import { changeColorNode, configureEngine } from "../helper/TreeEditorHelper";
+import { changeColorNode, configureEngine } from "BtHelpers/TreeEditorHelper";
 import { BasicNodeModel } from "../TreeEditor/nodes/basic_node/BasicNodeModel";
 import { TagNodeModel } from "../TreeEditor/nodes/tag_node/TagNodeModel";
 import TreeMonitorMenu from "./TreeMonitorMenu";

@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { publish } from "BtComponents/helper/TreeEditorHelper";
+import { publish } from "BtHooks/helper/TreeEditorHelper";
 import { SettingsData } from "BtContexts/ProjectSettingsContext";
 import { BTWorldData } from "BtTypes/index";
 

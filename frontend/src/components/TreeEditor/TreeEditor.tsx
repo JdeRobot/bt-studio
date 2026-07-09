@@ -18,7 +18,7 @@ import {
   isActionNode,
   addActionFrame,
   getActionFrame,
-} from "../helper/TreeEditorHelper";
+} from "BtHelpers/TreeEditorHelper";
 import { StyledBTCanvas } from "BtStyles/TreeEditor/BTCanvas.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 

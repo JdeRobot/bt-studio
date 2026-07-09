@@ -20,7 +20,7 @@ import {
   ProjectSettingsProvider,
   useProjectSettings,
 } from "BtContexts/ProjectSettingsContext";
-import getTools from "BtComponents/helper/tools";
+import getTools from "BtHelpers/tools";
 
 export const clearTimeouts = (
   timeoutsRef: MutableRefObject<number | null>[],

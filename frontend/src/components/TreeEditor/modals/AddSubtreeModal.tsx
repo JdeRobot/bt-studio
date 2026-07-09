@@ -5,7 +5,7 @@ import {
   ModalRow,
   ModalTitlebar,
 } from "jderobot-ide-interface";
-import { publish } from "../../helper/TreeEditorHelper";
+import { publish } from "BtHelpers/utils";
 
 const initialAddSubtreeModalData = {
   subTreeName: "",

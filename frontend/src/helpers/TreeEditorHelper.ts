@@ -7,16 +7,18 @@ import {
   ZoomCanvasAction,
 } from "@projectstorm/react-diagrams";
 
-import { BasicNodeFactory } from "../TreeEditor/nodes/basic_node/BasicNodeFactory";
-import { BasicNodeModel } from "../TreeEditor/nodes/basic_node/BasicNodeModel";
-import { TagNodeFactory } from "../TreeEditor/nodes/tag_node/TagNodeFactory";
-import { SimplePortFactory } from "../TreeEditor/nodes/SimplePortFactory";
-import { ChildrenPortModel } from "../TreeEditor/nodes/basic_node/ports/children_port/ChildrenPortModel";
-import { ParentPortModel } from "../TreeEditor/nodes/basic_node/ports/parent_port/ParentPortModel";
-import { OutputPortModel } from "../TreeEditor/nodes/basic_node/ports/output_port/OutputPortModel";
-import { InputPortModel } from "../TreeEditor/nodes/basic_node/ports/input_port/InputPortModel";
-import { TagOutputPortModel } from "../TreeEditor/nodes/tag_node/ports/output_port/TagOutputPortModel";
-import { TagInputPortModel } from "../TreeEditor/nodes/tag_node/ports/input_port/TagInputPortModel";
+import { BasicNodeFactory } from "../components/TreeEditor/nodes/basic_node/BasicNodeFactory";
+import { BasicNodeModel } from "../components/TreeEditor/nodes/basic_node/BasicNodeModel";
+import { TagNodeFactory } from "../components/TreeEditor/nodes/tag_node/TagNodeFactory";
+import { SimplePortFactory } from "../components/TreeEditor/nodes/SimplePortFactory";
+import { ChildrenPortModel } from "../components/TreeEditor/nodes/basic_node/ports/children_port/ChildrenPortModel";
+import { ParentPortModel } from "../components/TreeEditor/nodes/basic_node/ports/parent_port/ParentPortModel";
+import { OutputPortModel } from "../components/TreeEditor/nodes/basic_node/ports/output_port/OutputPortModel";
+import { InputPortModel } from "../components/TreeEditor/nodes/basic_node/ports/input_port/InputPortModel";
+import { TagOutputPortModel } from "../components/TreeEditor/nodes/tag_node/ports/output_port/TagOutputPortModel";
+import { TagInputPortModel } from "../components/TreeEditor/nodes/tag_node/ports/input_port/TagInputPortModel";
+import { getFile } from "BtApi/TreeWrapper";
+import { MutableRefObject } from "react";
 
 export enum ActionNodePortType {
   Input = 0,
@@ -60,7 +62,7 @@ export class ActionFrame {
     name: string,
     color: string,
     inputs: string[],
-    outputs: string[]
+    outputs: string[],
   ) {
     this.name = name;
     this.color = color;
@@ -160,7 +162,7 @@ export const addActionFrameRaw = (
 export const addActionFrame = (
   name: string,
   color: string,
-  ports: { [s: string]: PortModel }
+  ports: { [s: string]: PortModel },
 ) => {
   if (getActionFrame(name) !== undefined) {
     return; // Already exists
@@ -204,7 +206,7 @@ export const addPort = (
   engine: DiagramEngine,
   model: DiagramModel,
   diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>>,
-  updateJsonState: Function
+  updateJsonState: Function,
 ) => {
   // Check that the user didn't cancel
   if (!node || !portName) {
@@ -249,7 +251,7 @@ export const addPort = (
 const deletePortLink = (
   model: DiagramModel,
   portName: string,
-  node: BasicNodeModel
+  node: BasicNodeModel,
 ) => {
   let link: LinkModel | undefined;
   const nodePort = node.getPort(portName);
@@ -269,7 +271,7 @@ export const removePort = (
   engine: DiagramEngine,
   model: DiagramModel,
   diagramEditedCallback: React.Dispatch<React.SetStateAction<boolean>>,
-  updateJsonState: Function
+  updateJsonState: Function,
 ) => {
   //TODO: type should be an enum
   // Check that the user didn't cancel
@@ -329,7 +331,7 @@ export const changeColorNode = (
   diagramEditedCallback: React.Dispatch<
     React.SetStateAction<boolean>
   > = () => {},
-  updateJsonState: Function = () => {}
+  updateJsonState: Function = () => {},
 ) => {
   const color =
     "rgb(" +
@@ -371,7 +373,7 @@ export const changeColorNode = (
 export const configureEngine = (
   engine: React.MutableRefObject<DiagramEngine>,
   basicNodeCallback: Function | null = null,
-  tagNodeCallback: Function | null = null
+  tagNodeCallback: Function | null = null,
 ) => {
   console.log("Configuring engine!");
   // Register factories
@@ -384,32 +386,32 @@ export const configureEngine = (
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("children", () => new ChildrenPortModel())
+      new SimplePortFactory("children", () => new ChildrenPortModel()),
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("parent", () => new ParentPortModel())
+      new SimplePortFactory("parent", () => new ParentPortModel()),
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("output", () => new OutputPortModel(""))
+      new SimplePortFactory("output", () => new OutputPortModel("")),
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("input", () => new InputPortModel(""))
+      new SimplePortFactory("input", () => new InputPortModel("")),
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("tag output", () => new TagOutputPortModel())
+      new SimplePortFactory("tag output", () => new TagOutputPortModel()),
     );
   engine.current
     .getPortFactories()
     .registerFactory(
-      new SimplePortFactory("tag input", () => new TagInputPortModel())
+      new SimplePortFactory("tag input", () => new TagInputPortModel()),
     );
 
   // Disable loose links
@@ -426,7 +428,7 @@ export const configureEngine = (
 export const findSubtree = (
   baseTree: any,
   subTree: string,
-  oldIndex: number = -1
+  oldIndex: number = -1,
 ): number[] | undefined => {
   let path: number[] = [];
   let nodeChilds;

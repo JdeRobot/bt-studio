@@ -8,6 +8,7 @@
       "BtComponents/*": ["src/components/*"],
       "BtContexts/*": ["src/contexts/*"],
       "BtHooks/*": ["src/hooks/*"],
+      "BtHelpers/*": ["src/helpers/*"],
       "BtStyles/*": ["src/styles/*"],
       "BtTypes/*": ["src/types/*"],
       "BtTemplates/*": ["src/templates/*"],
@@ -33,5 +34,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "svg.d.ts"]
+  "include": ["src", "svg.d.ts", "src/helpers"]
 }

@@ -9,8 +9,8 @@ import {
   ActionNodePortType,
   changeColorNode,
   getActionFrame,
-} from "../../helper/TreeEditorHelper";
-import { rgbToLuminance } from "../../helper/colorHelper";
+} from "BtHelpers/TreeEditorHelper";
+import { rgbToLuminance } from "BtHelpers/colorHelper";
 
 import { ReactComponent as AddIcon } from "../img/add.svg";
 import { ReactComponent as DeleteIcon } from "../img/delete.svg";

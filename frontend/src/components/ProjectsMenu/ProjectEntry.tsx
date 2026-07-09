@@ -19,7 +19,7 @@ import {
   getProjectConfig,
   getProjectConfigRaw,
 } from "BtApi/TreeWrapper";
-import { publish } from "BtComponents/helper/TreeEditorHelper";
+import { publish } from "BtHelpers/utils";
 import JSZip from "jszip";
 import TreeGardener from "BtTemplates/TreeGardener";
 import RosTemplates from "BtTemplates/RosTemplates";

@@ -7,7 +7,7 @@ import {
   getSubtreeList,
   getActionsList,
 } from "BtApi/TreeWrapper";
-import { publish, subscribe, unsubscribe } from "../helper/TreeEditorHelper";
+import { publish, subscribe, unsubscribe } from "BtHelpers/utils";
 import AddSubtreeModal from "./modals/AddSubtreeModal";
 import { useError } from "jderobot-ide-interface";
 import {
