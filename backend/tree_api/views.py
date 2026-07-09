@@ -270,7 +270,7 @@ def create_subtree(fal, request):
     src_path = template_path
 
     # Create subtree directory if it does not exist
-    if not fal.exists(project_subtree_path):
+    if fal.exists(project_subtree_path) != 0:
         fal.mkdir(project_subtree_path)
 
     # Setup init and copy paths
@@ -854,7 +854,7 @@ def get_user_subtree_library_list(fal, request):
 
         library.append({"project": project, "tree": "main"})
         subtrees_path = fal.subtrees_path(project)
-        if fal.exists(subtrees_path):
+        if fal.exists(subtrees_path) != 0:
             subtree_list = fal.listfiles(subtrees_path)
             subtree_list = [f.split(".")[0] for f in subtree_list]
             for subtree in subtree_list:
@@ -964,7 +964,7 @@ def import_library_tree(fal, request):
         subtrees=set([entry]),
     )
 
-    if not fal.exists(fal.subtrees_path(project_id)):
+    if fal.exists(fal.subtrees_path(project_id)) != 0:
         fal.mkdir(fal.subtrees_path(project_id))
 
     # Write main tree
@@ -1035,7 +1035,7 @@ def import_user_library_tree(fal, request):
         subtrees=set([entry]),
     )
 
-    if not fal.exists(fal.subtrees_path(project_id)):
+    if fal.exists(fal.subtrees_path(project_id)) != 0:
         fal.mkdir(fal.subtrees_path(project_id))
 
     # Write main tree
