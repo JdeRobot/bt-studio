@@ -268,11 +268,7 @@ const TreeEditor = ({
     };
 
     type NodeType =
-      | "default"
-      | "sequences"
-      | "fallbacks"
-      | "decorators"
-      | "subtrees";
+      "default" | "sequences" | "fallbacks" | "decorators" | "subtrees";
 
     console.log("The node type is:", nodeType.toLowerCase());
     const {

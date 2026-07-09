@@ -55,6 +55,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "file-loader": "^6.2.0",
     "globals": "^17.7.0",
+    "jiti": "^2.7.0",
     "mini-css-extract-plugin": "^2.10.2",
     "path": "^0.12.7",
     "prettier": "^3.5.3",
