@@ -73,7 +73,7 @@ if ! command -v yarn &> /dev/null; then
     
     # Detect OS and install npm and node.js accordingly
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-      curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+      curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
       sudo apt-get install -y nodejs
     elif [[ "$OSTYPE" == "darwin"* ]]; then
       if command -v brew &> /dev/null; then
@@ -96,8 +96,8 @@ fi
 
 
 # Prepare the frontend
-nvm install 20
-nvm use 20
+nvm install 24
+nvm use 24
 
 cd frontend/
 DIRECTORY_TO_MONITOR="."

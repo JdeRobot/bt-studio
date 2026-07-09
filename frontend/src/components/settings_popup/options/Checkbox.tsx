@@ -1,6 +1,6 @@
 import React from "react";
-import { SettingData } from "../../options/Options";
 import "./Checkbox.css";
+import { SettingData } from "BtContexts/ProjectSettingsContext";
 
 const Checkbox = ({ setting }: { setting: SettingData<any> }) => {
   return (
