@@ -1,7 +1,7 @@
 import React from "react";
 import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { HomeIcon } from "BtIcons";
 
 const HomeButton = () => {

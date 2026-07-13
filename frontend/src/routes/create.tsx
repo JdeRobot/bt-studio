@@ -9,7 +9,7 @@ import {
   StyledHomeContent,
 } from "BtStyles/Pages/Home.styles";
 import { CreateProjectMenu } from "BtComponents/CreateProject";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import ProjSizeIndicator from "BtComponents/LimitIndicator";
 
 const App = () => {
