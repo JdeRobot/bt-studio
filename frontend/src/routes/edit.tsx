@@ -8,7 +8,7 @@ import {
   StyledHomeContainer,
   StyledHomeContent,
 } from "BtStyles/Pages/Home.styles";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { EditProjectMenu } from "BtComponents/EditProject";
 import ProjSizeIndicator from "BtComponents/LimitIndicator";
 

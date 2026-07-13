@@ -14,7 +14,7 @@ import {
   getProjectInfo,
 } from "BtApi/TreeWrapper";
 import { useError } from "jderobot-ide-interface";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import {
   GazeboIcon,
   RvizIcon,

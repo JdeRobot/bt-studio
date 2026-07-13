@@ -10,7 +10,7 @@ import {
 } from "BtStyles/CreateProject/CreateProject.styles";
 import { createProject, getProjectInfo } from "BtApi/TreeWrapper";
 import { useError } from "jderobot-ide-interface";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import {
   EmptyAddIcon,
   GazeboIcon,

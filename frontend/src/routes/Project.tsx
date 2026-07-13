@@ -13,7 +13,7 @@ import { explorers } from "BtComponents/Explorers";
 import { statusBar } from "BtComponents/StatusBar";
 import { editorApi } from "BtComponents/Editors";
 
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { StyledAppContainer } from "BtStyles/App.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 import {

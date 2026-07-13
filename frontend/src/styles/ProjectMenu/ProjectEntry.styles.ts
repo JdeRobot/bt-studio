@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import styled from "styled-components";
 
 const primaryColor = "#666";
@@ -24,11 +24,7 @@ export const StyledEntry = styled.div<StyledEntryProps>`
   display: grid;
   grid-template-columns: auto 20% 20% 15%;
 
-  ${(p) =>
-    p.noHover
-      ? ``
-      : ` &:hover {filter: var(--hover-light);}`
-  }
+  ${(p) => (p.noHover ? `` : ` &:hover {filter: var(--hover-light);}`)}
 
   &:first-of-type {
     border-top-right-radius: ${(p) => p.roundness ?? 1}px;

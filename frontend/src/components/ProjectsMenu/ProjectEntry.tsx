@@ -8,7 +8,7 @@ import {
   StyledEntryContainer,
   StyledSpacer,
 } from "BtStyles/ProjectMenu/ProjectEntry.styles";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import { Entry, useError } from "jderobot-ide-interface";
 import {
