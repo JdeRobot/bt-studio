@@ -244,7 +244,7 @@ const createRoboticsBackendWorld = async (
   const params: { [key: string]: string } = {
     project: project,
     world: world,
-    worldId: worldId,
+    id: worldId,
   };
 
   try {
