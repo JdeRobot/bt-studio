@@ -418,7 +418,7 @@ def get_world_configuration(fal, request):
         world = World.objects.get(name=content["id"])
 
         if world.scene.tools_config != "None":
-            tools_configuration = json.loads(world.scene.tools_config)
+            tools_config = json.loads(world.scene.tools_config)
 
         if world.robot.name != "None":
             robot_config = [
@@ -460,11 +460,11 @@ def get_world_configuration(fal, request):
             "launch_file_path": scene_entrypoint,
             "ros_version": ros_version,
             "type": world_type,
-            "tools_config": tools_configuration,
+            "tools_config": tools_config,
         },
         "robot": robot_config,
         "tools": tools,
-        "tools_config": tools_configuration,
+        "tools_config": tools_config,
     }
 
     return Response({"success": True, "world": config}, status=200)
