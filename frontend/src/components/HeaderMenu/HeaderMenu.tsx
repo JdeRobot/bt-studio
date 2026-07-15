@@ -16,6 +16,7 @@ import {
   TerminateWorldButton,
   ThemeButton,
   ExportButton,
+  SavePoseButton,
 } from "../Buttons";
 import {
   StyledHeaderButtonContainer,
@@ -92,6 +93,7 @@ const HeaderMenu = ({
           <ThemeButton />
           <ExportButton project={project} />
           <DownloadButton project={project} />
+          <SavePoseButton project={project} />
           <LayoutButton setLayout={setLayout} />
           {/* <SettingsButton project={project} /> */}
           <ExecutionControl

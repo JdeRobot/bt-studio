@@ -319,6 +319,99 @@ const listDockerWorlds = async () => {
   }
 };
 
+const listDockerRobots = async () => {
+  const apiUrl = "/bt_studio/list_docker_robots/";
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.robots;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
+  }
+};
+
+const createCombinedUniverse = async (
+  projectId: string,
+  universeName: string,
+  worldId: string,
+  robotId: string,
+  startPose: number[] | null = null
+) => {
+  if (!projectId) throw new Error("The project name is not set");
+  if (!universeName) throw new Error("The universe name is not set");
+  if (!worldId) throw new Error("The world is not set");
+
+  const apiUrl = "/bt_studio/create_combined_universe/";
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        project_id: projectId,
+        universe_name: universeName,
+        world_id: worldId,
+        robot_id: robotId,
+        start_pose: startPose,
+      },
+      axiosExtra()
+    );
+    return response.data;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
+  }
+};
+
+const getCombinedUniverseData = async (worldId: string, robotId: string) => {
+  const apiUrl = `/bt_studio/get_combined_universe_data/?world_id=${encodeURIComponent(
+    worldId
+  )}&robot_id=${encodeURIComponent(robotId || "None")}`;
+  try {
+    const response = await axios.get(apiUrl);
+    return {
+      world: response.data.universe.world,
+      robot: response.data.universe.robot,
+      tools: response.data.universe.tools,
+      tools_config: response.data.universe.tools_config,
+    };
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
+  }
+};
+
+const captureRobotPose = async () => {
+  const apiUrl = "/bt_studio/capture_robot_pose/";
+  try {
+    const response = await axios.get(apiUrl);
+    return response.data.pose;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
+  }
+};
+
+const saveCurrentPose = async (projectId: string, universeName: string) => {
+  if (!projectId) throw new Error("Project name is not set");
+  if (!universeName) throw new Error("Universe name is not set");
+
+  const apiUrl = "/bt_studio/save_current_pose/";
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        project_id: projectId,
+        universe_name: universeName,
+      },
+      axiosExtra()
+    );
+    return response.data.pose;
+  } catch (e: unknown) {
+    const error = e as ApiError;
+    throw Error(error.response?.data.message);
+  }
+};
+
+
 ////////////////////////////// App management //////////////////////////////////
 
 const generateLocalApp = async (project: string, btOrder: string) => {
@@ -998,7 +1091,13 @@ export {
   getWorldConfig,
   getWorldFile,
   listDockerWorlds,
+  listDockerRobots,
+  createCombinedUniverse,
+  getCombinedUniverseData,
+  captureRobotPose,
+  saveCurrentPose,
   listProjects,
+
   listWorlds,
   renameFile,
   renameFolder,
