@@ -1,4 +1,4 @@
-import React from "react";
+import React, { RefObject, useRef } from "react";
 import { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -24,7 +24,7 @@ import {
 } from "BtStyles/Header/HeaderMenu.styles";
 import { useBtTheme } from "BtContexts/BtThemeContext";
 import { getProjectInfo } from "BtApi/TreeWrapper";
-import { Layout } from "jderobot-ide-interface";
+import { Entry, Layout } from "jderobot-ide-interface";
 import { CommsManager } from "jderobot-commsmanager";
 import { subscribe, unsubscribe } from "BtHelpers/utils";
 import ConnectButton from "BtComponents/Buttons/Connect";
@@ -96,8 +96,10 @@ const HeaderMenu = ({
           {/* <SettingsButton project={project} /> */}
           <ExecutionControl
             project={project}
+            supportedLanguages={["cpp", "python", "tree"]}
             commsManager={commsManager}
             connectManager={connectManager}
+            additionalEntrypoints={[]}
           />
           <DocumentationButton />
         </StyledHeaderButtonContainer>
@@ -108,19 +110,26 @@ const HeaderMenu = ({
 
 const ExecutionControl = ({
   project,
+  supportedLanguages,
   commsManager,
   connectManager,
+  userRef,
+  additionalEntrypoints,
 }: {
   project: string;
+  supportedLanguages: string[];
   commsManager: CommsManager | null;
+  userRef?: RefObject<string | undefined>;
   connectManager: (
     desiredState?: string,
     callback?: () => void,
   ) => Promise<void>;
+  additionalEntrypoints?: string[];
 }) => {
   const [state, setState] = useState<string | undefined>(
     commsManager?.getState(),
   );
+  const entrypointRef = useRef<Entry | undefined>(undefined);
 
   const updateState = (e: unknown) => {
     const T = CustomEvent<{ detail: unknown }>;
@@ -129,11 +138,20 @@ const ExecutionControl = ({
     }
   };
 
+  const updateCurrent = (e: unknown) => {
+    const T = CustomEvent<{ detail: { file?: Entry } }>;
+    if (e instanceof T) {
+      entrypointRef.current = e.detail.file;
+    }
+  };
+
   useEffect(() => {
     subscribe("CommsManagerStateChange", updateState);
+    subscribe("currentFile", updateCurrent);
 
     return () => {
       unsubscribe("CommsManagerStateChange", () => {});
+      unsubscribe("currentFile", () => {});
     };
   }, []);
 
@@ -145,7 +163,12 @@ const ExecutionControl = ({
         <ConnectButton connectManager={connectManager} />
       ) : (
         <>
-          <PlayPauseButton project={project} />
+          <PlayPauseButton
+            project={project}
+            supportedLanguages={supportedLanguages}
+            entrypointRef={entrypointRef}
+            additionalEntrypoints={additionalEntrypoints}
+          />
           <ResetButton />
           <TerminateWorldButton />
         </>

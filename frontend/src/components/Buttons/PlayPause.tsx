@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import { StyledHeaderButton } from "BtStyles/Header/HeaderMenu.styles";
 import { Entry, useError } from "jderobot-ide-interface";
 import { CommsManager, states } from "jderobot-commsmanager";
@@ -11,12 +11,26 @@ import { publish, subscribe, unsubscribe, zipCodeFiles } from "BtHelpers/utils";
 import { LoadingIcon, PauseIcon, PlayIcon } from "BtIcons";
 import { useProjectSettings } from "BtContexts/ProjectSettingsContext";
 
-const PlayPauseButton = ({ project }: { project: string }) => {
+const PlayPauseButton = ({
+  project,
+  supportedLanguages,
+  userRef,
+  entrypointRef,
+  additionalEntrypoints,
+}: {
+  project: string;
+  supportedLanguages: string[];
+  userRef?: RefObject<string | undefined>;
+  entrypointRef: RefObject<Entry | undefined>;
+  additionalEntrypoints?: string[];
+}) => {
   const settings = useProjectSettings();
   const theme = useBtTheme();
   const { warning, error } = useError();
   const filesRef = useRef<Entry[]>([]);
   const runningFilesRef = useRef<JSZip>(JSZip);
+  const runningEntrypointRef = useRef<Entry | undefined>(undefined);
+  const runningContentRef = useRef<string | undefined>(undefined);
   const [state, setState] = useState<string>(states.IDLE);
   const [loading, setLoading] = useState<boolean>(false);
   const isCodeUpdatedRef = useRef<boolean | undefined>(undefined);
@@ -55,6 +69,26 @@ const PlayPauseButton = ({ project }: { project: string }) => {
       setLoading(false);
     }
   }, [state]);
+
+  const getLanguage = (extension?: string) => {
+    const fileTypes = {
+      py: "python",
+      cpp: "cpp",
+      json: "tree",
+    };
+
+    if (extension === undefined) {
+      return undefined;
+    }
+
+    for (const key in fileTypes) {
+      if (key === extension) {
+        return fileTypes[key as keyof typeof fileTypes];
+      }
+    }
+
+    return undefined;
+  };
 
   const compareZips = async (zip1: JSZip, zip2: JSZip) => {
     for (const key in zip1.files) {
@@ -114,6 +148,25 @@ const PlayPauseButton = ({ project }: { project: string }) => {
       return;
     }
 
+    if (entrypointRef.current === undefined) {
+      error(
+        "Failed to run the application. Make sure to select an entrypoint by opening it in the editor.",
+      );
+      setLoading(false);
+      return;
+    }
+
+    const language = getLanguage(entrypointRef.current.path.split(".").pop());
+
+    if (language === undefined || !supportedLanguages.includes(language)) {
+      console.log(language);
+      error(
+        `Failed to run the application. Entrypoint ${entrypointRef.current.path} is not supported.`,
+      );
+      setLoading(false);
+      return;
+    }
+
     if (save === undefined) {
       publish("autoSave");
       updateCode(false);
@@ -126,11 +179,11 @@ const PlayPauseButton = ({ project }: { project: string }) => {
 
     const files = await getFileList(project);
     filesRef.current = JSON.parse(files);
-    const userZip = await loadFiles(filesRef.current);
+    const userZip = await loadFiles(entrypointRef.current, filesRef.current);
 
     if (state === states.PAUSED) {
       const sameZips = await compareZips(userZip, runningFilesRef.current);
-      if (sameZips) {
+      if (sameZips && runningEntrypointRef.current === entrypointRef.current) {
         try {
           await manager.resume();
           console.log("App resumed correctly!");
@@ -148,14 +201,19 @@ const PlayPauseButton = ({ project }: { project: string }) => {
     try {
       runningFilesRef.current = userZip;
       const helperZip = new JSZip();
-      // Get the blob from the API wrapper
-      const appFiles = await generateDockerizedApp(
-        project,
-        settings.btOrder.value,
-      );
-      helperZip.file("self_contained_tree.xml", appFiles.tree);
-      TreeGardener.addDockerFiles(helperZip);
-      RosTemplates.addDockerFiles(helperZip);
+      runningEntrypointRef.current = entrypointRef.current;
+
+      // TODO: only if entrypoint is json
+      if (language === "tree") {
+        // Get the blob from the API wrapper
+        const appFiles = await generateDockerizedApp(
+          project,
+          settings.btOrder.value,
+        );
+        helperZip.file("self_contained_tree.xml", appFiles.tree);
+        TreeGardener.addDockerFiles(helperZip);
+        RosTemplates.addDockerFiles(helperZip);
+      }
 
       const finalZip = await mergeZips(helperZip, userZip);
 
@@ -164,13 +222,27 @@ const PlayPauseButton = ({ project }: { project: string }) => {
       reader.onloadend = async () => {
         const base64data = reader.result; // Get the zip in base64
         // Send the base64 encoded blob
-        if (base64data) {
+        if (base64data && runningEntrypointRef.current) {
+          const entrypoints =
+            language === "tree"
+              ? ["/workspace/code/execute_docker.py"]
+              : [`/workspace/code/${runningEntrypointRef.current.path}`];
+          if (additionalEntrypoints) {
+            additionalEntrypoints.forEach((entrypoint) => {
+              entrypoints.push(`/workspace/code/${entrypoint}`);
+            });
+          }
+
+          let to_lint = [];
+          if (language === "tree") {
+            to_lint = ["actions/*.py"];
+          } else {
+            to_lint = additionalEntrypoints ? additionalEntrypoints : [];
+            to_lint = [runningEntrypointRef.current.path].concat(to_lint);
+          }
+
           try {
-            await manager.run(
-              "/workspace/code/execute_docker.py",
-              ["actions/*.py"],
-              base64data as string,
-            );
+            await manager.run(entrypoints, to_lint, base64data as string);
           } catch {
             error(
               "Failed to run the application. See the traces in the terminal.",
@@ -193,25 +265,18 @@ const PlayPauseButton = ({ project }: { project: string }) => {
         error("Error running app: " + e.message);
       }
     }
-
-    async function loadFiles(files: Entry[]) {
-      const zip = new JSZip();
-
-      let actions = undefined;
-      for (const file of filesRef.current) {
-        if (file.is_dir && file.name === "actions") {
-          actions = file;
-        }
-      }
-
-      if (actions === undefined) {
-        throw Error("Action directory not found");
-      }
-
-      await zipCodeFiles(zip, files, project);
-      return zip;
-    }
   };
+
+  async function loadFiles(entrypoint: Entry, files: Entry[]) {
+    const zip = new JSZip();
+
+    await zipCodeFiles(zip, files, project);
+
+    zip.files[entrypoint.path]._data.then(
+      (value: string) => (runningContentRef.current = value),
+    );
+    return zip;
+  }
 
   return (
     <StyledHeaderButton
