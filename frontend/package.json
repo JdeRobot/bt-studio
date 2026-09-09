@@ -22,7 +22,7 @@
     "cypress": "^15.18.1",
     "eslint-config-react-app": "^7.0.1",
     "jderobot-commsmanager": "1.1.0",
-    "jderobot-ide-interface": "0.3.1",
+    "jderobot-ide-interface": "0.3.9",
     "jszip": "^3.10.1",
     "react": "^19.2.7",
     "react-color-palette": "^7.3.1",

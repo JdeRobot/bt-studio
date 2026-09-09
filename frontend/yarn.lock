@@ -9435,10 +9435,10 @@ jderobot-commsmanager@1.1.0:
   dependencies:
     uuid "^14.0.1"
 
-jderobot-ide-interface@0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/jderobot-ide-interface/-/jderobot-ide-interface-0.3.1.tgz#708f5a832474d4e4f837aee10228b248e8c1fad7"
-  integrity sha512-X5r+rYW00uEmfalygZtFQMzF1XiNDO+QPOem+yorXNCsFsL0lAh3W03jA1hnaqLGLF29rxRgmnYllCRhpqbrEg==
+jderobot-ide-interface@0.3.9:
+  version "0.3.9"
+  resolved "https://registry.yarnpkg.com/jderobot-ide-interface/-/jderobot-ide-interface-0.3.9.tgz#934eb68868050ce5b57a334b5f41f712be30843a"
+  integrity sha512-x/c6ayAckQLfz7RI2sAJmwq2Gbj5ZUPG4K1kV2rOfxTadjuJ3KqMaNva/MbkAhRsSdk0sseJEwiaE31JMQR0Hg==
   dependencies:
     "@emotion/react" "^11.14.0"
     "@emotion/styled" "^11.14.1"
@@ -9450,6 +9450,7 @@ jderobot-ide-interface@0.3.1:
     lodash "^4.18.1"
     monaco-editor "^0.55.1"
     re-resizable "^6.11.2"
+    react-resizable-panels "^4.12.4"
     react-spinners "^0.17.0"
     react-youtube "^10.1.0"
     typescript "^6.0.3"
@@ -11983,6 +11984,11 @@ react-refresh@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.11.0.tgz#77198b944733f0f1f1a90e791de4541f9f074046"
   integrity sha512-F27qZr8uUqwhWZboondsPx8tnC3Ct3SxZA3V5WyEvujRyyNv0VYPhoBg1gZ8/MV5tubQp76Trw8lTv9hzRBa+A==
+
+react-resizable-panels@^4.12.4:
+  version "4.12.4"
+  resolved "https://registry.yarnpkg.com/react-resizable-panels/-/react-resizable-panels-4.12.4.tgz#a428a1915504fba93b07859c1ffe8c85a57208ba"
+  integrity sha512-SOsSj4e9U7vxL15MbgTfl35IO4vxSW4Xb0b1gtJVbRPWv7FOezcgOA00Mi0jP8XqC3y7jOQxpsGs/9zLKHPitA==
 
 react-router@^8.2.0:
   version "8.2.0"
