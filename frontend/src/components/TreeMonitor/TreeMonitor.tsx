@@ -242,14 +242,14 @@ const TreeMonitor = ({
 
   return (
     <StyledContainer>
+      {engine.current.getModel() && (
+        <StyledBTCanvas bgColor={theme.palette.bg} engine={engine.current} />
+      )}
       <TreeMonitorMenu
         onZoomToFit={zoomToFit}
         setGoBack={setGoBack}
         subTreeName={subTreeName}
       />
-      {engine.current.getModel() && (
-        <StyledBTCanvas bgColor={theme.palette.bg} engine={engine.current} />
-      )}
     </StyledContainer>
   );
 };

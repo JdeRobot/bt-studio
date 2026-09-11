@@ -493,9 +493,9 @@ def get_file_list(fal, request):
     return Response({"file_list": EntryEncoder().encode(file_list)})
 
 
-@error_wrapper("GET", ["project_id"])
+@error_wrapper("GET", ["project"])
 def get_actions_list(fal, request):
-    project_id = request.GET.get("project_id")
+    project_id = request.GET.get("project")
 
     action_path = fal.actions_path(project_id)
 
