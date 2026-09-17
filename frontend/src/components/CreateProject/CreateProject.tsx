@@ -56,7 +56,7 @@ const Menu = ({ projId }: { projId?: string }) => {
     }
     setLoading(true);
     try {
-      await createProject(name);
+      await createProject(name, projId);
       navigate("..");
       console.log("Project created successfully");
     } catch (e: unknown) {
